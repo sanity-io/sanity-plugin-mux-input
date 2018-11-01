@@ -1,0 +1,61 @@
+{
+  "name": "sanity-plugin-mux-input",
+  "version": "0.0.1",
+  "description": "An input component that integrates Sanity Studio with MUX.com video encoding/hosting service.",
+  "main": "build/index.js",
+  "scripts": {
+    "build": "babel src -d build --copy-files",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sanity-io/sanity-plugin-mux-video-input.git"
+  },
+  "keywords": [
+    "sanity",
+    "video",
+    "mux",
+    "input",
+    "plugin"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "Sanity.io <hello@sanity.io>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sanity-io/sanity-plugin-mux-video-input/issues"
+  },
+  "homepage": "https://github.com/sanity-io/sanity-plugin-mux-video-input#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
+    "babel-eslint": "^9.0.0",
+    "eslint-config-prettier": "^3.0.1",
+    "eslint-config-sanity": "^4.0.2",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-prettier": "^2.6.0",
+    "eslint-plugin-react": "^7.7.0",
+    "eslint": "^5.6.0",
+    "prettier": "^1.14.2",
+    "react-hot-loader": "4.3.8"
+  },
+  "dependencies": {
+    "@sanity/document-window": "^0.135.3",
+    "get-it": "^4.0.4",
+    "hls.js": "^0.11.0",
+    "lodash": "^4.17.10",
+    "prop-types": "^15.6.0",
+    "react": "^16.2.0",
+    "uuid": "^3.3.2"
+  },
+  "peerDependencies": {
+    "@sanity/client": ">= 0.135.x",
+    "@sanity/base": ">= 0.135.x",
+    "@sanity/components": ">= 0.135.x",
+    "@sanity/core": ">= 0.135.x",
+    "rxjs": ">= 6.1.0"
+  }
+}

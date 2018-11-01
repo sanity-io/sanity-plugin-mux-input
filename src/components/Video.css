@@ -1,0 +1,48 @@
+@import "part:@sanity/base/theme/variables-style";
+
+.root {
+  width: 100%;
+  position: relative;
+  height: 100%;
+}
+
+.poster {
+  width: 100%;
+}
+
+.posterContainer {
+  position: relative;
+  top: 100px;
+  width: 100%;
+}
+
+.videoContainer {
+  width: 100%;
+  position: relative;
+}
+
+
+.isLoadingContainer {
+  overflow: hidden;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.isLoadingContent {
+  margin-left: var(--small-padding);
+  position: relative;
+  top: -3px;
+}
+
+.isLoading span {
+  margin-left: 0.5em;
+}
+
+.videoError {
+  position: relative;
+  top: 100px;
+}
