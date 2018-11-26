@@ -1,5 +1,6 @@
 # Mux Video Sanity Plugin
 
+This is a plugin which lets you use MUX video assets in your studio.
 
 # Setting up
 

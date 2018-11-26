@@ -1,4 +1,4 @@
-import MuxVideoInput from './components/MuxVideoInput'
+import Input from './components/Input'
 export default {
-  MuxVideoInput
+  Input
 }
