@@ -1,8 +1,28 @@
-# Mux Video Sanity Plugin
+# Mux Video Input Sanity Plugin
 
 This is a plugin which lets you use MUX video assets in your studio.
 
 # Setting up
+
+* While in your project folder, run ``sanity install mux-input``
+
+* Make a schema type that uses the plugin's type ``mux.video``, for example:
+
+```
+    {
+      title: "Video blog post",
+      name: "videoBlogPost",
+      type: "document",
+      fields: [
+        { title: "Title", name: "title", type: "string" },
+        {
+          title: "Video file",
+          name: "video",
+          type: "mux.video"
+        }
+      ]
+    }
+```
 
 * Get an API Access Token
 The Mux Video API uses an Access Token and Secret Key for authentication.
