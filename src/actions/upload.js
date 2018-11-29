@@ -32,6 +32,7 @@ export default function uploadSource(source, privacies) {
       'MUX-Proxy-UUID': uuid.v4(),
       'Content-Type': contentType
     },
+    timeout: 3600000,
     query,
     body
   })

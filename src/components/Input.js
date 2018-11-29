@@ -352,7 +352,7 @@ export default class MuxVideoInput extends Component {
 
   render() {
     const {type, level, markers} = this.props
-    const {isLoading, secrets, hasFocus, showNewUpload} = this.state
+    const {isLoading, secrets, hasFocus, needsSetup} = this.state
     return (
       <div className={styles.root}>
         <div className={styles.header}>
@@ -375,19 +375,19 @@ export default class MuxVideoInput extends Component {
 
         {this.renderSetupNotice()}
 
-        <Uploader
-          buttons={this.renderRemoveVideoButton()}
-          hasFocus={hasFocus}
-          label={showNewUpload ? 'Upload a new file' : null}
-          onBlur={this.blur}
-          onFocus={this.focus}
-          onSetupButtonClicked={this.handleSetupButtonClicked}
-          onUploadComplete={this.handleOnUploadComplete}
-          secrets={secrets}
-          showCancelButton={showNewUpload}
-        >
-          {this.renderAsset()}
-        </Uploader>
+        {!needsSetup && (
+          <Uploader
+            buttons={this.renderRemoveVideoButton()}
+            hasFocus={hasFocus}
+            onBlur={this.blur}
+            onFocus={this.focus}
+            onSetupButtonClicked={this.handleSetupButtonClicked}
+            onUploadComplete={this.handleOnUploadComplete}
+            secrets={secrets}
+          >
+            {this.renderAsset()}
+          </Uploader>
+        )}
       </div>
     )
   }

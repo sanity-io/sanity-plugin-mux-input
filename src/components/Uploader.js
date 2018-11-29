@@ -11,7 +11,6 @@ import FormField from 'part:@sanity/components/formfields/default'
 import FileInputButton from 'part:@sanity/components/fileinput/button'
 import ButtonCollection from 'part:@sanity/components/buttons/button-collection'
 import DefaultButton from 'part:@sanity/components/buttons/default'
-import PopOver from 'part:@sanity/components/dialogs/popover'
 import Dialog from 'part:@sanity/components/dialogs/default'
 import DialogContent from 'part:@sanity/components/dialogs/content'
 import ProgressBar from 'part:@sanity/components/progress/bar'
@@ -208,6 +207,9 @@ class MuxVideoInputUploader extends Component {
   }
 
   handlePaste = event => {
+    if (this.state.uploadState) {
+      return
+    }
     const clipboardData = event.clipboardData || window.clipboardData
     const url = clipboardData.getData('text')
     const cbFn = err => {
@@ -373,9 +375,7 @@ class MuxVideoInputUploader extends Component {
         onEscape={this.handleErrorClose}
         onClickOutside={this.handleErrorClose}
       >
-        <DialogContent size="small">
-          {message}
-        </DialogContent>
+        <DialogContent size="small">{message}</DialogContent>
       </Dialog>
     )
   }
