@@ -5,9 +5,9 @@
   },
   "parser": "babel-eslint",
   "extends": [
+    "eslint-config-sanity",
     "prettier",
-    "prettier/react",
-    "eslint-config-sanity"
+    "prettier/react"
   ],
   "rules": {
     "react/jsx-uses-vars": [2],

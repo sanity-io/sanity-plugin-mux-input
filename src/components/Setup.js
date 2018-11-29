@@ -1,8 +1,8 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 
-import {uniqueId} from 'lodash'
-import {saveSecrets} from '../actions/secrets'
+import {uniqueId, isString} from 'lodash'
+import {saveSecrets, testSecrets} from '../actions/secrets'
 
 import Button from 'part:@sanity/components/buttons/default'
 import Fieldset from 'part:@sanity/components/fieldsets/default'
@@ -75,30 +75,41 @@ class MuxVideoInputSetup extends Component {
   }
 
   handleSaveToken = () => {
+    const handleError = err => {
+      console.error(err) // eslint-disable-line no-console
+      this.setState({
+        isLoading: false,
+        error: 'Something went wrong saving the token. See console.error for more info.'
+      })
+    }
     this.setState({isLoading: true})
     const token = this.state.token || null
     const secretKey = this.state.secretKey || null
     saveSecrets(token, secretKey)
       .then(() => {
-        this.setState({isLoading: false})
-        this.props.onSave({token, secretKey})
+        testSecrets()
+          .then(result => {
+            this.setState({isLoading: false})
+            if (result.status) {
+              this.props.onSave({token, secretKey})
+              return
+            }
+            this.setState({error: 'Invalid credentials'})
+          })
+          .catch(handleError)
       })
-      .catch(err => {
-        console.error(err) // eslint-disable-line no-console
-        this.setState({error: err})
-      })
+      .catch(handleError)
   }
 
   render() {
     const {error, isLoading} = this.state
-
     return (
       <div className={styles.root}>
         <form onSubmit={this.handleOnSubmit}>
           <Fieldset
             legend={'MUX API Credentials'}
-            description="The credentials will be stored safely in a hidden document only available to editors."
             level={1}
+            description="The credentials will be stored safely in a hidden document only available to editors."
           >
             <FormField
               label="Access Token"
@@ -110,7 +121,7 @@ class MuxVideoInputSetup extends Component {
                 id={this.tokenInputId}
                 ref={this.firstField}
                 onChange={this.handleTokenChanged}
-                type="password"
+                type="text"
                 value={this.state.token || ''}
               />
             </FormField>
@@ -124,12 +135,12 @@ class MuxVideoInputSetup extends Component {
               <TextInput
                 id={this.secretKeyInputId}
                 onChange={this.handleSecretKeyChanged}
-                type="password"
+                type="text"
                 value={this.state.secretKey || ''}
               />
             </FormField>
 
-            <p>
+            <div className={styles.buttons}>
               <Button
                 loading={isLoading}
                 color="primary"
@@ -141,12 +152,20 @@ class MuxVideoInputSetup extends Component {
               <Button color="primary" kind="simple" onClick={this.handleCancel}>
                 Cancel
               </Button>
-            </p>
+            </div>
 
-            {error && (
-              <p>Something went wrong saving the token. See console.error for more info.</p>
-            )}
+            {error && <p className={styles.error}>{error}</p>}
           </Fieldset>
+          <div className={styles.notice}>
+            To set up a new access token, go to your{' '}
+            <a
+              href="https://dashboard.mux.com/settings/access-tokens"
+              target="_blank"
+              rel="noreferer noopener"
+            >
+              account on mux.com
+            </a>
+          </div>
         </form>
       </div>
     )

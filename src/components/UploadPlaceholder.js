@@ -5,14 +5,13 @@ import UploadIcon from 'part:@sanity/base/upload-icon'
 
 export default class UploadPlaceholder extends React.PureComponent {
   static propTypes = {
-    hasFocus: PropTypes.bool,
     invalidPaste: PropTypes.bool,
     invalidFile: PropTypes.bool
   }
   render() {
-    const {hasFocus, invalidPaste, invalidFile} = this.props
+    const {invalidPaste, invalidFile} = this.props
     return (
-      <div className={hasFocus ? styles.hasFocus : styles.noFocus}>
+      <div>
         <div className={styles.inner}>
           <div
             className={
@@ -35,7 +34,7 @@ export default class UploadPlaceholder extends React.PureComponent {
           >
             <div className={styles.iconContainer}>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="1em" width="1em">
-                {(!hasFocus || invalidPaste) && (
+                {invalidPaste && (
                   <g>
                     <path
                       fill="currentColor"
@@ -47,19 +46,18 @@ export default class UploadPlaceholder extends React.PureComponent {
                     />
                   </g>
                 )}
-                {hasFocus &&
-                  !invalidPaste && (
-                    <g>
-                      <path
-                        fill="currentColor"
-                        d="M32.49 3.62h-7.56a5.4 5.4 0 0 0-10.19 0H7.18a3.62 3.62 0 0 0-3.62 3.61v28.93a3.62 3.62 0 0 0 3.62 3.62h25.31a3.62 3.62 0 0 0 3.62-3.62V7.23a3.62 3.62 0 0 0-3.62-3.61zm-12.65 0A1.81 1.81 0 1 1 18 5.42a1.81 1.81 0 0 1 1.84-1.8zm12.65 32.54H7.18V7.23h3.61v5.43h18.09V7.23h3.61z"
-                      />
-                      <path
-                        fill="currentColor"
-                        d="M20 33.15c-6.26 0-8.44-4.22-8.53-4.4l1.73-.86-.87.43.87-.44c.07.14 1.78 3.34 6.8 3.34s6.73-3.2 6.8-3.34l1.72.87c-.09.18-2.27 4.4-8.52 4.4zM12.45 18.62h4.01v3.72h-4.01zM22.98 18.62h4.01v3.72h-4.01z"
-                      />
-                    </g>
-                  )}
+                {!invalidPaste && (
+                  <g>
+                    <path
+                      fill="currentColor"
+                      d="M32.49 3.62h-7.56a5.4 5.4 0 0 0-10.19 0H7.18a3.62 3.62 0 0 0-3.62 3.61v28.93a3.62 3.62 0 0 0 3.62 3.62h25.31a3.62 3.62 0 0 0 3.62-3.62V7.23a3.62 3.62 0 0 0-3.62-3.61zm-12.65 0A1.81 1.81 0 1 1 18 5.42a1.81 1.81 0 0 1 1.84-1.8zm12.65 32.54H7.18V7.23h3.61v5.43h18.09V7.23h3.61z"
+                    />
+                    <path
+                      fill="currentColor"
+                      d="M20 33.15c-6.26 0-8.44-4.22-8.53-4.4l1.73-.86-.87.43.87-.44c.07.14 1.78 3.34 6.8 3.34s6.73-3.2 6.8-3.34l1.72.87c-.09.18-2.27 4.4-8.52 4.4zM12.45 18.62h4.01v3.72h-4.01zM22.98 18.62h4.01v3.72h-4.01z"
+                    />
+                  </g>
+                )}
               </svg>
             </div>
             <div>

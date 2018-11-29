@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import Hls from 'hls.js'
 import {getAsset} from '../actions/assets'
-import Spinner from 'part:@sanity/components/loading/spinner'
+import ProgressBar from 'part:@sanity/components/progress/bar'
 
 import styles from './Video.css'
 
@@ -95,11 +95,15 @@ class MuxVideo extends Component {
     const {posterUrl, isLoading, error} = this.state
     if (isLoading) {
       return (
-        <div className={styles.isLoadingContainer}>
-          <div>
-            <Spinner inline />
-            <span className={styles.isLoadingContent}>{isLoading}</span>
-          </div>
+        <div className={styles.progressBar}>
+          <ProgressBar
+            percent={100}
+            text="Waiting for MUX to complete the file"
+            isInProgress={true}
+            showPercent
+            animation
+            color="primary"
+          />
         </div>
       )
     }

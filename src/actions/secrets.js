@@ -26,3 +26,12 @@ export function saveSecrets(token, secretKey) {
     }
   })
 }
+
+export function testSecrets() {
+  const dataset = client.clientConfig.dataset
+  return client.request({
+    url: `/addons/mux/secrets/${dataset}/test`,
+    withCredentials: true,
+    method: 'GET'
+  })
+}

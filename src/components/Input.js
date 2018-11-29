@@ -20,6 +20,8 @@ import MuxLogo from './MuxLogo'
 import Uploader from './Uploader'
 import styles from './Input.css'
 
+const NOOP = () => {}
+
 const cachedSecrets = {
   token: null,
   secretKey: null
@@ -79,6 +81,7 @@ export default class MuxVideoInput extends Component {
     this.setupButton = React.createRef()
     this.pollInterval = null
     this.video = React.createRef()
+    this.removeVideoButton = React.createRef()
   }
 
   componentDidMount() {
@@ -181,14 +184,6 @@ export default class MuxVideoInput extends Component {
     this.setState({showNewUpload: false, assetDocument: result.document}, () => {
       this.setupDocumentWindow()
     })
-  }
-
-  handleNewUploadButton = event => {
-    this.setState({showNewUpload: true})
-  }
-
-  handleCancelNewUpload = event => {
-    this.setState({showNewUpload: false})
   }
 
   handleRemoveVideoButtonClicked = event => {
@@ -294,64 +289,70 @@ export default class MuxVideoInput extends Component {
     )
   }
 
+  // eslint-disable-next-line complexity
   renderAsset() {
-    const {isLoading, needsSetup, showNewUpload, assetDocument, confirmRemove} = this.state
+    const {assetDocument} = this.state
     const renderAsset = assetDocument !== null
-    const renderUploader = (!isLoading && !needsSetup && !renderAsset) || showNewUpload
     if (!renderAsset) {
       return null
     }
-    return (
-      <div className={styles.videoContainer}>
-        <Video assetDocument={assetDocument} />
-        {!renderUploader && (
-          <div className={styles.videoButtons}>
-            <DefaultButton onClick={this.handleNewUploadButton}>Upload</DefaultButton>
+    return <Video assetDocument={assetDocument} />
+  }
 
-            <div className={styles.cancelRemoveVideoButton}>
-              <DefaultButton onClick={this.handleRemoveVideoButtonClicked}>Remove</DefaultButton>
-              {confirmRemove && (
-                <PopOver
-                  color="default"
-                  useOverlay={true}
-                  onEscape={this.handleCancelRemove}
-                  onClickOutside={this.handleCancelRemove}
-                  padding="large"
-                >
-                  <div className={styles.confirmDeletePopover}>
-                    <div className={styles.confirmDeletePopoverButtons}>
-                      <DefaultButton onClick={this.handleCancelRemove}>Cancel</DefaultButton>
-                      <DefaultButton
-                        color="danger"
-                        onClick={this.handleRemoveVideo}
-                        loading={this.state.isLoading}
-                      >
-                        Remove
-                      </DefaultButton>
-                    </div>
-                    <div>
-                      <Checkbox
-                        checked={this.state.deleteOnMuxChecked}
-                        onChange={this.handleDeleteOnMuxCheckBoxClicked}
-                      >
-                        Delete asset on MUX.com
-                      </Checkbox>
-                    </div>
+  renderRemoveVideoButton() {
+    const {assetDocument, confirmRemove} = this.state
+    const {readOnly} = this.props
+    if (assetDocument && assetDocument.status === 'ready' && !readOnly) {
+      return (
+        <DefaultButton
+          ref={this.removeVideoButton}
+          inverted
+          kind="default"
+          color="danger"
+          onClick={confirmRemove ? NOOP : this.handleRemoveVideoButtonClicked}
+        >
+          Remove
+          <div className={styles.popoverAnchor}>
+            {confirmRemove && (
+              <PopOver
+                color="default"
+                useOverlay={true}
+                onEscape={this.handleCancelRemove}
+                onClickOutside={this.handleCancelRemove}
+                padding="large"
+              >
+                <div className={styles.confirmDeletePopover}>
+                  <div className={styles.confirmDeletePopoverButtons}>
+                    <DefaultButton onClick={this.handleCancelRemove}>Cancel</DefaultButton>
+                    <DefaultButton
+                      color="danger"
+                      onClick={this.handleRemoveVideo}
+                      loading={this.state.isLoading}
+                    >
+                      Remove
+                    </DefaultButton>
                   </div>
-                </PopOver>
-              )}
-            </div>
+                  <div>
+                    <Checkbox
+                      checked={this.state.deleteOnMuxChecked}
+                      onChange={this.handleDeleteOnMuxCheckBoxClicked}
+                    >
+                      Delete asset on MUX.com
+                    </Checkbox>
+                  </div>
+                </div>
+              </PopOver>
+            )}
           </div>
-        )}
-      </div>
-    )
+        </DefaultButton>
+      )
+    }
+    return null
   }
 
   render() {
     const {type, level, markers} = this.props
-    const {isLoading, needsSetup, secrets, hasFocus, showNewUpload, assetDocument} = this.state
-    const renderUploader =
-      (!isLoading && !needsSetup && !assetDocument) || (assetDocument && showNewUpload)
+    const {isLoading, secrets, hasFocus, showNewUpload} = this.state
     return (
       <div className={styles.root}>
         <div className={styles.header}>
@@ -374,22 +375,19 @@ export default class MuxVideoInput extends Component {
 
         {this.renderSetupNotice()}
 
-        {<div className={showNewUpload ? styles.hidden : ''}>{this.renderAsset()}</div>}
-
-        {renderUploader && (
-          <div>
-            <Uploader
-              showCancelButton={showNewUpload}
-              onUploadComplete={this.handleOnUploadComplete}
-              secrets={secrets}
-              onBlur={this.blur}
-              onFocus={this.focus}
-              hasFocus={hasFocus}
-              onCancel={this.handleCancelNewUpload}
-              label={showNewUpload ? 'Upload a new file' : null}
-            />
-          </div>
-        )}
+        <Uploader
+          buttons={this.renderRemoveVideoButton()}
+          hasFocus={hasFocus}
+          label={showNewUpload ? 'Upload a new file' : null}
+          onBlur={this.blur}
+          onFocus={this.focus}
+          onSetupButtonClicked={this.handleSetupButtonClicked}
+          onUploadComplete={this.handleOnUploadComplete}
+          secrets={secrets}
+          showCancelButton={showNewUpload}
+        >
+          {this.renderAsset()}
+        </Uploader>
       </div>
     )
   }

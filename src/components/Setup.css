@@ -7,3 +7,18 @@
 .formField {
   margin-bottom: var(--medium-padding);
 }
+
+.buttons {
+  margin-bottom: var(--small-padding);
+}
+
+.notice {
+  margin-top: var(--medium-padding);
+  font-size: var(--font-size-small);
+  color: var(--gray-darker);
+}
+
+.error {
+  color: var(--state-danger-color);
+  font-size: var(--font-size-small);
+}

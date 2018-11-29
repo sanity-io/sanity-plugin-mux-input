@@ -35,28 +35,16 @@
   transform: translate(0%, -10%);
 }
 
-.videoContainer {
-  position: relative;
-  top: 0px;
-  min-height: 200px;
-}
-
-.videoButtons {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-}
-
 .cancelRemoveVideoButton {
   display: inline-block;
   position: relative;
   left: var(--small-padding);
 }
 
-.hidden {
-  display: none;
-}
-
 .confirmDeletePopoverButtons {
   margin-bottom: var(--medium-padding);
+}
+
+.popoverAnchor {
+  position: absolute;
 }

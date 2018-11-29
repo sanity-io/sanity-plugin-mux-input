@@ -1,27 +1,42 @@
 @import "part:@sanity/base/theme/variables-style";
 
 .root {
-  position: relative;
-}
-
-.uploadPlaceholder {
   padding: var(--small-padding);
   border-radius: var(--input-border-radius);
   transition: all 0.1s linear;
   color: var(--input-color);
   background-color: var(--input-bg);
   box-shadow: 0 0 3px color(var(--gray) a(50%));
+  min-height: 150px;
 }
 
-.uploadProgressContainer {
+
+.fileInputButtonContainer {
+  display: inline-block;
+}
+
+.uploadProgress {
+  text-align: center;
 }
 
 .progressBar {
   margin-top: var(--large-padding);
   margin-bottom: 2.5em;
+  text-align: left;
 }
 
 .errorMessage {
   background: #fff;
   color: var(--state-danger-color);
+}
+
+
+.hiddenTextField {
+  position: absolute;
+  border: 0;
+  color: white;
+}
+
+.hiddenTextField:focus {
+  outline: none;
 }
