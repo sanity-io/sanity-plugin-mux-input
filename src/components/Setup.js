@@ -157,14 +157,21 @@ class MuxVideoInputSetup extends Component {
             {error && <p className={styles.error}>{error}</p>}
           </Fieldset>
           <div className={styles.notice}>
-            To set up a new access token, go to your{' '}
-            <a
-              href="https://dashboard.mux.com/settings/access-tokens"
-              target="_blank"
-              rel="noreferer noopener"
-            >
-              account on mux.com
-            </a>
+            <p>
+              To set up a new access token, go to your{' '}
+              <a
+                href="https://dashboard.mux.com/settings/access-tokens"
+                target="_blank"
+                rel="noreferer noopener"
+              >
+                account on mux.com
+              </a>
+              .
+            </p>
+            <p>
+              The access token needs permissions: <strong>Mux Video </strong>
+              (Full Access) and <strong>Mux Data</strong> (Read)
+            </p>
           </div>
         </form>
       </div>
