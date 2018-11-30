@@ -8,8 +8,11 @@ import getPosterSrc from '../util/getPosterSrc'
 
 import styles from './Video.css'
 
+const NOOP = () => {}
+
 const propTypes = {
-  assetDocument: PropTypes.object.isRequired
+  assetDocument: PropTypes.object.isRequired,
+  autoload: PropTypes.bool
 }
 
 class MuxVideo extends Component {
@@ -19,6 +22,10 @@ class MuxVideo extends Component {
     isLoading: true,
     error: null,
     isDeletedOnMux: false
+  }
+
+  static defaultProps = {
+    autoload: true
   }
 
   videoContainer = React.createRef()
@@ -60,6 +67,11 @@ class MuxVideo extends Component {
       this.setState({error: null})
       this.attachVideo()
     }
+    if (this.state.source !== null && this.state.source !== prevState.source) {
+      this.setState({error: null, showControls: false})
+      this.hls.destroy()
+      this.attachVideo()
+    }
   }
 
   getVideoElement() {
@@ -67,13 +79,15 @@ class MuxVideo extends Component {
   }
 
   attachVideo() {
-    const {assetDocument} = this.props
+    const {assetDocument, autoload} = this.props
     if (Hls.isSupported()) {
-      this.hls = new Hls({autoStartLoad: true})
+      this.hls = new Hls({autoStartLoad: autoload})
       this.hls.loadSource(this.state.source)
       this.hls.attachMedia(this.video.current)
       this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        this.videoContainer.current.style.display = 'block'
+        if (this.videoContainer.current) {
+          this.videoContainer.current.style.display = 'block'
+        }
       })
       this.hls.on(Hls.Events.ERROR, (event, data) => {
         switch (data.type) {
@@ -105,9 +119,14 @@ class MuxVideo extends Component {
     }
   }
 
+  handleVideoClick = event => {
+    this.setState({showControls: true})
+    this.hls.startLoad(0)
+  }
+
   render() {
     const {posterUrl, isLoading, error} = this.state
-    const {assetDocument} = this.props
+    const {assetDocument, autoload} = this.props
     if (!assetDocument || !assetDocument.status) {
       return null
     }
@@ -126,10 +145,18 @@ class MuxVideo extends Component {
         </div>
       )
     }
+
+    const showControls = autoload || this.state.showControls
     return (
       <div>
         <div ref={this.videoContainer} className={styles.videoContainer}>
-          <video className={styles.root} controls ref={this.video} poster={posterUrl} />
+          <video
+            className={styles.root}
+            onClick={autoload ? NOOP : this.handleVideoClick}
+            controls={showControls}
+            ref={this.video}
+            poster={posterUrl}
+          />
         </div>
         {error && (
           <div className={[styles.videoContainer, styles.videoError].join(' ')}>

@@ -21,7 +21,7 @@ export default class MuxVideoPreview extends React.Component {
       return (
         <div className={styles.root}>
           <div className={styles.video}>
-            <Video assetDocument={value} />
+            <Video assetDocument={value} autoload={false} />
           </div>
         </div>
       )
