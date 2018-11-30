@@ -7,16 +7,12 @@
   color: var(--input-color);
   background-color: var(--input-bg);
   box-shadow: 0 0 3px color(var(--gray) a(50%));
-  min-height: 150px;
-}
-
-
-.fileInputButtonContainer {
-  display: inline-block;
+  min-height: 160px;
 }
 
 .uploadProgress {
   text-align: center;
+  padding: var(--medium-padding);
 }
 
 .progressBar {

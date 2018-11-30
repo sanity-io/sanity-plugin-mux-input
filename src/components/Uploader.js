@@ -78,6 +78,7 @@ const propTypes = {
   hasFocus: PropTypes.bool,
   onFocus: PropTypes.func,
   onBlur: PropTypes.func,
+  onBrowse: PropTypes.func.isRequired,
   onSetupButtonClicked: PropTypes.func.isRequired,
   onUploadComplete: PropTypes.func,
   secrets: PropTypes.shape({token: PropTypes.string, secretKey: PropTypes.string}),
@@ -113,7 +114,7 @@ class MuxVideoInputUploader extends Component {
     }
   }
 
-  uploadSource(source, callback) {
+  uploadSource(source, filename, callback) {
     isValidVideoSource(source, (error, result) => {
       if (error) {
         return callback(error)
@@ -122,7 +123,7 @@ class MuxVideoInputUploader extends Component {
       return testSecrets()
         .then(testResult => {
           if (testResult.status) {
-            return callback(null, uploadSourceAction(source))
+            return callback(null, uploadSourceAction(source, {filename}))
           }
           return callback(new Error('Invalid credentials'), null)
         })
@@ -153,7 +154,7 @@ class MuxVideoInputUploader extends Component {
 
   handleUploadFiles = files => {
     this.setState({uploadState: 0})
-    this.uploadSource(files[0], (err, subscription) => {
+    this.uploadSource(files[0], files[0].name, (err, subscription) => {
       if (err) {
         this.setState({invalidFile: true, error: err, uploadState: null})
         return null
@@ -220,7 +221,7 @@ class MuxVideoInputUploader extends Component {
         this.setState({invalidPaste: false})
       }, 2000)
     }
-    this.uploadSource(url, (err, subscription) => {
+    this.uploadSource(url, url.split('/').slice(-1)[0], (err, subscription) => {
       if (err) {
         return this.handleUploadError(err, cbFn)
       }
@@ -303,11 +304,19 @@ class MuxVideoInputUploader extends Component {
         <FormField level={0}>
           <UploadPlaceholder invalidPaste={invalidPaste} invalidFile={invalidFile} />
         </FormField>
-        <div className={styles.fileInputButtonContainer}>
-          <FileInputButton icon={UploadIcon} onSelect={this.handleUploadFiles} accept={'video/*'}>
+        <ButtonCollection>
+          <FileInputButton
+            inverted
+            icon={UploadIcon}
+            onSelect={this.handleUploadFiles}
+            accept={'video/*'}
+          >
             Select file
           </FileInputButton>
-        </div>
+          <DefaultButton inverted onClick={this.props.onBrowse}>
+            Browse
+          </DefaultButton>
+        </ButtonCollection>
       </div>
     )
   }

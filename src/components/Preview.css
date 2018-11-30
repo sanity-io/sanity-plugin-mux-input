@@ -1,0 +1,10 @@
+@import "part:@sanity/base/theme/variables-style";
+
+.root {
+  padding: 0;
+  user-select: none !important;
+}
+
+.video {
+  padding: var(--small-padding);
+}

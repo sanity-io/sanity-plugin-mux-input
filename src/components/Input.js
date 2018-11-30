@@ -1,10 +1,15 @@
-import React, {Component} from 'react'
+import React, {Component, Fragment} from 'react'
 import Button from 'part:@sanity/components/buttons/default'
 
 import {fetchSecrets} from '../actions/secrets'
 import {getAsset, deleteAsset} from '../actions/assets'
+import getPosterSrc from '../util/getPosterSrc'
+
 import client from 'part:@sanity/base/client'
 import DocumentWindow from '@sanity/document-window'
+import Dialog from 'part:@sanity/components/dialogs/default'
+import FullscreenDialog from 'part:@sanity/components/dialogs/fullscreen'
+import DialogContent from 'part:@sanity/components/dialogs/content'
 
 import PatchEvent, {set, unset} from 'part:@sanity/form-builder/patch-event'
 import Checkbox from 'part:@sanity/components/toggles/checkbox'
@@ -16,6 +21,7 @@ import Spinner from 'part:@sanity/components/loading/spinner'
 
 import Setup from './Setup'
 import Video from './Video'
+import SelectAsset from './SelectAsset'
 import MuxLogo from './MuxLogo'
 import Uploader from './Uploader'
 import styles from './Input.css'
@@ -49,8 +55,8 @@ function getSecrets() {
         secrets: cachedSecrets
       }
     })
-    .catch(err => {
-      console.error(err) // eslint-disable-line no-console
+    .catch(error => {
+      this.setState({error})
     })
 }
 
@@ -58,14 +64,17 @@ export default class MuxVideoInput extends Component {
   state = {
     assetDocument: null,
     confirmRemove: false,
-    deleteOnMuxChecked: false,
+    deleteOnMuxChecked: true,
+    deleteAssetDocumentChecked: true,
+    error: null,
     hasFocus: false,
     isInitialSetup: true,
     isLoading: 'secrets',
     needsSetup: true,
     secrets: null,
     showNewUpload: false,
-    showSetup: false
+    showSetup: false,
+    showBrowser: false
   }
 
   constructor(props) {
@@ -82,6 +91,7 @@ export default class MuxVideoInput extends Component {
     this.pollInterval = null
     this.video = React.createRef()
     this.removeVideoButton = React.createRef()
+    this.videoPlayer = React.createRef()
   }
 
   componentDidMount() {
@@ -125,10 +135,10 @@ export default class MuxVideoInput extends Component {
     this.documentWindow.on('data', docs => {
       const assetDocument = docs[0] || null
       this.setState({assetDocument})
-      if (assetDocument.status === 'preparing') {
+      if (assetDocument && assetDocument.status === 'preparing') {
         this.pollMux()
       }
-      if (assetDocument.status === 'ready') {
+      if (assetDocument && assetDocument.status === 'ready') {
         clearInterval(this.pollInterval)
         this.pollInterval = null
       }
@@ -150,11 +160,14 @@ export default class MuxVideoInput extends Component {
           const props = response.data
           client
             .patch(assetDocument._id)
-            .set({status: props.status})
+            .set({
+              status: props.status,
+              data: props
+            })
             .commit({returnDocuments: false})
         })
-        .catch(err => {
-          console.error(err) // eslint-disable-line no-console
+        .catch(error => {
+          this.setState({error})
         })
     }, 2000)
   }
@@ -194,37 +207,118 @@ export default class MuxVideoInput extends Component {
 
   handleRemoveVideo = event => {
     const {onChange} = this.props
+    const {assetDocument} = this.state
     this.setState({isLoading: true})
     const unsetAsset = () => {
-      onChange(PatchEvent.from(unset(['asset'])))
-      this.setState({
-        assetDocument: null,
-        confirmRemove: false,
-        deleteOnMuxChecked: false,
-        isLoading: false
+      return new Promise((resolve, reject) => {
+        onChange(PatchEvent.from(unset(['asset'])))
+        this.setState(
+          {
+            assetDocument: null,
+            confirmRemove: false,
+            isLoading: false
+          },
+          () => {
+            if (this.state.deleteAssetDocumentChecked) {
+              return client
+                .delete(assetDocument._id)
+                .then(() => {
+                  resolve()
+                })
+                .catch(error => {
+                  reject(error)
+                })
+            }
+            return resolve()
+          }
+        )
       })
     }
-    if (this.state.deleteOnMuxChecked) {
-      const {assetDocument} = this.state
-      return deleteAsset(assetDocument.assetId)
-        .then(response => {
-          unsetAsset()
-        })
-        .catch(err => {
-          console.error(err) // eslint-disable-line no-console
-        })
-    }
     return unsetAsset()
+      .then(() => {
+        if (this.state.deleteOnMuxChecked) {
+          return deleteAsset(assetDocument.assetId).catch(error => {
+            this.setState({error})
+          })
+        }
+        return true
+      })
+      .catch(error => {
+        this.setState({error})
+      })
   }
 
   handleCancelRemove = event => {
-    this.setState({confirmRemove: false, deleteOnMuxChecked: false})
+    this.setState({
+      confirmRemove: false,
+      deleteOnMuxChecked: true,
+      deleteAssetDocumentChecked: true
+    })
   }
 
   handleDeleteOnMuxCheckBoxClicked = event => {
     this.setState(prevState => ({
       deleteOnMuxChecked: !prevState.deleteOnMuxChecked
     }))
+  }
+
+  handleDeleteAssetDocumentCheckBoxClicked = event => {
+    this.setState(prevState => ({
+      deleteAssetDocumentChecked: !prevState.deleteAssetDocumentChecked
+    }))
+  }
+
+  handleSetThumbButton = event => {
+    const {assetDocument} = this.state
+    const currentTime = this.videoPlayer.current.getVideoElement().currentTime
+    client
+      .patch(assetDocument._id)
+      .set({
+        thumbTime: currentTime
+      })
+      .commit({returnDocuments: false})
+      .then(response => {
+        this.setState({
+          thumb: getPosterSrc(assetDocument.playbackId, {
+            time: currentTime,
+            width: 320,
+            height: 320,
+            fitMode: 'crop'
+          })
+        })
+      })
+      .catch(error => {
+        this.setState({error})
+      })
+  }
+
+  handleErrorClose = event => {
+    if (event) {
+      event.preventDefault()
+    }
+    this.setState({
+      error: null
+    })
+  }
+
+  handleCloseThumbPreview = event => {
+    this.setState({thumb: null})
+  }
+
+  handleBrowseButton = event => {
+    this.setState({showBrowser: true})
+  }
+
+  handleCloseBrowser = event => {
+    this.setState({showBrowser: false})
+  }
+
+  handleSelectAsset = asset => {
+    const {onChange} = this.props
+    onChange(PatchEvent.from(set({_ref: asset._id}, ['asset'])))
+    this.setState({showBrowser: false, assetDocument: asset}, () => {
+      this.setupDocumentWindow()
+    })
   }
 
   renderSetup() {
@@ -296,63 +390,137 @@ export default class MuxVideoInput extends Component {
     if (!renderAsset) {
       return null
     }
-    return <Video assetDocument={assetDocument} />
+    return <Video assetDocument={assetDocument} ref={this.videoPlayer} />
   }
 
-  renderRemoveVideoButton() {
+  renderVideoButtons() {
     const {assetDocument, confirmRemove} = this.state
     const {readOnly} = this.props
     if (assetDocument && assetDocument.status === 'ready' && !readOnly) {
       return (
-        <DefaultButton
-          ref={this.removeVideoButton}
-          inverted
-          kind="default"
-          color="danger"
-          onClick={confirmRemove ? NOOP : this.handleRemoveVideoButtonClicked}
-        >
-          Remove
-          <div className={styles.popoverAnchor}>
-            {confirmRemove && (
-              <PopOver
-                color="default"
-                useOverlay={true}
-                onEscape={this.handleCancelRemove}
-                onClickOutside={this.handleCancelRemove}
-                padding="large"
-              >
-                <div className={styles.confirmDeletePopover}>
-                  <div className={styles.confirmDeletePopoverButtons}>
-                    <DefaultButton onClick={this.handleCancelRemove}>Cancel</DefaultButton>
-                    <DefaultButton
-                      color="danger"
-                      onClick={this.handleRemoveVideo}
-                      loading={this.state.isLoading}
-                    >
-                      Remove
-                    </DefaultButton>
+        <Fragment>
+          <DefaultButton
+            inverted
+            kind="default"
+            onClick={this.handleBrowseButton}
+            title="Select a previous uploaded video"
+          >
+            Browse
+          </DefaultButton>
+
+          <DefaultButton
+            inverted
+            kind="default"
+            onClick={this.handleSetThumbButton}
+            disabled={!this.videoPlayer.current}
+            title="Set thumbnail image from the current video position"
+          >
+            Set thumb
+          </DefaultButton>
+
+          <DefaultButton
+            ref={this.removeVideoButton}
+            inverted
+            kind="default"
+            color="danger"
+            onClick={confirmRemove ? NOOP : this.handleRemoveVideoButtonClicked}
+          >
+            Remove
+            <div className={styles.popoverAnchor}>
+              {confirmRemove && (
+                <PopOver
+                  color="default"
+                  useOverlay={true}
+                  onEscape={this.handleCancelRemove}
+                  onClickOutside={this.handleCancelRemove}
+                  padding="large"
+                >
+                  <div className={styles.confirmDeletePopover}>
+                    <div className={styles.confirmDeletePopoverButtons}>
+                      <DefaultButton onClick={this.handleCancelRemove}>Cancel</DefaultButton>
+                      <DefaultButton
+                        color="danger"
+                        onClick={this.handleRemoveVideo}
+                        loading={this.state.isLoading}
+                      >
+                        Remove
+                      </DefaultButton>
+                    </div>
+                    <div>
+                      <Checkbox
+                        checked={this.state.deleteOnMuxChecked}
+                        onChange={this.handleDeleteOnMuxCheckBoxClicked}
+                      >
+                        Delete asset on MUX.com
+                      </Checkbox>
+                    </div>
+                    <div>
+                      <Checkbox
+                        checked={this.state.deleteAssetDocumentChecked}
+                        onChange={this.handleDeleteAssetDocumentCheckBoxClicked}
+                      >
+                        Delete video from dataset
+                      </Checkbox>
+                    </div>
                   </div>
-                  <div>
-                    <Checkbox
-                      checked={this.state.deleteOnMuxChecked}
-                      onChange={this.handleDeleteOnMuxCheckBoxClicked}
-                    >
-                      Delete asset on MUX.com
-                    </Checkbox>
-                  </div>
-                </div>
-              </PopOver>
-            )}
-          </div>
-        </DefaultButton>
+                </PopOver>
+              )}
+            </div>
+          </DefaultButton>
+        </Fragment>
       )
     }
     return null
   }
 
+  renderThumbPreview() {
+    return (
+      <PopOver
+        color="default"
+        useOverlay={true}
+        onClose={this.handleCloseThumbPreview}
+        onEscape={this.handleCloseThumbPreview}
+        onClickOutside={this.handleCloseThumbPreview}
+        padding="large"
+      >
+        <div>
+          <h4>Saved thumbnail frame:</h4>
+          <img className={styles.thumbPreview} src={this.state.thumb} width={240} height={240} />
+        </div>
+      </PopOver>
+    )
+  }
+
+  renderBrowser() {
+    return (
+      <FullscreenDialog title="Select video" onClose={this.handleCloseBrowser} isOpen>
+        <SelectAsset onSelect={this.handleSelectAsset} />
+      </FullscreenDialog>
+    )
+  }
+
+  renderError() {
+    const {error} = this.state
+    if (!error) {
+      return null
+    }
+    return (
+      <Dialog
+        title="Error"
+        color="danger"
+        useOverlay={true}
+        onClose={this.handleErrorClose}
+        onEscape={this.handleErrorClose}
+        onClickOutside={this.handleErrorClose}
+      >
+        <DialogContent size="small">{error.message}</DialogContent>
+      </Dialog>
+    )
+  }
+
   render() {
     const {type, level, markers} = this.props
-    const {isLoading, secrets, hasFocus, needsSetup} = this.state
+    const {isLoading, secrets, hasFocus, needsSetup, error, thumb, showBrowser} = this.state
     return (
       <div className={styles.root}>
         <div className={styles.header}>
@@ -377,17 +545,24 @@ export default class MuxVideoInput extends Component {
 
         {!needsSetup && (
           <Uploader
-            buttons={this.renderRemoveVideoButton()}
+            buttons={this.renderVideoButtons()}
             hasFocus={hasFocus}
             onBlur={this.blur}
             onFocus={this.focus}
             onSetupButtonClicked={this.handleSetupButtonClicked}
             onUploadComplete={this.handleOnUploadComplete}
             secrets={secrets}
+            onBrowse={this.handleBrowseButton}
           >
             {this.renderAsset()}
           </Uploader>
         )}
+
+        {thumb && this.renderThumbPreview()}
+
+        {showBrowser && this.renderBrowser()}
+
+        {error && this.renderError()}
       </div>
     )
   }

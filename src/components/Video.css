@@ -4,7 +4,7 @@
   width: 100%;
   position: relative;
   height: 100%;
-  min-height: 150px;
+  min-height: 160px;
 }
 
 .poster {
@@ -18,19 +18,19 @@
 }
 
 .videoContainer {
-  width: 100%;
   position: relative;
+  min-height: 150px;
 }
 
 .videoError {
   position: relative;
-  top: 100px;
+  padding: var(--medium-padding);
 }
 
 .progressBar {
-  width: 100%;
   position: relative;
   margin-top: var(--large-padding);
   margin-bottom: 2.5em;
+  padding: var(--medium-padding);
 }
 

@@ -4,7 +4,7 @@ import client from '../clients/uploadClient'
 import uuid from 'uuid'
 import studioClient from 'part:@sanity/base/client'
 
-export default function uploadSource(source, privacies) {
+export default function uploadSource(source, options = {}) {
   const fileIsUrl = isString(source)
   // Find content type
   const contentType = fileIsUrl ? 'application/json' : source.type
@@ -14,12 +14,13 @@ export default function uploadSource(source, privacies) {
     url = source
   }
 
+  const {filename, privacies} = options
+
   const muxBody = {
     input: url,
     playback_policy: privacies || ['public']
   }
-
-  const query = {muxBody: JSON.stringify(muxBody)}
+  const query = {muxBody: JSON.stringify(muxBody), filename}
   let body = ''
   if (!fileIsUrl) {
     body = source

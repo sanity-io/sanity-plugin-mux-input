@@ -1,8 +1,10 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import Hls from 'hls.js'
-import {getAsset} from '../actions/assets'
 import ProgressBar from 'part:@sanity/components/progress/bar'
+
+import {getAsset} from '../actions/assets'
+import getPosterSrc from '../util/getPosterSrc'
 
 import styles from './Video.css'
 
@@ -21,7 +23,9 @@ class MuxVideo extends Component {
 
   videoContainer = React.createRef()
   posterContainer = React.createRef()
+  hls = null
 
+  // eslint-disable-next-line complexity
   static getDerivedStateFromProps(nextProps) {
     let source = null
     let posterUrl = null
@@ -35,33 +39,43 @@ class MuxVideo extends Component {
     }
     if (assetDocument && assetDocument.playbackId) {
       source = `https://stream.mux.com/${assetDocument.playbackId}.m3u8`
-      posterUrl = `https://image.mux.com/${
-        assetDocument.playbackId
-      }/thumbnail.png?width=1080&smart_crop=true&time=1`
+      posterUrl = getPosterSrc(assetDocument.playbackId, {
+        time: assetDocument.thumbTime || 1,
+        fitMode: 'preserve'
+      })
+    }
+    if (assetDocument && typeof assetDocument.status === 'undefined') {
+      isLoading = false
     }
     return {isLoading, source, posterUrl}
   }
 
   componentDidMount() {
     this.video = React.createRef()
+    this.setState(MuxVideo.getDerivedStateFromProps(this.props))
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (this.state.source !== null && this.video.current && !this.video.current.src) {
+      this.setState({error: null})
       this.attachVideo()
     }
+  }
+
+  getVideoElement() {
+    return this.video && this.video.current
   }
 
   attachVideo() {
     const {assetDocument} = this.props
     if (Hls.isSupported()) {
-      const hls = new Hls()
-      hls.loadSource(this.state.source)
-      hls.attachMedia(this.video.current)
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      this.hls = new Hls({autoStartLoad: true})
+      this.hls.loadSource(this.state.source)
+      this.hls.attachMedia(this.video.current)
+      this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
         this.videoContainer.current.style.display = 'block'
       })
-      hls.on(Hls.Events.ERROR, (event, data) => {
+      this.hls.on(Hls.Events.ERROR, (event, data) => {
         switch (data.type) {
           case Hls.ErrorTypes.NETWORK_ERROR:
             this.videoContainer.current.style.display = 'none'
@@ -93,6 +107,11 @@ class MuxVideo extends Component {
 
   render() {
     const {posterUrl, isLoading, error} = this.state
+    const {assetDocument} = this.props
+    if (!assetDocument || !assetDocument.status) {
+      return null
+    }
+
     if (isLoading) {
       return (
         <div className={styles.progressBar}>
@@ -110,13 +129,7 @@ class MuxVideo extends Component {
     return (
       <div>
         <div ref={this.videoContainer} className={styles.videoContainer}>
-          <video
-            onError={this.handleVideoError}
-            className={styles.root}
-            controls
-            ref={this.video}
-            poster={posterUrl}
-          />
+          <video className={styles.root} controls ref={this.video} poster={posterUrl} />
         </div>
         {error && (
           <div className={[styles.videoContainer, styles.videoError].join(' ')}>
