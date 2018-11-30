@@ -1,12 +1,13 @@
 import React, {Component, Fragment} from 'react'
 import Button from 'part:@sanity/components/buttons/default'
+import {tap} from 'rxjs/operators'
 
 import {fetchSecrets} from '../actions/secrets'
 import {getAsset, deleteAsset} from '../actions/assets'
 import getPosterSrc from '../util/getPosterSrc'
 
 import client from 'part:@sanity/base/client'
-import DocumentWindow from '@sanity/document-window'
+import {observePaths} from 'part:@sanity/base/preview'
 import Dialog from 'part:@sanity/components/dialogs/default'
 import FullscreenDialog from 'part:@sanity/components/dialogs/fullscreen'
 import DialogContent from 'part:@sanity/components/dialogs/content'
@@ -95,7 +96,13 @@ export default class MuxVideoInput extends Component {
   }
 
   componentDidMount() {
-    this.setupDocumentWindow()
+    this.setupAssetListener()
+  }
+
+  compomentDidUnmount() {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
   }
 
   focus = () => {
@@ -106,44 +113,40 @@ export default class MuxVideoInput extends Component {
     this.setState({hasFocus: false})
   }
 
-  getAssetId() {
+  getAsset() {
     const {value} = this.props
-    const {assetDocument} = this.state
-    if (assetDocument) {
-      return assetDocument._id
-    }
-    if (value) {
-      const {asset} = value
-      if (asset && asset._ref) {
-        return asset._ref
-      }
-    }
-    return null
+    return value ? value.asset : null
   }
 
-  setupDocumentWindow() {
-    const id = this.getAssetId()
-    if (!id) {
+  setupAssetListener() {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
+    const asset = this.getAsset()
+    if (!asset) {
       return
     }
-    const query = new DocumentWindow.Query()
-      .constraint('_id == $id')
-      .params({id})
-      .from(0)
-      .to(1)
-    this.documentWindow = new DocumentWindow({client, query})
-    this.documentWindow.on('data', docs => {
-      const assetDocument = docs[0] || null
-      this.setState({assetDocument})
-      if (assetDocument && assetDocument.status === 'preparing') {
-        this.pollMux()
-      }
-      if (assetDocument && assetDocument.status === 'ready') {
-        clearInterval(this.pollInterval)
-        this.pollInterval = null
-      }
-      this.setState({assetDocument, isLoading: false})
-    })
+    this.subscription = observePaths(asset, [
+      'thumbTime',
+      'data',
+      'assetId',
+      'playbackId',
+      'status'
+    ])
+      .pipe(
+        tap(assetDocument => {
+          this.setState({assetDocument})
+          if (assetDocument && assetDocument.status === 'preparing') {
+            this.pollMux()
+          }
+          if (assetDocument && assetDocument.status === 'ready') {
+            clearInterval(this.pollInterval)
+            this.pollInterval = null
+          }
+          this.setState({assetDocument, isLoading: false})
+        })
+      )
+      .subscribe()
   }
 
   pollMux = () => {
@@ -195,7 +198,7 @@ export default class MuxVideoInput extends Component {
     const {id} = result
     onChange(PatchEvent.from(set({_ref: id}, ['asset'])))
     this.setState({showNewUpload: false, assetDocument: result.document}, () => {
-      this.setupDocumentWindow()
+      this.setupAssetListener()
     })
   }
 
@@ -317,7 +320,7 @@ export default class MuxVideoInput extends Component {
     const {onChange} = this.props
     onChange(PatchEvent.from(set({_ref: asset._id}, ['asset'])))
     this.setState({showBrowser: false, assetDocument: asset}, () => {
-      this.setupDocumentWindow()
+      this.setupAssetListener()
     })
   }
 
@@ -441,7 +444,7 @@ export default class MuxVideoInput extends Component {
                       <DefaultButton
                         color="danger"
                         onClick={this.handleRemoveVideo}
-                        loading={this.state.isLoading}
+                        loading={!!this.state.isLoading}
                       >
                         Remove
                       </DefaultButton>
