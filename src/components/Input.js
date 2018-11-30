@@ -75,7 +75,8 @@ export default class MuxVideoInput extends Component {
     secrets: null,
     showNewUpload: false,
     showSetup: false,
-    showBrowser: false
+    showBrowser: false,
+    videoReadyToPlay: false
   }
 
   constructor(props) {
@@ -122,6 +123,7 @@ export default class MuxVideoInput extends Component {
     if (this.subscription) {
       this.subscription.unsubscribe()
     }
+    this.setState({videoReadyToPlay: false})
     const asset = this.getAsset()
     if (!asset) {
       return
@@ -272,6 +274,9 @@ export default class MuxVideoInput extends Component {
   }
 
   handleSetThumbButton = event => {
+    if (!this.videoPlayer.current) {
+      return
+    }
     const {assetDocument} = this.state
     const currentTime = this.videoPlayer.current.getVideoElement().currentTime
     client
@@ -322,6 +327,10 @@ export default class MuxVideoInput extends Component {
     this.setState({showBrowser: false, assetDocument: asset}, () => {
       this.setupAssetListener()
     })
+  }
+
+  handleVideoReadyToPlay = () => {
+    this.setState({videoReadyToPlay: true})
   }
 
   renderSetup() {
@@ -393,7 +402,13 @@ export default class MuxVideoInput extends Component {
     if (!renderAsset) {
       return null
     }
-    return <Video assetDocument={assetDocument} ref={this.videoPlayer} />
+    return (
+      <Video
+        assetDocument={assetDocument}
+        ref={this.videoPlayer}
+        onReady={this.handleVideoReadyToPlay}
+      />
+    )
   }
 
   renderVideoButtons() {
@@ -413,9 +428,9 @@ export default class MuxVideoInput extends Component {
 
           <DefaultButton
             inverted
+            disabled={this.state.videoReadyToPlay === false}
             kind="default"
             onClick={this.handleSetThumbButton}
-            disabled={!this.videoPlayer.current}
             title="Set thumbnail image from the current video position"
           >
             Set thumb

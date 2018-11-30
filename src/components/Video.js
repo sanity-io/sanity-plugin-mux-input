@@ -88,6 +88,9 @@ class MuxVideo extends Component {
         if (this.videoContainer.current) {
           this.videoContainer.current.style.display = 'block'
         }
+        if (this.props.onReady) {
+          this.props.onReady()
+        }
       })
       this.hls.on(Hls.Events.ERROR, (event, data) => {
         switch (data.type) {
@@ -122,6 +125,9 @@ class MuxVideo extends Component {
   handleVideoClick = event => {
     this.setState({showControls: true})
     this.hls.startLoad(0)
+    if (this.props.onReady) {
+      this.props.onReady()
+    }
   }
 
   render() {
