@@ -32,3 +32,12 @@ If you haven't already, generate a new Access Token in the Access Token settings
 The token is stored in the dataset as a document of the type ``mux.apiKey`` with the id ``secrets.mux``.
 Having the ID be non-root ensures that only editors are able to see it.
 The MUX plugin will find it’s access tokens by fetching this document.
+
+
+# Playing videos in the frontend
+
+We have made an own player which supports poster images for the videos as set with this plugin, see [`sanity-mux-player`](https://github.com/sanity-io/sanity-mux-player)
+
+You could use any player which supports HLS, just point the video source to:
+
+`https://stream.mux.com/${assetDocument.playbackId}.m3u8`
