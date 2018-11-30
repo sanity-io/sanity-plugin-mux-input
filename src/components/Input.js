@@ -219,7 +219,7 @@ export default class MuxVideoInput extends Component {
             isLoading: false
           },
           () => {
-            if (this.state.deleteAssetDocumentChecked) {
+            if (this.state.deleteOnMuxChecked || this.state.deleteAssetDocumentChecked) {
               return client
                 .delete(assetDocument._id)
                 .then(() => {
@@ -454,14 +454,17 @@ export default class MuxVideoInput extends Component {
                         Delete asset on MUX.com
                       </Checkbox>
                     </div>
-                    <div>
-                      <Checkbox
-                        checked={this.state.deleteAssetDocumentChecked}
-                        onChange={this.handleDeleteAssetDocumentCheckBoxClicked}
-                      >
-                        Delete video from dataset
-                      </Checkbox>
-                    </div>
+                  </div>
+                  <div>
+                    <Checkbox
+                      disabled={this.state.deleteOnMuxChecked}
+                      checked={
+                        this.state.deleteOnMuxChecked || this.state.deleteAssetDocumentChecked
+                      }
+                      onChange={this.handleDeleteAssetDocumentCheckBoxClicked}
+                    >
+                      Delete video from dataset
+                    </Checkbox>
                   </div>
                 </PopOver>
               )}
