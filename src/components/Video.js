@@ -29,7 +29,6 @@ class MuxVideo extends Component {
   }
 
   videoContainer = React.createRef()
-  posterContainer = React.createRef()
   hls = null
 
   // eslint-disable-next-line complexity

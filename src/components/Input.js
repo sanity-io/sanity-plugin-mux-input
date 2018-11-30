@@ -100,9 +100,13 @@ export default class MuxVideoInput extends Component {
     this.setupAssetListener()
   }
 
-  compomentDidUnmount() {
+  componentWillUnmount() {
     if (this.subscription) {
       this.subscription.unsubscribe()
+    }
+    if (this.pollInterval) {
+      clearInterval(this.pollInterval)
+      this.pollInterval = null
     }
   }
 

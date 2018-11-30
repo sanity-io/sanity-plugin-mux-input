@@ -7,16 +7,6 @@
   min-height: 160px;
 }
 
-.poster {
-  width: 100%;
-}
-
-.posterContainer {
-  position: relative;
-  top: 100px;
-  width: 100%;
-}
-
 .videoContainer {
   position: relative;
   min-height: 150px;
