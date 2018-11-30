@@ -68,7 +68,9 @@ class MuxVideo extends Component {
     }
     if (this.state.source !== null && this.state.source !== prevState.source) {
       this.setState({error: null, showControls: false})
-      this.hls.destroy()
+      if (this.hls) {
+        this.hls.destroy()
+      }
       this.attachVideo()
     }
   }
