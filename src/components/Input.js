@@ -12,7 +12,7 @@ import Dialog from 'part:@sanity/components/dialogs/default'
 import FullscreenDialog from 'part:@sanity/components/dialogs/fullscreen'
 import DialogContent from 'part:@sanity/components/dialogs/content'
 
-import PatchEvent, {set, unset} from 'part:@sanity/form-builder/patch-event'
+import PatchEvent, {set, unset, setIfMissing} from 'part:@sanity/form-builder/patch-event'
 import Checkbox from 'part:@sanity/components/toggles/checkbox'
 import DefaultButton from 'part:@sanity/components/buttons/default'
 import FormField from 'part:@sanity/components/formfields/default'
@@ -202,7 +202,7 @@ export default class MuxVideoInput extends Component {
   handleOnUploadComplete = result => {
     const {onChange} = this.props
     const {id} = result
-    onChange(PatchEvent.from(set({_ref: id}, ['asset'])))
+    onChange(PatchEvent.from([setIfMissing({asset: {_ref: id}}, []), set({_ref: id}, ['asset'])]))
     this.setState({showNewUpload: false, assetDocument: result.document}, () => {
       this.setupAssetListener()
     })
@@ -327,7 +327,12 @@ export default class MuxVideoInput extends Component {
 
   handleSelectAsset = asset => {
     const {onChange} = this.props
-    onChange(PatchEvent.from(set({_ref: asset._id}, ['asset'])))
+    onChange(
+      PatchEvent.from([
+        setIfMissing({asset: {_ref: asset._id}}, []),
+        set({_ref: asset._id}, ['asset'])
+      ])
+    )
     this.setState({showBrowser: false, assetDocument: asset}, () => {
       this.setupAssetListener()
     })
