@@ -14,6 +14,14 @@ export default {
     {
       type: 'string',
       name: 'playbackId'
+    },
+    {
+      type: 'string',
+      name: 'filename'
+    },
+    {
+      type: 'number',
+      name: 'thumbTime'
     }
   ]
 }
