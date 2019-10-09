@@ -130,7 +130,7 @@ class MuxVideoInputUploader extends Component {
   }
 
   handleUploadSuccess = assetDocument => {
-    this.setState({uploadProgress: null})
+    this.setState({uploadProgress: 100})
     if (this.props.onUploadComplete) {
       this.props.onUploadComplete(assetDocument)
     }
