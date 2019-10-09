@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import Hls from 'hls.js'
 import ProgressBar from 'part:@sanity/components/progress/bar'
+import Button from 'part:@sanity/components/buttons/default'
 
 import {getAsset} from '../actions/assets'
 import getPosterSrc from '../util/getPosterSrc'
@@ -12,7 +13,9 @@ const NOOP = () => {}
 
 const propTypes = {
   assetDocument: PropTypes.object.isRequired,
-  autoload: PropTypes.bool
+  autoload: PropTypes.bool,
+  onCancel: PropTypes.func,
+  onReady: PropTypes.func
 }
 
 class MuxVideo extends Component {
@@ -38,7 +41,13 @@ class MuxVideo extends Component {
     let isLoading = true
     const {assetDocument} = nextProps
     if (assetDocument && assetDocument.status === 'preparing') {
-      isLoading = 'MUX is processing the video'
+      isLoading = 'Preparing the video'
+    }
+    if (assetDocument && assetDocument.status === 'waiting_for_upload') {
+      isLoading = 'Waiting for upload to start'
+    }
+    if (assetDocument && assetDocument.status === 'waiting') {
+      isLoading = 'Processing upload'
     }
     if (assetDocument && assetDocument.status === 'ready') {
       isLoading = false
@@ -96,7 +105,9 @@ class MuxVideo extends Component {
       this.hls.on(Hls.Events.ERROR, (event, data) => {
         switch (data.type) {
           case Hls.ErrorTypes.NETWORK_ERROR:
-            this.videoContainer.current.style.display = 'none'
+            if (this.videoContainer.current) {
+              this.videoContainer.current.style.display = 'none'
+            }
             this.setState({error: data})
             getAsset(assetDocument.assetId)
               .then(response => {
@@ -127,10 +138,17 @@ class MuxVideo extends Component {
     this.setState({showControls: true})
     this.hls.startLoad(0)
     if (this.props.onReady) {
-      this.props.onReady()
+      this.props.onReady(event)
     }
   }
 
+  handleCancelButtonClicked = event => {
+    if (this.props.onCancel) {
+      this.props.onCancel(event)
+    }
+  }
+
+  // eslint-disable-next-line complexity
   render() {
     const {posterUrl, isLoading, error} = this.state
     const {assetDocument, autoload} = this.props
@@ -140,15 +158,20 @@ class MuxVideo extends Component {
 
     if (isLoading) {
       return (
-        <div className={styles.progressBar}>
-          <ProgressBar
-            percent={100}
-            text="Waiting for MUX to complete the file"
-            isInProgress={true}
-            showPercent
-            animation
-            color="primary"
-          />
+        <div>
+          <div className={styles.progressBar}>
+            <ProgressBar
+              percent={100}
+              text={(isLoading !== true && isLoading) || 'Waiting for MUX to complete the file'}
+              isInProgress={true}
+              showPercent
+              animation
+              color="primary"
+            />
+          </div>
+          <div className={styles.uploadCancelButton}>
+            <Button onClick={this.handleCancelButtonClicked}>Cancel</Button>
+          </div>
         </div>
       )
     }

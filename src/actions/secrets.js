@@ -1,3 +1,4 @@
+import {defer} from 'rxjs'
 import client from 'part:@sanity/base/client'
 
 export function fetchSecrets() {
@@ -34,4 +35,15 @@ export function testSecrets() {
     withCredentials: true,
     method: 'GET'
   })
+}
+
+export function testSecretsObservable() {
+  const dataset = client.clientConfig.dataset
+  return defer(() =>
+    client.observable.request({
+      url: `/addons/mux/secrets/${dataset}/test`,
+      withCredentials: true,
+      method: 'GET'
+    })
+  )
 }

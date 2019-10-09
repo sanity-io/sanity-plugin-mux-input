@@ -40,19 +40,22 @@
 .pasteFile {
   padding: 1rem;
   display: none;
-
   @media (--screen-medium) {
     display: block;
   }
 }
 
+.dropFile.isDraggingOver {
+  color: var(--state-success-color);
+}
+
 .pasteFile {
   opacity: 0.2;
   transition: opacity linear 0.2s;
+}
 
-  @nest .hasFocus & {
-    opacity: 1;
-  }
+.pasteFile.hasFocus {
+  opacity: 1;
 }
 
 

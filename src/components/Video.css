@@ -24,3 +24,7 @@
   padding: var(--medium-padding);
 }
 
+.uploadCancelButton {
+  text-align: center;
+}
+
