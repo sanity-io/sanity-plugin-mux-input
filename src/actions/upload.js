@@ -158,8 +158,18 @@ function pollUpload(uuid) {
 }
 
 async function updateAssetDocumentFromUpload(uuid) {
-  const upload = await pollUpload(uuid)
-  const asset = await getAsset(upload.data.asset_id)
+  let upload
+  let asset
+  try {
+    upload = await pollUpload(uuid)
+  } catch (err) {
+    return Promise.reject(err)
+  }
+  try {
+    asset = await getAsset(upload.data.asset_id)
+  } catch (err) {
+    return Promise.reject(err)
+  }
   const doc = {
     _id: uuid,
     _type: 'mux.videoAsset',
