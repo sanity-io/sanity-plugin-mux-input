@@ -6,7 +6,7 @@ export function createUpChunkObservable(uuid, uploadUrl, source) {
     const upchunk = UpChunk.createUpload({
       endpoint: uploadUrl,
       file: source,
-      chunkSize: 512 // Uploads the file in ~1mb chunks
+      chunkSize: 5120 // Uploads the file in ~5mb chunks
     })
 
     const successHandler = () => {
