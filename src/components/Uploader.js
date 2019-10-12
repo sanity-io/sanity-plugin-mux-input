@@ -1,12 +1,12 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import {fromEvent} from 'rxjs'
-import {takeUntil} from 'rxjs/operators'
+import {Subject} from 'rxjs'
+import {takeUntil, tap} from 'rxjs/operators'
 
 import {extractDroppedFiles} from '../util/extractFiles'
-import uploadSourceAction from '../actions/upload'
-import {testSecrets} from '../actions/secrets'
+import {uploadFile, uploadUrl} from '../actions/upload'
 
+import client from 'part:@sanity/base/client'
 import FormField from 'part:@sanity/components/formfields/default'
 import FileInputButton from 'part:@sanity/components/fileinput/button'
 import ButtonCollection from 'part:@sanity/components/buttons/button-collection'
@@ -18,58 +18,6 @@ import UploadPlaceholder from './UploadPlaceholder'
 import UploadIcon from 'part:@sanity/base/upload-icon'
 
 import styles from './Uploader.css'
-import {isString} from 'lodash'
-
-// eslint-disable-next-line complexity
-function isValidVideoSource(source, callback) {
-  // Handle file input
-  if (typeof window !== 'undefined' && source instanceof window.File) {
-    const fileOptions = optionsFromFile({}, source)
-    return callback(null, fileOptions)
-  }
-  // Test string for url validity
-  if (isString(source)) {
-    let test
-    let msg
-    try {
-      test = new URL(source)
-    } catch (err) {
-      msg = 'Not a valid URL'
-      test = false
-    }
-    if (test && !test.protocol.match(/http:|https:/)) {
-      msg = 'Not a valid URL'
-      test = false
-    }
-    if (test && test.host.match(/^localhost/g)) {
-      msg = `Invalid host ('${test.host}')`
-      test = false
-    }
-    if (!test) {
-      return callback(new Error(msg))
-    }
-    return callback(null, source)
-  }
-  return callback(new Error('Could not identify source'), null)
-}
-
-function optionsFromFile(opts, file) {
-  if (typeof window === 'undefined' || !(file instanceof window.File)) {
-    return opts
-  }
-  const fileOpts = {
-    filename: opts.preserveFilename === false ? undefined : file.name,
-    contentType: file.type
-  }
-
-  return {
-    ...{
-      filename: opts.preserveFilename === false ? undefined : file.name,
-      contentType: file.type
-    },
-    fileOpts
-  }
-}
 
 const ctrlKey = 17
 const cmdKey = 91
@@ -86,13 +34,20 @@ const propTypes = {
   children: PropTypes.node
 }
 
+function createEventHandler() {
+  const events$ = new Subject()
+  const handler = event => events$.next(event)
+  return [events$.asObservable(), handler]
+}
+
 class MuxVideoInputUploader extends Component {
   state = {
     isDraggingOver: false,
     invalidPaste: false,
     invalidFile: false,
-    isComplete: false,
-    uploadState: null
+    uploadProgress: null,
+    fileInfo: null,
+    uuid: null
   }
   dragEnteredEls = []
 
@@ -108,127 +63,101 @@ class MuxVideoInputUploader extends Component {
     this.unSubscribeToUpload()
   }
 
+  componentDidMount() {
+    const [onClick$, onClick] = createEventHandler()
+    this.onCancelUploadButtonClick$ = onClick$
+    this.onCancelUploadButtonClick = onClick
+  }
+
   unSubscribeToUpload() {
     if (this.upload && !this.upload.closed) {
       this.upload.unsubscribe()
     }
   }
 
-  uploadSource(source, filename, callback) {
-    isValidVideoSource(source, (error, result) => {
-      if (error) {
-        return callback(error)
-      }
-      this.setState({uploadState: 0})
-      return testSecrets()
-        .then(testResult => {
-          if (testResult.status) {
-            return callback(null, uploadSourceAction(source, {filename}))
-          }
-          return callback(new Error('Invalid credentials'), null)
-        })
-        .catch(err => {
-          return callback(err, null)
-        })
-    })
-  }
-
-  subscribeToUpload = (upload, callback) => {
-    this.setState({
-      invalidFile: false,
-      invalidPaste: false,
-      error: null
-    })
-    this.unSubscribeToUpload()
-    this.upload = upload.pipe(takeUntil(this.$cancel)).subscribe({
-      next: event => {
-        this.handleUploadEvent(event, callback)
-      },
-      error: err => this.handleUploadError(err, callback)
-    })
-  }
-
-  trackProgress = evt => {
-    this.setState({uploadState: evt.percent})
-  }
-
-  handleUploadFiles = files => {
-    this.setState({uploadState: 0})
-    this.uploadSource(files[0], files[0].name, (err, subscription) => {
-      if (err) {
-        this.setState({invalidFile: true, error: err, uploadState: null})
-        return null
-      }
-      return this.setState({uploadState: 0}, () => {
-        this.$cancel = fromEvent(this.cancelUploadButton.current, 'click')
-        this.subscribeToUpload(subscription)
-      })
-    })
-  }
-
-  handleUploadResponse = (response, callback) => {
-    if (response.statusCode !== 200) {
-      const msg = (response.body && response.body.message) || response.statusCode
-      return this.handleUploadError(new Error(msg), callback)
+  handleProgress = evt => {
+    if (evt.percent) {
+      this.setState({uploadProgress: evt.percent})
     }
-    return this.handleUploadSuccess(response, callback)
+    if (evt.file) {
+      this.setState({fileInfo: evt.file})
+    }
   }
 
-  handleUploadEvent = (event, callback) => {
+  handleUploadFile = file => {
+    this.setState({uploadProgress: 0, fileInfo: null, uuid: null})
+    this.upload = uploadFile(file)
+      .pipe(
+        takeUntil(
+          this.onCancelUploadButtonClick$.pipe(
+            tap(() => {
+              if (this.state.uuid) {
+                client.delete(this.state.uuid)
+              }
+            })
+          )
+        )
+      )
+      .subscribe({
+        complete: () => {
+          this.setState({error: null, uploadProgress: null, uuid: null})
+        },
+        next: event => {
+          this.handleUploadEvent(event)
+        },
+        error: err => {
+          this.setState({error: err, uploadProgress: null, uuid: null})
+        }
+      })
+  }
+
+  handleUploadEvent = event => {
     switch (event.type) {
-      case 'response':
-        return this.handleUploadResponse(event, callback)
+      case 'success':
+        return this.handleUploadSuccess(event.asset)
       case 'progress':
-        return this.trackProgress(event)
+        return this.handleProgress(event)
+      case 'file':
+        return this.setState({fileInfo: event.file})
+      case 'uuid':
+        // Means we created a mux.videoAsset document with an uuid
+        return this.setState({uuid: event.uuid})
+      case 'url':
+        return this.setState({url: event.url, uploadProgress: 100})
       default:
         return null
     }
   }
 
-  handleUploadSuccess = (response, callback) => {
-    const asset = response.body.results[0]
-    this.props.onUploadComplete(asset)
-    if (this.upload && !this.upload.closed) {
-      this.setState({isComplete: false, uploadState: null, asset})
+  handleUploadSuccess = assetDocument => {
+    this.setState({uploadProgress: 100})
+    if (this.props.onUploadComplete) {
+      this.props.onUploadComplete(assetDocument)
     }
-    if (callback) {
-      return callback(null, response)
-    }
-    return true
-  }
-
-  handleUploadError = (error, callback) => {
-    if (error) {
-      this.setState({error: error, isComplete: true})
-    }
-    if (callback) {
-      return callback(error)
-    }
-    return true
   }
 
   handlePaste = event => {
-    if (this.state.uploadState) {
-      return
-    }
     const clipboardData = event.clipboardData || window.clipboardData
     const url = clipboardData.getData('text')
-    const cbFn = err => {
-      if (err) {
-        this.setState({invalidPaste: true, error: err})
+    this.upload = uploadUrl(url, url.split('/').slice(-1)[0]).subscribe({
+      complete: () => {
+        this.setState({error: null, uploadProgress: null, url: null})
+      },
+      next: sEvent => {
+        this.handleUploadEvent(sEvent)
+      },
+      error: err => {
+        let error
+        // Don't output error dialog when just invalid url
+        if (!err.message.toLowerCase().match('invalid url')) {
+          error = err
+        }
+        this.setState({invalidPaste: true, error}, () => {
+          setTimeout(() => {
+            this.setState({invalidPaste: false, uploadProgress: null})
+          }, 2000)
+        })
       }
-      setTimeout(() => {
-        this.setState({invalidPaste: false})
-      }, 2000)
-    }
-    this.uploadSource(url, url.split('/').slice(-1)[0], (err, subscription) => {
-      if (err) {
-        return this.handleUploadError(err, cbFn)
-      }
-      return this.setState({error: null, uploadState: 0}, () => {
-        this.$cancel = fromEvent(this.cancelUploadButton.current, 'click')
-        this.subscribeToUpload(subscription, cbFn)
-      })
     })
   }
 
@@ -238,7 +167,7 @@ class MuxVideoInputUploader extends Component {
     event.stopPropagation()
     extractDroppedFiles(event.nativeEvent.dataTransfer).then(files => {
       if (files) {
-        this.handleUploadFiles(files)
+        this.handleUploadFile(files[0])
       }
     })
   }
@@ -251,7 +180,7 @@ class MuxVideoInputUploader extends Component {
   handleDragEnter = event => {
     event.stopPropagation()
     this.dragEnteredEls.push(event.target)
-    this.setState({isDraggingOver: true})
+    this.setState({isDraggingOver: true, hasFocus: true})
   }
 
   handleDragLeave = event => {
@@ -261,12 +190,12 @@ class MuxVideoInputUploader extends Component {
       this.dragEnteredEls.splice(idx, 1)
     }
     if (this.dragEnteredEls.length === 0) {
-      this.setState({isDraggingOver: false})
+      this.setState({isDraggingOver: false, hasFocus: false})
     }
   }
 
   handleCancelUploadButtonClicked = event => {
-    this.setState({uploadState: null, error: null})
+    this.setState({uploadProgress: null, error: null})
     this.container.current.focus()
   }
 
@@ -274,14 +203,14 @@ class MuxVideoInputUploader extends Component {
     if (event) {
       event.preventDefault()
     }
-    if (this.state.uploadState !== null) {
+    if (this.state.uploadProgress !== null) {
       return
     }
     this.setState({
       invalidFile: false,
       invalidPaste: false,
       error: null,
-      uploadState: null
+      uploadProgress: null
     })
     this.container.current.focus()
   }
@@ -295,20 +224,25 @@ class MuxVideoInputUploader extends Component {
     if (this.props.children) {
       return null
     }
-    if (this.state.uploadState !== null) {
+    if (this.state.uploadProgress !== null) {
       return null
     }
-    const {invalidFile, invalidPaste} = this.state
+    const {invalidFile, invalidPaste, isDraggingOver} = this.state
     return (
       <div>
         <FormField level={0}>
-          <UploadPlaceholder invalidPaste={invalidPaste} invalidFile={invalidFile} />
+          <UploadPlaceholder
+            isDraggingOver={isDraggingOver}
+            hasFocus={this.props.hasFocus}
+            invalidPaste={invalidPaste}
+            invalidFile={invalidFile}
+          />
         </FormField>
         <ButtonCollection>
           <FileInputButton
             inverted
             icon={UploadIcon}
-            onSelect={this.handleUploadFiles}
+            onSelect={files => this.handleUploadFile(files[0])}
             accept={'video/*'}
           >
             Select file
@@ -321,30 +255,37 @@ class MuxVideoInputUploader extends Component {
     )
   }
 
+  // eslint-disable-next-line complexity
   renderUploadProgress() {
-    const {uploadState} = this.state
-    if (uploadState === null) {
+    const {uploadProgress, fileInfo, url} = this.state
+    if (uploadProgress === null) {
       return null
     }
-    let text = uploadState < 100 ? 'Uploading' : 'Waiting for MUX to complete the file'
+    let text =
+      uploadProgress < 100
+        ? `Uploading ${fileInfo ? `'${fileInfo.name}'` : 'file'}`
+        : 'Waiting for MUX to complete the file'
     if (this.state.error) {
       text = this.state.error.message
+    }
+    if (url) {
+      text = `Uploading ${url}`
     }
     return (
       <div className={styles.uploadProgress}>
         <div className={styles.progressBar}>
           <ProgressBar
-            percent={uploadState}
+            percent={uploadProgress}
             text={text}
-            isInProgress={uploadState === 100 && !this.state.error}
+            isInProgress={uploadProgress === 100 && !this.state.error}
             showPercent
             animation
             color="primary"
           />
         </div>
-        {(uploadState < 100 || this.state.error) && (
+        {(uploadProgress < 100 || this.state.error) && (
           <div ref={this.cancelUploadButton}>
-            <DefaultButton color="danger" onClick={this.handleCancelUploadButtonClicked}>
+            <DefaultButton color="danger" onClick={this.onCancelUploadButtonClick}>
               Cancel upload
             </DefaultButton>
           </div>
@@ -354,11 +295,11 @@ class MuxVideoInputUploader extends Component {
   }
 
   renderError() {
-    const {uploadState, error} = this.state
+    const {uploadProgress, error} = this.state
     if (!error) {
       return null
     }
-    if (uploadState !== null) {
+    if (uploadProgress !== null) {
       return null
     }
     let message = this.state.error.message
@@ -366,12 +307,10 @@ class MuxVideoInputUploader extends Component {
       message = (
         <div>
           <h3>Invalid credentials</h3>
-          <p>
-            You need to check your Mux access token and secret key.
-            <DefaultButton color="primary" onClick={this.handleSetupButtonClicked} kind="simple">
-              Run setup
-            </DefaultButton>
-          </p>
+          <p>You need to check your Mux access token and secret key.</p>
+          <DefaultButton color="primary" onClick={this.handleSetupButtonClicked} kind="simple">
+            Run setup
+          </DefaultButton>
         </div>
       )
     }
@@ -390,13 +329,13 @@ class MuxVideoInputUploader extends Component {
   }
 
   renderButtons() {
-    if (this.state.uploadState === null && this.props.buttons) {
+    if (this.state.uploadProgress === null && this.props.buttons) {
       return (
         <ButtonCollection>
           <FileInputButton
             inverted
             icon={UploadIcon}
-            onSelect={this.handleUploadFiles}
+            onSelect={files => this.handleUploadFile(files[0])}
             accept={'video/*'}
           >
             Upload
@@ -409,7 +348,7 @@ class MuxVideoInputUploader extends Component {
   }
 
   renderChildren() {
-    if (this.state.uploadState !== null) {
+    if (this.state.uploadProgress !== null) {
       return null
     }
     return this.props.children
@@ -443,7 +382,6 @@ class MuxVideoInputUploader extends Component {
         onBlur={this.props.onBlur}
         onFocus={this.props.onFocus}
         onDrop={this.handleDrop}
-        onPaste={this.handlePaste}
         onKeyDown={this.handleKeyDown}
         onDragOver={this.handleDragOver}
         onDragLeave={this.handleDragLeave}

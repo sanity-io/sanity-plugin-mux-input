@@ -1,6 +1,6 @@
 {
   "name": "sanity-plugin-mux-input",
-  "version": "0.1.11",
+  "version": "0.2.1",
   "description": "An input component that integrates Sanity Studio with MUX.com video encoding/hosting service.",
   "main": "build/index.js",
   "scripts": {
@@ -29,9 +29,10 @@
   },
   "homepage": "https://github.com/sanity-io/sanity-plugin-mux-input#readme",
   "devDependencies": {
-    "@babel/cli": "^7.0.0",
-    "@babel/core": "^7.0.0",
+    "@babel/cli": "^7.6.3",
+    "@babel/core": "^7.6.3",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/plugin-transform-runtime": "^7.6.2",
     "@babel/preset-env": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
     "babel-eslint": "^9.0.0",
@@ -45,9 +46,11 @@
     "react-hot-loader": "4.3.8"
   },
   "dependencies": {
+    "@babel/runtime": "^7.6.2",
+    "@mux/upchunk": "^1.0.6",
     "get-it": "^4.0.4",
     "hls.js": "^0.11.0",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.15",
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
     "uuid": "^3.3.2"

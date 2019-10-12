@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 
-import {uniqueId, isString} from 'lodash'
+import {uniqueId} from 'lodash'
 import {saveSecrets, testSecrets} from '../actions/secrets'
 
 import Button from 'part:@sanity/components/buttons/default'

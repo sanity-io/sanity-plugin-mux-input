@@ -5,19 +5,31 @@ import UploadIcon from 'part:@sanity/base/upload-icon'
 
 export default class UploadPlaceholder extends React.PureComponent {
   static propTypes = {
+    hasFocus: PropTypes.bool,
     invalidPaste: PropTypes.bool,
-    invalidFile: PropTypes.bool
+    invalidFile: PropTypes.bool,
+    isDraggingOver: PropTypes.bool
   }
   render() {
-    const {invalidPaste, invalidFile} = this.props
+    const {invalidPaste, invalidFile, hasFocus, isDraggingOver} = this.props
+    const fileClassNames = [styles.dropFile]
+    const pasteClassNames = [styles.pasteFile]
+    if (invalidFile) {
+      fileClassNames.push(styles.invalidFile)
+    }
+    if (isDraggingOver) {
+      fileClassNames.push(styles.isDraggingOver)
+    }
+    if (invalidPaste) {
+      pasteClassNames.push(styles.invalidPaste)
+    }
+    if (hasFocus) {
+      pasteClassNames.push(styles.hasFocus)
+    }
     return (
       <div>
         <div className={styles.inner}>
-          <div
-            className={
-              invalidFile ? [styles.dropFile, styles.invalidFile].join(' ') : styles.dropFile
-            }
-          >
+          <div className={fileClassNames.join(' ')}>
             <div className={styles.iconContainer}>
               <UploadIcon />
             </div>
@@ -25,13 +37,7 @@ export default class UploadPlaceholder extends React.PureComponent {
               <span>Drop file {invalidFile}</span>
             </p>
           </div>
-          <div
-            className={
-              this.props.invalidPaste
-                ? [styles.pasteFile, styles.invalidPaste].join(' ')
-                : styles.pasteFile
-            }
-          >
+          <div className={pasteClassNames.join(' ')}>
             <div className={styles.iconContainer}>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" height="1em" width="1em">
                 {invalidPaste && (
