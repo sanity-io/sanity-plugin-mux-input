@@ -22,6 +22,19 @@ export default {
     {
       type: 'number',
       name: 'thumbTime'
+    },
+    {
+      type: 'string',
+      name: 'mp4Support'
+    },
+    {
+      type: 'string',
+      name: 'mp4SupportStatus'
+    },
+    {
+      type: 'array',
+      name: 'mp4Files',
+      of: [{type: 'string'}]
     }
   ]
 }

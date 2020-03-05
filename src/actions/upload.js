@@ -18,6 +18,7 @@ export function cancelUpload(uuid) {
 }
 
 export function uploadUrl(url, options = {}) {
+  console.log('debug calling uploadUrl') // eslint-disable-line no-console
   return testUrl(url).pipe(
     switchMap(validUrl => {
       return concat(
@@ -31,7 +32,8 @@ export function uploadUrl(url, options = {}) {
             const {privacies} = options
             const muxBody = {
               input: validUrl,
-              playback_policy: privacies || ['public']
+              playback_policy: privacies || ['public'],
+              mp4_support: 'standard'
             }
             const query = {
               muxBody: JSON.stringify(muxBody),
@@ -68,6 +70,7 @@ export function uploadUrl(url, options = {}) {
 }
 
 export function uploadFile(file) {
+  console.log('debug calling uploadFile') // eslint-disable-line no-console
   return testFile(file).pipe(
     switchMap(fileOptions => {
       return concat(
@@ -78,6 +81,9 @@ export function uploadFile(file) {
               return throwError(new Error('Invalid credentials'))
             }
             const uuid = Uuid.v4()
+            const query = {
+              muxBody: JSON.stringify({new_asset_settings: {mp4_support: 'standard'}})
+            }
             return concat(
               of({type: 'uuid', uuid}),
               defer(() =>
@@ -88,7 +94,8 @@ export function uploadFile(file) {
                   headers: {
                     'MUX-Proxy-UUID': uuid,
                     'Content-Type': 'application/json'
-                  }
+                  },
+                  query
                 })
               ).pipe(
                 mergeMap(result => {
@@ -177,7 +184,11 @@ async function updateAssetDocumentFromUpload(uuid) {
     data: asset.data,
     assetId: asset.data.id,
     playbackId: asset.data.playback_ids[0].id,
-    uploadId: upload.data.id
+    uploadId: upload.data.id,
+    mp4Support: asset.data.mp4_support,
+    mp4SupportStatus: asset.data.static_renditions && asset.data.static_renditions.status,
+    mp4Files:
+      asset.data.static_renditions && asset.data.static_renditions.files.map(file => file.name)
   }
   return client.createOrReplace(doc).then(() => {
     return doc
