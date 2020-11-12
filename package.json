@@ -1,12 +1,12 @@
 {
   "name": "sanity-plugin-mux-input",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "An input component that integrates Sanity Studio with MUX.com video encoding/hosting service.",
   "main": "build/index.js",
   "scripts": {
     "build": "babel src -d build --copy-files",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepublish": "npm run build"
+    "prepare": "npm run build"
   },
   "repository": {
     "type": "git",
