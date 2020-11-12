@@ -1,6 +1,6 @@
 export default {
   name: 'mux.videoAsset',
-  type: 'object',
+  type: 'document',
   title: 'Video asset',
   fields: [
     {
