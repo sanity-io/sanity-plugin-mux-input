@@ -19,6 +19,7 @@ import Checkbox from 'part:@sanity/components/toggles/checkbox'
 import DefaultButton from 'part:@sanity/components/buttons/default'
 import FormField from 'part:@sanity/components/formfields/default'
 import PopOver from 'part:@sanity/components/dialogs/popover'
+import Alert from 'part:@sanity/components/alerts/alert'
 import SetupIcon from 'part:@sanity/base/plugin-icon'
 import Spinner from 'part:@sanity/components/loading/spinner'
 
@@ -85,6 +86,7 @@ export default withDocument(
       isLoading: 'secrets',
       needsSetup: true,
       secrets: null,
+      isSigned: false,
       showNewUpload: false,
       showSetup: false,
       showBrowser: false,
@@ -172,7 +174,8 @@ export default withDocument(
               clearInterval(this.pollInterval)
               this.pollInterval = null
             }
-            this.setState({assetDocument, isLoading: false})
+            const isSigned = assetDocument.data.playback_ids[0].policy === 'signed'
+            this.setState({assetDocument, isSigned, isLoading: false})
             return of(assetDocument)
           })
         )
@@ -317,7 +320,7 @@ export default withDocument(
       if (!this.videoPlayer.current) {
         return
       }
-      const {assetDocument} = this.state
+      const {assetDocument, isSigned} = this.state
       const currentTime = this.videoPlayer.current.getVideoElement().currentTime
       client
         .patch(assetDocument._id)
@@ -331,7 +334,7 @@ export default withDocument(
             width: 320,
             height: 320,
             fitMode: 'crop',
-            isSigned: assetDocument.data.playback_ids[0].policy === 'signed',
+            isSigned,
             signingKeyId: cachedSecrets.signingKeyId,
             signingKeyPrivate: cachedSecrets.signingKeyPrivate
           }
@@ -447,18 +450,27 @@ export default withDocument(
 
     // eslint-disable-next-line complexity
     renderAsset() {
-      const {assetDocument} = this.state
+      const {assetDocument, isSigned} = this.state
       const renderAsset = !!assetDocument
       if (!renderAsset) {
         return null
       }
+      const isSignedAlert = isSigned ?
+        <div className={styles.alert}>
+          <Alert title='Note' color='success'>
+              This mux asset is using a signed url
+          </Alert>
+        </div> : null
       return (
-        <Video
-          assetDocument={assetDocument}
-          ref={this.videoPlayer}
-          onReady={this.handleVideoReadyToPlay}
-          onCancel={this.handleRemoveVideo}
-        />
+        <>
+          {isSignedAlert}
+          <Video
+            assetDocument={assetDocument}
+            ref={this.videoPlayer}
+            onReady={this.handleVideoReadyToPlay}
+            onCancel={this.handleRemoveVideo}
+          />
+        </>
       )
     }
 

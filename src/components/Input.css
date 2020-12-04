@@ -1,4 +1,4 @@
-@import "part:@sanity/base/theme/variables-style";
+@import 'part:@sanity/base/theme/variables-style';
 
 .root {
   position: relative;
@@ -51,4 +51,8 @@
 
 .thumbPreview {
   border: 1px solid var(--gray);
+}
+
+.alert {
+  margin-bottom: 0.3125rem;
 }
