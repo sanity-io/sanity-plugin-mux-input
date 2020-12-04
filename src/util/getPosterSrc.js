@@ -1,11 +1,25 @@
+import generateJwt from "./generateJwt"
+
 export default function getPosterSrc(playbackId, options = {}) {
-  const width = options.width || 640
-  const height = options.height || ''
-  const time = options.time || 1
-  const fitMode = typeof options.fitMode === 'undefined' ? 'smartcrop' : options.fitMode
-  let url = `https://image.mux.com/${playbackId}/thumbnail.png?width=${width}&fit_mode=${fitMode}&time=${time}`
-  if (options.height) {
-    url += `&height=${height}`
+  const {
+    width = 640,
+    height = null,
+    time = 1,
+    fit_mode = 'smartcrop',
+    isSigned = false
+  } = options
+
+  const params = { width, fit_mode, time }
+
+  if (options.height) params.height = height.toString()
+
+  let qs
+  if (isSigned && options.signingKeyId && options.signingKeyPrivate) {
+    const token = generateJwt(playbackId, options.signingKeyId, options.signingKeyPrivate, 't', params)
+    qs = `token=${token}`
+  } else {
+    qs = Object.keys(params).map(key => `${key}=${params[key]}`).join('&')
   }
-  return url
+
+  return `https://image.mux.com/${playbackId}/thumbnail.png?${qs}`
 }

@@ -1,4 +1,4 @@
-@import "part:@sanity/base/theme/variables-style";
+@import 'part:@sanity/base/theme/variables-style';
 
 .root {
   position: relative;
@@ -6,6 +6,10 @@
 
 .formField {
   margin-bottom: var(--medium-padding);
+}
+
+.paragraph {
+  margin-bottom: 0;
 }
 
 .buttons {
