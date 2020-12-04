@@ -2,12 +2,13 @@ import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 
 import {uniqueId} from 'lodash'
-import {saveSecrets, testSecrets} from '../actions/secrets'
+import {haveValidSigningKeys, saveSecrets, testSecrets} from '../actions/secrets'
 
 import Button from 'part:@sanity/components/buttons/default'
 import Fieldset from 'part:@sanity/components/fieldsets/default'
 import FormField from 'part:@sanity/components/formfields/default'
 import TextInput from 'part:@sanity/components/textinputs/default'
+import Checkbox from 'part:@sanity/components/toggles/checkbox'
 
 import styles from './Setup.css'
 
@@ -16,17 +17,22 @@ const propTypes = {
   onCancel: PropTypes.func.isRequired,
   secrets: PropTypes.shape({
     token: PropTypes.string,
-    secretKey: PropTypes.string
+    secretKey: PropTypes.string,
+    enableSignedUrls: PropTypes.bool,
+    signingKeyId: PropTypes.string,
+    signingKeyPrivate: PropTypes.string,
   })
 }
 
 class MuxVideoInputSetup extends Component {
   tokenInputId = uniqueId('MuxTokenInput')
   secretKeyInputId = uniqueId('MuxSecretInput')
+  enableSignedUrlsInputId = uniqueId('MuxEnableSignedUrlsInput')
 
   state = {
     token: null,
     secretKey: null,
+    enableSignedUrls: false,
     isLoading: false,
     error: null
   }
@@ -38,7 +44,10 @@ class MuxVideoInputSetup extends Component {
     if (nextProps.secrets) {
       return {
         token: nextProps.secrets.token,
-        secretKey: nextProps.secrets.secretKey
+        secretKey: nextProps.secrets.secretKey,
+        enableSignedUrls: nextProps.secrets.enableSignedUrls,
+        signingKeyId: nextProps.secrets.signingKeyId,
+        signingKeyPrivate: nextProps.secrets.signingKeyPrivate
       }
     }
     return null
@@ -47,9 +56,12 @@ class MuxVideoInputSetup extends Component {
   constructor(props) {
     super(props)
     if (props.secrets) {
-      const {token, secretKey} = props.secrets
+      const {token, secretKey, enableSignedUrls, signingKeyId, signingKeyPrivate} = props.secrets
       this.state.token = token
       this.state.secretKey = secretKey
+      this.state.enableSignedUrls = enableSignedUrls
+      this.state.signingKeyId = signingKeyId
+      this.state.signingKeyPrivate = signingKeyPrivate
     }
     this.firstField = React.createRef()
   }
@@ -66,6 +78,9 @@ class MuxVideoInputSetup extends Component {
     this.setState({secretKey: event.currentTarget.value})
   }
 
+  handleEnableSignedUrls = event =>
+    this.setState({ enableSignedUrls: event.currentTarget.checked })
+
   handleCancel = event => {
     this.props.onCancel()
   }
@@ -74,7 +89,7 @@ class MuxVideoInputSetup extends Component {
     event.preventDefault()
   }
 
-  handleSaveToken = () => {
+  handleSaveToken = async () => {
     const handleError = err => {
       console.error(err) // eslint-disable-line no-console
       this.setState({
@@ -85,20 +100,51 @@ class MuxVideoInputSetup extends Component {
     this.setState({isLoading: true})
     const token = this.state.token || null
     const secretKey = this.state.secretKey || null
-    saveSecrets(token, secretKey)
-      .then(() => {
-        testSecrets()
-          .then(result => {
-            this.setState({isLoading: false})
-            if (result.status) {
-              this.props.onSave({token, secretKey})
-              return
-            }
-            this.setState({error: 'Invalid credentials'})
-          })
-          .catch(handleError)
+    const enableSignedUrls = this.state.enableSignedUrls || false
+    let signingKeyId = this.state.signingKeyId || null
+    let signingKeyPrivate = this.state.signingKeyPrivate || null
+
+    const hasValidSigningKeys = await haveValidSigningKeys(signingKeyId, signingKeyPrivate)
+
+    if (!hasValidSigningKeys) {
+      // TODO: UPDATE THIS WITH SANITY ABSTRACT
+      const signingKeyRes = await fetch('https://api.mux.com/video/v1/signing-keys', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Basic SECRET:SECRET'
+        }
       })
-      .catch(handleError)
+    
+      const { data } = await signingKeyRes.json()
+
+      signingKeyId = data.id
+      signingKeyPrivate = data.private_key
+    }
+
+    try {
+      await saveSecrets(token, secretKey, enableSignedUrls, signingKeyId, signingKeyPrivate)
+    } catch (err) {
+      handleError(err)
+      return
+    }
+
+    let result;
+    
+    try { result = await testSecrets() }
+    catch (err) {
+      handleError(err)
+      return
+    }
+
+    this.setState({ isLoading: false })
+    
+    if (result.status) {
+      this.props.onSave({token, secretKey, enableSignedUrls, signingKeyId, signingKeyPrivate})
+      return
+    } else {
+      handleError({error: 'Invalid credentials'})
+    }
   }
 
   render() {
@@ -138,6 +184,24 @@ class MuxVideoInputSetup extends Component {
                 type="text"
                 value={this.state.secretKey || ''}
               />
+            </FormField>
+            <FormField
+              label="Enable Signed Urls"
+              labelFor={this.enableSignedUrlsInputId}
+              level={0}
+              className={styles.formField}
+            >
+              <Checkbox
+                id={this.enableSignedUrlsInputId}
+                onChange={this.handleEnableSignedUrls}
+                checked={this.state.enableSignedUrls || false}
+              />
+              {this.state.signingKeyId ?
+                <p className={styles.paragraph}>The signing key ID that Sanity will use is{' '}
+                  {this.state.signingKeyId}. This key is only used
+                for previewing content in the Sanity UI. You should generate
+                a different key to use in your application server.</p>
+                : null}
             </FormField>
 
             <div className={styles.buttons}>

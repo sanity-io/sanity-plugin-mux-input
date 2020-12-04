@@ -3,21 +3,27 @@ import client from 'part:@sanity/base/client'
 import Button from 'part:@sanity/components/buttons/default'
 import styles from './SelectAsset.css'
 import getPosterSrc from '../util/getPosterSrc'
+import { fetchSecrets } from '../actions/secrets'
 
 const PER_PAGE = 200
 
 function createQuery(start = 0, end = PER_PAGE) {
-  return `*[_type == "mux.videoAsset"] | order(_updatedAt desc) [${start}...${end}] {_id, playbackId, thumbTime}`
+  return `*[_type == "mux.videoAsset"] | order(_updatedAt desc) [${start}...${end}] {_id, playbackId, thumbTime, data}`
 }
 
 export default class SelectAsset extends React.Component {
-  state = {
-    assets: [],
-    isLastPage: false,
-    isLoading: false
-  }
-
   pageNo = 0
+  
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      assets: [],
+      isLastPage: false,
+      isLoading: false,
+      secrets: null
+    }
+  }
 
   fetchPage(pageNo) {
     const start = pageNo * PER_PAGE
@@ -34,6 +40,7 @@ export default class SelectAsset extends React.Component {
 
   componentDidMount() {
     this.fetchPage(this.pageNo)
+    fetchSecrets().then(({ secrets }) => this.setState({ secrets }))
   }
 
   select(id) {
@@ -67,7 +74,8 @@ export default class SelectAsset extends React.Component {
   }
 
   render() {
-    const {assets, isLastPage, isLoading} = this.state
+    const { assets, isLastPage, isLoading, secrets } = this.state
+    
     return (
       <div className={styles.root}>
         <div className={styles.imageList}>
@@ -79,7 +87,10 @@ export default class SelectAsset extends React.Component {
               time: asset.thumbTime,
               fitMode: 'crop',
               width: 100,
-              height: 100
+              height: 100,
+              isSigned: asset.data && asset.data.playback_ids[0].policy === 'signed',
+              signingKeyId: secrets.signingKeyId || null,
+              signingKeyPrivate: secrets.signingKeyPrivate || null
             })
             return (
               <a

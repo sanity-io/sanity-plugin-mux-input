@@ -28,10 +28,10 @@ export function uploadUrl(url, options = {}) {
               return throwError(new Error('Invalid credentials'))
             }
             const uuid = Uuid.v4()
-            const {privacies} = options
+            const { enableSignedUrls } = options
             const muxBody = {
               input: validUrl,
-              playback_policy: privacies || ['public']
+              playback_policy: [enableSignedUrls ? 'signed' : 'public']
             }
             const query = {
               muxBody: JSON.stringify(muxBody),
@@ -81,6 +81,7 @@ export function uploadFile(file) {
             return concat(
               of({type: 'uuid', uuid}),
               defer(() =>
+                // TODO: NEED TO ADD PLAYBACK POLICY DEF HERE
                 client.observable.request({
                   url: `/addons/mux/uploads/${studioClient.clientConfig.dataset}`,
                   withCredentials: true,
