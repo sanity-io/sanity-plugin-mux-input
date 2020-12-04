@@ -46,6 +46,7 @@ const MuxVideoPreview = (props) => {
   if (posterSrc !== undefined) {
     return (<div className={styles.poster} style={{ backgroundImage: `url(${posterSrc})` }} />)
   }
+  
   const { filename, playbackId, status } = props.value
 
   return (

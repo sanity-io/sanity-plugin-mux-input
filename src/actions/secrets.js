@@ -4,7 +4,7 @@ import client from 'part:@sanity/base/client'
 const cache = {
   secrets: null,
   exists: false
-};
+}
 
 export function fetchSecrets() {
   if (!cache.exists) {
@@ -76,7 +76,7 @@ export async function haveValidSigningKeys(signingKeyId, signingKeyPrivate) {
   })
   
   return res.status === 200
-};
+}
 
 export function testSecretsObservable() {
   const dataset = client.clientConfig.dataset
