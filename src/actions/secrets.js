@@ -1,29 +1,48 @@
 import {defer} from 'rxjs'
 import client from 'part:@sanity/base/client'
 
+const cache = {
+  secrets: null,
+  exists: false
+};
+
 export function fetchSecrets() {
-  return client.fetch('*[_id == "secrets.mux"]').then(results => {
-    const secrets = {token: null, secretKey: null}
-    if (results.length > 0) {
-      secrets.token = results[0].token || null
-      secrets.secretKey = results[0].secretKey || null
-    }
-    const exists = results.length !== 0
-    return {secrets, exists}
-  })
+  if (!cache.exists) {
+    return client.fetch('*[_id == "secrets.mux"]').then(results => {
+      if (results.length > 0) {
+        cache.secrets = {
+          token: results[0].token || null,
+          secretKey: results[0].secretKey || null,
+          enableSignedUrls: results[0].enableSignedUrls || false,
+          signingKeyId: results[0].signingKeyId || null,
+          signingKeyPrivate: results[0].signingKeyPrivate || null
+        }
+      }
+      cache.exists = results.length !== 0
+      return cache
+    })
+  } else {
+    return Promise.resolve(cache)
+  }
 }
 
-export function saveSecrets(token, secretKey) {
+export function saveSecrets(token, secretKey, enableSignedUrls, signingKeyId, signingKeyPrivate) {
   const doc = {
     _id: 'secrets.mux',
     _type: 'mux.apiKey',
     token,
-    secretKey
+    secretKey,
+    enableSignedUrls,
+    signingKeyId,
+    signingKeyPrivate
   }
   return client.createOrReplace(doc).then(res => {
     return {
       token,
-      secretKey
+      secretKey,
+      enableSignedUrls,
+      signingKeyId,
+      signingKeyPrivate
     }
   })
 }
@@ -36,6 +55,21 @@ export function testSecrets() {
     method: 'GET'
   })
 }
+
+export async function haveValidSigningKeys(signingKeyId, signingKeyPrivate) {
+  if (!(signingKeyId && signingKeyPrivate)) return
+  
+  // TODO: UPDATE THIS WITH SANITY ABSTRACT
+  const res = await fetch(`https://api.mux.com/video/v1/signing-keys/${signingKeyId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Basic SECRET:SECRET'
+    }
+  })
+    
+  return res.status === 200;
+};
 
 export function testSecretsObservable() {
   const dataset = client.clientConfig.dataset

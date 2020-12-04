@@ -29,7 +29,11 @@ const propTypes = {
   onBrowse: PropTypes.func.isRequired,
   onSetupButtonClicked: PropTypes.func.isRequired,
   onUploadComplete: PropTypes.func,
-  secrets: PropTypes.shape({token: PropTypes.string, secretKey: PropTypes.string}),
+  secrets: PropTypes.shape({
+    token: PropTypes.string,
+    secretKey: PropTypes.string,
+    enableSignedUrls: PropTypes.bool
+  }),
   buttons: PropTypes.node,
   children: PropTypes.node
 }
@@ -139,7 +143,9 @@ class MuxVideoInputUploader extends Component {
   handlePaste = event => {
     const clipboardData = event.clipboardData || window.clipboardData
     const url = clipboardData.getData('text')
-    this.upload = uploadUrl(url, url.split('/').slice(-1)[0]).subscribe({
+    const options = { enableSignedUrls: this.props.secrets.enableSignedUrls }
+
+    this.upload = uploadUrl(url, options).subscribe({
       complete: () => {
         this.setState({error: null, uploadProgress: null, url: null})
       },

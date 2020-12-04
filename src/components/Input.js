@@ -33,11 +33,17 @@ const NOOP = () => {}
 
 const cachedSecrets = {
   token: null,
-  secretKey: null
+  secretKey: null,
+  enableSignedUrls: false,
+  signingKeyId: null,
+  signingKeyPrivate: null
 }
 
 function validateSecrets(secrets) {
-  return Object.keys(secrets).some(key => secrets[key] === null)
+  if (secrets.token === null) return true
+  if (secrets.secretKey === null) return true
+
+  return false
 }
 
 function getSecrets() {
@@ -52,6 +58,9 @@ function getSecrets() {
     .then(({secrets, exists}) => {
       cachedSecrets.token = secrets.token
       cachedSecrets.secretKey = secrets.secretKey
+      cachedSecrets.enableSignedUrls = secrets.enableSignedUrls
+      cachedSecrets.signingKeyId = secrets.signingKeyId
+      cachedSecrets.signingKeyPrivate = secrets.signingKeyPrivate
       return {
         isInitialSetup: !exists,
         needsSetup: validateSecrets(cachedSecrets),
@@ -200,9 +209,12 @@ export default withDocument(
       this.setState({showSetup: true})
     }
 
-    handleSaveSetup = ({token, secretKey}) => {
+    handleSaveSetup = ({token, secretKey, enableSignedUrls, signingKeyId, signingKeyPrivate}) => {
       cachedSecrets.token = token
       cachedSecrets.secretKey = secretKey
+      cachedSecrets.enableSignedUrls = enableSignedUrls
+      cachedSecrets.signingKeyId = signingKeyId
+      cachedSecrets.signingKeyPrivate = signingKeyPrivate
       this.setState({
         showSetup: false,
         secrets: cachedSecrets,
@@ -314,14 +326,19 @@ export default withDocument(
         })
         .commit({returnDocuments: false})
         .then(response => {
-          this.setState({
-            thumb: getPosterSrc(assetDocument.playbackId, {
-              time: currentTime,
-              width: 320,
-              height: 320,
-              fitMode: 'crop'
-            })
-          })
+          const options = {
+            time: currentTime,
+            width: 320,
+            height: 320,
+            fitMode: 'crop',
+            isSigned: assetDocument.data.playback_ids[0].policy === 'signed',
+            signingKeyId: cachedSecrets.signingKeyId,
+            signingKeyPrivate: cachedSecrets.signingKeyPrivate
+          }
+
+          const thumb = getPosterSrc(assetDocument.playbackId, options);
+
+          this.setState({ thumb });
         })
         .catch(error => {
           this.setState({error})

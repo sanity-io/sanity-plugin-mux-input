@@ -6,8 +6,10 @@ import Button from 'part:@sanity/components/buttons/default'
 
 import {getAsset} from '../actions/assets'
 import getPosterSrc from '../util/getPosterSrc'
+import getVideoSrc from '../util/getVideoSrc'
 
 import styles from './Video.css'
+import { fetchSecrets } from '../actions/secrets'
 
 const NOOP = () => {}
 
@@ -19,14 +21,6 @@ const propTypes = {
 }
 
 class MuxVideo extends Component {
-  state = {
-    posterUrl: null,
-    source: null,
-    isLoading: true,
-    error: null,
-    isDeletedOnMux: false
-  }
-
   static defaultProps = {
     autoload: true
   }
@@ -34,10 +28,20 @@ class MuxVideo extends Component {
   videoContainer = React.createRef()
   hls = null
 
+  constructor(props) {
+    super(props)
+    this.state = {
+      posterUrl: null,
+      source: null,
+      isLoading: true,
+      error: null,
+      isDeletedOnMux: false,
+      secrets: null
+    }
+  }
+
   // eslint-disable-next-line complexity
   static getDerivedStateFromProps(nextProps) {
-    let source = null
-    let posterUrl = null
     let isLoading = true
     const {assetDocument} = nextProps
     if (assetDocument && assetDocument.status === 'preparing') {
@@ -52,25 +56,22 @@ class MuxVideo extends Component {
     if (assetDocument && assetDocument.status === 'ready') {
       isLoading = false
     }
-    if (assetDocument && assetDocument.playbackId) {
-      source = `https://stream.mux.com/${assetDocument.playbackId}.m3u8`
-      posterUrl = getPosterSrc(assetDocument.playbackId, {
-        time: assetDocument.thumbTime || 1,
-        fitMode: 'preserve'
-      })
-    }
     if (assetDocument && typeof assetDocument.status === 'undefined') {
       isLoading = false
     }
-    return {isLoading, source, posterUrl}
+    return {isLoading}
   }
 
   componentDidMount() {
     this.video = React.createRef()
     this.setState(MuxVideo.getDerivedStateFromProps(this.props))
+    fetchSecrets().then(({ secrets }) => this.setState({ secrets }))
   }
 
   componentDidUpdate(prevProps, prevState) {
+    if (!this.state.isLoading && this.state.secrets && this.state.source === null) {
+      this.resolveSourceAndPoster(this.props.assetDocument)
+    }
     if (this.state.source !== null && this.video.current && !this.video.current.src) {
       this.setState({error: null})
       this.attachVideo()
@@ -82,6 +83,19 @@ class MuxVideo extends Component {
       }
       this.attachVideo()
     }
+  }
+
+  resolveSourceAndPoster(assetDocument) {
+    const playbackId = assetDocument.playbackId
+    const options = {
+      isSigned: assetDocument.data.playback_ids[0].policy === 'signed',
+      signingKeyId: this.state.secrets.signingKeyId || null,
+      signingKeyPrivate: this.state.secrets.signingKeyPrivate || null
+    }
+
+    const source = getVideoSrc(playbackId, options)
+    const posterSrc = getPosterSrc(playbackId, options)
+    this.setState({ source, posterSrc })
   }
 
   getVideoElement() {
