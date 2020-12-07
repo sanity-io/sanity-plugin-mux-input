@@ -16,20 +16,20 @@ Not familiar with Sanity? [Visit www.sanity.io](https://www.sanity.io/)
 
 * Make a schema type that uses the plugin's type ``mux.video``, for example:
 
-  ```
+  ```js
+  {
+    title: "Video blog post",
+    name: "videoBlogPost",
+    type: "document",
+    fields: [
+      { title: "Title", name: "title", type: "string" },
       {
-        title: "Video blog post",
-        name: "videoBlogPost",
-        type: "document",
-        fields: [
-          { title: "Title", name: "title", type: "string" },
-          {
-            title: "Video file",
-            name: "video",
-            type: "mux.video"
-          }
-        ]
+        title: "Video file",
+        name: "video",
+        type: "mux.video"
       }
+    ]
+  }
   ```
 
   Read more about [schemas in Sanity here](https://www.sanity.io/docs/the-schema).
