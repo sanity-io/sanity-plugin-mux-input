@@ -4,6 +4,7 @@
   "description": "An input component that integrates Sanity Studio with MUX.com video encoding/hosting service.",
   "main": "build/index.js",
   "scripts": {
+    "dev": "npx babel src -d build --copy-files --watch --source-maps",
     "build": "babel src -d build --copy-files",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepublish": "npm run build"
@@ -43,16 +44,19 @@
     "eslint-plugin-prettier": "^2.6.0",
     "eslint-plugin-react": "^7.7.0",
     "prettier": "^1.14.2",
-    "react-hot-loader": "4.3.8"
+    "react-hot-loader": "4.3.8",
+    "@sanity/ui": "^0.32.2",
+    "styled-components": "^5.2.1"
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@mux/upchunk": "^1.0.6",
     "get-it": "^4.0.4",
     "hls.js": "^0.11.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.20",
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
+    "react-icons": "^4.1.0",
     "uuid": "^3.3.2"
   },
   "peerDependencies": {
@@ -60,6 +64,8 @@
     "@sanity/base": ">= 0.135.x",
     "@sanity/components": ">= 0.135.x",
     "@sanity/core": ">= 0.135.x",
-    "rxjs": ">= 6.1.0"
+    "rxjs": ">= 6.1.0",
+    "@sanity/ui": "^0.32.2",
+    "styled-components": "^5.2.1"
   }
 }

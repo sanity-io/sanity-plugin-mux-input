@@ -8,14 +8,15 @@ import {uploadFile, uploadUrl} from '../actions/upload'
 
 import client from 'part:@sanity/base/client'
 import FormField from 'part:@sanity/components/formfields/default'
-import FileInputButton from 'part:@sanity/components/fileinput/button'
 import ButtonCollection from 'part:@sanity/components/buttons/button-collection'
-import DefaultButton from 'part:@sanity/components/buttons/default'
 import Dialog from 'part:@sanity/components/dialogs/default'
 import DialogContent from 'part:@sanity/components/dialogs/content'
 import ProgressBar from 'part:@sanity/components/progress/bar'
 import UploadPlaceholder from './UploadPlaceholder'
-import UploadIcon from 'part:@sanity/base/upload-icon'
+import FileInputButton from './FileInputButton'
+import {FiUpload} from 'react-icons/fi'
+
+import {Button} from '@sanity/ui'
 
 import styles from './Uploader.css'
 
@@ -240,16 +241,12 @@ class MuxVideoInputUploader extends Component {
         </FormField>
         <ButtonCollection>
           <FileInputButton
-            inverted
-            icon={UploadIcon}
+            icon={<FiUpload data-sanity-icon="upload" />}
             onSelect={files => this.handleUploadFile(files[0])}
             accept={'video/*'}
-          >
-            Select file
-          </FileInputButton>
-          <DefaultButton inverted onClick={this.props.onBrowse}>
-            Browse
-          </DefaultButton>
+            text="Upload"
+          />
+          <Button mode="ghost" tone="default" text="Browse" onClick={this.props.onBrowse} />
         </ButtonCollection>
       </div>
     )
@@ -285,9 +282,12 @@ class MuxVideoInputUploader extends Component {
         </div>
         {(uploadProgress < 100 || this.state.error) && (
           <div ref={this.cancelUploadButton}>
-            <DefaultButton color="danger" onClick={this.onCancelUploadButtonClick}>
-              Cancel upload
-            </DefaultButton>
+            <Button
+              text="Cancel upload"
+              padding={3}
+              tone="critical"
+              onClick={this.onCancelUploadButtonClick}
+            />
           </div>
         )}
       </div>
@@ -308,9 +308,12 @@ class MuxVideoInputUploader extends Component {
         <div>
           <h3>Invalid credentials</h3>
           <p>You need to check your Mux access token and secret key.</p>
-          <DefaultButton color="primary" onClick={this.handleSetupButtonClicked} kind="simple">
-            Run setup
-          </DefaultButton>
+          <Button
+            text="Run setup"
+            tone="primary"
+            padding={3}
+            onClick={this.handleSetupButtonClicked}
+          />
         </div>
       )
     }
@@ -333,13 +336,11 @@ class MuxVideoInputUploader extends Component {
       return (
         <ButtonCollection>
           <FileInputButton
-            inverted
-            icon={UploadIcon}
+            icon={<FiUpload data-sanity-icon="upload" />}
             onSelect={files => this.handleUploadFile(files[0])}
             accept={'video/*'}
-          >
-            Upload
-          </FileInputButton>
+            text="Upload"
+          />
           {this.props.buttons}
         </ButtonCollection>
       )
