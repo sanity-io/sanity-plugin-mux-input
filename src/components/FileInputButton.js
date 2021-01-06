@@ -22,11 +22,19 @@ const handleSelect = ({event, onSelect}) => {
   }
 }
 
+const handleButtonClick = inputRef => {
+  if (inputRef && inputRef.current) {
+    inputRef.current.click()
+  }
+}
+
 export const FileInputButton = ({onSelect, accept = 'video/*', type = 'file', ...props}) => {
   const _inputId = React.useRef(uniqueId('FileSelect'))
+  const inputRef = React.useRef(null)
   return (
     <Label htmlFor={_inputId.current}>
       <HiddenInput
+        ref={inputRef}
         accept={accept}
         tabindex="0"
         type={type}
@@ -34,7 +42,14 @@ export const FileInputButton = ({onSelect, accept = 'video/*', type = 'file', ..
         onChange={event => handleSelect({event, onSelect})}
         value=""
       />
-      <Button padding={[3, 3, 4]} mode="ghost" tone="default" style={{width: '100%'}} {...props} />
+      <Button
+        onClick={() => handleButtonClick(inputRef)}
+        padding={[3, 3, 4]}
+        mode="ghost"
+        tone="default"
+        style={{width: '100%'}}
+        {...props}
+      />
     </Label>
   )
 }
