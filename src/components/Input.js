@@ -21,6 +21,7 @@ import {
   Checkbox,
   Stack,
   Flex,
+  Grid,
   Button,
   Dialog,
   Text,
@@ -601,13 +602,22 @@ export default withDocument(
                       />
                       <Text style={{margin: '0 10px'}}>Delete video from dataset</Text>
                     </Flex>
-                    <Button
-                      mode="ghost"
-                      tone="critical"
-                      text="Remove"
-                      onClick={this.handleRemoveVideo}
-                      loading={!!isLoading}
-                    />
+                    <Grid columns={2} gap={2}>
+                      <Button
+                        mode="ghost"
+                        tone="default"
+                        text="Cancel"
+                        onClick={this.handleCancelRemove}
+                        loading={!!isLoading}
+                      />
+                      <Button
+                        mode="default"
+                        tone="critical"
+                        text="Remove"
+                        onClick={this.handleRemoveVideo}
+                        loading={!!isLoading}
+                      />
+                    </Grid>
                   </Stack>
                 </Box>
               </Dialog>
