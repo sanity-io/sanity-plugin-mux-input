@@ -1,13 +1,13 @@
 {
   "name": "@kimpaow/sanity-plugin-mux-input",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "An input component that integrates Sanity Studio with MUX.com video encoding/hosting service.",
   "main": "build/index.js",
   "scripts": {
     "dev": "npx babel src -d build --copy-files --watch --source-maps",
     "build": "babel src -d build --copy-files",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "publish": "npm publish --access public",
+    "deploy": "npm publish --access public",
     "prepublish": "npm run build"
   },
   "repository": {
