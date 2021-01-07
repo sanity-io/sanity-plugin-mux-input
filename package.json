@@ -1,5 +1,5 @@
 {
-  "name": "sanity-plugin-mux-input",
+  "name": "@kimpaow/sanity-plugin-mux-input",
   "version": "0.2.1",
   "description": "An input component that integrates Sanity Studio with MUX.com video encoding/hosting service.",
   "main": "build/index.js",
@@ -7,11 +7,12 @@
     "dev": "npx babel src -d build --copy-files --watch --source-maps",
     "build": "babel src -d build --copy-files",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "publish": "npm publish --access public",
     "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sanity-io/sanity-plugin-mux-input.git"
+    "url": "git+https://github.com/KimPaow/sanity-plugin-mux-input.git"
   },
   "keywords": [
     "sanity",
@@ -23,12 +24,12 @@
   "publishConfig": {
     "access": "public"
   },
-  "author": "Sanity.io <hello@sanity.io>",
+  "author": "Kim Björkman",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/sanity-io/sanity-plugin-mux-input/issues"
+    "url": "https://github.com/KimPaow/sanity-plugin-mux-input/issues"
   },
-  "homepage": "https://github.com/sanity-io/sanity-plugin-mux-input#readme",
+  "homepage": "https://github.com/KimPaow/sanity-plugin-mux-input#readme",
   "devDependencies": {
     "@babel/cli": "^7.6.3",
     "@babel/core": "^7.6.3",
