@@ -242,8 +242,6 @@ export default withDocument(
 
     handleRemoveVideo = () => {
       const {assetDocument} = this.state
-      console.debug('assetDocument: ', assetDocument)
-      console.debug('document._id: ', this.props.document._id)
       this.setState({isLoading: true})
       const unsetAsset = () => {
         return new Promise((resolve, reject) => {
