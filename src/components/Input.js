@@ -12,7 +12,7 @@ import {observePaths} from 'part:@sanity/base/preview'
 import FullscreenDialog from 'part:@sanity/components/dialogs/fullscreen'
 import DialogContent from 'part:@sanity/components/dialogs/content'
 
-import PatchEvent, {set, setIfMissing} from 'part:@sanity/form-builder/patch-event'
+import PatchEvent, {set, unset, setIfMissing} from 'part:@sanity/form-builder/patch-event'
 import FormField from 'part:@sanity/components/formfields/default'
 import SetupIcon from 'part:@sanity/base/plugin-icon'
 import Spinner from 'part:@sanity/components/loading/spinner'
@@ -242,6 +242,8 @@ export default withDocument(
 
     handleRemoveVideo = () => {
       const {assetDocument} = this.state
+      console.debug('assetDocument: ', assetDocument)
+      console.debug('document._id: ', this.props.document._id)
       this.setState({isLoading: true})
       const unsetAsset = () => {
         return new Promise((resolve, reject) => {
@@ -271,16 +273,7 @@ export default withDocument(
                       })
                   })
               }
-              return client
-                .patch(this.props.document._id)
-                .unset(['video'])
-                .commit({returnDocuments: false})
-                .then(() => {
-                  return resolve()
-                })
-                .catch(error => {
-                  reject(error)
-                })
+              return this.props.onChange(PatchEvent.from(unset()))
             }
           )
         })
@@ -397,7 +390,7 @@ export default withDocument(
       return (
         <Dialog
           header="MUX API Credentials"
-          width={2}
+          width={1}
           onClose={this.handleCancelSaveSetup}
           zOffset={1000}
         >
