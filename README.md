@@ -1,6 +1,8 @@
 # Mux Video Input Sanity Plugin
 
-This is a plugin which let you use [MUX.com](https://www.mux.com  ) video assets in your Sanity studio.
+This is an unofficial update to the Mux Video Input Plugin that was originally created by the Sanity team. It resolves some bugs and uses the new Sanity UI components.
+
+This is a plugin which let you use [MUX.com](https://www.mux.com) video assets in your Sanity studio.
 
 The Mux plugin for Sanity gives you a way to upload and preview videos easily.
 
@@ -10,11 +12,10 @@ Not familiar with Sanity? [Visit www.sanity.io](https://www.sanity.io/)
 
 ## Quick start
 
-* While in your project folder, run ``sanity install mux-input``.
+- While in your project folder, run `sanity install @kimpaow/sanity-plugin-mux-video-input`.
   Read more about [using plugins in Sanity here](https://www.sanity.io/docs/plugins).
 
-
-* Make a schema type that uses the plugin's type ``mux.video``, for example:
+* Make a schema type that uses the plugin's type `mux.video`, for example:
 
   ```js
   {
@@ -34,19 +35,17 @@ Not familiar with Sanity? [Visit www.sanity.io](https://www.sanity.io/)
 
   Read more about [schemas in Sanity here](https://www.sanity.io/docs/the-schema).
 
-
-* Get an API Access Token and enter it into the setup screen
+- Get an API Access Token and enter it into the setup screen
   First time you use the plugin you will be asked to enter your MUX credentials.
 
   The Mux Video API uses an Access Token and Secret Key for authentication.
 
-  If you haven't already, generate a new Access Token in the Access Token settings of your Mux account dashboard, and make sure it got permission to both read and write *video* and read *data*.
+  If you haven't already, generate a new Access Token in the Access Token settings of your Mux account dashboard, and make sure it got permission to both read and write _video_ and read _data_.
 
-  The token is stored in the dataset as a document of the type ``mux.apiKey`` with the id ``secrets.mux``.
+  The token is stored in the dataset as a document of the type `mux.apiKey` with the id `secrets.mux`.
   Having the ID be non-root ensures that only editors are able to see it.
 
   The MUX plugin will find it’s access tokens by fetching this document.
-
 
 # Playing videos in the frontend
 
