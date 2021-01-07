@@ -10,6 +10,7 @@ export default {
       title: 'Video',
       name: 'asset',
       type: 'reference',
+      weak: true,
       to: [{type: 'mux.videoAsset'}]
     }
   ],
