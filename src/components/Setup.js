@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 
 import {uniqueId} from 'lodash'
-import {haveValidSigningKeys, saveSecrets, testSecrets} from '../actions/secrets'
+import {createSigningKeys, haveValidSigningKeys, saveSecrets, testSecrets} from '../actions/secrets'
 
 import Button from 'part:@sanity/components/buttons/default'
 import Fieldset from 'part:@sanity/components/fieldsets/default'
@@ -106,18 +106,9 @@ class MuxVideoInputSetup extends Component {
 
     const hasValidSigningKeys = await haveValidSigningKeys(signingKeyId, signingKeyPrivate)
 
-    if (!hasValidSigningKeys) {
-      // TODO: UPDATE THIS WITH SANITY ABSTRACT
-      const signingKeyRes = await fetch('https://api.mux.com/video/v1/signing-keys', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Basic SECRET:SECRET'
-        }
-      })
-    
-      const { data } = await signingKeyRes.json()
-
+    if (!hasValidSigningKeys && enableSignedUrls) {
+      const { data } = await createSigningKeys()
+      
       signingKeyId = data.id
       signingKeyPrivate = data.private_key
     }
