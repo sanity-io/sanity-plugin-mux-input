@@ -67,7 +67,7 @@ export function uploadUrl(url, options = {}) {
   )
 }
 
-export function uploadFile(file) {
+export function uploadFile(file, options = {}) {
   return testFile(file).pipe(
     switchMap(fileOptions => {
       return concat(
@@ -78,10 +78,17 @@ export function uploadFile(file) {
               return throwError(new Error('Invalid credentials'))
             }
             const uuid = Uuid.v4()
+            const { enableSignedUrls } = options
+            const body = {
+              playback_policy: [enableSignedUrls ? 'signed' : 'public'],
+              // TODO: These parameters were enabled by Sanity, but we are not using them yet
+              // mp4_support: false (default),
+              // normalize_audio: false (default),
+              // master_access: false (default),
+            }
             return concat(
               of({type: 'uuid', uuid}),
               defer(() =>
-                // TODO: NEED TO ADD PLAYBACK POLICY DEF HERE
                 client.observable.request({
                   url: `/addons/mux/uploads/${studioClient.clientConfig.dataset}`,
                   withCredentials: true,
@@ -89,7 +96,8 @@ export function uploadFile(file) {
                   headers: {
                     'MUX-Proxy-UUID': uuid,
                     'Content-Type': 'application/json'
-                  }
+                  },
+                  body
                 })
               ).pipe(
                 mergeMap(result => {

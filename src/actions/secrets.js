@@ -47,6 +47,15 @@ export function saveSecrets(token, secretKey, enableSignedUrls, signingKeyId, si
   })
 }
 
+export function createSigningKeys() {
+  const dataset = client.clientConfig.dataset
+  return client.request({
+    url: `/addons/mux/signing-keys/${dataset}`,
+    withCredentials: true,
+    method: 'POST'
+  })
+}
+
 export function testSecrets() {
   const dataset = client.clientConfig.dataset
   return client.request({
@@ -58,17 +67,15 @@ export function testSecrets() {
 
 export async function haveValidSigningKeys(signingKeyId, signingKeyPrivate) {
   if (!(signingKeyId && signingKeyPrivate)) return
-  
-  // TODO: UPDATE THIS WITH SANITY ABSTRACT
-  const res = await fetch(`https://api.mux.com/video/v1/signing-keys/${signingKeyId}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Basic SECRET:SECRET'
-    }
+
+  const dataset = client.clientConfig.dataset
+  const res = await client.request({
+    url: `/addons/mux/signing-keys/${dataset}/${signingKeyId}`,
+    withCredentials: true,
+    method: 'GET'
   })
-    
-  return res.status === 200;
+  
+  return res.status === 200
 };
 
 export function testSecretsObservable() {
