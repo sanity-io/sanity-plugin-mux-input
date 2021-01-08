@@ -90,7 +90,7 @@ class MuxVideoInputUploader extends Component {
 
   handleUploadFile = file => {
     this.setState({uploadProgress: 0, fileInfo: null, uuid: null})
-    this.upload = uploadFile(file)
+    this.upload = uploadFile(file, { enableSignedUrls: this.props.secrets.enableSignedUrls })
       .pipe(
         takeUntil(
           this.onCancelUploadButtonClick$.pipe(
