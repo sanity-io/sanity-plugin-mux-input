@@ -89,7 +89,6 @@ export function uploadFile(file, options = {}) {
             return concat(
               of({type: 'uuid', uuid}),
               defer(() =>
-                // TODO: NEED TO ADD PLAYBACK POLICY DEF HERE
                 client.observable.request({
                   url: `/addons/mux/uploads/${studioClient.clientConfig.dataset}`,
                   withCredentials: true,
