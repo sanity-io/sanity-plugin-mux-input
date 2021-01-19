@@ -1,8 +1,14 @@
-@import "part:@sanity/base/theme/variables-style";
+@import 'part:@sanity/base/theme/variables-style';
 
 .root {
   padding: 0;
   user-select: none !important;
+}
+
+.poster {
+  height: 360px;
+  width: 100%;
+  background-size: cover;
 }
 
 .video {
