@@ -100,7 +100,7 @@ export default withDocument(
           secrets,
           isInitialSetup,
           needsSetup,
-          isLoading: props.value && props.value.asset // If there is an asset continue loading
+          isLoading: !props.value?.asset // If there is an asset continue loading
         })
       })
       this.setupButton = React.createRef()

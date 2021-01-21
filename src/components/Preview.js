@@ -11,12 +11,7 @@ const MuxVideoPreview = (props) => {
   const [posterSrc, setPosterSrc] = React.useState(undefined)
 
   React.useEffect(() => {
-    const resolveSecrets = async () => {
-      const { secrets } = await fetchSecrets()
-      setSecrets(secrets)
-    }
-
-    resolveSecrets()
+    fetchSecrets().then(({ secrets }) => setSecrets(secrets))
   }, [])
 
   React.useEffect(() => {

@@ -20,7 +20,8 @@ export default {
       status: 'asset.status',
       duration: 'asset.data.duration',
       thumbTime: 'asset.thumbTime',
-      filename: 'asset.filename'
+      filename: 'asset.filename',
+      playback_ids: 'asset.data.playback_ids'
     },
     component: Preview
   }
