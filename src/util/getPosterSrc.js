@@ -8,7 +8,6 @@ export default function getPosterSrc(playbackId, options = {}) {
     fit_mode = 'smartcrop',
     isSigned = false
   } = options
-
   const params = { width, fit_mode, time }
 
   if (options.height) params.height = height.toString()
