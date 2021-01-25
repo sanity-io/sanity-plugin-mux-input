@@ -1,6 +1,6 @@
 # Mux Video Input Sanity Plugin
 
-This is a plugin which let you use [MUX.com](https://www.mux.com  ) video assets in your Sanity studio.
+This is a plugin which let you use [MUX.com](https://www.mux.com) video assets in your Sanity studio.
 
 The Mux plugin for Sanity gives you a way to upload and preview videos easily.
 
@@ -10,11 +10,10 @@ Not familiar with Sanity? [Visit www.sanity.io](https://www.sanity.io/)
 
 ## Quick start
 
-* While in your project folder, run ``sanity install mux-input``.
+- While in your project folder, run `sanity install mux-input`.
   Read more about [using plugins in Sanity here](https://www.sanity.io/docs/plugins).
 
-
-* Make a schema type that uses the plugin's type ``mux.video``, for example:
+* Make a schema type that uses the plugin's type `mux.video`, for example:
 
   ```js
   {
@@ -34,19 +33,17 @@ Not familiar with Sanity? [Visit www.sanity.io](https://www.sanity.io/)
 
   Read more about [schemas in Sanity here](https://www.sanity.io/docs/the-schema).
 
-
-* Get an API Access Token and enter it into the setup screen
+- Get an API Access Token and enter it into the setup screen
   First time you use the plugin you will be asked to enter your MUX credentials.
 
   The Mux Video API uses an Access Token and Secret Key for authentication.
 
-  If you haven't already, generate a new Access Token in the Access Token settings of your Mux account dashboard, and make sure it got permission to both read and write *video* and read *data*.
+  If you haven't already, generate a new Access Token in the Access Token settings of your Mux account dashboard, and make sure it got permission to both read and write _video_ and read _data_.
 
-  The token is stored in the dataset as a document of the type ``mux.apiKey`` with the id ``secrets.mux``.
+  The token is stored in the dataset as a document of the type `mux.apiKey` with the id `secrets.mux`.
   Having the ID be non-root ensures that only editors are able to see it.
 
   The MUX plugin will find it’s access tokens by fetching this document.
-
 
 # Playing videos in the frontend
 
@@ -55,3 +52,9 @@ We have made an own player which supports poster images for the videos as set wi
 You could use any player which supports HLS, just point the video source to:
 
 `https://stream.mux.com/${assetDocument.playbackId}.m3u8`
+
+# Enabling Signed Urls
+
+To enable [signed urls](https://docs.mux.com/docs/security-signed-urls) with content uploaded to Mux, you will need to check the "Enable Signed Urls" option in the Mux Plugin configuration. Assuming that the API Access Token and Secret Key are set (as per the [Quick start](#quick-start) section).
+
+More information for this feature of the plugin can be found on Mux's [documentation](https://docs.mux.com/docs/headless-cms-sanity#advanced-signed-urls)
