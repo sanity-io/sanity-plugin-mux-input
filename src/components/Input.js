@@ -31,7 +31,9 @@ import MuxLogo from './MuxLogo'
 import Uploader from './Uploader'
 import styles from './Input.css'
 
-const NOOP = () => {}
+const NOOP = () => {
+  /* intentional noop */
+}
 
 const cachedSecrets = {
   token: null,
@@ -88,7 +90,6 @@ export default withDocument(
       needsSetup: true,
       secrets: null,
       isSigned: false,
-      showNewUpload: false,
       showSetup: false,
       showBrowser: false,
       videoReadyToPlay: false,
@@ -125,11 +126,11 @@ export default withDocument(
       }
     }
 
-    focus = () => {
+    handleFocus = () => {
       this.setState({hasFocus: true})
     }
 
-    blur = () => {
+    handleBlur = () => {
       this.setState({hasFocus: false})
     }
 
@@ -238,7 +239,7 @@ export default withDocument(
       onChange(
         PatchEvent.from([setIfMissing({asset: {_ref: _id}}, []), set({_ref: _id}, ['asset'])])
       )
-      this.setState({showNewUpload: false, assetDocument: result.document}, () => {
+      this.setState({assetDocument: result.document}, () => {
         this.setupAssetListener()
       })
     }
@@ -402,7 +403,7 @@ export default withDocument(
       return (
         <PopOver
           color="default"
-          useOverlay={true}
+          useOverlay
           onEscape={this.handleCancelSaveSetup}
           onClickOutside={this.handleCancelSaveSetup}
           padding="large"
@@ -515,7 +516,7 @@ export default withDocument(
                 {confirmRemove && (
                   <PopOver
                     color="default"
-                    useOverlay={true}
+                    useOverlay
                     onEscape={this.handleCancelRemove}
                     onClickOutside={this.handleCancelRemove}
                     padding="large"
@@ -565,7 +566,7 @@ export default withDocument(
       return (
         <PopOver
           color="default"
-          useOverlay={true}
+          useOverlay
           onClose={this.handleCloseThumbPreview}
           onEscape={this.handleCloseThumbPreview}
           onClickOutside={this.handleCloseThumbPreview}
@@ -596,7 +597,7 @@ export default withDocument(
         <Dialog
           title="Error"
           color="danger"
-          useOverlay={true}
+          useOverlay
           onClose={this.handleErrorClose}
           onEscape={this.handleErrorClose}
           onClickOutside={this.handleErrorClose}
@@ -635,8 +636,8 @@ export default withDocument(
             <Uploader
               buttons={this.renderVideoButtons()}
               hasFocus={hasFocus}
-              onBlur={this.blur}
-              onFocus={this.focus}
+              onBlur={this.handleBlur}
+              onFocus={this.handleFocus}
               onSetupButtonClicked={this.handleSetupButtonClicked}
               onUploadComplete={this.handleOnUploadComplete}
               secrets={secrets}

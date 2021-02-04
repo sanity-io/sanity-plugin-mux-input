@@ -1,10 +1,13 @@
+/* eslint-disable camelcase */
 import generateJwt from './generateJwt'
 
 export default function getPosterSrc(playbackId, options = {}) {
   const {width = 640, height = null, time = 1, fit_mode = 'smartcrop', isSigned = false} = options
-  const params = {width, fit_mode, time}
+  const params = {width, time, fit_mode}
 
-  if (options.height) params.height = height.toString()
+  if (options.height) {
+    params.height = height.toString()
+  }
 
   let qs
   if (isSigned && options.signingKeyId && options.signingKeyPrivate) {

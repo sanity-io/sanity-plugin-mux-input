@@ -221,7 +221,7 @@ class MuxVideoInputSetup extends Component {
               <a
                 href="https://dashboard.mux.com/settings/access-tokens"
                 target="_blank"
-                rel="noreferer noopener"
+                rel="noreferrer noopener"
               >
                 account on mux.com
               </a>

@@ -11,7 +11,9 @@ import getVideoSrc from '../util/getVideoSrc'
 
 import styles from './Video.css'
 
-const NOOP = () => {}
+const NOOP = () => {
+  /* intentional noop */
+}
 
 const propTypes = {
   assetDocument: PropTypes.object.isRequired,
@@ -72,11 +74,15 @@ class MuxVideo extends Component {
     if (!this.state.isLoading && this.state.secrets && this.state.source === null) {
       this.resolveSourceAndPoster(this.props.assetDocument)
     }
+
     if (this.state.source !== null && this.video.current && !this.video.current.src) {
+      // eslint-disable-next-line react/no-did-update-set-state
       this.setState({error: null})
       this.attachVideo()
     }
+
     if (this.state.source !== null && this.state.source !== prevState.source) {
+      // eslint-disable-next-line react/no-did-update-set-state
       this.setState({error: null, showControls: false})
       if (this.hls) {
         this.hls.destroy()
@@ -94,8 +100,8 @@ class MuxVideo extends Component {
     }
 
     const source = getVideoSrc(playbackId, options)
-    const posterSrc = getPosterSrc(playbackId, options)
-    this.setState({source, posterSrc})
+    const posterUrl = getPosterSrc(playbackId, options)
+    this.setState({source, posterUrl})
   }
 
   getVideoElement() {
@@ -177,7 +183,7 @@ class MuxVideo extends Component {
             <ProgressBar
               percent={100}
               text={(isLoading !== true && isLoading) || 'Waiting for MUX to complete the file'}
-              isInProgress={true}
+              isInProgress
               showPercent
               animation
               color="primary"

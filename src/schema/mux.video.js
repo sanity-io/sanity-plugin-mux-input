@@ -21,7 +21,7 @@ export default {
       duration: 'asset.data.duration',
       thumbTime: 'asset.thumbTime',
       filename: 'asset.filename',
-      playback_ids: 'asset.data.playback_ids',
+      playbackIds: 'asset.data.playback_ids',
     },
     component: Preview,
   },

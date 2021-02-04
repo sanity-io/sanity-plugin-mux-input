@@ -70,7 +70,7 @@ class MuxVideoInputUploader extends Component {
   componentDidMount() {
     const [onClick$, onClick] = createEventHandler()
     this.onCancelUploadButtonClick$ = onClick$
-    this.onCancelUploadButtonClick = onClick
+    this.handleCancelUploadButtonClick = onClick
   }
 
   unSubscribeToUpload() {
@@ -186,7 +186,7 @@ class MuxVideoInputUploader extends Component {
   handleDragEnter = (event) => {
     event.stopPropagation()
     this.dragEnteredEls.push(event.target)
-    this.setState({isDraggingOver: true, hasFocus: true})
+    this.setState({isDraggingOver: true})
   }
 
   handleDragLeave = (event) => {
@@ -196,7 +196,7 @@ class MuxVideoInputUploader extends Component {
       this.dragEnteredEls.splice(idx, 1)
     }
     if (this.dragEnteredEls.length === 0) {
-      this.setState({isDraggingOver: false, hasFocus: false})
+      this.setState({isDraggingOver: false})
     }
   }
 
@@ -291,7 +291,7 @@ class MuxVideoInputUploader extends Component {
         </div>
         {(uploadProgress < 100 || this.state.error) && (
           <div ref={this.cancelUploadButton}>
-            <DefaultButton color="danger" onClick={this.onCancelUploadButtonClick}>
+            <DefaultButton color="danger" onClick={this.handleCancelUploadButtonClick}>
               Cancel upload
             </DefaultButton>
           </div>
@@ -324,7 +324,7 @@ class MuxVideoInputUploader extends Component {
       <Dialog
         title="Upload failed"
         color="danger"
-        useOverlay={true}
+        useOverlay
         onClose={this.handleErrorClose}
         onEscape={this.handleErrorClose}
         onClickOutside={this.handleErrorClose}

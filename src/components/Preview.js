@@ -20,7 +20,7 @@ const MuxVideoPreview = (props) => {
     if (props.value.status !== 'ready') return
 
     const {signingKeyId, signingKeyPrivate} = secrets
-    const playbackId = props.value.playback_ids[0]
+    const playbackId = props.value.playbackIds[0]
 
     setPosterSrc(
       getPosterSrc(playbackId.id, {
