@@ -58,21 +58,15 @@
     "singleQuote": true
   },
   "eslintConfig": {
+    "parser": "sanipack/babel/eslint-parser",
     "extends": [
       "sanity",
       "sanity/react",
       "prettier",
       "prettier/react"
     ],
-    "env": {
-      "node": true,
-      "browser": true
-    },
-    "parserOptions": {
-      "ecmaVersion": 2020,
-      "ecmaFeatures": {
-        "jsx": true
-      }
+    "rules": {
+      "react/prop-types": "off"
     }
   }
 }
