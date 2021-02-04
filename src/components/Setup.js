@@ -143,11 +143,13 @@ class MuxVideoInputSetup extends Component {
       <div className={styles.root}>
         <form onSubmit={this.handleOnSubmit}>
           <Fieldset
-            legend={'MUX API Credentials'}
             level={1}
+            legend="MUX API Credentials"
             description="The credentials will be stored safely in a hidden document only available to editors."
+            changeIndicator={false}
           >
             <FormField
+              changeIndicator={false}
               label="Access Token"
               labelFor={this.tokenInputId}
               level={0}
@@ -163,6 +165,7 @@ class MuxVideoInputSetup extends Component {
             </FormField>
 
             <FormField
+              changeIndicator={false}
               label="Secret Key"
               labelFor={this.secretKeyInputId}
               level={0}
@@ -176,6 +179,7 @@ class MuxVideoInputSetup extends Component {
               />
             </FormField>
             <FormField
+              changeIndicator={false}
               label="Enable Signed Urls"
               labelFor={this.enableSignedUrlsInputId}
               level={0}

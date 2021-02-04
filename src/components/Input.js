@@ -15,6 +15,7 @@ import FullscreenDialog from 'part:@sanity/components/dialogs/fullscreen'
 import DialogContent from 'part:@sanity/components/dialogs/content'
 
 import PatchEvent, {set, setIfMissing} from 'part:@sanity/form-builder/patch-event'
+import ButtonCollection from 'part:@sanity/components/buttons/button-collection'
 import Checkbox from 'part:@sanity/components/toggles/checkbox'
 import DefaultButton from 'part:@sanity/components/buttons/default'
 import FormField from 'part:@sanity/components/formfields/default'
@@ -100,7 +101,7 @@ export default withDocument(
           secrets,
           isInitialSetup,
           needsSetup,
-          isLoading: !props.value?.asset // If there is an asset continue loading
+          isLoading: props.value?.asset // If there is an asset continue loading
         })
       })
       this.setupButton = React.createRef()
@@ -211,7 +212,7 @@ export default withDocument(
     }
 
     handleSetupButtonClicked = event => {
-      this.setState({showSetup: true})
+      this.setState(prevState => ({showSetup: !prevState.showStetup}))
     }
 
     handleSaveSetup = ({token, secretKey, enableSignedUrls, signingKeyId, signingKeyPrivate}) => {
@@ -521,34 +522,34 @@ export default withDocument(
                   >
                     <div className={styles.confirmDeletePopover}>
                       <div className={styles.confirmDeletePopoverButtons}>
-                        <DefaultButton onClick={this.handleCancelRemove}>Cancel</DefaultButton>
-                        <DefaultButton
-                          color="danger"
-                          onClick={this.handleRemoveVideo}
-                          loading={!!this.state.isLoading}
-                        >
-                          Remove
-                        </DefaultButton>
-                      </div>
-                      <div>
-                        <Checkbox
-                          checked={this.state.deleteOnMuxChecked}
-                          onChange={this.handleDeleteOnMuxCheckBoxClicked}
-                        >
-                          Delete asset on MUX.com
-                        </Checkbox>
+                        <ButtonCollection>
+                          <DefaultButton onClick={this.handleCancelRemove}>Cancel</DefaultButton>
+                          <DefaultButton
+                            color="danger"
+                            onClick={this.handleRemoveVideo}
+                            loading={!!this.state.isLoading}
+                          >
+                            Remove
+                          </DefaultButton>
+                        </ButtonCollection>
                       </div>
                     </div>
-                    <div>
+                    <div className={styles.deleteCheckboxRow}>
+                      <Checkbox
+                        checked={this.state.deleteOnMuxChecked}
+                        onChange={this.handleDeleteOnMuxCheckBoxClicked}
+                        label="Delete asset on MUX.com"
+                      />
+                    </div>
+                    <div className={styles.deleteCheckboxRow}>
                       <Checkbox
                         disabled={this.state.deleteOnMuxChecked}
                         checked={
                           this.state.deleteOnMuxChecked || this.state.deleteAssetDocumentChecked
                         }
                         onChange={this.handleDeleteAssetDocumentCheckBoxClicked}
-                      >
-                        Delete video from dataset
-                      </Checkbox>
+                        label="Delete video from dataset"
+                      />
                     </div>
                   </PopOver>
                 )}
