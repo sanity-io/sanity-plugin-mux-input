@@ -20,7 +20,7 @@ const propTypes = {
     secretKey: PropTypes.string,
     enableSignedUrls: PropTypes.bool,
     signingKeyId: PropTypes.string,
-    signingKeyPrivate: PropTypes.string,
+    signingKeyPrivate: PropTypes.string
   })
 }
 
@@ -78,8 +78,7 @@ class MuxVideoInputSetup extends Component {
     this.setState({secretKey: event.currentTarget.value})
   }
 
-  handleEnableSignedUrls = event =>
-    this.setState({ enableSignedUrls: event.currentTarget.checked })
+  handleEnableSignedUrls = event => this.setState({enableSignedUrls: event.currentTarget.checked})
 
   handleCancel = event => {
     this.props.onCancel()
@@ -107,8 +106,7 @@ class MuxVideoInputSetup extends Component {
     const hasValidSigningKeys = await haveValidSigningKeys(signingKeyId, signingKeyPrivate)
 
     if (!hasValidSigningKeys && enableSignedUrls) {
-      const { data } = await createSigningKeys()
-      
+      const {data} = await createSigningKeys()
       signingKeyId = data.id
       signingKeyPrivate = data.private_key
     }
@@ -120,22 +118,23 @@ class MuxVideoInputSetup extends Component {
       return
     }
 
-    let result;
-    
-    try { result = await testSecrets() }
-    catch (err) {
+    let result
+
+    try {
+      result = await testSecrets()
+    } catch (err) {
       handleError(err)
       return
     }
 
-    this.setState({ isLoading: false })
-    
+    this.setState({isLoading: false})
+
     if (result.status) {
       this.props.onSave({token, secretKey, enableSignedUrls, signingKeyId, signingKeyPrivate})
       return
-    } else {
-      handleError({error: 'Invalid credentials'})
     }
+
+    handleError({error: 'Invalid credentials'})
   }
 
   render() {
@@ -187,12 +186,13 @@ class MuxVideoInputSetup extends Component {
                 onChange={this.handleEnableSignedUrls}
                 checked={this.state.enableSignedUrls || false}
               />
-              {this.state.signingKeyId ?
-                <p className={styles.paragraph}>The signing key ID that Sanity will use is{' '}
-                  {this.state.signingKeyId}. This key is only used
-                for previewing content in the Sanity UI. You should generate
-                a different key to use in your application server.</p>
-                : null}
+              {this.state.signingKeyId ? (
+                <p className={styles.paragraph}>
+                  The signing key ID that Sanity will use is <code>{this.state.signingKeyId}</code>.
+                  This key is only used for previewing content in the Sanity UI. You should generate
+                  a different key to use in your application server.
+                </p>
+              ) : null}
             </FormField>
 
             <div className={styles.buttons}>

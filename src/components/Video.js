@@ -5,11 +5,11 @@ import ProgressBar from 'part:@sanity/components/progress/bar'
 import Button from 'part:@sanity/components/buttons/default'
 
 import {getAsset} from '../actions/assets'
+import {fetchSecrets} from '../actions/secrets'
 import getPosterSrc from '../util/getPosterSrc'
 import getVideoSrc from '../util/getVideoSrc'
 
 import styles from './Video.css'
-import { fetchSecrets } from '../actions/secrets'
 
 const NOOP = () => {}
 
@@ -65,7 +65,7 @@ class MuxVideo extends Component {
   componentDidMount() {
     this.video = React.createRef()
     this.setState(MuxVideo.getDerivedStateFromProps(this.props))
-    fetchSecrets().then(({ secrets }) => this.setState({ secrets }))
+    fetchSecrets().then(({secrets}) => this.setState({secrets}))
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -95,7 +95,7 @@ class MuxVideo extends Component {
 
     const source = getVideoSrc(playbackId, options)
     const posterSrc = getPosterSrc(playbackId, options)
-    this.setState({ source, posterSrc })
+    this.setState({source, posterSrc})
   }
 
   getVideoElement() {

@@ -1,9 +1,9 @@
 import React from 'react'
 import client from 'part:@sanity/base/client'
 import Button from 'part:@sanity/components/buttons/default'
-import styles from './SelectAsset.css'
 import getPosterSrc from '../util/getPosterSrc'
-import { fetchSecrets } from '../actions/secrets'
+import {fetchSecrets} from '../actions/secrets'
+import styles from './SelectAsset.css'
 
 const PER_PAGE = 200
 
@@ -13,9 +13,9 @@ function createQuery(start = 0, end = PER_PAGE) {
 
 export default class SelectAsset extends React.Component {
   pageNo = 0
-  
+
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       assets: [],
@@ -40,7 +40,7 @@ export default class SelectAsset extends React.Component {
 
   componentDidMount() {
     this.fetchPage(this.pageNo)
-    fetchSecrets().then(({ secrets }) => this.setState({ secrets }))
+    fetchSecrets().then(({secrets}) => this.setState({secrets}))
   }
 
   select(id) {
@@ -74,8 +74,8 @@ export default class SelectAsset extends React.Component {
   }
 
   render() {
-    const { assets, isLastPage, isLoading, secrets } = this.state
-    
+    const {assets, isLastPage, isLoading, secrets} = this.state
+
     return (
       <div className={styles.root}>
         <div className={styles.imageList}>

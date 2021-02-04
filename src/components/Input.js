@@ -174,7 +174,9 @@ export default withDocument(
               clearInterval(this.pollInterval)
               this.pollInterval = null
             }
-            const isSigned = assetDocument.data.playback_ids[0].policy === 'signed'
+
+            // eslint-disable-next-line camelcase
+            const isSigned = assetDocument?.data?.playback_ids[0]?.policy === 'signed'
             this.setState({assetDocument, isSigned, isLoading: false})
             return of(assetDocument)
           })
@@ -339,9 +341,9 @@ export default withDocument(
             signingKeyPrivate: cachedSecrets.signingKeyPrivate
           }
 
-          const thumb = getPosterSrc(assetDocument.playbackId, options);
+          const thumb = getPosterSrc(assetDocument.playbackId, options)
 
-          this.setState({ thumb });
+          this.setState({thumb})
         })
         .catch(error => {
           this.setState({error})
@@ -455,12 +457,13 @@ export default withDocument(
       if (!renderAsset) {
         return null
       }
-      const isSignedAlert = isSigned ?
+      const isSignedAlert = isSigned ? (
         <div className={styles.alert}>
-          <Alert title='Note' color='success'>
-              This mux asset is using a signed url
+          <Alert title="Note" color="success">
+            This mux asset is using a signed url
           </Alert>
-        </div> : null
+        </div>
+      ) : null
       return (
         <>
           {isSignedAlert}

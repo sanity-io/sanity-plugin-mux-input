@@ -90,7 +90,7 @@ class MuxVideoInputUploader extends Component {
 
   handleUploadFile = file => {
     this.setState({uploadProgress: 0, fileInfo: null, uuid: null})
-    this.upload = uploadFile(file, { enableSignedUrls: this.props.secrets.enableSignedUrls })
+    this.upload = uploadFile(file, {enableSignedUrls: this.props.secrets.enableSignedUrls})
       .pipe(
         takeUntil(
           this.onCancelUploadButtonClick$.pipe(
@@ -143,7 +143,7 @@ class MuxVideoInputUploader extends Component {
   handlePaste = event => {
     const clipboardData = event.clipboardData || window.clipboardData
     const url = clipboardData.getData('text')
-    const options = { enableSignedUrls: this.props.secrets.enableSignedUrls }
+    const options = {enableSignedUrls: this.props.secrets.enableSignedUrls}
 
     this.upload = uploadUrl(url, options).subscribe({
       complete: () => {

@@ -28,7 +28,7 @@ export function uploadUrl(url, options = {}) {
               return throwError(new Error('Invalid credentials'))
             }
             const uuid = Uuid.v4()
-            const { enableSignedUrls } = options
+            const {enableSignedUrls} = options
             const muxBody = {
               input: validUrl,
               playback_policy: [enableSignedUrls ? 'signed' : 'public']
@@ -78,9 +78,9 @@ export function uploadFile(file, options = {}) {
               return throwError(new Error('Invalid credentials'))
             }
             const uuid = Uuid.v4()
-            const { enableSignedUrls } = options
+            const {enableSignedUrls} = options
             const body = {
-              playback_policy: [enableSignedUrls ? 'signed' : 'public'],
+              playback_policy: [enableSignedUrls ? 'signed' : 'public']
               // TODO: These parameters were enabled by Sanity, but we are not using them yet
               // mp4_support: false (default),
               // normalize_audio: false (default),
