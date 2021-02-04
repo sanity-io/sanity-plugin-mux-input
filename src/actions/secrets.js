@@ -7,23 +7,21 @@ const cache = {
 }
 
 export function fetchSecrets() {
-  if (!cache.exists) {
-    return client.fetch('*[_id == "secrets.mux"]').then((results) => {
-      if (results.length > 0) {
-        cache.secrets = {
-          token: results[0].token || null,
-          secretKey: results[0].secretKey || null,
-          enableSignedUrls: results[0].enableSignedUrls || false,
-          signingKeyId: results[0].signingKeyId || null,
-          signingKeyPrivate: results[0].signingKeyPrivate || null,
-        }
-      }
-      cache.exists = results.length !== 0
-      return cache
-    })
-  } else {
+  if (cache.exists) {
     return Promise.resolve(cache)
   }
+
+  return client.fetch('*[_id == "secrets.mux"][0]').then((secrets) => {
+    cache.exists = Boolean(secrets)
+    cache.secrets = {
+      token: secrets.token || null,
+      secretKey: secrets.secretKey || null,
+      enableSignedUrls: secrets.enableSignedUrls || false,
+      signingKeyId: secrets.signingKeyId || null,
+      signingKeyPrivate: secrets.signingKeyPrivate || null,
+    }
+    return cache
+  })
 }
 
 export function saveSecrets(token, secretKey, enableSignedUrls, signingKeyId, signingKeyPrivate) {
@@ -36,14 +34,16 @@ export function saveSecrets(token, secretKey, enableSignedUrls, signingKeyId, si
     signingKeyId,
     signingKeyPrivate,
   }
-  return client.createOrReplace(doc).then((res) => {
-    return {
+  return client.createOrReplace(doc).then(() => {
+    cache.exists = true
+    cache.secrets = {
       token,
       secretKey,
       enableSignedUrls,
       signingKeyId,
       signingKeyPrivate,
     }
+    return cache.secrets
   })
 }
 
@@ -66,7 +66,9 @@ export function testSecrets() {
 }
 
 export async function haveValidSigningKeys(signingKeyId, signingKeyPrivate) {
-  if (!(signingKeyId && signingKeyPrivate)) return
+  if (!(signingKeyId && signingKeyPrivate)) {
+    return false
+  }
 
   const dataset = client.clientConfig.dataset
   const res = await client.request({
