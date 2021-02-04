@@ -1,4 +1,4 @@
-export default duration => {
+export default (duration) => {
   {
     const secNum = parseInt(duration, 10)
     let hours = Math.floor(secNum / 3600)

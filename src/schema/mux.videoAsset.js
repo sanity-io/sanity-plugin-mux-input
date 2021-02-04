@@ -5,23 +5,23 @@ export default {
   fields: [
     {
       type: 'string',
-      name: 'status'
+      name: 'status',
     },
     {
       type: 'string',
-      name: 'assetId'
+      name: 'assetId',
     },
     {
       type: 'string',
-      name: 'playbackId'
+      name: 'playbackId',
     },
     {
       type: 'string',
-      name: 'filename'
+      name: 'filename',
     },
     {
       type: 'number',
-      name: 'thumbTime'
-    }
-  ]
+      name: 'thumbTime',
+    },
+  ],
 }

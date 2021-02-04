@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import client from 'part:@sanity/base/client'
-import Uuid from 'uuid'
+import {uuid as generateUuid} from '@sanity/uuid'
 import {isString} from 'lodash'
 import {throwError, of, from, concat, defer} from 'rxjs'
 import {mergeMap, catchError, mergeMapTo, switchMap} from 'rxjs/operators'
@@ -13,29 +13,29 @@ export function cancelUpload(uuid) {
   return client.observable.request({
     url: `/addons/mux/uploads/${client.clientConfig.dataset}/${uuid}`,
     withCredentials: true,
-    method: 'DELETE'
+    method: 'DELETE',
   })
 }
 
 export function uploadUrl(url, options = {}) {
   return testUrl(url).pipe(
-    switchMap(validUrl => {
+    switchMap((validUrl) => {
       return concat(
         of({type: 'url', url: validUrl}),
         testSecretsObservable().pipe(
-          switchMap(json => {
+          switchMap((json) => {
             if (!json || !json.status) {
               return throwError(new Error('Invalid credentials'))
             }
-            const uuid = Uuid.v4()
+            const uuid = generateUuid()
             const {enableSignedUrls} = options
             const muxBody = {
               input: validUrl,
-              playback_policy: [enableSignedUrls ? 'signed' : 'public']
+              playback_policy: [enableSignedUrls ? 'signed' : 'public'],
             }
             const query = {
               muxBody: JSON.stringify(muxBody),
-              filename: validUrl.split('/').slice(-1)[0]
+              filename: validUrl.split('/').slice(-1)[0],
             }
             const dataset = studioClient.clientConfig.dataset
             return defer(() =>
@@ -45,12 +45,12 @@ export function uploadUrl(url, options = {}) {
                 method: 'POST',
                 headers: {
                   'MUX-Proxy-UUID': uuid,
-                  'Content-Type': 'application/json'
+                  'Content-Type': 'application/json',
                 },
-                query
+                query,
               })
             ).pipe(
-              mergeMap(result => {
+              mergeMap((result) => {
                 const asset =
                   (result && result.results && result.results[0] && result.results[0].document) ||
                   null
@@ -69,18 +69,18 @@ export function uploadUrl(url, options = {}) {
 
 export function uploadFile(file, options = {}) {
   return testFile(file).pipe(
-    switchMap(fileOptions => {
+    switchMap((fileOptions) => {
       return concat(
         of({type: 'file', file: fileOptions}),
         testSecretsObservable().pipe(
-          switchMap(json => {
+          switchMap((json) => {
             if (!json || !json.status) {
               return throwError(new Error('Invalid credentials'))
             }
-            const uuid = Uuid.v4()
+            const uuid = generateUuid()
             const {enableSignedUrls} = options
             const body = {
-              playback_policy: [enableSignedUrls ? 'signed' : 'public']
+              playback_policy: [enableSignedUrls ? 'signed' : 'public'],
               // TODO: These parameters were enabled by Sanity, but we are not using them yet
               // mp4_support: false (default),
               // normalize_audio: false (default),
@@ -95,25 +95,25 @@ export function uploadFile(file, options = {}) {
                   method: 'POST',
                   headers: {
                     'MUX-Proxy-UUID': uuid,
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                   },
-                  body
+                  body,
                 })
               ).pipe(
-                mergeMap(result => {
+                mergeMap((result) => {
                   return createUpChunkObservable(uuid, result.upload.url, file).pipe(
                     // eslint-disable-next-line max-nested-callbacks
-                    mergeMap(event => {
+                    mergeMap((event) => {
                       if (event.type !== 'success') {
                         return of(event)
                       }
                       return from(updateAssetDocumentFromUpload(uuid)).pipe(
                         // eslint-disable-next-line max-nested-callbacks
-                        mergeMap(doc => of({...event, asset: doc}))
+                        mergeMap((doc) => of({...event, asset: doc}))
                       )
                     }),
                     // eslint-disable-next-line max-nested-callbacks
-                    catchError(err => {
+                    catchError((err) => {
                       // Delete asset document
                       return cancelUpload(uuid).pipe(mergeMapTo(throwError(err)))
                     })
@@ -132,7 +132,7 @@ export function getUpload(assetId) {
   return client.request({
     url: `/addons/mux/uploads/${studioClient.clientConfig.dataset}/${assetId}`,
     withCredentials: true,
-    method: 'GET'
+    method: 'GET',
   })
 }
 
@@ -186,7 +186,7 @@ async function updateAssetDocumentFromUpload(uuid) {
     data: asset.data,
     assetId: asset.data.id,
     playbackId: asset.data.playback_ids[0].id,
-    uploadId: upload.data.id
+    uploadId: upload.data.id,
   }
   return client.createOrReplace(doc).then(() => {
     return doc
@@ -224,14 +224,14 @@ function optionsFromFile(opts, file) {
   }
   const fileOpts = {
     filename: opts.preserveFilename === false ? undefined : file.name,
-    contentType: file.type
+    contentType: file.type,
   }
 
   return {
     ...{
       filename: opts.preserveFilename === false ? undefined : file.name,
-      contentType: file.type
+      contentType: file.type,
     },
-    fileOpts
+    fileOpts,
   }
 }

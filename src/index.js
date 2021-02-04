@@ -4,5 +4,5 @@ import Player from './components/Video'
 export default {
   Input,
   Preview,
-  Player
+  Player,
 }

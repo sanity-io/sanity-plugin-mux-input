@@ -1,10 +1,12 @@
 {
   "name": "sanity-plugin-mux-input",
+  "version": "0.2.1",
   "description": "An input component that integrates Sanity Studio with MUX.com video encoding/hosting service.",
   "main": "build/index.js",
   "scripts": {
     "build": "sanipack build",
     "watch": "sanipack build --watch",
+    "test": "eslint .",
     "prepublishOnly": "sanipack build && sanipack verify"
   },
   "repository": {
@@ -23,29 +25,25 @@
   "license": "MIT",
   "dependencies": {
     "@mux/upchunk": "^2.2.0",
+    "@sanity/uuid": "^3.0.1",
     "hls.js": "^0.11.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.20",
     "prop-types": "^15.7.2",
-    "rxjs": "^6.5.3",
-    "uuid": "^3.3.2"
+    "rxjs": "^6.5.3"
   },
   "devDependencies": {
-    "babel-eslint": "^9.0.0",
-    "eslint": "7.19.0",
-    "eslint-config-prettier": "7.2.0",
-    "eslint-config-sanity": "1.150.8",
+    "eslint": "^7.19.0",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-config-sanity": "^1.150.8",
     "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-prettier": "^2.6.0",
-    "eslint-plugin-react": "7.22.0",
-    "prettier": "2.2.1",
-    "react-hot-loader": "4.3.8",
-    "sanipack": "1.0.2"
+    "eslint-plugin-react": "^7.22.0",
+    "prettier": "^2.2.1",
+    "sanipack": "^1.0.2"
   },
   "peerDependencies": {
     "react": "^16.9 || ^17"
   },
-  "version": "0.2.1",
   "publishConfig": {
     "access": "public"
   },

@@ -6,7 +6,7 @@ export function deleteAsset(assetId) {
   return client.request({
     url: `/addons/mux/assets/${dataset}/${assetId}`,
     withCredentials: true,
-    method: 'DELETE'
+    method: 'DELETE',
   })
 }
 
@@ -15,7 +15,7 @@ export function getAsset(assetId) {
   return client.request({
     url: `/addons/mux/assets/${dataset}/data/${assetId}`,
     withCredentials: true,
-    method: 'GET'
+    method: 'GET',
   })
 }
 

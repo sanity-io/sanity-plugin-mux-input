@@ -20,8 +20,8 @@ const propTypes = {
     secretKey: PropTypes.string,
     enableSignedUrls: PropTypes.bool,
     signingKeyId: PropTypes.string,
-    signingKeyPrivate: PropTypes.string
-  })
+    signingKeyPrivate: PropTypes.string,
+  }),
 }
 
 class MuxVideoInputSetup extends Component {
@@ -34,7 +34,7 @@ class MuxVideoInputSetup extends Component {
     secretKey: null,
     enableSignedUrls: false,
     isLoading: false,
-    error: null
+    error: null,
   }
 
   static getDerivedStateFromProps(nextProps, nextState) {
@@ -47,7 +47,7 @@ class MuxVideoInputSetup extends Component {
         secretKey: nextProps.secrets.secretKey,
         enableSignedUrls: nextProps.secrets.enableSignedUrls,
         signingKeyId: nextProps.secrets.signingKeyId,
-        signingKeyPrivate: nextProps.secrets.signingKeyPrivate
+        signingKeyPrivate: nextProps.secrets.signingKeyPrivate,
       }
     }
     return null
@@ -70,30 +70,30 @@ class MuxVideoInputSetup extends Component {
     this.firstField.current.focus()
   }
 
-  handleTokenChanged = event => {
+  handleTokenChanged = (event) => {
     this.setState({token: event.currentTarget.value})
   }
 
-  handleSecretKeyChanged = event => {
+  handleSecretKeyChanged = (event) => {
     this.setState({secretKey: event.currentTarget.value})
   }
 
-  handleEnableSignedUrls = event => this.setState({enableSignedUrls: event.currentTarget.checked})
+  handleEnableSignedUrls = (event) => this.setState({enableSignedUrls: event.currentTarget.checked})
 
-  handleCancel = event => {
+  handleCancel = (event) => {
     this.props.onCancel()
   }
 
-  handleOnSubmit = event => {
+  handleOnSubmit = (event) => {
     event.preventDefault()
   }
 
   handleSaveToken = async () => {
-    const handleError = err => {
+    const handleError = (err) => {
       console.error(err) // eslint-disable-line no-console
       this.setState({
         isLoading: false,
-        error: 'Something went wrong saving the token. See console.error for more info.'
+        error: 'Something went wrong saving the token. See console.error for more info.',
       })
     }
     this.setState({isLoading: true})

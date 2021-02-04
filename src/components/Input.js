@@ -38,7 +38,7 @@ const cachedSecrets = {
   secretKey: null,
   enableSignedUrls: false,
   signingKeyId: null,
-  signingKeyPrivate: null
+  signingKeyPrivate: null,
 }
 
 function validateSecrets(secrets) {
@@ -53,7 +53,7 @@ function getSecrets() {
     return Promise.resolve({
       isInitialSetup: true,
       needsSetup: false,
-      secrets: cachedSecrets
+      secrets: cachedSecrets,
     })
   }
   return fetchSecrets()
@@ -66,10 +66,10 @@ function getSecrets() {
       return {
         isInitialSetup: !exists,
         needsSetup: validateSecrets(cachedSecrets),
-        secrets: cachedSecrets
+        secrets: cachedSecrets,
       }
     })
-    .catch(error => {
+    .catch((error) => {
       this.setState({error})
     })
 }
@@ -91,7 +91,7 @@ export default withDocument(
       showNewUpload: false,
       showSetup: false,
       showBrowser: false,
-      videoReadyToPlay: false
+      videoReadyToPlay: false,
     }
 
     constructor(props) {
@@ -101,7 +101,7 @@ export default withDocument(
           secrets,
           isInitialSetup,
           needsSetup,
-          isLoading: props.value?.asset // If there is an asset continue loading
+          isLoading: props.value?.asset, // If there is an asset continue loading
         })
       })
       this.setupButton = React.createRef()
@@ -152,10 +152,10 @@ export default withDocument(
         'data',
         'assetId',
         'playbackId',
-        'status'
+        'status',
       ])
         .pipe(
-          tap(assetDocument => {
+          tap((assetDocument) => {
             this.setState({assetDocument})
             if (assetDocument && assetDocument.status === 'errored') {
               clearInterval(this.pollInterval)
@@ -164,7 +164,7 @@ export default withDocument(
               return this.handleRemoveVideo().then(() => {
                 this.setState({
                   isLoading: false,
-                  error: new Error(assetDocument.data.errors.messages.join(' '))
+                  error: new Error(assetDocument.data.errors.messages.join(' ')),
                 })
               })
             }
@@ -195,24 +195,24 @@ export default withDocument(
       }
       this.pollInterval = setInterval(() => {
         getAsset(assetDocument.assetId)
-          .then(response => {
+          .then((response) => {
             const props = response.data
             client
               .patch(assetDocument._id)
               .set({
                 status: props.status,
-                data: props
+                data: props,
               })
               .commit({returnDocuments: false})
           })
-          .catch(error => {
+          .catch((error) => {
             this.setState({error})
           })
       }, 2000)
     }
 
-    handleSetupButtonClicked = event => {
-      this.setState(prevState => ({showSetup: !prevState.showStetup}))
+    handleSetupButtonClicked = (event) => {
+      this.setState((prevState) => ({showSetup: !prevState.showStetup}))
     }
 
     handleSaveSetup = ({token, secretKey, enableSignedUrls, signingKeyId, signingKeyPrivate}) => {
@@ -224,7 +224,7 @@ export default withDocument(
       this.setState({
         showSetup: false,
         secrets: cachedSecrets,
-        needsSetup: validateSecrets(cachedSecrets)
+        needsSetup: validateSecrets(cachedSecrets),
       })
     }
 
@@ -232,7 +232,7 @@ export default withDocument(
       this.setState({showSetup: false})
     }
 
-    handleOnUploadComplete = result => {
+    handleOnUploadComplete = (result) => {
       const {onChange} = this.props
       const {_id} = result
       onChange(
@@ -243,7 +243,7 @@ export default withDocument(
       })
     }
 
-    handleRemoveVideoButtonClicked = event => {
+    handleRemoveVideoButtonClicked = (event) => {
       event.preventDefault()
       event.stopPropagation()
       this.setState({confirmRemove: true})
@@ -258,7 +258,7 @@ export default withDocument(
             {
               assetDocument: null,
               confirmRemove: false,
-              isLoading: false
+              isLoading: false,
             },
             () => {
               if (this.state.deleteOnMuxChecked || this.state.deleteAssetDocumentChecked) {
@@ -275,7 +275,7 @@ export default withDocument(
                       .then(() => {
                         resolve()
                       })
-                      .catch(error => {
+                      .catch((error) => {
                         reject(error)
                       })
                   })
@@ -288,38 +288,38 @@ export default withDocument(
       return unsetAsset()
         .then(() => {
           if (this.state.deleteOnMuxChecked) {
-            return deleteAsset(assetDocument.assetId).catch(error => {
+            return deleteAsset(assetDocument.assetId).catch((error) => {
               this.setState({error})
             })
           }
           return true
         })
-        .catch(error => {
+        .catch((error) => {
           this.setState({error})
         })
     }
 
-    handleCancelRemove = event => {
+    handleCancelRemove = (event) => {
       this.setState({
         confirmRemove: false,
         deleteOnMuxChecked: true,
-        deleteAssetDocumentChecked: true
+        deleteAssetDocumentChecked: true,
       })
     }
 
-    handleDeleteOnMuxCheckBoxClicked = event => {
-      this.setState(prevState => ({
-        deleteOnMuxChecked: !prevState.deleteOnMuxChecked
+    handleDeleteOnMuxCheckBoxClicked = (event) => {
+      this.setState((prevState) => ({
+        deleteOnMuxChecked: !prevState.deleteOnMuxChecked,
       }))
     }
 
-    handleDeleteAssetDocumentCheckBoxClicked = event => {
-      this.setState(prevState => ({
-        deleteAssetDocumentChecked: !prevState.deleteAssetDocumentChecked
+    handleDeleteAssetDocumentCheckBoxClicked = (event) => {
+      this.setState((prevState) => ({
+        deleteAssetDocumentChecked: !prevState.deleteAssetDocumentChecked,
       }))
     }
 
-    handleSetThumbButton = event => {
+    handleSetThumbButton = (event) => {
       if (!this.videoPlayer.current) {
         return
       }
@@ -328,10 +328,10 @@ export default withDocument(
       client
         .patch(assetDocument._id)
         .set({
-          thumbTime: currentTime
+          thumbTime: currentTime,
         })
         .commit({returnDocuments: false})
-        .then(response => {
+        .then((response) => {
           const options = {
             time: currentTime,
             width: 320,
@@ -339,45 +339,45 @@ export default withDocument(
             fitMode: 'crop',
             isSigned,
             signingKeyId: cachedSecrets.signingKeyId,
-            signingKeyPrivate: cachedSecrets.signingKeyPrivate
+            signingKeyPrivate: cachedSecrets.signingKeyPrivate,
           }
 
           const thumb = getPosterSrc(assetDocument.playbackId, options)
 
           this.setState({thumb})
         })
-        .catch(error => {
+        .catch((error) => {
           this.setState({error})
         })
     }
 
-    handleErrorClose = event => {
+    handleErrorClose = (event) => {
       if (event) {
         event.preventDefault()
       }
       this.setState({
-        error: null
+        error: null,
       })
     }
 
-    handleCloseThumbPreview = event => {
+    handleCloseThumbPreview = (event) => {
       this.setState({thumb: null})
     }
 
-    handleBrowseButton = event => {
+    handleBrowseButton = (event) => {
       this.setState({showBrowser: true})
     }
 
-    handleCloseBrowser = event => {
+    handleCloseBrowser = (event) => {
       this.setState({showBrowser: false})
     }
 
-    handleSelectAsset = asset => {
+    handleSelectAsset = (asset) => {
       const {onChange} = this.props
       onChange(
         PatchEvent.from([
           setIfMissing({asset: {_ref: asset._id}}, []),
-          set({_ref: asset._id}, ['asset'])
+          set({_ref: asset._id}, ['asset']),
         ])
       )
       this.setState({showBrowser: false, assetDocument: asset}, () => {

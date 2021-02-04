@@ -8,7 +8,7 @@ export default class UploadPlaceholder extends React.PureComponent {
     hasFocus: PropTypes.bool,
     invalidPaste: PropTypes.bool,
     invalidFile: PropTypes.bool,
-    isDraggingOver: PropTypes.bool
+    isDraggingOver: PropTypes.bool,
   }
   render() {
     const {invalidPaste, invalidFile, hasFocus, isDraggingOver} = this.props

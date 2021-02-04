@@ -17,12 +17,12 @@ const propTypes = {
   assetDocument: PropTypes.object.isRequired,
   autoload: PropTypes.bool,
   onCancel: PropTypes.func,
-  onReady: PropTypes.func
+  onReady: PropTypes.func,
 }
 
 class MuxVideo extends Component {
   static defaultProps = {
-    autoload: true
+    autoload: true,
   }
 
   videoContainer = React.createRef()
@@ -36,7 +36,7 @@ class MuxVideo extends Component {
       isLoading: true,
       error: null,
       isDeletedOnMux: false,
-      secrets: null
+      secrets: null,
     }
   }
 
@@ -90,7 +90,7 @@ class MuxVideo extends Component {
     const options = {
       isSigned: assetDocument.data.playback_ids[0].policy === 'signed',
       signingKeyId: this.state.secrets.signingKeyId || null,
-      signingKeyPrivate: this.state.secrets.signingKeyPrivate || null
+      signingKeyPrivate: this.state.secrets.signingKeyPrivate || null,
     }
 
     const source = getVideoSrc(playbackId, options)
@@ -124,10 +124,10 @@ class MuxVideo extends Component {
             }
             this.setState({error: data})
             getAsset(assetDocument.assetId)
-              .then(response => {
+              .then((response) => {
                 this.setState({isDeletedOnMux: false})
               })
-              .catch(err => {
+              .catch((err) => {
                 if (err.message.match(/404/)) {
                   this.setState({isDeletedOnMux: true})
                   return
@@ -148,7 +148,7 @@ class MuxVideo extends Component {
     }
   }
 
-  handleVideoClick = event => {
+  handleVideoClick = (event) => {
     this.setState({showControls: true})
     this.hls.startLoad(0)
     if (this.props.onReady) {
@@ -156,7 +156,7 @@ class MuxVideo extends Component {
     }
   }
 
-  handleCancelButtonClicked = event => {
+  handleCancelButtonClicked = (event) => {
     if (this.props.onCancel) {
       this.props.onCancel(event)
     }
