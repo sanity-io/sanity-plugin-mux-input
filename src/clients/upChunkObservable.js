@@ -45,9 +45,6 @@ export function createUpChunkObservable(uuid, uploadUrl, source) {
     upchunk.on('offline', offlineHandler)
     upchunk.on('online', onlineHandler)
 
-    return () => {
-      upchunk.pause()
-      // Should be teared down here, but upChunk doesn't support it
-    }
+    return () => upchunk.abort()
   })
 }

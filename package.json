@@ -1,67 +1,80 @@
 {
   "name": "sanity-plugin-mux-input",
-  "version": "0.2.1",
   "description": "An input component that integrates Sanity Studio with MUX.com video encoding/hosting service.",
   "main": "build/index.js",
   "scripts": {
-    "build": "babel src -d build --copy-files",
-    "watch": "babel src -d build --copy-files --watch",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "prepublish": "npm run build"
+    "build": "sanipack build",
+    "watch": "sanipack build --watch",
+    "prepublishOnly": "sanipack build && sanipack verify"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sanity-io/sanity-plugin-mux-input.git"
+    "url": "git@github.com:sanity-io/sanity-plugin-mux-input.git"
   },
   "keywords": [
     "sanity",
     "video",
     "mux",
     "input",
-    "plugin"
+    "plugin",
+    "sanity-plugin"
   ],
+  "author": "Sanity.io <hello@sanity.io>",
+  "license": "MIT",
+  "dependencies": {
+    "@mux/upchunk": "^2.2.0",
+    "hls.js": "^0.11.0",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.20",
+    "prop-types": "^15.7.2",
+    "rxjs": "^6.5.3",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "babel-eslint": "^9.0.0",
+    "eslint": "7.19.0",
+    "eslint-config-prettier": "7.2.0",
+    "eslint-config-sanity": "1.150.8",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^2.6.0",
+    "eslint-plugin-react": "7.22.0",
+    "prettier": "2.2.1",
+    "react-hot-loader": "4.3.8",
+    "sanipack": "1.0.2"
+  },
+  "peerDependencies": {
+    "react": "^16.9 || ^17"
+  },
+  "version": "0.2.1",
   "publishConfig": {
     "access": "public"
   },
-  "author": "Sanity.io <hello@sanity.io>",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/sanity-io/sanity-plugin-mux-input/issues"
   },
   "homepage": "https://github.com/sanity-io/sanity-plugin-mux-input#readme",
-  "devDependencies": {
-    "@babel/cli": "^7.12.13",
-    "@babel/core": "^7.12.13",
-    "@babel/plugin-proposal-class-properties": "^7.12.13",
-    "@babel/plugin-transform-runtime": "^7.12.13",
-    "@babel/preset-env": "^7.12.13",
-    "@babel/preset-react": "^7.12.13",
-    "babel-eslint": "^9.0.0",
-    "eslint": "^5.6.0",
-    "eslint-config-prettier": "^3.0.1",
-    "eslint-config-sanity": "^4.0.2",
-    "eslint-plugin-import": "^2.9.0",
-    "eslint-plugin-prettier": "^2.6.0",
-    "eslint-plugin-react": "^7.7.0",
-    "prettier": "^1.14.2",
-    "react-hot-loader": "4.3.8"
+  "prettier": {
+    "semi": false,
+    "printWidth": 100,
+    "bracketSpacing": false,
+    "singleQuote": true
   },
-  "dependencies": {
-    "@babel/runtime": "^7.12.13",
-    "@mux/upchunk": "^1.0.6",
-    "get-it": "^4.0.4",
-    "hls.js": "^0.11.0",
-    "jsonwebtoken": "^8.5.1",
-    "lodash": "^4.17.15",
-    "prop-types": "^15.6.0",
-    "react": "^16.2.0",
-    "uuid": "^3.3.2"
-  },
-  "peerDependencies": {
-    "@sanity/client": ">= 0.135.x",
-    "@sanity/base": ">= 0.135.x",
-    "@sanity/components": ">= 0.135.x",
-    "@sanity/core": ">= 0.135.x",
-    "rxjs": ">= 6.1.0"
+  "eslintConfig": {
+    "extends": [
+      "sanity",
+      "sanity/react",
+      "prettier",
+      "prettier/react"
+    ],
+    "env": {
+      "node": true,
+      "browser": true
+    },
+    "parserOptions": {
+      "ecmaVersion": 2018,
+      "ecmaFeatures": {
+        "jsx": true
+      }
+    }
   }
 }

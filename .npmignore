@@ -1,4 +1,5 @@
-
 .DS_Store
+.editorconfig
+.eslintignore
 /src
 /node_modules

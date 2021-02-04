@@ -5,7 +5,7 @@ import {isString} from 'lodash'
 import {throwError, of, from, concat, defer} from 'rxjs'
 import {mergeMap, catchError, mergeMapTo, switchMap} from 'rxjs/operators'
 import studioClient from 'part:@sanity/base/client'
-import {createUpChunkObservable} from '../clients/upChunkObserable'
+import {createUpChunkObservable} from '../clients/upChunkObservable'
 import {getAsset} from '../actions/assets'
 import {testSecretsObservable} from '../actions/secrets'
 
