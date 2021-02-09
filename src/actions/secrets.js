@@ -14,11 +14,11 @@ export function fetchSecrets() {
   return client.fetch('*[_id == "secrets.mux"][0]').then((secrets) => {
     cache.exists = Boolean(secrets)
     cache.secrets = {
-      token: secrets.token || null,
-      secretKey: secrets.secretKey || null,
-      enableSignedUrls: secrets.enableSignedUrls || false,
-      signingKeyId: secrets.signingKeyId || null,
-      signingKeyPrivate: secrets.signingKeyPrivate || null,
+      token: secrets?.token || null,
+      secretKey: secrets?.secretKey || null,
+      enableSignedUrls: secrets?.enableSignedUrls || false,
+      signingKeyId: secrets?.signingKeyId || null,
+      signingKeyPrivate: secrets?.signingKeyPrivate || null,
     }
     return cache
   })

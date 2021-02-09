@@ -71,9 +71,6 @@ function getSecrets() {
         secrets: cachedSecrets,
       }
     })
-    .catch((error) => {
-      this.setState({error})
-    })
 }
 
 export default withDocument(
@@ -104,7 +101,8 @@ export default withDocument(
           needsSetup,
           isLoading: props.value?.asset, // If there is an asset continue loading
         })
-      })
+      }).catch((error) => this.setState({ error }))
+      
       this.setupButton = React.createRef()
       this.pollInterval = null
       this.video = React.createRef()
