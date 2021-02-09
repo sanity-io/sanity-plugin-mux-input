@@ -40,7 +40,7 @@
     "eslint-plugin-react": "^7.22.0",
     "prettier": "^2.2.1",
     "react": "^17.0.1",
-    "sanipack": "^1.0.6"
+    "sanipack": "^1.0.7"
   },
   "peerDependencies": {
     "react": "^16.9 || ^17"
