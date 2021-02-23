@@ -124,6 +124,10 @@ export default withDocument(
       }
     }
 
+    focus = () => {
+      this.handleFocus();
+    }
+
     handleFocus = () => {
       this.setState({hasFocus: true})
     }
