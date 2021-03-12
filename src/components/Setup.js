@@ -117,6 +117,7 @@ class MuxVideoInputSetup extends Component {
         const { data } = await createSigningKeys()
         signingKeyId = data.id
         signingKeyPrivate = data.private_key
+        await saveSecrets(token, secretKey, enableSignedUrls, signingKeyId, signingKeyPrivate)
       } catch ({ message }) {
         this.setState({ error: message })
       }
