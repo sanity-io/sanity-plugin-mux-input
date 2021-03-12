@@ -71,13 +71,20 @@ export async function haveValidSigningKeys(signingKeyId, signingKeyPrivate) {
   }
 
   const dataset = client.clientConfig.dataset
-  const res = await client.request({
-    url: `/addons/mux/signing-keys/${dataset}/${signingKeyId}`,
-    withCredentials: true,
-    method: 'GET',
-  })
-
-  return res.status === 200
+  try {
+    const res = await client.request({
+      url: `/addons/mux/signing-keys/${dataset}/${signingKeyId}`,
+      withCredentials: true,
+      method: 'GET',
+    })
+    //
+    // if this signing key is valid it will return { data: { id: 'xxxx' } }
+    //
+    return !!(res.data && res.data.id);
+  } catch (e) {
+    console.error('Error fetching signingKeyId', signingKeyId, 'assuming it is not valid');
+    return false
+  }
 }
 
 export function testSecretsObservable() {
