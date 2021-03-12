@@ -58,3 +58,17 @@ You could use any player which supports HLS, just point the video source to:
 To enable [signed urls](https://docs.mux.com/docs/security-signed-urls) with content uploaded to Mux, you will need to check the "Enable Signed Urls" option in the Mux Plugin configuration. Assuming that the API Access Token and Secret Key are set (as per the [Quick start](#quick-start) section).
 
 More information for this feature of the plugin can be found on Mux's [documentation](https://docs.mux.com/docs/headless-cms-sanity#advanced-signed-urls)
+
+# Contributing
+
+Issues are actively monitored and PRs are welcome. When developing this plugin the easiest setup is:
+
+1. Fork this repo.
+1. Install the sanity cli and create a sanity project: `npm install -g @sanity/cli && sanity init`. Follow the prompts, starting out with the blog template is a good way to go.
+1. `cd` into your project directory, run `npm install && npm start` - your sanity studio should be running on http://localhost:3333.
+1. `cd` into the `plugins` director of your project.
+1. Fork this repo and clone your fork into the `plugins` directory inside your project `git clone git@github.com:your-fork/sanity-plugin-mux-input.git`.
+1. Open `sanity.json`, go to the `plugins` array and add `mux-input`.
+1. Re-start the stanity studio server with `npm start`.
+1. Edit `schemas/post.js` and add follow the plugin documentation to add a `mux.video` type field.
+1. Your studio should reload, and now when you edit the plugin code it should reload the studio, when you're done create a branch, put in a PR and a maintainer will review it. Thank you!
