@@ -69,6 +69,6 @@ Issues are actively monitored and PRs are welcome. When developing this plugin t
 1. `cd` into the `plugins` director of your project.
 1. Fork this repo and clone your fork into the `plugins` directory inside your project `git clone git@github.com:your-fork/sanity-plugin-mux-input.git`.
 1. Open `sanity.json`, go to the `plugins` array and add `mux-input`.
-1. Re-start the stanity studio server with `npm start`.
+1. Re-start the sanity studio server with `npm start`.
 1. Edit `schemas/post.js` and add follow the plugin documentation to add a `mux.video` type field.
 1. Your studio should reload, and now when you edit the plugin code it should reload the studio, when you're done create a branch, put in a PR and a maintainer will review it. Thank you!
