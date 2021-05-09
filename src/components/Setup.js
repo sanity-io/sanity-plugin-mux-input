@@ -7,9 +7,9 @@ import {createSigningKeys, haveValidSigningKeys, saveSecrets, testSecrets} from 
 import Fieldset from 'part:@sanity/components/fieldsets/default'
 import FormField from 'part:@sanity/components/formfields/default'
 import TextInput from 'part:@sanity/components/textinputs/default'
-import Checkbox from 'part:@sanity/components/toggles/checkbox'
+// import Checkbox from 'part:@sanity/components/toggles/checkbox'
 
-import {Button, Box} from '@sanity/ui'
+import {Button, Stack, Checkbox, Inline, Flex, Text, Code, Box} from '@sanity/ui'
 
 import styles from './Setup.css'
 
@@ -146,20 +146,25 @@ class MuxVideoInputSetup extends Component {
   render() {
     const {error, isLoading} = this.state
     return (
-      <Box padding={3} style={{position: 'relative'}}>
+      <Box
+        paddingRight={4}
+        paddingLeft={4}
+        paddingBottom={4}
+        paddingTop={2}
+        style={{position: 'relative'}}
+      >
         <form onSubmit={this.handleOnSubmit}>
           <Fieldset
             level={1}
             description="The credentials will be stored safely in a hidden document only available to editors."
             changeIndicator={false}
           >
-            <Box paddingRight={3}>
+            <Stack space={4} paddingRight={3}>
               <FormField
                 changeIndicator={false}
                 label="Access Token"
                 labelFor={this.tokenInputId}
                 level={0}
-                className={styles.formField}
               >
                 <TextInput
                   id={this.tokenInputId}
@@ -174,7 +179,6 @@ class MuxVideoInputSetup extends Component {
                 label="Secret Key"
                 labelFor={this.secretKeyInputId}
                 level={0}
-                className={styles.formField}
               >
                 <TextInput
                   id={this.secretKeyInputId}
@@ -183,29 +187,44 @@ class MuxVideoInputSetup extends Component {
                   value={this.state.secretKey || ''}
                 />
               </FormField>
-              <FormField
-                changeIndicator={false}
-                label="Enable Signed Urls"
-                labelFor={this.enableSignedUrlsInputId}
-                level={0}
-                className={styles.formField}
-              >
-                <Checkbox
-                  id={this.enableSignedUrlsInputId}
-                  onChange={this.handleEnableSignedUrls}
-                  checked={this.state.enableSignedUrls || false}
-                />
-                {this.state.signingKeyId ? (
-                  <p className={styles.paragraph}>
-                    The signing key ID that Sanity will use is{' '}
-                    <code>{this.state.signingKeyId}</code>. This key is only used for previewing
-                    content in the Sanity UI. You should generate a different key to use in your
-                    application server.
-                  </p>
-                ) : null}
-              </FormField>
 
-              <div className={styles.buttons}>
+              <Stack space={4}>
+                <Flex align="center">
+                  <Checkbox
+                    id={this.enableSignedUrlsInputId}
+                    onChange={this.handleEnableSignedUrls}
+                    checked={this.state.enableSignedUrls || false}
+                    style={{display: 'block'}}
+                  />
+                  <Box flex={1} paddingLeft={3}>
+                    <Text>
+                      <label htmlFor={this.enableSignedUrlsInputId}>Enable Signed Urls</label>
+                    </Text>
+                  </Box>
+                </Flex>
+                {this.state.signingKeyId ? (
+                  <Stack space={3}>
+                    <Inline space={2}>
+                      <Text size={1}>The signing key ID that Sanity will use is: </Text>
+                      <Code
+                        size={1}
+                        weight={500}
+                        muted={true}
+                        style={{display: 'inline-block'}}
+                        marginLeft={3}
+                      >
+                        {this.state.signingKeyId}
+                      </Code>
+                    </Inline>
+                    <Text size={1}>
+                      This key is only used for previewing content in the Sanity UI. You should
+                      generate a different key to use in your application server.
+                    </Text>
+                  </Stack>
+                ) : null}
+              </Stack>
+
+              <Inline space={2}>
                 <Button
                   text="Save"
                   loading={isLoading}
@@ -215,13 +234,13 @@ class MuxVideoInputSetup extends Component {
                 />
 
                 <Button text="Cancel" tone="primary" mode="bleed" onClick={this.handleCancel} />
-              </div>
+              </Inline>
 
               {error && <p className={styles.error}>{error}</p>}
-            </Box>
+            </Stack>
           </Fieldset>
-          <div className={styles.notice}>
-            <p>
+          <Stack space={3} marginTop={4}>
+            <Text size={1} muted={true}>
               To set up a new access token, go to your{' '}
               <a
                 href="https://dashboard.mux.com/settings/access-tokens"
@@ -231,12 +250,12 @@ class MuxVideoInputSetup extends Component {
                 account on mux.com
               </a>
               .
-            </p>
-            <p>
+            </Text>
+            <Text size={1} muted={true}>
               The access token needs permissions: <strong>Mux Video </strong>
               (Full Access) and <strong>Mux Data</strong> (Read)
-            </p>
-          </div>
+            </Text>
+          </Stack>
         </form>
       </Box>
     )

@@ -13,12 +13,6 @@
   font-size: var(--font-size-small);
 }
 
-.warning {
-  padding: var(--medium-padding);
-  background-color: #efefefef;
-  color: var(--black);
-}
-
 .header {
   display: flex;
   align-items: center;

@@ -402,13 +402,6 @@ export default withDocument(
 
     renderSetup() {
       const {secrets} = this.state
-      const setup = (
-        <Setup
-          secrets={secrets ? secrets : null}
-          onSave={this.handleSaveSetup}
-          onCancel={this.handleCancelSaveSetup}
-        />
-      )
 
       return (
         <Dialog
@@ -417,7 +410,11 @@ export default withDocument(
           onClose={this.handleCancelSaveSetup}
           zOffset={1000}
         >
-          {setup}
+          <Setup
+            secrets={secrets || null}
+            onSave={this.handleSaveSetup}
+            onCancel={this.handleCancelSaveSetup}
+          />
         </Dialog>
       )
     }
@@ -448,17 +445,19 @@ export default withDocument(
         return null
       }
       return (
-        <div className={styles.warning}>
+        <Stack padding={4} space={5} style={{backgroundColor: '#efefefef', borderRadius: 3}}>
           <MuxLogo />
-          {isInitialSetup && (
-            <p>
-              Looks like this is the first time you are using the MUX video plugin in this dataset.
-              Great!
-            </p>
-          )}
-          <p>Before you can upload video, you must set your MUX credentials.</p>
-          <p>Click the plugin button in the field title to open Setup.</p>
-        </div>
+          <Stack space={4}>
+            {isInitialSetup && (
+              <Text>
+                Looks like this is the first time you are using the MUX video plugin in this
+                dataset. Great!
+              </Text>
+            )}
+            <Text>Before you can upload video, you must set your MUX credentials.</Text>
+            <Text>Click the plugin button in the field title to open Setup.</Text>
+          </Stack>
+        </Stack>
       )
     }
 
