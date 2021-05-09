@@ -1,9 +1,5 @@
 @import 'part:@sanity/base/theme/variables-style';
 
-.root {
-  position: relative;
-}
-
 .formField {
   margin-bottom: var(--medium-padding);
 }
@@ -14,6 +10,10 @@
 
 .buttons {
   margin-bottom: var(--small-padding);
+}
+
+.buttons button {
+  margin-right: 10px;
 }
 
 .notice {

@@ -4,11 +4,12 @@ import PropTypes from 'prop-types'
 import {uniqueId} from 'lodash'
 import {createSigningKeys, haveValidSigningKeys, saveSecrets, testSecrets} from '../actions/secrets'
 
-import Button from 'part:@sanity/components/buttons/default'
 import Fieldset from 'part:@sanity/components/fieldsets/default'
 import FormField from 'part:@sanity/components/formfields/default'
 import TextInput from 'part:@sanity/components/textinputs/default'
 import Checkbox from 'part:@sanity/components/toggles/checkbox'
+
+import {Button, Box} from '@sanity/ui'
 
 import styles from './Setup.css'
 
@@ -114,12 +115,12 @@ class MuxVideoInputSetup extends Component {
 
     if (!hasValidSigningKeys && enableSignedUrls) {
       try {
-        const { data } = await createSigningKeys()
+        const {data} = await createSigningKeys()
         signingKeyId = data.id
         signingKeyPrivate = data.private_key
         await saveSecrets(token, secretKey, enableSignedUrls, signingKeyId, signingKeyPrivate)
-      } catch ({ message }) {
-        this.setState({ error: message })
+      } catch ({message}) {
+        this.setState({error: message})
       }
     }
 
@@ -145,80 +146,79 @@ class MuxVideoInputSetup extends Component {
   render() {
     const {error, isLoading} = this.state
     return (
-      <div className={styles.root}>
+      <Box padding={3} style={{position: 'relative'}}>
         <form onSubmit={this.handleOnSubmit}>
           <Fieldset
             level={1}
-            legend="MUX API Credentials"
             description="The credentials will be stored safely in a hidden document only available to editors."
             changeIndicator={false}
           >
-            <FormField
-              changeIndicator={false}
-              label="Access Token"
-              labelFor={this.tokenInputId}
-              level={0}
-              className={styles.formField}
-            >
-              <TextInput
-                id={this.tokenInputId}
-                ref={this.firstField}
-                onChange={this.handleTokenChanged}
-                type="text"
-                value={this.state.token || ''}
-              />
-            </FormField>
-
-            <FormField
-              changeIndicator={false}
-              label="Secret Key"
-              labelFor={this.secretKeyInputId}
-              level={0}
-              className={styles.formField}
-            >
-              <TextInput
-                id={this.secretKeyInputId}
-                onChange={this.handleSecretKeyChanged}
-                type="text"
-                value={this.state.secretKey || ''}
-              />
-            </FormField>
-            <FormField
-              changeIndicator={false}
-              label="Enable Signed Urls"
-              labelFor={this.enableSignedUrlsInputId}
-              level={0}
-              className={styles.formField}
-            >
-              <Checkbox
-                id={this.enableSignedUrlsInputId}
-                onChange={this.handleEnableSignedUrls}
-                checked={this.state.enableSignedUrls || false}
-              />
-              {this.state.signingKeyId ? (
-                <p className={styles.paragraph}>
-                  The signing key ID that Sanity will use is <code>{this.state.signingKeyId}</code>.
-                  This key is only used for previewing content in the Sanity UI. You should generate
-                  a different key to use in your application server.
-                </p>
-              ) : null}
-            </FormField>
-
-            <div className={styles.buttons}>
-              <Button
-                loading={isLoading}
-                color="primary"
-                kind="default"
-                onClick={this.handleSaveToken}
+            <Box paddingRight={3}>
+              <FormField
+                changeIndicator={false}
+                label="Access Token"
+                labelFor={this.tokenInputId}
+                level={0}
+                className={styles.formField}
               >
-                Save
-              </Button>
-              <Button color="primary" kind="simple" onClick={this.handleCancel}>
-                Cancel
-              </Button>
-            </div>
+                <TextInput
+                  id={this.tokenInputId}
+                  ref={this.firstField}
+                  onChange={this.handleTokenChanged}
+                  type="text"
+                  value={this.state.token || ''}
+                />
+              </FormField>
+              <FormField
+                changeIndicator={false}
+                label="Secret Key"
+                labelFor={this.secretKeyInputId}
+                level={0}
+                className={styles.formField}
+              >
+                <TextInput
+                  id={this.secretKeyInputId}
+                  onChange={this.handleSecretKeyChanged}
+                  type="text"
+                  value={this.state.secretKey || ''}
+                />
+              </FormField>
+              <FormField
+                changeIndicator={false}
+                label="Enable Signed Urls"
+                labelFor={this.enableSignedUrlsInputId}
+                level={0}
+                className={styles.formField}
+              >
+                <Checkbox
+                  id={this.enableSignedUrlsInputId}
+                  onChange={this.handleEnableSignedUrls}
+                  checked={this.state.enableSignedUrls || false}
+                />
+                {this.state.signingKeyId ? (
+                  <p className={styles.paragraph}>
+                    The signing key ID that Sanity will use is{' '}
+                    <code>{this.state.signingKeyId}</code>. This key is only used for previewing
+                    content in the Sanity UI. You should generate a different key to use in your
+                    application server.
+                  </p>
+                ) : null}
+              </FormField>
 
-            {error && <p className={styles.error}>{error}</p>}
+              <div className={styles.buttons}>
+                <Button
+                  text="Save"
+                  loading={isLoading}
+                  tone="primary"
+                  mode="default"
+                  onClick={this.handleSaveToken}
+                />
+
+                <Button text="Cancel" tone="primary" mode="bleed" onClick={this.handleCancel} />
+              </div>
+
+              {error && <p className={styles.error}>{error}</p>}
+            </Box>
           </Fieldset>
           <div className={styles.notice}>
             <p>
@@ -238,7 +238,7 @@ class MuxVideoInputSetup extends Component {
             </p>
           </div>
         </form>
-      </div>
+      </Box>
     )
   }
 }
