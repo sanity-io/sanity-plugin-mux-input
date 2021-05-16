@@ -1,9 +1,8 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import styles from './UploadPlaceholder.css'
-import UploadIcon from 'part:@sanity/base/upload-icon'
 import {Flex} from '@sanity/ui'
-import {FiUpload, FiCopy} from 'react-icons/fi'
+import PropTypes from 'prop-types'
+import React from 'react'
+import {FiCopy, FiUpload} from 'react-icons/fi'
+import styles from './UploadPlaceholder.css'
 
 export default class UploadPlaceholder extends React.PureComponent {
   static propTypes = {
@@ -53,4 +52,11 @@ export default class UploadPlaceholder extends React.PureComponent {
       </div>
     )
   }
+}
+
+UploadPlaceholder.defaultProps = {
+  hasFocus: false,
+  invalidPaste: false,
+  invalidFile: false,
+  isDraggingOver: false,
 }

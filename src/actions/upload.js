@@ -1,13 +1,12 @@
 /* eslint-disable camelcase */
-import client from 'part:@sanity/base/client'
 import {uuid as generateUuid} from '@sanity/uuid'
 import {isString} from 'lodash'
-import {throwError, of, from, concat, defer} from 'rxjs'
-import {mergeMap, catchError, mergeMapTo, switchMap} from 'rxjs/operators'
-import studioClient from 'part:@sanity/base/client'
-import {createUpChunkObservable} from '../clients/upChunkObservable'
+import {default as client, default as studioClient} from 'part:@sanity/base/client'
+import {concat, defer, from, of, throwError} from 'rxjs'
+import {catchError, mergeMap, mergeMapTo, switchMap} from 'rxjs/operators'
 import {getAsset} from '../actions/assets'
 import {testSecretsObservable} from '../actions/secrets'
+import {createUpChunkObservable} from '../clients/upChunkObservable'
 
 export function cancelUpload(uuid) {
   return client.observable.request({
@@ -81,6 +80,7 @@ export function uploadFile(file, options = {}) {
             const {enableSignedUrls} = options
             const body = {
               playback_policy: [enableSignedUrls ? 'signed' : 'public'],
+              // eslint-disable-next-line no-warning-comments
               // TODO: These parameters were enabled by Sanity, but we are not using them yet
               // mp4_support: false (default),
               // normalize_audio: false (default),

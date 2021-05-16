@@ -1,16 +1,11 @@
-import React, {Component} from 'react'
-import PropTypes from 'prop-types'
-
+import {Box, Button, Checkbox, Code, Flex, Inline, Stack, Text} from '@sanity/ui'
 import {uniqueId} from 'lodash'
-import {createSigningKeys, haveValidSigningKeys, saveSecrets, testSecrets} from '../actions/secrets'
-
 import Fieldset from 'part:@sanity/components/fieldsets/default'
 import FormField from 'part:@sanity/components/formfields/default'
 import TextInput from 'part:@sanity/components/textinputs/default'
-// import Checkbox from 'part:@sanity/components/toggles/checkbox'
-
-import {Button, Stack, Checkbox, Inline, Flex, Text, Code, Box} from '@sanity/ui'
-
+import PropTypes from 'prop-types'
+import React, {Component} from 'react'
+import {createSigningKeys, haveValidSigningKeys, saveSecrets, testSecrets} from '../actions/secrets'
 import styles from './Setup.css'
 
 const propTypes = {
@@ -263,5 +258,15 @@ class MuxVideoInputSetup extends Component {
 }
 
 MuxVideoInputSetup.propTypes = propTypes
+
+MuxVideoInputSetup.defaultProps = {
+  secrets: {
+    token: '',
+    secretKey: '',
+    enableSignedUrls: false,
+    signingKeyId: '',
+    signingKeyPrivate: '',
+  },
+}
 
 export default MuxVideoInputSetup

@@ -1,9 +1,8 @@
-import React from 'react'
-import PropTypes from 'prop-types'
 import {SanityDefaultPreview} from 'part:@sanity/base/preview'
-
-import getPosterSrc from '../util/getPosterSrc'
+import PropTypes from 'prop-types'
+import React from 'react'
 import {fetchSecrets} from '../actions/secrets'
+import getPosterSrc from '../util/getPosterSrc'
 import styles from './Preview.css'
 
 const MuxVideoPreview = (props) => {
@@ -53,6 +52,10 @@ const MuxVideoPreview = (props) => {
 
 MuxVideoPreview.propTypes = {
   value: PropTypes.object,
+}
+
+MuxVideoPreview.defaultProps = {
+  value: null,
 }
 
 export default MuxVideoPreview

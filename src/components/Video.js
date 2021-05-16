@@ -1,14 +1,12 @@
-import React, {Component} from 'react'
-import PropTypes from 'prop-types'
 import Hls from 'hls.js'
-import ProgressBar from 'part:@sanity/components/progress/bar'
 import Button from 'part:@sanity/components/buttons/default'
-
+import ProgressBar from 'part:@sanity/components/progress/bar'
+import PropTypes from 'prop-types'
+import React, {Component} from 'react'
 import {getAsset} from '../actions/assets'
 import {fetchSecrets} from '../actions/secrets'
 import getPosterSrc from '../util/getPosterSrc'
 import getVideoSrc from '../util/getVideoSrc'
-
 import styles from './Video.css'
 
 const NOOP = () => {
@@ -16,6 +14,7 @@ const NOOP = () => {
 }
 
 const propTypes = {
+  // eslint-disable-next-line react/forbid-prop-types
   assetDocument: PropTypes.object.isRequired,
   autoload: PropTypes.bool,
   onCancel: PropTypes.func,
@@ -23,10 +22,6 @@ const propTypes = {
 }
 
 class MuxVideo extends Component {
-  static defaultProps = {
-    autoload: true,
-  }
-
   videoContainer = React.createRef()
   hls = null
 
@@ -227,5 +222,11 @@ class MuxVideo extends Component {
 }
 
 MuxVideo.propTypes = propTypes
+
+MuxVideo.defaultProps = {
+  autoload: true,
+  onCancel: undefined,
+  onReady: undefined,
+}
 
 export default MuxVideo

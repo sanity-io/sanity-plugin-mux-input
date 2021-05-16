@@ -1,42 +1,37 @@
+import {
+  Box,
+  Button,
+  Checkbox,
+  Dialog,
+  Flex,
+  Grid,
+  Stack,
+  studioTheme,
+  Text,
+  ThemeProvider,
+} from '@sanity/ui'
+import client from 'part:@sanity/base/client'
+import SetupIcon from 'part:@sanity/base/plugin-icon'
+import {observePaths} from 'part:@sanity/base/preview'
+import Alert from 'part:@sanity/components/alerts/alert'
+import DialogContent from 'part:@sanity/components/dialogs/content'
+import FullscreenDialog from 'part:@sanity/components/dialogs/fullscreen'
+import FormField from 'part:@sanity/components/formfields/default'
+import Spinner from 'part:@sanity/components/loading/spinner'
+import {withDocument} from 'part:@sanity/form-builder'
+import PatchEvent, {set, setIfMissing, unset} from 'part:@sanity/form-builder/patch-event'
 import React, {Component, Fragment} from 'react'
 import {of} from 'rxjs'
 import {tap} from 'rxjs/operators'
-import {withDocument} from 'part:@sanity/form-builder'
-
+import {deleteAsset, getAsset} from '../actions/assets'
 import {fetchSecrets} from '../actions/secrets'
-import {getAsset, deleteAsset} from '../actions/assets'
 import getPosterSrc from '../util/getPosterSrc'
-
-import client from 'part:@sanity/base/client'
-import {observePaths} from 'part:@sanity/base/preview'
-import FullscreenDialog from 'part:@sanity/components/dialogs/fullscreen'
-import DialogContent from 'part:@sanity/components/dialogs/content'
-
-import PatchEvent, {set, unset, setIfMissing} from 'part:@sanity/form-builder/patch-event'
-import FormField from 'part:@sanity/components/formfields/default'
-import Alert from 'part:@sanity/components/alerts/alert'
-import SetupIcon from 'part:@sanity/base/plugin-icon'
-import Spinner from 'part:@sanity/components/loading/spinner'
-
-import {
-  Checkbox,
-  Stack,
-  Flex,
-  Grid,
-  Button,
-  Dialog,
-  Text,
-  Box,
-  studioTheme,
-  ThemeProvider,
-} from '@sanity/ui'
-
-import Setup from './Setup'
-import Video from './Video'
-import SelectAsset from './SelectAsset'
-import MuxLogo from './MuxLogo'
-import Uploader from './Uploader'
 import styles from './Input.css'
+import MuxLogo from './MuxLogo'
+import SelectAsset from './SelectAsset'
+import Setup from './Setup'
+import Uploader from './Uploader'
+import Video from './Video'
 
 const NOOP = () => {
   /* intentional noop */
@@ -171,6 +166,7 @@ export default withDocument(
             if (assetDocument && assetDocument.status === 'errored') {
               clearInterval(this.pollInterval)
               this.pollInterval = null
+              // eslint-disable-next-line no-warning-comments
               // todo: use client.observable
               return this.handleRemoveVideo().then(() => {
                 this.setState({
@@ -581,7 +577,9 @@ export default withDocument(
               <Uploader
                 buttons={this.renderVideoButtons()}
                 hasFocus={hasFocus}
+                // eslint-disable-next-line react/jsx-handler-names
                 onBlur={this.blur}
+                // eslint-disable-next-line react/jsx-handler-names
                 onFocus={this.focus}
                 onSetupButtonClicked={this.handleSetupButtonClicked}
                 onUploadComplete={this.handleOnUploadComplete}

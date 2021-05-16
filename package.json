@@ -72,7 +72,11 @@
       "prettier/react"
     ],
     "rules": {
-      "react/prop-types": "off"
+      "react/prop-types": "off",
+      "react/jsx-boolean-value": "off",
+      "react/jsx-no-bind": "off",
+      "react/forbid-prop-types": "off",
+      "react/no-did-mount-set-state": "off"
     }
   }
 }
