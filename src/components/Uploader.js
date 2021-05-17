@@ -1,4 +1,4 @@
-import {Button} from '@sanity/ui'
+import {Button, Card} from '@sanity/ui'
 import client from 'part:@sanity/base/client'
 import ButtonCollection from 'part:@sanity/components/buttons/button-collection'
 import DialogContent from 'part:@sanity/components/dialogs/content'
@@ -379,8 +379,10 @@ class MuxVideoInputUploader extends Component {
 
   render() {
     return (
-      <div
-        className={styles.root}
+      <Card
+        padding={2}
+        radius={0}
+        shadow={1}
         tabIndex={0}
         onBlur={this.props.onBlur}
         onFocus={this.props.onFocus}
@@ -402,7 +404,7 @@ class MuxVideoInputUploader extends Component {
         {this.renderUploadPlaceHolder()}
         {this.renderChildren()}
         {this.renderButtons()}
-      </div>
+      </Card>
     )
   }
 }

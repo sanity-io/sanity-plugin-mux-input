@@ -1,10 +1,12 @@
 import {
   Box,
   Button,
+  Card,
   Checkbox,
   Dialog,
   Flex,
   Grid,
+  Inline,
   Stack,
   studioTheme,
   Text,
@@ -13,7 +15,6 @@ import {
 import client from 'part:@sanity/base/client'
 import SetupIcon from 'part:@sanity/base/plugin-icon'
 import {observePaths} from 'part:@sanity/base/preview'
-import Alert from 'part:@sanity/components/alerts/alert'
 import DialogContent from 'part:@sanity/components/dialogs/content'
 import FullscreenDialog from 'part:@sanity/components/dialogs/fullscreen'
 import FormField from 'part:@sanity/components/formfields/default'
@@ -468,11 +469,9 @@ export default withDocument(
         return null
       }
       const isSignedAlert = isSigned ? (
-        <div className={styles.alert}>
-          <Alert title="Note" color="success">
-            This mux asset is using a signed url
-          </Alert>
-        </div>
+        <Card padding={3} radius={2} shadow={1} tone="positive" marginBottom={2}>
+          <Text size={1}>This Mux asset is using a signed url.</Text>
+        </Card>
       ) : null
       return (
         <>
@@ -555,8 +554,8 @@ export default withDocument(
       } = this.state
       return (
         <ThemeProvider theme={studioTheme}>
-          <div className={styles.root}>
-            <div className={styles.header}>
+          <Box style={{position: 'relative'}}>
+            <Flex align="center" justify="space-between">
               <FormField
                 label={type.title}
                 markers={markers}
@@ -565,13 +564,15 @@ export default withDocument(
                 className={styles.formField}
               />
               {this.renderSetupButton()}
-            </div>
+            </Flex>
 
             {isLoading === 'secrets' && (
-              <div className={styles.isLoading}>
-                <Spinner inline />
-                <span>Fetching credentials</span>
-              </div>
+              <Box marginBottom={2}>
+                <Inline align="center" space={2}>
+                  <Spinner inline />
+                  <Text size={1}>Fetching credentials</Text>
+                </Inline>
+              </Box>
             )}
 
             {needsSetup && this.renderSetupNotice()}
@@ -650,7 +651,7 @@ export default withDocument(
             )}
 
             {error && this.renderError()}
-          </div>
+          </Box>
         </ThemeProvider>
       )
     }

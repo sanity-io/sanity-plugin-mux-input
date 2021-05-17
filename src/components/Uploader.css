@@ -1,6 +1,6 @@
-@import "part:@sanity/base/theme/variables-style";
+@import 'part:@sanity/base/theme/variables-style';
 
-.root {
+/* .root {
   padding: var(--small-padding);
   border-radius: var(--input-border-radius);
   transition: all 0.1s linear;
@@ -8,7 +8,7 @@
   background-color: var(--input-bg);
   box-shadow: 0 0 3px color(var(--gray) a(50%));
   min-height: 160px;
-}
+} */
 
 .uploadProgress {
   text-align: center;
@@ -25,7 +25,6 @@
   background: #fff;
   color: var(--state-danger-color);
 }
-
 
 .hiddenTextField {
   position: absolute;
