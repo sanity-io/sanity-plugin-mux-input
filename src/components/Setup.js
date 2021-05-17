@@ -5,7 +5,7 @@ import FormField from 'part:@sanity/components/formfields/default'
 import TextInput from 'part:@sanity/components/textinputs/default'
 import PropTypes from 'prop-types'
 import React, {Component} from 'react'
-import {createSigningKeys, haveValidSigningKeys, saveSecrets, testSecrets} from '../actions/secrets'
+import {createSigningKeys, haveValidSigningKeys, saveSecrets} from '../actions/secrets'
 import styles from './Setup.css'
 
 const propTypes = {
@@ -95,53 +95,41 @@ class MuxVideoInputSetup extends Component {
 
     this.setState({isLoading: true})
 
-    const token = this.state.token || null
-    const secretKey = this.state.secretKey || null
-    const enableSignedUrls = this.state.enableSignedUrls || false
-    let signingKeyId = this.state.signingKeyId || null
-    let signingKeyPrivate = this.state.signingKeyPrivate || null
-
-    const hasValidSigningKeys = await haveValidSigningKeys(signingKeyId, signingKeyPrivate)
+    const {token, secretKey, enableSignedUrls} = this.state || {}
+    let {signingKeyId, signingKeyPrivate} = this.state || {}
 
     try {
       await saveSecrets(token, secretKey, enableSignedUrls, signingKeyId, signingKeyPrivate)
     } catch (err) {
-      handleError(err)
+      handleError('Error while trying to save secrets:', err)
       return
     }
 
-    if (!hasValidSigningKeys && enableSignedUrls) {
-      try {
-        const {data} = await createSigningKeys()
-        signingKeyId = data.id
-        signingKeyPrivate = data.private_key
-        await saveSecrets(token, secretKey, enableSignedUrls, signingKeyId, signingKeyPrivate)
-      } catch ({message}) {
-        this.setState({error: message})
+    if (enableSignedUrls) {
+      const hasValidSigningKeys = await haveValidSigningKeys(signingKeyId, signingKeyPrivate)
+
+      if (!hasValidSigningKeys) {
+        try {
+          const {data} = await createSigningKeys()
+          signingKeyId = data.id
+          signingKeyPrivate = data.private_key
+          await saveSecrets(token, secretKey, enableSignedUrls, signingKeyId, signingKeyPrivate)
+        } catch ({message}) {
+          // eslint-disable-next-line no-console
+          console.log('Error while creating and saving signing key:', message)
+          this.setState({error: message})
+        }
       }
-    }
-
-    let result
-
-    try {
-      result = await testSecrets()
-    } catch (err) {
-      handleError(err)
-      return
     }
 
     this.setState({isLoading: false})
 
-    if (result.status) {
-      this.props.onSave({token, secretKey, enableSignedUrls, signingKeyId, signingKeyPrivate})
-      return
-    }
-
-    handleError({error: 'Invalid credentials'})
+    this.props.onSave({token, secretKey, enableSignedUrls, signingKeyId, signingKeyPrivate})
   }
 
   render() {
     const {error, isLoading} = this.state
+
     return (
       <Box
         paddingRight={4}
@@ -263,11 +251,11 @@ MuxVideoInputSetup.propTypes = propTypes
 
 MuxVideoInputSetup.defaultProps = {
   secrets: {
-    token: '',
-    secretKey: '',
+    token: null,
+    secretKey: null,
     enableSignedUrls: false,
-    signingKeyId: '',
-    signingKeyPrivate: '',
+    signingKeyId: null,
+    signingKeyPrivate: null,
   },
 }
 

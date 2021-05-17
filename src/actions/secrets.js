@@ -1,5 +1,7 @@
-import client from 'part:@sanity/base/client'
+import sanityClient from 'part:@sanity/base/client'
 import {defer} from 'rxjs'
+
+const client = sanityClient.withConfig({apiVersion: '2021-05-17'})
 
 const cache = {
   secrets: null,
@@ -34,6 +36,7 @@ export function saveSecrets(token, secretKey, enableSignedUrls, signingKeyId, si
     signingKeyId,
     signingKeyPrivate,
   }
+
   return client.createOrReplace(doc).then(() => {
     cache.exists = true
     cache.secrets = {

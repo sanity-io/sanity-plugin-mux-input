@@ -46,10 +46,9 @@ const cachedSecrets = {
 }
 
 function validateSecrets(secrets) {
-  if (secrets.token === null) return true
-  if (secrets.secretKey === null) return true
+  if (!secrets.token || !secrets.secretKey) return false
 
-  return false
+  return true
 }
 
 function getSecrets() {
@@ -66,9 +65,10 @@ function getSecrets() {
     cachedSecrets.enableSignedUrls = secrets.enableSignedUrls
     cachedSecrets.signingKeyId = secrets.signingKeyId
     cachedSecrets.signingKeyPrivate = secrets.signingKeyPrivate
+
     return {
       isInitialSetup: !exists,
-      needsSetup: validateSecrets(cachedSecrets),
+      needsSetup: !validateSecrets(cachedSecrets),
       secrets: cachedSecrets,
     }
   })
@@ -186,6 +186,7 @@ export default withDocument(
             // eslint-disable-next-line camelcase
             const isSigned = assetDocument?.data?.playback_ids[0]?.policy === 'signed'
             this.setState({assetDocument, isSigned, isLoading: false})
+
             return of(assetDocument)
           })
         )
@@ -228,10 +229,11 @@ export default withDocument(
       cachedSecrets.enableSignedUrls = enableSignedUrls
       cachedSecrets.signingKeyId = signingKeyId
       cachedSecrets.signingKeyPrivate = signingKeyPrivate
+
       this.setState({
         showSetup: false,
         secrets: cachedSecrets,
-        needsSetup: validateSecrets(cachedSecrets),
+        needsSetup: !validateSecrets(cachedSecrets),
       })
     }
 
@@ -435,11 +437,12 @@ export default withDocument(
     }
 
     renderSetupNotice() {
-      const {isLoading, needsSetup, isInitialSetup} = this.state
-      const renderSetupNotice = needsSetup
-      if (isLoading || !renderSetupNotice) {
+      const {isLoading, isInitialSetup} = this.state
+
+      if (isLoading) {
         return null
       }
+
       return (
         <Stack padding={4} space={5} style={{backgroundColor: '#efefefef', borderRadius: 3}}>
           <MuxLogo />
@@ -571,7 +574,7 @@ export default withDocument(
               </div>
             )}
 
-            {this.renderSetupNotice()}
+            {needsSetup && this.renderSetupNotice()}
 
             {!needsSetup && (
               <Uploader
