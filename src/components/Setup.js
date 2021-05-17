@@ -137,7 +137,7 @@ class MuxVideoInputSetup extends Component {
         style={{position: 'relative'}}
       >
         <form onSubmit={this.handleOnSubmit}>
-          <Stack space={4} paddingRight={3}>
+          <Stack space={4}>
             {!this.state.token && (
               <Card padding={[3, 3, 3]} radius={2} shadow={1} tone="primary">
                 <Stack space={3}>
