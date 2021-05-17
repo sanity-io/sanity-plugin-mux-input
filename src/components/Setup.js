@@ -92,7 +92,9 @@ class MuxVideoInputSetup extends Component {
         error: 'Something went wrong saving the token. See console.error for more info.',
       })
     }
+
     this.setState({isLoading: true})
+
     const token = this.state.token || null
     const secretKey = this.state.secretKey || null
     const enableSignedUrls = this.state.enableSignedUrls || false
@@ -197,7 +199,7 @@ class MuxVideoInputSetup extends Component {
                     </Text>
                   </Box>
                 </Flex>
-                {this.state.signingKeyId ? (
+                {this.state.signingKeyId && this.state.enableSignedUrls ? (
                   <Stack space={3}>
                     <Inline space={2}>
                       <Text size={1}>The signing key ID that Sanity will use is: </Text>
