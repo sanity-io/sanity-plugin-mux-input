@@ -1,4 +1,4 @@
-@import "part:@sanity/base/theme/variables-style";
+@import 'part:@sanity/base/theme/variables-style';
 
 .root {
   width: 100%;
@@ -10,6 +10,10 @@
 .videoContainer {
   position: relative;
   min-height: 150px;
+}
+
+.videoContainer video {
+  border-radius: 0.1875rem;
 }
 
 .videoError {
@@ -27,4 +31,3 @@
 .uploadCancelButton {
   text-align: center;
 }
-

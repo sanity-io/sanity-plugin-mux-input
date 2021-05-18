@@ -1,8 +1,8 @@
-import React from 'react'
-import client from 'part:@sanity/base/client'
 import {Button} from '@sanity/ui'
-import getPosterSrc from '../util/getPosterSrc'
+import client from 'part:@sanity/base/client'
+import React from 'react'
 import {fetchSecrets} from '../actions/secrets'
+import getPosterSrc from '../util/getPosterSrc'
 import styles from './SelectAsset.css'
 
 const PER_PAGE = 200
@@ -85,7 +85,8 @@ export default class SelectAsset extends React.Component {
             const height = 100
             const posterUrl = getPosterSrc(asset.playbackId, {
               time: asset.thumbTime,
-              fitMode: 'crop',
+              // eslint-disable-next-line camelcase
+              fit_mode: 'smartcrop',
               width: 100,
               height: 100,
               isSigned: asset.data && asset.data.playback_ids[0].policy === 'signed',
@@ -123,7 +124,6 @@ export default class SelectAsset extends React.Component {
           {!isLastPage && (
             <Button
               text="Load more"
-              padding={[3, 3, 4]}
               mode="ghost"
               tone="primary"
               onClick={this.handleFetchNextPage}

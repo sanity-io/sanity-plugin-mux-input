@@ -1,17 +1,4 @@
-import {
-  Box,
-  Button,
-  Card,
-  Checkbox,
-  Dialog,
-  Flex,
-  Grid,
-  Inline,
-  Stack,
-  studioTheme,
-  Text,
-  ThemeProvider,
-} from '@sanity/ui'
+import {Box, Button, Card, Checkbox, Dialog, Flex, Grid, Inline, Stack, Text} from '@sanity/ui'
 import client from 'part:@sanity/base/client'
 import SetupIcon from 'part:@sanity/base/plugin-icon'
 import {observePaths} from 'part:@sanity/base/preview'
@@ -21,7 +8,7 @@ import FormField from 'part:@sanity/components/formfields/default'
 import Spinner from 'part:@sanity/components/loading/spinner'
 import {withDocument} from 'part:@sanity/form-builder'
 import PatchEvent, {set, setIfMissing, unset} from 'part:@sanity/form-builder/patch-event'
-import React, {Component, Fragment} from 'react'
+import React, {Component} from 'react'
 import {of} from 'rxjs'
 import {tap} from 'rxjs/operators'
 import {deleteAsset, getAsset} from '../actions/assets'
@@ -490,32 +477,31 @@ export default withDocument(
       const {assetDocument, confirmRemove} = this.state
       const {readOnly} = this.props
       if (assetDocument && assetDocument.status === 'ready' && !readOnly) {
-        return (
-          <Fragment>
-            <Button
-              mode="ghost"
-              tone="default"
-              onClick={this.handleBrowseButton}
-              text="Browse"
-              style={{textAlign: 'center'}}
-            />
-            <Button
-              mode="ghost"
-              tone="default"
-              disabled={this.state.videoReadyToPlay === false}
-              onClick={this.handleSetThumbButton}
-              text="Thumbnail"
-              style={{textAlign: 'center'}}
-            />
-            <Button
-              ref={this.removeVideoButton}
-              onClick={confirmRemove ? NOOP : this.handleRemoveVideoButtonClicked}
-              mode="ghost"
-              tone="critical"
-              text="Remove"
-            />
-          </Fragment>
-        )
+        return [
+          <Button
+            key="browse"
+            mode="ghost"
+            tone="primary"
+            onClick={this.handleBrowseButton}
+            text="Browse"
+          />,
+          <Button
+            key="thumbnail"
+            mode="ghost"
+            tone="primary"
+            disabled={this.state.videoReadyToPlay === false}
+            onClick={this.handleSetThumbButton}
+            text="Thumbnail"
+          />,
+          <Button
+            key="remove"
+            ref={this.removeVideoButton}
+            onClick={confirmRemove ? NOOP : this.handleRemoveVideoButtonClicked}
+            mode="ghost"
+            tone="critical"
+            text="Remove"
+          />,
+        ]
       }
       return null
     }
@@ -553,106 +539,104 @@ export default withDocument(
         thumb,
       } = this.state
       return (
-        <ThemeProvider theme={studioTheme}>
-          <Box style={{position: 'relative'}}>
-            <Flex align="center" justify="space-between">
-              <FormField
-                label={type.title}
-                markers={markers}
-                description={type.description}
-                level={level}
-                className={styles.formField}
-              />
-              {this.renderSetupButton()}
-            </Flex>
+        <Box style={{position: 'relative'}}>
+          <Flex align="center" justify="space-between">
+            <FormField
+              label={type.title}
+              markers={markers}
+              description={type.description}
+              level={level}
+              className={styles.formField}
+            />
+            {this.renderSetupButton()}
+          </Flex>
 
-            {isLoading === 'secrets' && (
-              <Box marginBottom={2}>
-                <Inline align="center" space={2}>
-                  <Spinner inline />
-                  <Text size={1}>Fetching credentials</Text>
-                </Inline>
+          {isLoading === 'secrets' && (
+            <Box marginBottom={2}>
+              <Inline align="center" space={2}>
+                <Spinner inline />
+                <Text size={1}>Fetching credentials</Text>
+              </Inline>
+            </Box>
+          )}
+
+          {needsSetup && this.renderSetupNotice()}
+
+          {!needsSetup && (
+            <Uploader
+              buttons={this.renderVideoButtons()}
+              hasFocus={hasFocus}
+              // eslint-disable-next-line react/jsx-handler-names
+              onBlur={this.blur}
+              // eslint-disable-next-line react/jsx-handler-names
+              onFocus={this.focus}
+              onSetupButtonClicked={this.handleSetupButtonClicked}
+              onUploadComplete={this.handleOnUploadComplete}
+              secrets={secrets}
+              onBrowse={this.handleBrowseButton}
+            >
+              {this.renderAsset()}
+            </Uploader>
+          )}
+
+          {thumb && (
+            <Dialog
+              header="Current thumbnail frame:"
+              zOffset={1000}
+              onClose={this.handleCloseThumbPreview}
+            >
+              <Box padding={4}>
+                <img style={{maxWidth: '100%'}} src={this.state.thumb} width={400} />
               </Box>
-            )}
+            </Dialog>
+          )}
 
-            {needsSetup && this.renderSetupNotice()}
+          {showBrowser && this.renderBrowser()}
 
-            {!needsSetup && (
-              <Uploader
-                buttons={this.renderVideoButtons()}
-                hasFocus={hasFocus}
-                // eslint-disable-next-line react/jsx-handler-names
-                onBlur={this.blur}
-                // eslint-disable-next-line react/jsx-handler-names
-                onFocus={this.focus}
-                onSetupButtonClicked={this.handleSetupButtonClicked}
-                onUploadComplete={this.handleOnUploadComplete}
-                secrets={secrets}
-                onBrowse={this.handleBrowseButton}
-              >
-                {this.renderAsset()}
-              </Uploader>
-            )}
+          {confirmRemove && (
+            <Dialog header="Remove video" zOffset={1000} onClose={this.handleCancelRemove}>
+              <Box padding={4}>
+                <Stack space={3}>
+                  <Flex align="center">
+                    <Checkbox
+                      checked={this.state.deleteOnMuxChecked}
+                      onChange={this.handleDeleteOnMuxCheckBoxClicked}
+                    />
+                    <Text style={{margin: '0 10px'}}>Delete asset on MUX.com</Text>
+                  </Flex>
+                  <Flex align="center">
+                    <Checkbox
+                      disabled={this.state.deleteOnMuxChecked}
+                      checked={
+                        this.state.deleteOnMuxChecked || this.state.deleteAssetDocumentChecked
+                      }
+                      onChange={this.handleDeleteAssetDocumentCheckBoxClicked}
+                    />
+                    <Text style={{margin: '0 10px'}}>Delete video from dataset</Text>
+                  </Flex>
+                  <Grid columns={2} gap={2}>
+                    <Button
+                      mode="ghost"
+                      tone="default"
+                      text="Cancel"
+                      onClick={this.handleCancelRemove}
+                      loading={!!isLoading}
+                    />
+                    <Button
+                      mode="default"
+                      tone="critical"
+                      text="Remove"
+                      onClick={this.handleRemoveVideo}
+                      loading={!!isLoading}
+                    />
+                  </Grid>
+                </Stack>
+              </Box>
+            </Dialog>
+          )}
 
-            {thumb && (
-              <Dialog
-                header="Current thumbnail frame:"
-                zOffset={1000}
-                onClose={this.handleCloseThumbPreview}
-              >
-                <Box padding={4}>
-                  <img style={{maxWidth: '100%'}} src={this.state.thumb} width={400} />
-                </Box>
-              </Dialog>
-            )}
-
-            {showBrowser && this.renderBrowser()}
-
-            {confirmRemove && (
-              <Dialog header="Remove video" zOffset={1000} onClose={this.handleCancelRemove}>
-                <Box padding={4}>
-                  <Stack space={3}>
-                    <Flex align="center">
-                      <Checkbox
-                        checked={this.state.deleteOnMuxChecked}
-                        onChange={this.handleDeleteOnMuxCheckBoxClicked}
-                      />
-                      <Text style={{margin: '0 10px'}}>Delete asset on MUX.com</Text>
-                    </Flex>
-                    <Flex align="center">
-                      <Checkbox
-                        disabled={this.state.deleteOnMuxChecked}
-                        checked={
-                          this.state.deleteOnMuxChecked || this.state.deleteAssetDocumentChecked
-                        }
-                        onChange={this.handleDeleteAssetDocumentCheckBoxClicked}
-                      />
-                      <Text style={{margin: '0 10px'}}>Delete video from dataset</Text>
-                    </Flex>
-                    <Grid columns={2} gap={2}>
-                      <Button
-                        mode="ghost"
-                        tone="default"
-                        text="Cancel"
-                        onClick={this.handleCancelRemove}
-                        loading={!!isLoading}
-                      />
-                      <Button
-                        mode="default"
-                        tone="critical"
-                        text="Remove"
-                        onClick={this.handleRemoveVideo}
-                        loading={!!isLoading}
-                      />
-                    </Grid>
-                  </Stack>
-                </Box>
-              </Dialog>
-            )}
-
-            {error && this.renderError()}
-          </Box>
-        </ThemeProvider>
+          {error && this.renderError()}
+        </Box>
       )
     }
   }

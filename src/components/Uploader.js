@@ -1,4 +1,5 @@
-import {Button, Card} from '@sanity/ui'
+import {UploadIcon} from '@sanity/icons'
+import {Button, Card, Grid} from '@sanity/ui'
 import client from 'part:@sanity/base/client'
 import ButtonCollection from 'part:@sanity/components/buttons/button-collection'
 import DialogContent from 'part:@sanity/components/dialogs/content'
@@ -336,15 +337,15 @@ class MuxVideoInputUploader extends Component {
   renderButtons() {
     if (this.state.uploadProgress === null && this.props.buttons) {
       return (
-        <ButtonCollection>
+        <Grid columns={4} gap={2}>
           <FileInputButton
-            icon={<FiUpload data-sanity-icon="upload" />}
+            icon={<UploadIcon data-sanity-icon="upload" />}
             onSelect={(files) => this.handleUploadFile(files[0])}
             accept={'video/*'}
             text="Upload"
           />
           {this.props.buttons}
-        </ButtonCollection>
+        </Grid>
       )
     }
     return null
@@ -380,9 +381,9 @@ class MuxVideoInputUploader extends Component {
   render() {
     return (
       <Card
-        padding={2}
+        padding={0}
         radius={0}
-        shadow={1}
+        shadow={0}
         tabIndex={0}
         onBlur={this.props.onBlur}
         onFocus={this.props.onFocus}

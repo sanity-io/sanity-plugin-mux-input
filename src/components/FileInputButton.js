@@ -1,7 +1,7 @@
-import React from 'react'
-import {uniqueId} from 'lodash'
-import styled from 'styled-components'
 import {Button} from '@sanity/ui'
+import {uniqueId} from 'lodash'
+import React from 'react'
+import styled from 'styled-components'
 
 const HiddenInput = styled.input`
   overflow: hidden;
@@ -22,7 +22,7 @@ const handleSelect = ({event, onSelect}) => {
   }
 }
 
-const handleButtonClick = inputRef => {
+const handleButtonClick = (inputRef) => {
   if (inputRef && inputRef.current) {
     inputRef.current.click()
   }
@@ -39,14 +39,13 @@ export const FileInputButton = ({onSelect, accept = 'video/*', type = 'file', ..
         tabindex="0"
         type={type}
         id={_inputId.current}
-        onChange={event => handleSelect({event, onSelect})}
+        onChange={(event) => handleSelect({event, onSelect})}
         value=""
       />
       <Button
         onClick={() => handleButtonClick(inputRef)}
-        padding={[3, 3, 4]}
-        mode="ghost"
-        tone="default"
+        mode="default"
+        tone="primary"
         style={{width: '100%'}}
         {...props}
       />

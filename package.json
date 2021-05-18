@@ -44,9 +44,7 @@
     "sanipack": "^1.0.7"
   },
   "peerDependencies": {
-    "@sanity/ui": "^0.33",
-    "react": "^16.9 || ^17",
-    "styled-components": "^5"
+    "react": "^16.9 || ^17"
   },
   "publishConfig": {
     "access": "public"
