@@ -456,12 +456,12 @@ export default withDocument(
         return null
       }
       const isSignedAlert = isSigned ? (
-        <Card padding={3} radius={2} shadow={1} tone="positive" marginBottom={2}>
+        <Card padding={3} radius={2} shadow={1} tone="positive">
           <Text size={1}>This Mux asset is using a signed url.</Text>
         </Card>
       ) : null
       return (
-        <>
+        <Stack space={2} marginBottom={2}>
           {isSignedAlert}
           <Video
             assetDocument={assetDocument}
@@ -469,7 +469,7 @@ export default withDocument(
             onReady={this.handleVideoReadyToPlay}
             onCancel={this.handleRemoveVideo}
           />
-        </>
+        </Stack>
       )
     }
 
@@ -585,9 +585,19 @@ export default withDocument(
               zOffset={1000}
               onClose={this.handleCloseThumbPreview}
             >
-              <Box padding={4}>
-                <img style={{maxWidth: '100%'}} src={this.state.thumb} width={400} />
-              </Box>
+              <Stack space={3} padding={3}>
+                <Card padding={3} radius={1} shadow={1} tone="primary">
+                  <Text size={1}>
+                    Pause the video at the frame you want as a thumbnail and click the 'Thumbnail'
+                    button again to select it.
+                  </Text>
+                </Card>
+                <img
+                  style={{maxWidth: '100%', borderRadius: '0.1875rem', display: 'block'}}
+                  src={this.state.thumb}
+                  width={400}
+                />
+              </Stack>
             </Dialog>
           )}
 

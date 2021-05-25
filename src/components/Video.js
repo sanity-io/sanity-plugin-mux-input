@@ -1,4 +1,6 @@
+import {Card, Stack, Text} from '@sanity/ui'
 import Hls from 'hls.js'
+import 'media-chrome'
 import Button from 'part:@sanity/components/buttons/default'
 import ProgressBar from 'part:@sanity/components/progress/bar'
 import PropTypes from 'prop-types'
@@ -6,6 +8,7 @@ import React, {Component} from 'react'
 import {getAsset} from '../actions/assets'
 import {fetchSecrets} from '../actions/secrets'
 import getPosterSrc from '../util/getPosterSrc'
+import getStoryboardSrc from '../util/getStoryboardSrc'
 import getVideoSrc from '../util/getVideoSrc'
 import styles from './Video.css'
 
@@ -28,6 +31,7 @@ class MuxVideo extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      storyboardUrl: null,
       posterUrl: null,
       source: null,
       isLoading: true,
@@ -35,6 +39,8 @@ class MuxVideo extends Component {
       isDeletedOnMux: false,
       secrets: null,
     }
+    this.playRef = React.createRef()
+    this.muteRef = React.createRef()
   }
 
   // eslint-disable-next-line complexity
@@ -61,6 +67,17 @@ class MuxVideo extends Component {
 
   componentDidMount() {
     this.video = React.createRef()
+
+    const style = document.createElement('style')
+    style.innerHTML = 'button svg { vertical-align: middle; }'
+
+    if (this.playRef.current.shadowRoot) {
+      this.playRef.current.shadowRoot.appendChild(style)
+    }
+    if (this.muteRef.current.shadowRoot) {
+      this.muteRef.current.shadowRoot.appendChild(style.cloneNode(true))
+    }
+
     this.setState(MuxVideo.getDerivedStateFromProps(this.props))
     fetchSecrets().then(({secrets}) => this.setState({secrets}))
   }
@@ -96,7 +113,8 @@ class MuxVideo extends Component {
 
     const source = getVideoSrc(playbackId, options)
     const posterUrl = getPosterSrc(playbackId, options)
-    this.setState({source, posterUrl})
+    const storyboardUrl = getStoryboardSrc(playbackId, options)
+    this.setState({source, posterUrl, storyboardUrl})
   }
 
   getVideoElement() {
@@ -109,7 +127,7 @@ class MuxVideo extends Component {
       this.hls = new Hls({autoStartLoad: autoload})
       this.hls.loadSource(this.state.source)
       this.hls.attachMedia(this.video.current)
-      this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      this.hls.on(Hls.Events.MANIFEST_PARSED, (e) => {
         if (this.videoContainer.current) {
           this.videoContainer.current.style.display = 'block'
         }
@@ -193,28 +211,35 @@ class MuxVideo extends Component {
 
     const showControls = autoload || this.state.showControls
     return (
-      <div>
-        <div ref={this.videoContainer} className={styles.videoContainer}>
+      <div ref={this.videoContainer} className={styles.videoContainer}>
+        <media-container>
           <video
-            className={styles.root}
             onClick={autoload ? NOOP : this.handleVideoClick}
-            controls={showControls}
             ref={this.video}
             poster={posterUrl}
-          />
-        </div>
-        {error && (
-          <div className={[styles.videoContainer, styles.videoError].join(' ')}>
-            <p>
-              There was an error loading this video ({error.type}
-              ).
-            </p>
-            {this.state.isDeletedOnMux && (
-              <p>
-                <strong>The video is deleted on MUX.com</strong>
-              </p>
+            slot="media"
+            crossOrigin="anonomous"
+          >
+            {this.state.storyboardUrl && (
+              <track label="thumbnails" default kind="metadata" src={this.state.storyboardUrl} />
             )}
-          </div>
+          </video>
+          {showControls && (
+            <media-control-bar>
+              <media-play-button ref={this.playRef} />
+              <media-mute-button ref={this.muteRef} />
+              <media-volume-range />
+              <media-progress-range />
+            </media-control-bar>
+          )}
+        </media-container>
+        {error && (
+          <Card padding={3} radius={2} shadow={1} tone="critical" marginTop={2}>
+            <Stack space={2}>
+              <Text size={1}>There was an error loading this video ({error.type}).</Text>
+              {this.state.isDeletedOnMux && <Text size={1}>The video is deleted on MUX.com</Text>}
+            </Stack>
+          </Card>
         )}
       </div>
     )

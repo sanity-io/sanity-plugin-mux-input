@@ -1,24 +1,8 @@
 @import 'part:@sanity/base/theme/variables-style';
 
-.root {
-  width: 100%;
-  position: relative;
-  height: 100%;
-  min-height: 160px;
-}
-
 .videoContainer {
   position: relative;
   min-height: 150px;
-}
-
-.videoContainer video {
-  border-radius: 0.1875rem;
-}
-
-.videoError {
-  position: relative;
-  padding: var(--medium-padding);
 }
 
 .progressBar {
