@@ -1,7 +1,7 @@
 import {Button} from '@sanity/ui'
-import client from 'part:@sanity/base/client'
 import React from 'react'
 import {fetchSecrets} from '../actions/secrets'
+import client from '../clients/SanityClient'
 import getPosterSrc from '../util/getPosterSrc'
 import styles from './SelectAsset.css'
 

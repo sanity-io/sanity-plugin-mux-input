@@ -1,7 +1,5 @@
-import sanityClient from 'part:@sanity/base/client'
 import {defer} from 'rxjs'
-
-const client = sanityClient.withConfig({apiVersion: '2021-05-17'})
+import client from '../clients/SanityClient'
 
 const cache = {
   secrets: null,

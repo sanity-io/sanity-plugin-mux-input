@@ -1,16 +1,16 @@
 /* eslint-disable camelcase */
 import {uuid as generateUuid} from '@sanity/uuid'
 import {isString} from 'lodash'
-import {default as studioClient} from 'part:@sanity/base/client'
 import {concat, defer, from, of, throwError} from 'rxjs'
 import {catchError, mergeMap, mergeMapTo, switchMap} from 'rxjs/operators'
 import {getAsset} from '../actions/assets'
 import {testSecretsObservable} from '../actions/secrets'
+import client from '../clients/SanityClient'
 import {createUpChunkObservable} from '../clients/upChunkObservable'
 
 export function cancelUpload(uuid) {
-  return studioClient.observable.request({
-    url: `/addons/mux/uploads/${studioClient.clientConfig.dataset}/${uuid}`,
+  return client.observable.request({
+    url: `/addons/mux/uploads/${client.clientConfig.dataset}/${uuid}`,
     withCredentials: true,
     method: 'DELETE',
   })
@@ -36,9 +36,9 @@ export function uploadUrl(url, options = {}) {
               muxBody: JSON.stringify(muxBody),
               filename: validUrl.split('/').slice(-1)[0],
             }
-            const dataset = studioClient.clientConfig.dataset
+            const dataset = client.clientConfig.dataset
             return defer(() =>
-              studioClient.observable.request({
+              client.observable.request({
                 url: `/addons/mux/assets/${dataset}`,
                 withCredentials: true,
                 method: 'POST',
@@ -88,8 +88,8 @@ export function uploadFile(file, options = {}) {
             return concat(
               of({type: 'uuid', uuid}),
               defer(() =>
-                studioClient.observable.request({
-                  url: `/addons/mux/uploads/${studioClient.clientConfig.dataset}`,
+                client.observable.request({
+                  url: `/addons/mux/uploads/${client.clientConfig.dataset}`,
                   withCredentials: true,
                   method: 'POST',
                   headers: {
@@ -128,8 +128,8 @@ export function uploadFile(file, options = {}) {
 }
 
 export function getUpload(assetId) {
-  return studioClient.request({
-    url: `/addons/mux/uploads/${studioClient.clientConfig.dataset}/${assetId}`,
+  return client.request({
+    url: `/addons/mux/uploads/${client.clientConfig.dataset}/${assetId}`,
     withCredentials: true,
     method: 'GET',
   })
@@ -187,7 +187,7 @@ async function updateAssetDocumentFromUpload(uuid) {
     playbackId: asset.data.playback_ids[0].id,
     uploadId: upload.data.id,
   }
-  return studioClient.createOrReplace(doc).then(() => {
+  return client.createOrReplace(doc).then(() => {
     return doc
   })
 }
