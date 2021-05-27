@@ -71,10 +71,10 @@ class MuxVideo extends Component {
     const style = document.createElement('style')
     style.innerHTML = 'button svg { vertical-align: middle; }'
 
-    if (this.playRef.current.shadowRoot) {
+    if (this.playRef?.current?.shadowRoot) {
       this.playRef.current.shadowRoot.appendChild(style)
     }
-    if (this.muteRef.current.shadowRoot) {
+    if (this.muteRef?.current?.shadowRoot) {
       this.muteRef.current.shadowRoot.appendChild(style.cloneNode(true))
     }
 
