@@ -80,7 +80,6 @@ export function uploadFile(file, options = {}) {
             const {enableSignedUrls} = options
             const body = {
               playback_policy: [enableSignedUrls ? 'signed' : 'public'],
-              // eslint-disable-next-line no-warning-comments
               // TODO: These parameters were enabled by Sanity, but we are not using them yet
               // mp4_support: false (default),
               // normalize_audio: false (default),
