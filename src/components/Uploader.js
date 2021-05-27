@@ -341,7 +341,6 @@ class MuxVideoInputUploader extends Component {
           <FileInputButton
             icon={<UploadIcon data-sanity-icon="upload" />}
             onSelect={(files) => this.handleUploadFile(files[0])}
-            accept={'video/*'}
             text="Upload"
           />
           {this.props.buttons}
