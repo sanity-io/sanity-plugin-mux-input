@@ -28,14 +28,13 @@ const handleButtonClick = (inputRef) => {
   }
 }
 
-export const FileInputButton = ({onSelect, accept = 'video/*', type = 'file', ...props}) => {
+export const FileInputButton = ({onSelect, type = 'file', ...props}) => {
   const _inputId = React.useRef(uniqueId('FileSelect'))
   const inputRef = React.useRef(null)
   return (
     <Label htmlFor={_inputId.current}>
       <HiddenInput
         ref={inputRef}
-        accept={accept}
         tabindex="0"
         type={type}
         id={_inputId.current}
