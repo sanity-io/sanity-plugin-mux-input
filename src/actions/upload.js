@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 import {uuid as generateUuid} from '@sanity/uuid'
 import {isString} from 'lodash'
-import {default as client, default as studioClient} from 'part:@sanity/base/client'
+import {default as studioClient} from 'part:@sanity/base/client'
 import {concat, defer, from, of, throwError} from 'rxjs'
 import {catchError, mergeMap, mergeMapTo, switchMap} from 'rxjs/operators'
 import {getAsset} from '../actions/assets'
@@ -9,8 +9,8 @@ import {testSecretsObservable} from '../actions/secrets'
 import {createUpChunkObservable} from '../clients/upChunkObservable'
 
 export function cancelUpload(uuid) {
-  return client.observable.request({
-    url: `/addons/mux/uploads/${client.clientConfig.dataset}/${uuid}`,
+  return studioClient.observable.request({
+    url: `/addons/mux/uploads/${studioClient.clientConfig.dataset}/${uuid}`,
     withCredentials: true,
     method: 'DELETE',
   })
@@ -38,7 +38,7 @@ export function uploadUrl(url, options = {}) {
             }
             const dataset = studioClient.clientConfig.dataset
             return defer(() =>
-              client.observable.request({
+              studioClient.observable.request({
                 url: `/addons/mux/assets/${dataset}`,
                 withCredentials: true,
                 method: 'POST',
@@ -89,7 +89,7 @@ export function uploadFile(file, options = {}) {
             return concat(
               of({type: 'uuid', uuid}),
               defer(() =>
-                client.observable.request({
+                studioClient.observable.request({
                   url: `/addons/mux/uploads/${studioClient.clientConfig.dataset}`,
                   withCredentials: true,
                   method: 'POST',
@@ -129,7 +129,7 @@ export function uploadFile(file, options = {}) {
 }
 
 export function getUpload(assetId) {
-  return client.request({
+  return studioClient.request({
     url: `/addons/mux/uploads/${studioClient.clientConfig.dataset}/${assetId}`,
     withCredentials: true,
     method: 'GET',
@@ -188,7 +188,7 @@ async function updateAssetDocumentFromUpload(uuid) {
     playbackId: asset.data.playback_ids[0].id,
     uploadId: upload.data.id,
   }
-  return client.createOrReplace(doc).then(() => {
+  return studioClient.createOrReplace(doc).then(() => {
     return doc
   })
 }
