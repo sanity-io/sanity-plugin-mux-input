@@ -79,6 +79,7 @@ export default withDocument(
       showSetup: false,
       showBrowser: false,
       videoReadyToPlay: false,
+      thumbLoading: false,
     }
 
     constructor(props) {
@@ -316,10 +317,34 @@ export default withDocument(
       }))
     }
 
+    handleOpenThumb = (event) => {
+      if (!this.videoPlayer.current) {
+        return
+      }
+      const {assetDocument, isSigned} = this.state
+      const currentTime = this.videoPlayer.current.getVideoElement().currentTime
+      const options = {
+        time: assetDocument.thumbTime,
+        width: 320,
+        height: 320,
+        fitMode: 'crop',
+        isSigned,
+        signingKeyId: cachedSecrets.signingKeyId,
+        signingKeyPrivate: cachedSecrets.signingKeyPrivate,
+      }
+
+      const thumb = getPosterSrc(assetDocument.playbackId, options)
+      const newThumb = getPosterSrc(assetDocument.playbackId, {...options, time: currentTime})
+
+      this.setState({thumb, newThumb})
+    }
+
     handleSetThumbButton = (event) => {
       if (!this.videoPlayer.current) {
         return
       }
+
+      this.setState({thumbLoading: true})
       const {assetDocument, isSigned} = this.state
       const currentTime = this.videoPlayer.current.getVideoElement().currentTime
       client
@@ -341,10 +366,10 @@ export default withDocument(
 
           const thumb = getPosterSrc(assetDocument.playbackId, options)
 
-          this.setState({thumb})
+          this.setState({thumb, thumbLoading: false})
         })
         .catch((error) => {
-          this.setState({error})
+          this.setState({error, thumbLoading: false})
         })
     }
 
@@ -490,7 +515,7 @@ export default withDocument(
             mode="ghost"
             tone="primary"
             disabled={this.state.videoReadyToPlay === false}
-            onClick={this.handleSetThumbButton}
+            onClick={this.handleOpenThumb}
             text="Thumbnail"
           />,
           <Button
@@ -537,7 +562,11 @@ export default withDocument(
         showBrowser,
         confirmRemove,
         thumb,
+        assetDocument,
       } = this.state
+
+      const cssAspectRatio = assetDocument?.data?.aspect_ratio?.split(':')?.join('/') || 'auto'
+
       return (
         <Box style={{position: 'relative'}}>
           <Flex align="center" justify="space-between">
@@ -580,22 +609,48 @@ export default withDocument(
           )}
 
           {thumb && (
-            <Dialog
-              header="Current thumbnail frame:"
-              zOffset={1000}
-              onClose={this.handleCloseThumbPreview}
-            >
+            <Dialog header="Thumbnail" zOffset={1000} onClose={this.handleCloseThumbPreview}>
               <Stack space={3} padding={3}>
-                <Card padding={3} radius={1} shadow={1} tone="primary">
-                  <Text size={1}>
-                    Pause the video at the frame you want as a thumbnail and click the 'Thumbnail'
-                    button again to select it.
-                  </Text>
-                </Card>
-                <img
-                  style={{maxWidth: '100%', borderRadius: '0.1875rem', display: 'block'}}
-                  src={this.state.thumb}
-                  width={400}
+                <Stack space={3}>
+                  <Stack space={2}>
+                    <Text size={1} weight="semibold">
+                      Current:
+                    </Text>
+                    <img
+                      style={{
+                        maxWidth: '100%',
+                        borderRadius: '0.1875rem',
+                        display: 'block',
+                        aspectRatio: cssAspectRatio,
+                      }}
+                      src={this.state.thumb}
+                      width={400}
+                    />
+                  </Stack>
+                  <Stack space={2}>
+                    <Text size={1} weight="semibold">
+                      New:
+                    </Text>
+                    <img
+                      style={{
+                        maxWidth: '100%',
+                        borderRadius: '0.1875rem',
+                        display: 'block',
+                        aspectRatio: cssAspectRatio,
+                      }}
+                      src={this.state.newThumb}
+                      width={400}
+                    />
+                  </Stack>
+                </Stack>
+                <Button
+                  key="thumbnail"
+                  mode="ghost"
+                  tone="primary"
+                  disabled={this.state.videoReadyToPlay === false}
+                  onClick={this.handleSetThumbButton}
+                  loading={this.state.thumbLoading}
+                  text="Set new thumbnail"
                 />
               </Stack>
             </Dialog>
