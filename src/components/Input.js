@@ -377,6 +377,7 @@ export default withDocument(
       if (event) {
         event.preventDefault()
       }
+
       this.setState({
         error: null,
       })
@@ -396,12 +397,14 @@ export default withDocument(
 
     handleSelectAsset = (asset) => {
       const {onChange} = this.props
+
       onChange(
         PatchEvent.from([
           setIfMissing({asset: {_ref: asset._id}}, []),
           set({_ref: asset._id}, ['asset']),
         ])
       )
+
       this.setState({showBrowser: false, assetDocument: asset}, () => {
         this.setupAssetListener()
       })
@@ -416,7 +419,7 @@ export default withDocument(
 
       return (
         <Dialog
-          header="MUX API Credentials"
+          header="Mux API Credentials"
           width={1}
           onClose={this.handleCancelSaveSetup}
           zOffset={1000}
@@ -462,11 +465,11 @@ export default withDocument(
           <Stack space={4}>
             {isInitialSetup && (
               <Text>
-                Looks like this is the first time you are using the MUX video plugin in this
+                Looks like this is the first time you are using the Mux video plugin in this
                 dataset. Great!
               </Text>
             )}
-            <Text>Before you can upload video, you must set your MUX credentials.</Text>
+            <Text>Before you can upload video, you must set your Mux credentials.</Text>
             <Text>Click the plugin button in the field title to open Setup.</Text>
           </Stack>
         </Stack>
@@ -667,7 +670,7 @@ export default withDocument(
                       checked={this.state.deleteOnMuxChecked}
                       onChange={this.handleDeleteOnMuxCheckBoxClicked}
                     />
-                    <Text style={{margin: '0 10px'}}>Delete asset on MUX.com</Text>
+                    <Text style={{margin: '0 10px'}}>Delete asset on Mux</Text>
                   </Flex>
                   <Flex align="center">
                     <Checkbox

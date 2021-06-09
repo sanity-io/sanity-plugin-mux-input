@@ -195,7 +195,7 @@ class MuxVideo extends Component {
           <div className={styles.progressBar}>
             <ProgressBar
               percent={100}
-              text={(isLoading !== true && isLoading) || 'Waiting for MUX to complete the file'}
+              text={(isLoading !== true && isLoading) || 'Waiting for Mux to complete the file'}
               isInProgress
               showPercent
               animation
@@ -237,7 +237,7 @@ class MuxVideo extends Component {
           <Card padding={3} radius={2} shadow={1} tone="critical" marginTop={2}>
             <Stack space={2}>
               <Text size={1}>There was an error loading this video ({error.type}).</Text>
-              {this.state.isDeletedOnMux && <Text size={1}>The video is deleted on MUX.com</Text>}
+              {this.state.isDeletedOnMux && <Text size={1}>The video is deleted on Mux</Text>}
             </Stack>
           </Card>
         )}

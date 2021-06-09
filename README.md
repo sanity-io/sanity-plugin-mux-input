@@ -1,6 +1,6 @@
 # Mux Video Input Sanity Plugin
 
-This is a plugin which let you use [MUX.com](https://www.mux.com) video assets in your Sanity studio.
+This is a plugin which let you use [Mux](https://www.mux.com) video assets in your Sanity studio.
 
 The Mux plugin for Sanity gives you a way to upload and preview videos easily.
 
@@ -34,7 +34,7 @@ Not familiar with Sanity? [Visit www.sanity.io](https://www.sanity.io/)
   Read more about [schemas in Sanity here](https://www.sanity.io/docs/the-schema).
 
 - Get an API Access Token and enter it into the setup screen
-  First time you use the plugin you will be asked to enter your MUX credentials.
+  First time you use the plugin you will be asked to enter your Mux credentials.
 
   The Mux Video API uses an Access Token and Secret Key for authentication.
 
@@ -43,7 +43,7 @@ Not familiar with Sanity? [Visit www.sanity.io](https://www.sanity.io/)
   The token is stored in the dataset as a document of the type `mux.apiKey` with the id `secrets.mux`.
   Having the ID be non-root ensures that only editors are able to see it.
 
-  The MUX plugin will find it’s access tokens by fetching this document.
+  The Mux plugin will find it’s access tokens by fetching this document.
 
 # Playing videos in the frontend
 

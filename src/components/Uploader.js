@@ -264,7 +264,7 @@ class MuxVideoInputUploader extends Component {
     let text =
       uploadProgress < 100
         ? `Uploading ${fileInfo ? `'${fileInfo.name}'` : 'file'}`
-        : 'Waiting for MUX to complete the file'
+        : 'Waiting for Mux to complete the file'
     if (this.state.error) {
       text = this.state.error.message
     }
