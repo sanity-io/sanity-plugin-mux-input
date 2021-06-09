@@ -67,7 +67,7 @@ export default withDocument(
     state = {
       assetDocument: null,
       confirmRemove: false,
-      deleteOnMuxChecked: true,
+      deleteOnMuxChecked: false,
       deleteAssetDocumentChecked: true,
       error: null,
       hasFocus: false,
@@ -694,6 +694,9 @@ export default withDocument(
                       mode="default"
                       tone="critical"
                       text="Remove"
+                      disabled={
+                        !this.state.deleteAssetDocumentChecked && !this.state.deleteOnMuxChecked
+                      }
                       onClick={this.handleRemoveVideo}
                       loading={!!isLoading}
                     />
