@@ -1,5 +1,9 @@
 import sanityClient from 'part:@sanity/base/client'
 
-export const client = sanityClient.withConfig({apiVersion: '2021-05-17'})
+const isContentLakeSupported = typeof sanityClient.withConfig === 'function'
+
+export const client = isContentLakeSupported
+  ? sanityClient.withConfig({apiVersion: '2021-05-17'})
+  : sanityClient
 
 export default client
