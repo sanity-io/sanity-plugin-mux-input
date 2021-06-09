@@ -84,7 +84,7 @@ export default class SelectAsset extends React.Component {
             const width = 100
             const height = 100
             const posterUrl = getPosterSrc(asset.playbackId, {
-              time: asset.thumbTime,
+              time: asset.thumbTime || 1,
               // eslint-disable-next-line camelcase
               fit_mode: 'smartcrop',
               width: 100,
