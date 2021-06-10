@@ -47,6 +47,7 @@ class MuxVideo extends Component {
   static getDerivedStateFromProps(nextProps) {
     let isLoading = true
     const {assetDocument} = nextProps
+
     if (assetDocument && assetDocument.status === 'preparing') {
       isLoading = 'Preparing the video'
     }
@@ -83,7 +84,14 @@ class MuxVideo extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (!this.state.isLoading && this.state.secrets && this.state.source === null) {
+    const previousVideo = prevProps.assetDocument.playbackId
+    const newVideo = this.props.assetDocument.playbackId
+
+    if (
+      !this.state.isLoading &&
+      this.state.secrets &&
+      (this.state.source === null || previousVideo !== newVideo)
+    ) {
       this.resolveSourceAndPoster(this.props.assetDocument)
     }
 
@@ -123,6 +131,7 @@ class MuxVideo extends Component {
 
   attachVideo() {
     const {assetDocument, autoload} = this.props
+
     if (Hls.isSupported()) {
       this.hls = new Hls({autoStartLoad: autoload})
       this.hls.loadSource(this.state.source)
@@ -210,6 +219,7 @@ class MuxVideo extends Component {
     }
 
     const showControls = autoload || this.state.showControls
+
     return (
       <div ref={this.videoContainer} className={styles.videoContainer}>
         <media-container>
