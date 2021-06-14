@@ -1,28 +1,7 @@
 @import 'part:@sanity/base/theme/variables-style';
 
-.root {
-  position: relative;
-}
-
-.formField {
-  margin-bottom: var(--medium-padding);
-}
-
-.paragraph {
-  margin-bottom: 0;
-}
-
-.buttons {
-  margin-bottom: var(--small-padding);
-}
-
-.notice {
-  margin-top: var(--medium-padding);
-  font-size: var(--font-size-small);
-  color: var(--gray-darker);
-}
-
 .error {
   color: var(--state-danger-color);
   font-size: var(--font-size-small);
+  margin: 0;
 }

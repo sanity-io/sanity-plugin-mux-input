@@ -1,5 +1,4 @@
-/* eslint-disable camelcase */
-import client from 'part:@sanity/base/client'
+import client from '../clients/SanityClient'
 
 export function deleteAsset(assetId) {
   const dataset = client.clientConfig.dataset

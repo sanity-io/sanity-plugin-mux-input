@@ -1,23 +1,21 @@
-import React, {Component} from 'react'
+import {UploadIcon} from '@sanity/icons'
+import {Button, Card, Grid} from '@sanity/ui'
+import ButtonCollection from 'part:@sanity/components/buttons/button-collection'
+import DialogContent from 'part:@sanity/components/dialogs/content'
+import Dialog from 'part:@sanity/components/dialogs/default'
+import FormField from 'part:@sanity/components/formfields/default'
+import ProgressBar from 'part:@sanity/components/progress/bar'
 import PropTypes from 'prop-types'
+import React, {Component} from 'react'
+import {FiUpload} from 'react-icons/fi'
 import {Subject} from 'rxjs'
 import {takeUntil, tap} from 'rxjs/operators'
-
-import {extractDroppedFiles} from '../util/extractFiles'
 import {uploadFile, uploadUrl} from '../actions/upload'
-
-import client from 'part:@sanity/base/client'
-import FormField from 'part:@sanity/components/formfields/default'
-import FileInputButton from 'part:@sanity/components/fileinput/button'
-import ButtonCollection from 'part:@sanity/components/buttons/button-collection'
-import DefaultButton from 'part:@sanity/components/buttons/default'
-import Dialog from 'part:@sanity/components/dialogs/default'
-import DialogContent from 'part:@sanity/components/dialogs/content'
-import ProgressBar from 'part:@sanity/components/progress/bar'
-import UploadPlaceholder from './UploadPlaceholder'
-import UploadIcon from 'part:@sanity/base/upload-icon'
-
+import client from '../clients/SanityClient'
+import {extractDroppedFiles} from '../util/extractFiles'
+import FileInputButton from './FileInputButton'
 import styles from './Uploader.css'
+import UploadPlaceholder from './UploadPlaceholder'
 
 const ctrlKey = 17
 const cmdKey = 91
@@ -246,16 +244,12 @@ class MuxVideoInputUploader extends Component {
         </FormField>
         <ButtonCollection>
           <FileInputButton
-            inverted
-            icon={UploadIcon}
+            icon={<FiUpload data-sanity-icon="upload" />}
             onSelect={(files) => this.handleUploadFile(files[0])}
             accept={'video/*'}
-          >
-            Select file
-          </FileInputButton>
-          <DefaultButton inverted onClick={this.props.onBrowse}>
-            Browse
-          </DefaultButton>
+            text="Upload"
+          />
+          <Button mode="ghost" tone="default" text="Browse" onClick={this.props.onBrowse} />
         </ButtonCollection>
       </div>
     )
@@ -270,7 +264,7 @@ class MuxVideoInputUploader extends Component {
     let text =
       uploadProgress < 100
         ? `Uploading ${fileInfo ? `'${fileInfo.name}'` : 'file'}`
-        : 'Waiting for MUX to complete the file'
+        : 'Waiting for Mux to complete the file'
     if (this.state.error) {
       text = this.state.error.message
     }
@@ -291,9 +285,12 @@ class MuxVideoInputUploader extends Component {
         </div>
         {(uploadProgress < 100 || this.state.error) && (
           <div ref={this.cancelUploadButton}>
-            <DefaultButton color="danger" onClick={this.handleCancelUploadButtonClick}>
-              Cancel upload
-            </DefaultButton>
+            <Button
+              text="Cancel upload"
+              padding={3}
+              tone="critical"
+              onClick={this.handleCancelUploadButtonClick}
+            />
           </div>
         )}
       </div>
@@ -314,9 +311,12 @@ class MuxVideoInputUploader extends Component {
         <div>
           <h3>Invalid credentials</h3>
           <p>You need to check your Mux access token and secret key.</p>
-          <DefaultButton color="primary" onClick={this.handleSetupButtonClicked} kind="simple">
-            Run setup
-          </DefaultButton>
+          <Button
+            text="Run setup"
+            tone="primary"
+            padding={3}
+            onClick={this.handleSetupButtonClicked}
+          />
         </div>
       )
     }
@@ -337,17 +337,14 @@ class MuxVideoInputUploader extends Component {
   renderButtons() {
     if (this.state.uploadProgress === null && this.props.buttons) {
       return (
-        <ButtonCollection>
+        <Grid columns={4} gap={2}>
           <FileInputButton
-            inverted
-            icon={UploadIcon}
+            icon={<UploadIcon data-sanity-icon="upload" />}
             onSelect={(files) => this.handleUploadFile(files[0])}
-            accept={'video/*'}
-          >
-            Upload
-          </FileInputButton>
+            text="Upload"
+          />
           {this.props.buttons}
-        </ButtonCollection>
+        </Grid>
       )
     }
     return null
@@ -382,8 +379,10 @@ class MuxVideoInputUploader extends Component {
 
   render() {
     return (
-      <div
-        className={styles.root}
+      <Card
+        padding={0}
+        radius={0}
+        shadow={0}
         tabIndex={0}
         onBlur={this.props.onBlur}
         onFocus={this.props.onFocus}
@@ -405,11 +404,25 @@ class MuxVideoInputUploader extends Component {
         {this.renderUploadPlaceHolder()}
         {this.renderChildren()}
         {this.renderButtons()}
-      </div>
+      </Card>
     )
   }
 }
 
 MuxVideoInputUploader.propTypes = propTypes
+
+MuxVideoInputUploader.defaultProps = {
+  hasFocus: false,
+  onFocus: null,
+  onBlur: null,
+  onUploadComplete: null,
+  secrets: {
+    token: '',
+    secretKey: '',
+    enableSignedUrls: false,
+  },
+  buttons: null,
+  children: null,
+}
 
 export default MuxVideoInputUploader

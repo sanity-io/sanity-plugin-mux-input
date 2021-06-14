@@ -1,15 +1,10 @@
-import React, {Component} from 'react'
-import PropTypes from 'prop-types'
-
+import {Box, Button, Card, Checkbox, Code, Flex, Inline, Stack, Text} from '@sanity/ui'
 import {uniqueId} from 'lodash'
-import {createSigningKeys, haveValidSigningKeys, saveSecrets, testSecrets} from '../actions/secrets'
-
-import Button from 'part:@sanity/components/buttons/default'
-import Fieldset from 'part:@sanity/components/fieldsets/default'
 import FormField from 'part:@sanity/components/formfields/default'
 import TextInput from 'part:@sanity/components/textinputs/default'
-import Checkbox from 'part:@sanity/components/toggles/checkbox'
-
+import PropTypes from 'prop-types'
+import React, {Component} from 'react'
+import {createSigningKeys, haveValidSigningKeys, saveSecrets} from '../actions/secrets'
 import styles from './Setup.css'
 
 const propTypes = {
@@ -23,7 +18,6 @@ const propTypes = {
     signingKeyPrivate: PropTypes.string,
   }),
 }
-
 class MuxVideoInputSetup extends Component {
   tokenInputId = uniqueId('MuxTokenInput')
   secretKeyInputId = uniqueId('MuxSecretInput')
@@ -96,69 +90,83 @@ class MuxVideoInputSetup extends Component {
         error: 'Something went wrong saving the token. See console.error for more info.',
       })
     }
-    this.setState({isLoading: true})
-    const token = this.state.token || null
-    const secretKey = this.state.secretKey || null
-    const enableSignedUrls = this.state.enableSignedUrls || false
-    let signingKeyId = this.state.signingKeyId || null
-    let signingKeyPrivate = this.state.signingKeyPrivate || null
 
-    const hasValidSigningKeys = await haveValidSigningKeys(signingKeyId, signingKeyPrivate)
+    this.setState({isLoading: true})
+
+    const {token, secretKey, enableSignedUrls} = this.state || {}
+    let {signingKeyId, signingKeyPrivate} = this.state || {}
 
     try {
       await saveSecrets(token, secretKey, enableSignedUrls, signingKeyId, signingKeyPrivate)
     } catch (err) {
-      handleError(err)
+      handleError('Error while trying to save secrets:', err)
       return
     }
 
-    if (!hasValidSigningKeys && enableSignedUrls) {
-      try {
-        const { data } = await createSigningKeys()
-        signingKeyId = data.id
-        signingKeyPrivate = data.private_key
-        await saveSecrets(token, secretKey, enableSignedUrls, signingKeyId, signingKeyPrivate)
-      } catch ({ message }) {
-        this.setState({ error: message })
+    if (enableSignedUrls) {
+      const hasValidSigningKeys = await haveValidSigningKeys(signingKeyId, signingKeyPrivate)
+
+      if (!hasValidSigningKeys) {
+        try {
+          const {data} = await createSigningKeys()
+          signingKeyId = data.id
+          signingKeyPrivate = data.private_key
+          await saveSecrets(token, secretKey, enableSignedUrls, signingKeyId, signingKeyPrivate)
+        } catch ({message}) {
+          // eslint-disable-next-line no-console
+          console.log('Error while creating and saving signing key:', message)
+          this.setState({error: message})
+        }
       }
-    }
-
-    let result
-
-    try {
-      result = await testSecrets()
-    } catch (err) {
-      handleError(err)
-      return
     }
 
     this.setState({isLoading: false})
 
-    if (result.status) {
-      this.props.onSave({token, secretKey, enableSignedUrls, signingKeyId, signingKeyPrivate})
-      return
-    }
-
-    handleError({error: 'Invalid credentials'})
+    this.props.onSave({token, secretKey, enableSignedUrls, signingKeyId, signingKeyPrivate})
   }
 
   render() {
     const {error, isLoading} = this.state
+
     return (
-      <div className={styles.root}>
+      <Box
+        paddingRight={4}
+        paddingLeft={4}
+        paddingBottom={4}
+        paddingTop={4}
+        style={{position: 'relative'}}
+      >
         <form onSubmit={this.handleOnSubmit}>
-          <Fieldset
-            level={1}
-            legend="MUX API Credentials"
-            description="The credentials will be stored safely in a hidden document only available to editors."
-            changeIndicator={false}
-          >
+          <Stack space={4}>
+            {!this.state.token && (
+              <Card padding={[3, 3, 3]} radius={2} shadow={1} tone="primary">
+                <Stack space={3}>
+                  <Text size={1}>
+                    To set up a new access token, go to your{' '}
+                    <a
+                      href="https://dashboard.mux.com/settings/access-tokens"
+                      target="_blank"
+                      rel="noreferrer noopener"
+                    >
+                      account on mux.com
+                    </a>
+                    .
+                  </Text>
+                  <Text size={1}>
+                    The access token needs permissions: <strong>Mux Video </strong>
+                    (Full Access) and <strong>Mux Data</strong> (Read)
+                    <br />
+                    The credentials will be stored safely in a hidden document only available to
+                    editors.
+                  </Text>
+                </Stack>
+              </Card>
+            )}
             <FormField
               changeIndicator={false}
               label="Access Token"
               labelFor={this.tokenInputId}
               level={0}
-              className={styles.formField}
             >
               <TextInput
                 id={this.tokenInputId}
@@ -168,13 +176,11 @@ class MuxVideoInputSetup extends Component {
                 value={this.state.token || ''}
               />
             </FormField>
-
             <FormField
               changeIndicator={false}
               label="Secret Key"
               labelFor={this.secretKeyInputId}
               level={0}
-              className={styles.formField}
             >
               <TextInput
                 id={this.secretKeyInputId}
@@ -183,66 +189,66 @@ class MuxVideoInputSetup extends Component {
                 value={this.state.secretKey || ''}
               />
             </FormField>
-            <FormField
-              changeIndicator={false}
-              label="Enable Signed Urls"
-              labelFor={this.enableSignedUrlsInputId}
-              level={0}
-              className={styles.formField}
-            >
-              <Checkbox
-                id={this.enableSignedUrlsInputId}
-                onChange={this.handleEnableSignedUrls}
-                checked={this.state.enableSignedUrls || false}
-              />
-              {this.state.signingKeyId ? (
-                <p className={styles.paragraph}>
-                  The signing key ID that Sanity will use is <code>{this.state.signingKeyId}</code>.
-                  This key is only used for previewing content in the Sanity UI. You should generate
-                  a different key to use in your application server.
-                </p>
-              ) : null}
-            </FormField>
 
-            <div className={styles.buttons}>
+            <Stack space={4}>
+              <Flex align="center">
+                <Checkbox
+                  id={this.enableSignedUrlsInputId}
+                  onChange={this.handleEnableSignedUrls}
+                  checked={this.state.enableSignedUrls || false}
+                  style={{display: 'block'}}
+                />
+                <Box flex={1} paddingLeft={3}>
+                  <Text>
+                    <label htmlFor={this.enableSignedUrlsInputId}>Enable Signed Urls</label>
+                  </Text>
+                </Box>
+              </Flex>
+              {this.state.signingKeyId && this.state.enableSignedUrls ? (
+                <Card padding={[3, 3, 3]} radius={2} shadow={1} tone="caution">
+                  <Stack space={3}>
+                    <Text size={1}>The signing key ID that Sanity will use is:</Text>
+                    <Code size={1}>{this.state.signingKeyId}</Code>
+                    <Text size={1}>
+                      This key is only used for previewing content in the Sanity UI.
+                      <br />
+                      You should generate a different key to use in your application server.
+                    </Text>
+                  </Stack>
+                </Card>
+              ) : null}
+            </Stack>
+
+            <Inline space={2}>
               <Button
+                text="Save"
                 loading={isLoading}
-                color="primary"
-                kind="default"
+                tone="primary"
+                mode="default"
                 onClick={this.handleSaveToken}
-              >
-                Save
-              </Button>
-              <Button color="primary" kind="simple" onClick={this.handleCancel}>
-                Cancel
-              </Button>
-            </div>
+              />
+
+              <Button text="Cancel" tone="primary" mode="bleed" onClick={this.handleCancel} />
+            </Inline>
 
             {error && <p className={styles.error}>{error}</p>}
-          </Fieldset>
-          <div className={styles.notice}>
-            <p>
-              To set up a new access token, go to your{' '}
-              <a
-                href="https://dashboard.mux.com/settings/access-tokens"
-                target="_blank"
-                rel="noreferrer noopener"
-              >
-                account on mux.com
-              </a>
-              .
-            </p>
-            <p>
-              The access token needs permissions: <strong>Mux Video </strong>
-              (Full Access) and <strong>Mux Data</strong> (Read)
-            </p>
-          </div>
+          </Stack>
         </form>
-      </div>
+      </Box>
     )
   }
 }
 
 MuxVideoInputSetup.propTypes = propTypes
+
+MuxVideoInputSetup.defaultProps = {
+  secrets: {
+    token: null,
+    secretKey: null,
+    enableSignedUrls: false,
+    signingKeyId: null,
+    signingKeyPrivate: null,
+  },
+}
 
 export default MuxVideoInputSetup

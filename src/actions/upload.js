@@ -1,13 +1,12 @@
 /* eslint-disable camelcase */
-import client from 'part:@sanity/base/client'
 import {uuid as generateUuid} from '@sanity/uuid'
 import {isString} from 'lodash'
-import {throwError, of, from, concat, defer} from 'rxjs'
-import {mergeMap, catchError, mergeMapTo, switchMap} from 'rxjs/operators'
-import studioClient from 'part:@sanity/base/client'
-import {createUpChunkObservable} from '../clients/upChunkObservable'
+import {concat, defer, from, of, throwError} from 'rxjs'
+import {catchError, mergeMap, mergeMapTo, switchMap} from 'rxjs/operators'
 import {getAsset} from '../actions/assets'
 import {testSecretsObservable} from '../actions/secrets'
+import client from '../clients/SanityClient'
+import {createUpChunkObservable} from '../clients/upChunkObservable'
 
 export function cancelUpload(uuid) {
   return client.observable.request({
@@ -37,7 +36,7 @@ export function uploadUrl(url, options = {}) {
               muxBody: JSON.stringify(muxBody),
               filename: validUrl.split('/').slice(-1)[0],
             }
-            const dataset = studioClient.clientConfig.dataset
+            const dataset = client.clientConfig.dataset
             return defer(() =>
               client.observable.request({
                 url: `/addons/mux/assets/${dataset}`,
@@ -90,7 +89,7 @@ export function uploadFile(file, options = {}) {
               of({type: 'uuid', uuid}),
               defer(() =>
                 client.observable.request({
-                  url: `/addons/mux/uploads/${studioClient.clientConfig.dataset}`,
+                  url: `/addons/mux/uploads/${client.clientConfig.dataset}`,
                   withCredentials: true,
                   method: 'POST',
                   headers: {
@@ -130,7 +129,7 @@ export function uploadFile(file, options = {}) {
 
 export function getUpload(assetId) {
   return client.request({
-    url: `/addons/mux/uploads/${studioClient.clientConfig.dataset}/${assetId}`,
+    url: `/addons/mux/uploads/${client.clientConfig.dataset}/${assetId}`,
     withCredentials: true,
     method: 'GET',
   })

@@ -1,5 +1,5 @@
 import {defer} from 'rxjs'
-import client from 'part:@sanity/base/client'
+import client from '../clients/SanityClient'
 
 const cache = {
   secrets: null,
@@ -34,6 +34,7 @@ export function saveSecrets(token, secretKey, enableSignedUrls, signingKeyId, si
     signingKeyId,
     signingKeyPrivate,
   }
+
   return client.createOrReplace(doc).then(() => {
     cache.exists = true
     cache.secrets = {
@@ -80,9 +81,9 @@ export async function haveValidSigningKeys(signingKeyId, signingKeyPrivate) {
     //
     // if this signing key is valid it will return { data: { id: 'xxxx' } }
     //
-    return !!(res.data && res.data.id);
+    return !!(res.data && res.data.id)
   } catch (e) {
-    console.error('Error fetching signingKeyId', signingKeyId, 'assuming it is not valid');
+    console.error('Error fetching signingKeyId', signingKeyId, 'assuming it is not valid')
     return false
   }
 }

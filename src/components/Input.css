@@ -1,29 +1,5 @@
 @import 'part:@sanity/base/theme/variables-style';
 
-.root {
-  position: relative;
-}
-
-.isLoading {
-  display: flex;
-}
-.isLoading span {
-  margin-left: var(--small-padding);
-  font-size: var(--font-size-small);
-}
-
-.warning {
-  padding: var(--medium-padding);
-  background-color: #efefefef;
-  color: var(--black);
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
 .formField {
   display: inline-block;
 }
@@ -45,16 +21,8 @@
   margin-bottom: var(--medium-padding);
 }
 
-.popoverAnchor {
-  position: absolute;
-}
-
 .thumbPreview {
   border: 1px solid var(--gray);
-}
-
-.alert {
-  margin-bottom: 0.3125rem;
 }
 
 .deleteCheckboxRow:not(:last-child) {

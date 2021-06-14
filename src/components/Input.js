@@ -1,35 +1,25 @@
-import React, {Component, Fragment} from 'react'
-import Button from 'part:@sanity/components/buttons/default'
+import {Box, Button, Card, Checkbox, Dialog, Flex, Grid, Inline, Stack, Text} from '@sanity/ui'
+import SetupIcon from 'part:@sanity/base/plugin-icon'
+import {observePaths} from 'part:@sanity/base/preview'
+import DialogContent from 'part:@sanity/components/dialogs/content'
+import FullscreenDialog from 'part:@sanity/components/dialogs/fullscreen'
+import FormField from 'part:@sanity/components/formfields/default'
+import Spinner from 'part:@sanity/components/loading/spinner'
+import {withDocument} from 'part:@sanity/form-builder'
+import PatchEvent, {set, setIfMissing, unset} from 'part:@sanity/form-builder/patch-event'
+import React, {Component} from 'react'
 import {of} from 'rxjs'
 import {tap} from 'rxjs/operators'
-import {withDocument} from 'part:@sanity/form-builder'
-
+import {deleteAsset, getAsset} from '../actions/assets'
 import {fetchSecrets} from '../actions/secrets'
-import {getAsset, deleteAsset} from '../actions/assets'
+import client from '../clients/SanityClient'
 import getPosterSrc from '../util/getPosterSrc'
-
-import client from 'part:@sanity/base/client'
-import {observePaths} from 'part:@sanity/base/preview'
-import Dialog from 'part:@sanity/components/dialogs/default'
-import FullscreenDialog from 'part:@sanity/components/dialogs/fullscreen'
-import DialogContent from 'part:@sanity/components/dialogs/content'
-
-import PatchEvent, {set, setIfMissing} from 'part:@sanity/form-builder/patch-event'
-import ButtonCollection from 'part:@sanity/components/buttons/button-collection'
-import Checkbox from 'part:@sanity/components/toggles/checkbox'
-import DefaultButton from 'part:@sanity/components/buttons/default'
-import FormField from 'part:@sanity/components/formfields/default'
-import PopOver from 'part:@sanity/components/dialogs/popover'
-import Alert from 'part:@sanity/components/alerts/alert'
-import SetupIcon from 'part:@sanity/base/plugin-icon'
-import Spinner from 'part:@sanity/components/loading/spinner'
-
-import Setup from './Setup'
-import Video from './Video'
-import SelectAsset from './SelectAsset'
-import MuxLogo from './MuxLogo'
-import Uploader from './Uploader'
 import styles from './Input.css'
+import MuxLogo from './MuxLogo'
+import SelectAsset from './SelectAsset'
+import Setup from './Setup'
+import Uploader from './Uploader'
+import Video from './Video'
 
 const NOOP = () => {
   /* intentional noop */
@@ -44,10 +34,9 @@ const cachedSecrets = {
 }
 
 function validateSecrets(secrets) {
-  if (secrets.token === null) return true
-  if (secrets.secretKey === null) return true
+  if (!secrets.token || !secrets.secretKey) return false
 
-  return false
+  return true
 }
 
 function getSecrets() {
@@ -58,19 +47,19 @@ function getSecrets() {
       secrets: cachedSecrets,
     })
   }
-  return fetchSecrets()
-    .then(({secrets, exists}) => {
-      cachedSecrets.token = secrets.token
-      cachedSecrets.secretKey = secrets.secretKey
-      cachedSecrets.enableSignedUrls = secrets.enableSignedUrls
-      cachedSecrets.signingKeyId = secrets.signingKeyId
-      cachedSecrets.signingKeyPrivate = secrets.signingKeyPrivate
-      return {
-        isInitialSetup: !exists,
-        needsSetup: validateSecrets(cachedSecrets),
-        secrets: cachedSecrets,
-      }
-    })
+  return fetchSecrets().then(({secrets, exists}) => {
+    cachedSecrets.token = secrets.token
+    cachedSecrets.secretKey = secrets.secretKey
+    cachedSecrets.enableSignedUrls = secrets.enableSignedUrls
+    cachedSecrets.signingKeyId = secrets.signingKeyId
+    cachedSecrets.signingKeyPrivate = secrets.signingKeyPrivate
+
+    return {
+      isInitialSetup: !exists,
+      needsSetup: !validateSecrets(cachedSecrets),
+      secrets: cachedSecrets,
+    }
+  })
 }
 
 export default withDocument(
@@ -78,7 +67,7 @@ export default withDocument(
     state = {
       assetDocument: null,
       confirmRemove: false,
-      deleteOnMuxChecked: true,
+      deleteOnMuxChecked: false,
       deleteAssetDocumentChecked: true,
       error: null,
       hasFocus: false,
@@ -90,19 +79,22 @@ export default withDocument(
       showSetup: false,
       showBrowser: false,
       videoReadyToPlay: false,
+      thumbLoading: false,
     }
 
     constructor(props) {
       super(props)
-      getSecrets().then(({secrets, isInitialSetup, needsSetup}) => {
-        this.setState({
-          secrets,
-          isInitialSetup,
-          needsSetup,
-          isLoading: props.value?.asset, // If there is an asset continue loading
+      getSecrets()
+        .then(({secrets, isInitialSetup, needsSetup}) => {
+          this.setState({
+            secrets,
+            isInitialSetup,
+            needsSetup,
+            isLoading: props.value?.asset, // If there is an asset continue loading
+          })
         })
-      }).catch((error) => this.setState({ error }))
-      
+        .catch((error) => this.setState({error}))
+
       this.setupButton = React.createRef()
       this.pollInterval = null
       this.video = React.createRef()
@@ -125,7 +117,7 @@ export default withDocument(
     }
 
     focus = () => {
-      this.handleFocus();
+      this.handleFocus()
     }
 
     handleFocus = () => {
@@ -163,6 +155,7 @@ export default withDocument(
             if (assetDocument && assetDocument.status === 'errored') {
               clearInterval(this.pollInterval)
               this.pollInterval = null
+              // eslint-disable-next-line no-warning-comments
               // todo: use client.observable
               return this.handleRemoveVideo().then(() => {
                 this.setState({
@@ -182,6 +175,7 @@ export default withDocument(
             // eslint-disable-next-line camelcase
             const isSigned = assetDocument?.data?.playback_ids[0]?.policy === 'signed'
             this.setState({assetDocument, isSigned, isLoading: false})
+
             return of(assetDocument)
           })
         )
@@ -224,10 +218,11 @@ export default withDocument(
       cachedSecrets.enableSignedUrls = enableSignedUrls
       cachedSecrets.signingKeyId = signingKeyId
       cachedSecrets.signingKeyPrivate = signingKeyPrivate
+
       this.setState({
         showSetup: false,
         secrets: cachedSecrets,
-        needsSetup: validateSecrets(cachedSecrets),
+        needsSetup: !validateSecrets(cachedSecrets),
       })
     }
 
@@ -283,7 +278,7 @@ export default withDocument(
                       })
                   })
               }
-              return resolve()
+              return this.props.onChange(PatchEvent.from(unset()))
             }
           )
         })
@@ -322,10 +317,34 @@ export default withDocument(
       }))
     }
 
+    handleOpenThumb = (event) => {
+      if (!this.videoPlayer.current) {
+        return
+      }
+      const {assetDocument, isSigned} = this.state
+      const currentTime = this.videoPlayer.current.getVideoElement().currentTime
+      const options = {
+        time: assetDocument.thumbTime,
+        width: 320,
+        height: 320,
+        fitMode: 'crop',
+        isSigned,
+        signingKeyId: cachedSecrets.signingKeyId,
+        signingKeyPrivate: cachedSecrets.signingKeyPrivate,
+      }
+
+      const thumb = getPosterSrc(assetDocument.playbackId, options)
+      const newThumb = getPosterSrc(assetDocument.playbackId, {...options, time: currentTime})
+
+      this.setState({thumb, newThumb})
+    }
+
     handleSetThumbButton = (event) => {
       if (!this.videoPlayer.current) {
         return
       }
+
+      this.setState({thumbLoading: true})
       const {assetDocument, isSigned} = this.state
       const currentTime = this.videoPlayer.current.getVideoElement().currentTime
       client
@@ -347,10 +366,10 @@ export default withDocument(
 
           const thumb = getPosterSrc(assetDocument.playbackId, options)
 
-          this.setState({thumb})
+          this.setState({thumb, thumbLoading: false})
         })
         .catch((error) => {
-          this.setState({error})
+          this.setState({error, thumbLoading: false})
         })
     }
 
@@ -358,6 +377,7 @@ export default withDocument(
       if (event) {
         event.preventDefault()
       }
+
       this.setState({
         error: null,
       })
@@ -377,12 +397,14 @@ export default withDocument(
 
     handleSelectAsset = (asset) => {
       const {onChange} = this.props
+
       onChange(
         PatchEvent.from([
           setIfMissing({asset: {_ref: asset._id}}, []),
           set({_ref: asset._id}, ['asset']),
         ])
       )
+
       this.setState({showBrowser: false, assetDocument: asset}, () => {
         this.setupAssetListener()
       })
@@ -394,24 +416,20 @@ export default withDocument(
 
     renderSetup() {
       const {secrets} = this.state
-      const setup = (
-        <Setup
-          secrets={secrets ? secrets : null}
-          onSave={this.handleSaveSetup}
-          onCancel={this.handleCancelSaveSetup}
-        />
-      )
 
       return (
-        <PopOver
-          color="default"
-          useOverlay
-          onEscape={this.handleCancelSaveSetup}
-          onClickOutside={this.handleCancelSaveSetup}
-          padding="large"
+        <Dialog
+          header="Mux API Credentials"
+          width={1}
+          onClose={this.handleCancelSaveSetup}
+          zOffset={1000}
         >
-          {setup}
-        </PopOver>
+          <Setup
+            secrets={secrets || null}
+            onSave={this.handleSaveSetup}
+            onCancel={this.handleCancelSaveSetup}
+          />
+        </Dialog>
       )
     }
 
@@ -421,12 +439,13 @@ export default withDocument(
       return (
         <div className={styles.setupButtonContainer}>
           <Button
-            color={needsSetup ? 'danger' : 'primary'}
+            tone={needsSetup ? 'critical' : 'positive'}
+            mode="bleed"
             onClick={this.handleSetupButtonClicked}
             icon={SetupIcon}
-            kind="simple"
-            title="Configure MUX API access"
-            tabIndex={1}
+            padding={3}
+            radius={3}
+            aria-label="Set up Mux credentials"
           />
           {renderSetup && this.renderSetup()}
         </div>
@@ -434,23 +453,26 @@ export default withDocument(
     }
 
     renderSetupNotice() {
-      const {isLoading, needsSetup, isInitialSetup} = this.state
-      const renderSetupNotice = needsSetup
-      if (isLoading || !renderSetupNotice) {
+      const {isLoading, isInitialSetup} = this.state
+
+      if (isLoading) {
         return null
       }
+
       return (
-        <div className={styles.warning}>
+        <Stack padding={4} space={5} style={{backgroundColor: '#efefefef', borderRadius: 3}}>
           <MuxLogo />
-          {isInitialSetup && (
-            <p>
-              Looks like this is the first time you are using the MUX video plugin in this dataset.
-              Great!
-            </p>
-          )}
-          <p>Before you can upload video, you must set your MUX credentials.</p>
-          <p>Click the plugin button in the field title to open Setup.</p>
-        </div>
+          <Stack space={4}>
+            {isInitialSetup && (
+              <Text>
+                Looks like this is the first time you are using the Mux video plugin in this
+                dataset. Great!
+              </Text>
+            )}
+            <Text>Before you can upload video, you must set your Mux credentials.</Text>
+            <Text>Click the plugin button in the field title to open Setup.</Text>
+          </Stack>
+        </Stack>
       )
     }
 
@@ -462,14 +484,12 @@ export default withDocument(
         return null
       }
       const isSignedAlert = isSigned ? (
-        <div className={styles.alert}>
-          <Alert title="Note" color="success">
-            This mux asset is using a signed url
-          </Alert>
-        </div>
+        <Card padding={3} radius={2} shadow={1} tone="positive">
+          <Text size={1}>This Mux asset is using a signed url.</Text>
+        </Card>
       ) : null
       return (
-        <>
+        <Stack space={2} marginBottom={2}>
           {isSignedAlert}
           <Video
             assetDocument={assetDocument}
@@ -477,7 +497,7 @@ export default withDocument(
             onReady={this.handleVideoReadyToPlay}
             onCancel={this.handleRemoveVideo}
           />
-        </>
+        </Stack>
       )
     }
 
@@ -485,101 +505,33 @@ export default withDocument(
       const {assetDocument, confirmRemove} = this.state
       const {readOnly} = this.props
       if (assetDocument && assetDocument.status === 'ready' && !readOnly) {
-        return (
-          <Fragment>
-            <DefaultButton
-              inverted
-              kind="default"
-              onClick={this.handleBrowseButton}
-              title="Select a previous uploaded video"
-            >
-              Browse
-            </DefaultButton>
-
-            <DefaultButton
-              inverted
-              disabled={this.state.videoReadyToPlay === false}
-              kind="default"
-              onClick={this.handleSetThumbButton}
-              title="Set thumbnail image from the current video position"
-            >
-              Set thumb
-            </DefaultButton>
-
-            <DefaultButton
-              ref={this.removeVideoButton}
-              inverted
-              kind="default"
-              color="danger"
-              onClick={confirmRemove ? NOOP : this.handleRemoveVideoButtonClicked}
-            >
-              Remove
-              <div className={styles.popoverAnchor}>
-                {confirmRemove && (
-                  <PopOver
-                    color="default"
-                    useOverlay
-                    onEscape={this.handleCancelRemove}
-                    onClickOutside={this.handleCancelRemove}
-                    padding="large"
-                  >
-                    <div className={styles.confirmDeletePopover}>
-                      <div className={styles.confirmDeletePopoverButtons}>
-                        <ButtonCollection>
-                          <DefaultButton onClick={this.handleCancelRemove}>Cancel</DefaultButton>
-                          <DefaultButton
-                            color="danger"
-                            onClick={this.handleRemoveVideo}
-                            loading={!!this.state.isLoading}
-                          >
-                            Remove
-                          </DefaultButton>
-                        </ButtonCollection>
-                      </div>
-                    </div>
-                    <div className={styles.deleteCheckboxRow}>
-                      <Checkbox
-                        checked={this.state.deleteOnMuxChecked}
-                        onChange={this.handleDeleteOnMuxCheckBoxClicked}
-                        label="Delete asset on MUX.com"
-                      />
-                    </div>
-                    <div className={styles.deleteCheckboxRow}>
-                      <Checkbox
-                        disabled={this.state.deleteOnMuxChecked}
-                        checked={
-                          this.state.deleteOnMuxChecked || this.state.deleteAssetDocumentChecked
-                        }
-                        onChange={this.handleDeleteAssetDocumentCheckBoxClicked}
-                        label="Delete video from dataset"
-                      />
-                    </div>
-                  </PopOver>
-                )}
-              </div>
-            </DefaultButton>
-          </Fragment>
-        )
+        return [
+          <Button
+            key="browse"
+            mode="ghost"
+            tone="primary"
+            onClick={this.handleBrowseButton}
+            text="Browse"
+          />,
+          <Button
+            key="thumbnail"
+            mode="ghost"
+            tone="primary"
+            disabled={this.state.videoReadyToPlay === false}
+            onClick={this.handleOpenThumb}
+            text="Thumbnail"
+          />,
+          <Button
+            key="remove"
+            ref={this.removeVideoButton}
+            onClick={confirmRemove ? NOOP : this.handleRemoveVideoButtonClicked}
+            mode="ghost"
+            tone="critical"
+            text="Remove"
+          />,
+        ]
       }
       return null
-    }
-
-    renderThumbPreview() {
-      return (
-        <PopOver
-          color="default"
-          useOverlay
-          onClose={this.handleCloseThumbPreview}
-          onEscape={this.handleCloseThumbPreview}
-          onClickOutside={this.handleCloseThumbPreview}
-          padding="large"
-        >
-          <div>
-            <h4>Saved thumbnail frame:</h4>
-            <img className={styles.thumbPreview} src={this.state.thumb} width={240} height={240} />
-          </div>
-        </PopOver>
-      )
     }
 
     renderBrowser() {
@@ -596,14 +548,7 @@ export default withDocument(
         return null
       }
       return (
-        <Dialog
-          title="Error"
-          color="danger"
-          useOverlay
-          onClose={this.handleErrorClose}
-          onEscape={this.handleErrorClose}
-          onClickOutside={this.handleErrorClose}
-        >
+        <Dialog header="Error" onClose={this.handleErrorClose}>
           <DialogContent size="small">{error.message}</DialogContent>
         </Dialog>
       )
@@ -611,10 +556,23 @@ export default withDocument(
 
     render() {
       const {type, level, markers} = this.props
-      const {isLoading, secrets, hasFocus, needsSetup, error, thumb, showBrowser} = this.state
+      const {
+        isLoading,
+        secrets,
+        hasFocus,
+        needsSetup,
+        error,
+        showBrowser,
+        confirmRemove,
+        thumb,
+        assetDocument,
+      } = this.state
+
+      const cssAspectRatio = assetDocument?.data?.aspect_ratio?.split(':')?.join('/') || 'auto'
+
       return (
-        <div className={styles.root}>
-          <div className={styles.header}>
+        <Box style={{position: 'relative'}}>
+          <Flex align="center" justify="space-between">
             <FormField
               label={type.title}
               markers={markers}
@@ -623,23 +581,27 @@ export default withDocument(
               className={styles.formField}
             />
             {this.renderSetupButton()}
-          </div>
+          </Flex>
 
           {isLoading === 'secrets' && (
-            <div className={styles.isLoading}>
-              <Spinner inline />
-              <span>Fetching credentials</span>
-            </div>
+            <Box marginBottom={2}>
+              <Inline align="center" space={2}>
+                <Spinner inline />
+                <Text size={1}>Fetching credentials</Text>
+              </Inline>
+            </Box>
           )}
 
-          {this.renderSetupNotice()}
+          {needsSetup && this.renderSetupNotice()}
 
           {!needsSetup && (
             <Uploader
               buttons={this.renderVideoButtons()}
               hasFocus={hasFocus}
-              onBlur={this.handleBlur}
-              onFocus={this.handleFocus}
+              // eslint-disable-next-line react/jsx-handler-names
+              onBlur={this.blur}
+              // eslint-disable-next-line react/jsx-handler-names
+              onFocus={this.focus}
               onSetupButtonClicked={this.handleSetupButtonClicked}
               onUploadComplete={this.handleOnUploadComplete}
               secrets={secrets}
@@ -649,12 +611,103 @@ export default withDocument(
             </Uploader>
           )}
 
-          {thumb && this.renderThumbPreview()}
+          {thumb && (
+            <Dialog header="Thumbnail" zOffset={1000} onClose={this.handleCloseThumbPreview}>
+              <Stack space={3} padding={3}>
+                <Stack space={3}>
+                  <Stack space={2}>
+                    <Text size={1} weight="semibold">
+                      Current:
+                    </Text>
+                    <img
+                      style={{
+                        maxWidth: '100%',
+                        borderRadius: '0.1875rem',
+                        display: 'block',
+                        aspectRatio: cssAspectRatio,
+                      }}
+                      src={this.state.thumb}
+                      width={400}
+                    />
+                  </Stack>
+                  <Stack space={2}>
+                    <Text size={1} weight="semibold">
+                      New:
+                    </Text>
+                    <img
+                      style={{
+                        maxWidth: '100%',
+                        borderRadius: '0.1875rem',
+                        display: 'block',
+                        aspectRatio: cssAspectRatio,
+                      }}
+                      src={this.state.newThumb}
+                      width={400}
+                    />
+                  </Stack>
+                </Stack>
+                <Button
+                  key="thumbnail"
+                  mode="ghost"
+                  tone="primary"
+                  disabled={this.state.videoReadyToPlay === false}
+                  onClick={this.handleSetThumbButton}
+                  loading={this.state.thumbLoading}
+                  text="Set new thumbnail"
+                />
+              </Stack>
+            </Dialog>
+          )}
 
           {showBrowser && this.renderBrowser()}
 
+          {confirmRemove && (
+            <Dialog header="Remove video" zOffset={1000} onClose={this.handleCancelRemove}>
+              <Box padding={4}>
+                <Stack space={3}>
+                  <Flex align="center">
+                    <Checkbox
+                      checked={this.state.deleteOnMuxChecked}
+                      onChange={this.handleDeleteOnMuxCheckBoxClicked}
+                    />
+                    <Text style={{margin: '0 10px'}}>Delete asset on Mux</Text>
+                  </Flex>
+                  <Flex align="center">
+                    <Checkbox
+                      disabled={this.state.deleteOnMuxChecked}
+                      checked={
+                        this.state.deleteOnMuxChecked || this.state.deleteAssetDocumentChecked
+                      }
+                      onChange={this.handleDeleteAssetDocumentCheckBoxClicked}
+                    />
+                    <Text style={{margin: '0 10px'}}>Delete video from dataset</Text>
+                  </Flex>
+                  <Grid columns={2} gap={2}>
+                    <Button
+                      mode="ghost"
+                      tone="default"
+                      text="Cancel"
+                      onClick={this.handleCancelRemove}
+                      loading={!!isLoading}
+                    />
+                    <Button
+                      mode="default"
+                      tone="critical"
+                      text="Remove"
+                      disabled={
+                        !this.state.deleteAssetDocumentChecked && !this.state.deleteOnMuxChecked
+                      }
+                      onClick={this.handleRemoveVideo}
+                      loading={!!isLoading}
+                    />
+                  </Grid>
+                </Stack>
+              </Box>
+            </Dialog>
+          )}
+
           {error && this.renderError()}
-        </div>
+        </Box>
       )
     }
   }
