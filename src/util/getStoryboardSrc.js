@@ -10,5 +10,5 @@ export default function getStoryboardSrc(playbackId, options = {}) {
     qs = `?token=${token}`
   }
 
-  return `https://image.mux.com/${playbackId}/storyboard.json?${qs}`
+  return `https://image.mux.com/${playbackId}/storyboard.vtt?${qs}`
 }
