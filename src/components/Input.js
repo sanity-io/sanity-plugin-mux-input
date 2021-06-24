@@ -1,4 +1,17 @@
-import {Box, Button, Card, Checkbox, Dialog, Flex, Grid, Inline, Stack, Text} from '@sanity/ui'
+import {
+  Box,
+  Button,
+  Card,
+  Checkbox,
+  Dialog,
+  Flex,
+  Grid,
+  Inline,
+  Stack,
+  studioTheme,
+  Text,
+  ThemeProvider,
+} from '@sanity/ui'
 import SetupIcon from 'part:@sanity/base/plugin-icon'
 import {observePaths} from 'part:@sanity/base/preview'
 import DialogContent from 'part:@sanity/components/dialogs/content'
@@ -571,140 +584,142 @@ export default withDocument(
       const cssAspectRatio = assetDocument?.data?.aspect_ratio?.split(':')?.join('/') || 'auto'
 
       return (
-        <Box style={{position: 'relative'}}>
-          <Flex align="center" justify="space-between">
-            <FormField
-              label={type.title}
-              markers={markers}
-              description={type.description}
-              level={level}
-              className={styles.formField}
-            />
-            {this.renderSetupButton()}
-          </Flex>
+        <ThemeProvider theme={studioTheme}>
+          <Box style={{position: 'relative'}}>
+            <Flex align="center" justify="space-between">
+              <FormField
+                label={type.title}
+                markers={markers}
+                description={type.description}
+                level={level}
+                className={styles.formField}
+              />
+              {this.renderSetupButton()}
+            </Flex>
 
-          {isLoading === 'secrets' && (
-            <Box marginBottom={2}>
-              <Inline align="center" space={2}>
-                <Spinner inline />
-                <Text size={1}>Fetching credentials</Text>
-              </Inline>
-            </Box>
-          )}
-
-          {needsSetup && this.renderSetupNotice()}
-
-          {!needsSetup && (
-            <Uploader
-              buttons={this.renderVideoButtons()}
-              hasFocus={hasFocus}
-              // eslint-disable-next-line react/jsx-handler-names
-              onBlur={this.blur}
-              // eslint-disable-next-line react/jsx-handler-names
-              onFocus={this.focus}
-              onSetupButtonClicked={this.handleSetupButtonClicked}
-              onUploadComplete={this.handleOnUploadComplete}
-              secrets={secrets}
-              onBrowse={this.handleBrowseButton}
-            >
-              {this.renderAsset()}
-            </Uploader>
-          )}
-
-          {thumb && (
-            <Dialog header="Thumbnail" zOffset={1000} onClose={this.handleCloseThumbPreview}>
-              <Stack space={3} padding={3}>
-                <Stack space={3}>
-                  <Stack space={2}>
-                    <Text size={1} weight="semibold">
-                      Current:
-                    </Text>
-                    <img
-                      style={{
-                        maxWidth: '100%',
-                        borderRadius: '0.1875rem',
-                        display: 'block',
-                        aspectRatio: cssAspectRatio,
-                      }}
-                      src={this.state.thumb}
-                      width={400}
-                    />
-                  </Stack>
-                  <Stack space={2}>
-                    <Text size={1} weight="semibold">
-                      New:
-                    </Text>
-                    <img
-                      style={{
-                        maxWidth: '100%',
-                        borderRadius: '0.1875rem',
-                        display: 'block',
-                        aspectRatio: cssAspectRatio,
-                      }}
-                      src={this.state.newThumb}
-                      width={400}
-                    />
-                  </Stack>
-                </Stack>
-                <Button
-                  key="thumbnail"
-                  mode="ghost"
-                  tone="primary"
-                  disabled={this.state.videoReadyToPlay === false}
-                  onClick={this.handleSetThumbButton}
-                  loading={this.state.thumbLoading}
-                  text="Set new thumbnail"
-                />
-              </Stack>
-            </Dialog>
-          )}
-
-          {showBrowser && this.renderBrowser()}
-
-          {confirmRemove && (
-            <Dialog header="Remove video" zOffset={1000} onClose={this.handleCancelRemove}>
-              <Box padding={4}>
-                <Stack space={3}>
-                  <Flex align="center">
-                    <Checkbox
-                      checked={this.state.deleteOnMuxChecked}
-                      onChange={this.handleDeleteOnMuxCheckBoxClicked}
-                    />
-                    <Text style={{margin: '0 10px'}}>Delete asset on Mux</Text>
-                  </Flex>
-                  <Flex align="center">
-                    <Checkbox
-                      disabled={this.state.deleteOnMuxChecked}
-                      checked={
-                        this.state.deleteOnMuxChecked || this.state.deleteAssetDocumentChecked
-                      }
-                      onChange={this.handleDeleteAssetDocumentCheckBoxClicked}
-                    />
-                    <Text style={{margin: '0 10px'}}>Delete video from dataset</Text>
-                  </Flex>
-                  <Grid columns={2} gap={2}>
-                    <Button
-                      mode="ghost"
-                      tone="default"
-                      text="Cancel"
-                      onClick={this.handleCancelRemove}
-                      loading={!!isLoading}
-                    />
-                    <Button
-                      mode="default"
-                      tone="critical"
-                      text="Remove"
-                      onClick={this.handleRemoveVideo}
-                      loading={!!isLoading}
-                    />
-                  </Grid>
-                </Stack>
+            {isLoading === 'secrets' && (
+              <Box marginBottom={2}>
+                <Inline align="center" space={2}>
+                  <Spinner inline />
+                  <Text size={1}>Fetching credentials</Text>
+                </Inline>
               </Box>
-            </Dialog>
-          )}
+            )}
 
-          {error && this.renderError()}
-        </Box>
+            {needsSetup && this.renderSetupNotice()}
+
+            {!needsSetup && (
+              <Uploader
+                buttons={this.renderVideoButtons()}
+                hasFocus={hasFocus}
+                // eslint-disable-next-line react/jsx-handler-names
+                onBlur={this.blur}
+                // eslint-disable-next-line react/jsx-handler-names
+                onFocus={this.focus}
+                onSetupButtonClicked={this.handleSetupButtonClicked}
+                onUploadComplete={this.handleOnUploadComplete}
+                secrets={secrets}
+                onBrowse={this.handleBrowseButton}
+              >
+                {this.renderAsset()}
+              </Uploader>
+            )}
+
+            {thumb && (
+              <Dialog header="Thumbnail" zOffset={1000} onClose={this.handleCloseThumbPreview}>
+                <Stack space={3} padding={3}>
+                  <Stack space={3}>
+                    <Stack space={2}>
+                      <Text size={1} weight="semibold">
+                        Current:
+                      </Text>
+                      <img
+                        style={{
+                          maxWidth: '100%',
+                          borderRadius: '0.1875rem',
+                          display: 'block',
+                          aspectRatio: cssAspectRatio,
+                        }}
+                        src={this.state.thumb}
+                        width={400}
+                      />
+                    </Stack>
+                    <Stack space={2}>
+                      <Text size={1} weight="semibold">
+                        New:
+                      </Text>
+                      <img
+                        style={{
+                          maxWidth: '100%',
+                          borderRadius: '0.1875rem',
+                          display: 'block',
+                          aspectRatio: cssAspectRatio,
+                        }}
+                        src={this.state.newThumb}
+                        width={400}
+                      />
+                    </Stack>
+                  </Stack>
+                  <Button
+                    key="thumbnail"
+                    mode="ghost"
+                    tone="primary"
+                    disabled={this.state.videoReadyToPlay === false}
+                    onClick={this.handleSetThumbButton}
+                    loading={this.state.thumbLoading}
+                    text="Set new thumbnail"
+                  />
+                </Stack>
+              </Dialog>
+            )}
+
+            {showBrowser && this.renderBrowser()}
+
+            {confirmRemove && (
+              <Dialog header="Remove video" zOffset={1000} onClose={this.handleCancelRemove}>
+                <Box padding={4}>
+                  <Stack space={3}>
+                    <Flex align="center">
+                      <Checkbox
+                        checked={this.state.deleteOnMuxChecked}
+                        onChange={this.handleDeleteOnMuxCheckBoxClicked}
+                      />
+                      <Text style={{margin: '0 10px'}}>Delete asset on Mux</Text>
+                    </Flex>
+                    <Flex align="center">
+                      <Checkbox
+                        disabled={this.state.deleteOnMuxChecked}
+                        checked={
+                          this.state.deleteOnMuxChecked || this.state.deleteAssetDocumentChecked
+                        }
+                        onChange={this.handleDeleteAssetDocumentCheckBoxClicked}
+                      />
+                      <Text style={{margin: '0 10px'}}>Delete video from dataset</Text>
+                    </Flex>
+                    <Grid columns={2} gap={2}>
+                      <Button
+                        mode="ghost"
+                        tone="default"
+                        text="Cancel"
+                        onClick={this.handleCancelRemove}
+                        loading={!!isLoading}
+                      />
+                      <Button
+                        mode="default"
+                        tone="critical"
+                        text="Remove"
+                        onClick={this.handleRemoveVideo}
+                        loading={!!isLoading}
+                      />
+                    </Grid>
+                  </Stack>
+                </Box>
+              </Dialog>
+            )}
+
+            {error && this.renderError()}
+          </Box>
+        </ThemeProvider>
       )
     }
   }
