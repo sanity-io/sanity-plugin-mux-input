@@ -5,6 +5,10 @@
   min-height: 150px;
 }
 
+.videoContainer media-controller {
+  max-width: 100%;
+}
+
 .progressBar {
   position: relative;
   margin-top: var(--large-padding);
