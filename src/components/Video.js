@@ -222,7 +222,7 @@ class MuxVideo extends Component {
 
     return (
       <div ref={this.videoContainer} className={styles.videoContainer}>
-        <media-container>
+        <media-controller>
           <video
             onClick={autoload ? NOOP : this.handleVideoClick}
             ref={this.video}
@@ -242,7 +242,7 @@ class MuxVideo extends Component {
               <media-progress-range />
             </media-control-bar>
           )}
-        </media-container>
+        </media-controller>
         {error && (
           <Card padding={3} radius={2} shadow={1} tone="critical" marginTop={2}>
             <Stack space={2}>

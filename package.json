@@ -31,7 +31,7 @@
     "hls.js": "^0.11.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.20",
-    "media-chrome": "^0.0.15",
+    "media-chrome": "^0.1.0",
     "prop-types": "^15.7.2",
     "react-icons": "^4.1.0",
     "rxjs": "^6.5.3"
