@@ -238,7 +238,8 @@ class MuxVideo extends Component {
             <media-control-bar>
               <media-play-button ref={this.playRef} />
               <media-mute-button ref={this.muteRef} />
-              <media-volume-range />
+              {/* The media volume range is causing an error to be logged in the studio: Failed to construct 'CustomElement': The result must not have attributes */}
+              {/* <media-volume-range /> */}
               <media-progress-range />
             </media-control-bar>
           )}
