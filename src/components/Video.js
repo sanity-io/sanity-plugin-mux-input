@@ -1,4 +1,4 @@
-import {Card, Stack, Text} from '@sanity/ui'
+import {Box, Card, Stack, Text} from '@sanity/ui'
 import Hls from 'hls.js'
 import 'media-chrome'
 import Button from 'part:@sanity/components/buttons/default'
@@ -37,6 +37,7 @@ class MuxVideo extends Component {
       isLoading: true,
       error: null,
       isDeletedOnMux: false,
+      isPreparingStaticRenditions: false,
       secrets: null,
     }
     this.playRef = React.createRef()
@@ -46,6 +47,7 @@ class MuxVideo extends Component {
   // eslint-disable-next-line complexity
   static getDerivedStateFromProps(nextProps) {
     let isLoading = true
+    let isPreparingStaticRenditions = false
     const {assetDocument} = nextProps
 
     if (assetDocument && assetDocument.status === 'preparing') {
@@ -63,7 +65,16 @@ class MuxVideo extends Component {
     if (assetDocument && typeof assetDocument.status === 'undefined') {
       isLoading = false
     }
-    return {isLoading}
+    if (assetDocument?.data?.static_renditions?.status === 'preparing') {
+      isPreparingStaticRenditions = true
+    }
+    if (assetDocument?.data?.static_renditions?.status === 'ready') {
+      isPreparingStaticRenditions = false
+    }
+    return {
+      isLoading,
+      isPreparingStaticRenditions,
+    }
   }
 
   componentDidMount() {
@@ -234,6 +245,7 @@ class MuxVideo extends Component {
               <track label="thumbnails" default kind="metadata" src={this.state.storyboardUrl} />
             )}
           </video>
+
           {showControls && (
             <media-control-bar>
               <media-play-button ref={this.playRef} />
@@ -250,6 +262,23 @@ class MuxVideo extends Component {
               <Text size={1}>There was an error loading this video ({error.type}).</Text>
               {this.state.isDeletedOnMux && <Text size={1}>The video is deleted on Mux</Text>}
             </Stack>
+          </Card>
+        )}
+
+        {this.state.isPreparingStaticRenditions && (
+          <Card
+            padding={2}
+            radius={1}
+            style={{
+              background: 'var(--card-fg-color)',
+              position: 'absolute',
+              top: '0.5em',
+              left: '0.5em',
+            }}
+          >
+            <Text size={1} style={{color: 'var(--card-bg-color)'}}>
+              MUX is preparing static renditions, please stand by
+            </Text>
           </Card>
         )}
       </div>

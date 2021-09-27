@@ -59,6 +59,18 @@ To enable [signed urls](https://docs.mux.com/docs/security-signed-urls) with con
 
 More information for this feature of the plugin can be found on Mux's [documentation](https://docs.mux.com/docs/headless-cms-sanity#advanced-signed-urls)
 
+# Enabling MP4 support
+
+To enable [static MP4 renditions](https://docs.mux.com/guides/video/enable-static-mp4-renditions), create or open the config file found in `config/mux-input.json` in your studio folder. This file is automatically created the first time the studio starts after adding the plugin.
+
+```
+{
+  "mp4_support": "standard"
+}
+```
+
+Currently `mp4_support` is the only supported MUX option and this supports a value of either `standard` or `none` (the default).
+
 # Contributing
 
 Issues are actively monitored and PRs are welcome. When developing this plugin the easiest setup is:
