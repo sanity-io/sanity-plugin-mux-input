@@ -33,6 +33,7 @@ import SelectAsset from './SelectAsset'
 import Setup from './Setup'
 import Uploader from './Uploader'
 import Video from './Video'
+import config from '../config'
 
 const NOOP = () => {
   /* intentional noop */
@@ -177,12 +178,31 @@ export default withDocument(
                 })
               })
             }
-            if (assetDocument && assetDocument.status === 'preparing') {
+            // Poll MUX if it's preparing the main document or its own static renditions
+            if (
+              assetDocument?.status === 'preparing' ||
+              assetDocument?.data?.static_renditions?.status === 'preparing'
+            ) {
               this.pollMux()
             }
+            // If MP4 support is enabled: MUX will prepare static_renditions only _after_ an asset
+            // has been successfully uploaded.
+            // A _ready_ asset doesn't mean static mp4s are generated and ready for use!
+            // In these cases, wait for `static_renditions.status === 'ready'` before clearing the poll interval.
             if (assetDocument && assetDocument.status === 'ready') {
-              clearInterval(this.pollInterval)
-              this.pollInterval = null
+              switch (config.mp4_support) {
+                case 'standard':
+                  if (assetDocument?.data?.static_renditions?.status === 'ready') {
+                    clearInterval(this.pollInterval)
+                    this.pollInterval = null
+                  }
+                  break
+                case 'none':
+                default:
+                  clearInterval(this.pollInterval)
+                  this.pollInterval = null
+                  break
+              }
             }
 
             // eslint-disable-next-line camelcase
@@ -207,6 +227,8 @@ export default withDocument(
         getAsset(assetDocument.assetId)
           .then((response) => {
             const props = response.data
+
+            // TODO: consider a deep comparison on `props` with asset data and only patch only if it's changed
             client
               .patch(assetDocument._id)
               .set({

@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 import {uuid as generateUuid} from '@sanity/uuid'
+import config from '../config'
 import {isString} from 'lodash'
 import {concat, defer, from, of, throwError} from 'rxjs'
 import {catchError, mergeMap, mergeMapTo, switchMap} from 'rxjs/operators'
@@ -31,11 +32,13 @@ export function uploadUrl(url, options = {}) {
             const muxBody = {
               input: validUrl,
               playback_policy: [enableSignedUrls ? 'signed' : 'public'],
+              mp4_support: config.mp4_support,
             }
             const query = {
               muxBody: JSON.stringify(muxBody),
               filename: validUrl.split('/').slice(-1)[0],
             }
+
             const dataset = client.clientConfig.dataset
             return defer(() =>
               client.observable.request({
@@ -53,6 +56,7 @@ export function uploadUrl(url, options = {}) {
                 const asset =
                   (result && result.results && result.results[0] && result.results[0].document) ||
                   null
+
                 if (!asset) {
                   return throwError(new Error('No asset document returned'))
                 }
@@ -79,12 +83,10 @@ export function uploadFile(file, options = {}) {
             const uuid = generateUuid()
             const {enableSignedUrls} = options
             const body = {
+              mp4_support: config.mp4_support,
               playback_policy: [enableSignedUrls ? 'signed' : 'public'],
-              // TODO: These parameters were enabled by Sanity, but we are not using them yet
-              // mp4_support: false (default),
-              // normalize_audio: false (default),
-              // master_access: false (default),
             }
+
             return concat(
               of({type: 'uuid', uuid}),
               defer(() =>
@@ -178,6 +180,7 @@ async function updateAssetDocumentFromUpload(uuid) {
   } catch (err) {
     return Promise.reject(err)
   }
+
   const doc = {
     _id: uuid,
     _type: 'mux.videoAsset',
