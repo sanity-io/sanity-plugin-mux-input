@@ -84,3 +84,12 @@ Issues are actively monitored and PRs are welcome. When developing this plugin t
 1. Re-start the sanity studio server with `npm start`.
 1. Edit `schemas/post.js` and add follow the plugin documentation to add a `mux.video` type field.
 1. Your studio should reload, and now when you edit the plugin code it should reload the studio, when you're done create a branch, put in a PR and a maintainer will review it. Thank you!
+
+## Publishing
+
+### Test
+`yarn semantic-release`
+
+### Go live
+
+`yarn semantic-release -- --no-ci`
