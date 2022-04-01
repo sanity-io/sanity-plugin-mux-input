@@ -152,3 +152,7 @@ storybook-static
 sanity/dist
 package-lock.json
 yarn.lock
+
+##intellij
+.idea/
+*.iml
