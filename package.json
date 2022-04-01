@@ -8,7 +8,7 @@
     "build": "sanipack build",
     "watch": "sanipack build --watch",
     "test": "eslint .",
-    "semantic-release": "semantic-release",
+    "semantic-release": "semantic-release --branches main",
     "prepublishOnly": "npm run test && sanipack build && sanipack verify"
   },
   "repository": {
