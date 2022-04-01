@@ -24,7 +24,7 @@
   "author": "Sanity.io <hello@sanity.io>",
   "license": "MIT",
   "dependencies": {
-    "@mux/upchunk": "^2.2.2",
+    "@mux/upchunk": "2.2.2",
     "@sanity/icons": "^1.2.1",
     "@sanity/ui": "^0.36.12",
     "@sanity/uuid": "^3.0.1",
