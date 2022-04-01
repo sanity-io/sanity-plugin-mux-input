@@ -1,4 +1,4 @@
-import {Box, Card, Stack, Text} from '@sanity/ui'
+import {Card, Stack, Text} from '@sanity/ui'
 import Hls from 'hls.js'
 import 'media-chrome'
 import Button from 'part:@sanity/components/buttons/default'

@@ -4,10 +4,11 @@
   "description": "An input component that integrates Sanity Studio with Mux video encoding/hosting service.",
   "main": "build/index.js",
   "scripts": {
+    "prepare": "husky install",
     "build": "sanipack build",
     "watch": "sanipack build --watch",
     "test": "eslint .",
-    "prepublishOnly": "sanipack build && sanipack verify"
+    "prepublishOnly": "npm run test && sanipack build && sanipack verify"
   },
   "repository": {
     "type": "git",
@@ -37,18 +38,24 @@
     "rxjs": "^6.5.3"
   },
   "devDependencies": {
+    "@commitlint/cli": "^16.2.3",
+    "@commitlint/config-conventional": "^16.2.1",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-config-sanity": "^5.1.0",
     "eslint-plugin-import": "^2.24.2",
     "eslint-plugin-react": "^7.26.1",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.3.7",
     "prettier": "^2.4.1",
     "react": "^17.0.1",
-    "sanipack": "^2.0.1"
+    "sanipack": "^2.0.1",
+    "semantic-release": "^19.0.2"
   },
   "peerDependencies": {
-    "react": "^16.9 || ^17",
     "@sanity/base": "^2.11.0",
+    "react": "^16.9 || ^17",
     "styled-components": "^5.0.0"
   },
   "publishConfig": {
@@ -71,8 +78,7 @@
     "extends": [
       "sanity",
       "sanity/react",
-      "prettier",
-      "prettier/react"
+      "prettier"
     ],
     "rules": {
       "react/prop-types": "off",

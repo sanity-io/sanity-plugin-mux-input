@@ -228,7 +228,6 @@ export default withDocument(
           .then((response) => {
             const props = response.data
 
-            // TODO: consider a deep comparison on `props` with asset data and only patch only if it's changed
             client
               .patch(assetDocument._id)
               .set({
