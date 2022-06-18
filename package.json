@@ -30,7 +30,6 @@
     "build": "sanipack build",
     "prepare": "husky install",
     "prepublishOnly": "npm run test && sanipack build && sanipack verify",
-    "semantic-release": "semantic-release --branches main",
     "test": "eslint .",
     "watch": "sanipack build --watch"
   },
@@ -73,6 +72,8 @@
   "devDependencies": {
     "@commitlint/cli": "^16.2.3",
     "@commitlint/config-conventional": "^16.2.1",
+    "@semantic-release/changelog": "^6.0.1",
+    "@semantic-release/git": "^10.0.1",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
@@ -85,7 +86,7 @@
     "prettier-plugin-packagejson": "^2.2.18",
     "react": "^17.0.1",
     "sanipack": "^2.0.1",
-    "semantic-release": "^19.0.2"
+    "semantic-release": "^19.0.3"
   },
   "peerDependencies": {
     "@sanity/base": "^2.11.0",
