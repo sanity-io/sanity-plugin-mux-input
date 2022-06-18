@@ -2,19 +2,6 @@
   "name": "sanity-plugin-mux-input",
   "version": "1.1.1",
   "description": "An input component that integrates Sanity Studio with Mux video encoding/hosting service.",
-  "main": "build/index.js",
-  "scripts": {
-    "prepare": "husky install",
-    "build": "sanipack build",
-    "watch": "sanipack build --watch",
-    "test": "eslint .",
-    "semantic-release": "semantic-release --branches main",
-    "prepublishOnly": "npm run test && sanipack build && sanipack verify"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:sanity-io/sanity-plugin-mux-input.git"
-  },
   "keywords": [
     "sanity",
     "video",
@@ -23,8 +10,48 @@
     "plugin",
     "sanity-plugin"
   ],
-  "author": "Sanity.io <hello@sanity.io>",
+  "homepage": "https://github.com/sanity-io/sanity-plugin-mux-input#readme",
+  "bugs": {
+    "url": "https://github.com/sanity-io/sanity-plugin-mux-input/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:sanity-io/sanity-plugin-mux-input.git"
+  },
   "license": "MIT",
+  "author": "Sanity.io <hello@sanity.io>",
+  "main": "build/index.js",
+  "scripts": {
+    "build": "sanipack build",
+    "prepare": "husky install",
+    "prepublishOnly": "npm run test && sanipack build && sanipack verify",
+    "test": "eslint .",
+    "semantic-release": "semantic-release --branches main",
+    "watch": "sanipack build --watch"
+  },
+  "prettier": {
+    "arrowParens": "always",
+    "bracketSpacing": false,
+    "printWidth": 100,
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "eslintConfig": {
+    "parser": "sanipack/babel/eslint-parser",
+    "extends": [
+      "sanity",
+      "sanity/react",
+      "prettier"
+    ],
+    "rules": {
+      "react/forbid-prop-types": "off",
+      "react/jsx-boolean-value": "off",
+      "react/jsx-no-bind": "off",
+      "react/no-did-mount-set-state": "off",
+      "react/prop-types": "off"
+    }
+  },
   "dependencies": {
     "@mux/upchunk": "2.2.2",
     "@sanity/icons": "^1.2.1",
@@ -50,6 +77,7 @@
     "husky": "^7.0.4",
     "lint-staged": "^12.3.7",
     "prettier": "^2.4.1",
+    "prettier-plugin-packagejson": "^2.2.18",
     "react": "^17.0.1",
     "sanipack": "^2.0.1",
     "semantic-release": "^19.0.2"
@@ -61,32 +89,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "bugs": {
-    "url": "https://github.com/sanity-io/sanity-plugin-mux-input/issues"
-  },
-  "homepage": "https://github.com/sanity-io/sanity-plugin-mux-input#readme",
-  "prettier": {
-    "semi": false,
-    "printWidth": 100,
-    "bracketSpacing": false,
-    "singleQuote": true,
-    "arrowParens": "always",
-    "trailingComma": "es5"
-  },
-  "eslintConfig": {
-    "parser": "sanipack/babel/eslint-parser",
-    "extends": [
-      "sanity",
-      "sanity/react",
-      "prettier"
-    ],
-    "rules": {
-      "react/prop-types": "off",
-      "react/jsx-boolean-value": "off",
-      "react/jsx-no-bind": "off",
-      "react/forbid-prop-types": "off",
-      "react/no-did-mount-set-state": "off"
-    }
   }
 }
