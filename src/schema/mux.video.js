@@ -11,8 +11,8 @@ export default {
       name: 'asset',
       type: 'reference',
       weak: true,
-      to: [{type: 'mux.videoAsset'}]
-    }
+      to: [{type: 'mux.videoAsset'}],
+    },
   ],
   inputComponent: Input,
   preview: {
@@ -22,8 +22,8 @@ export default {
       duration: 'asset.data.duration',
       thumbTime: 'asset.thumbTime',
       filename: 'asset.filename',
-      playbackIds: 'asset.data.playback_ids'
+      playbackIds: 'asset.data.playback_ids',
     },
-    component: Preview
-  }
+    component: Preview,
+  },
 }

@@ -88,6 +88,7 @@ Issues are actively monitored and PRs are welcome. When developing this plugin t
 ## Publishing
 
 ### Test
+
 `yarn semantic-release`
 
 ### Go live
