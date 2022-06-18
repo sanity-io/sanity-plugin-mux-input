@@ -1,6 +1,0 @@
-.DS_Store
-.editorconfig
-.eslintignore
-.babelrc
-/src
-/node_modules
