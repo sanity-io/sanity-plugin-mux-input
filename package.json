@@ -84,7 +84,7 @@
   },
   "peerDependencies": {
     "@sanity/base": "^2.11.0",
-    "react": "^16.9 || ^17",
+    "react": "^16.9 || ^17 || ^18",
     "styled-components": "^5.0.0"
   },
   "publishConfig": {
