@@ -22,9 +22,10 @@
   "author": "Sanity.io <hello@sanity.io>",
   "main": "build/index.js",
   "files": [
-    "sanity.json",
+    "build",
     "config.dist.json",
-    "build"
+    "sanity.json",
+    "v2-incompatible.js"
   ],
   "scripts": {
     "build": "sanipack build",
@@ -59,6 +60,7 @@
   "dependencies": {
     "@mux/upchunk": "2.2.2",
     "@sanity/icons": "^1.2.1",
+    "@sanity/incompatible-plugin": "^0.0.1-studio-v3.1",
     "@sanity/ui": "^0.36.12",
     "@sanity/uuid": "^3.0.1",
     "hls.js": "^0.11.0",
@@ -93,5 +95,6 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "sanityExchangeUrl": "https://www.sanity.io/plugins/sanity-plugin-mux-input"
 }
