@@ -20,7 +20,17 @@
   },
   "license": "MIT",
   "author": "Sanity.io <hello@sanity.io>",
-  "main": "build/index.js",
+  "source": "./src/index.tsx",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "require": "./lib/cjs/index.js",
+      "default": "./lib/esm/index.js"
+    }
+  },
+  "main": "./lib/cjs/index.js",
+  "module": "./lib/esm/index.js",
+  "types": "./lib/types/index.d.ts",
   "files": [
     "build",
     "config.dist.json",
@@ -28,11 +38,16 @@
     "v2-incompatible.js"
   ],
   "scripts": {
-    "build": "true",
-    "prepare": "husky install",
-    "prepublishOnly": "npm run test && true",
-    "test": "eslint .",
-    "watch": "true"
+    "prepare": "husky install || true",
+    "clean": "rimraf lib",
+    "prebuild": "npm run clean && plugin-kit verify-package --silent",
+    "build": "parcel build --no-cache",
+    "link-watch": "plugin-kit link-watch",
+    "watch": "parcel watch",
+    "type-check": "tsc --noEmit --watch",
+    "compile": "tsc --noEmit",
+    "test": "eslint . --ext .js,.jsx,.mjs,.ts,.tsx --quiet",
+    "prepublishOnly": "npm run build"
   },
   "prettier": {
     "arrowParens": "always",
@@ -42,59 +57,70 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "eslintConfig": {
-    "parser": "sanipack/babel/eslint-parser",
-    "extends": [
-      "sanity",
-      "sanity/react",
-      "prettier"
-    ],
-    "rules": {
-      "react/forbid-prop-types": "off",
-      "react/jsx-boolean-value": "off",
-      "react/jsx-no-bind": "off",
-      "react/no-did-mount-set-state": "off",
-      "react/prop-types": "off"
-    }
-  },
   "dependencies": {
-    "@mux/upchunk": "2.2.2",
-    "@sanity/icons": "^1.2.1",
+    "@mux-elements/playback-core": "^0.4.0",
+    "@mux/upchunk": "^2.3.1",
+    "@reach/auto-id": "^0.17.0",
+    "@sanity/icons": "^1.2.8",
     "@sanity/incompatible-plugin": "^0.0.1-studio-v3.1",
-    "@sanity/ui": "^0.36.12",
+    "@sanity/ui": "^0.37.9",
     "@sanity/uuid": "^3.0.1",
-    "hls.js": "^0.11.0",
-    "jsonwebtoken": "^8.5.1",
-    "lodash": "^4.17.21",
-    "media-chrome": "^0.2.2",
-    "prop-types": "^15.8.1",
+    "jsonwebtoken-esm": "^1.0.3",
+    "lodash.memoize": "^4.1.2",
+    "media-chrome": "^0.6.2",
     "react-icons": "^4.3.1",
-    "rxjs": "^6.5.3"
+    "react-rx": "^1.0.1",
+    "rxjs": "^6.5.3",
+    "scroll-into-view-if-needed": "^2.2.29",
+    "suspend-react": "^0.0.8",
+    "use-device-pixel-ratio": "^1.1.0",
+    "use-error-boundary": "^2.0.6"
   },
   "devDependencies": {
     "@commitlint/cli": "^16.2.3",
     "@commitlint/config-conventional": "^16.2.1",
+    "@parcel/packager-ts": "^2.6.1",
+    "@parcel/transformer-typescript-types": "^2.6.1",
+    "@sanity/eslint-config-no-v2-imports": "^0.0.1-studio-v3.3",
+    "@sanity/plugin-kit": "^0.1.0-v3-studio.1",
+    "@types/react": "^18.0.14",
+    "@types/react-dom": "^18.0.5",
+    "@typescript-eslint/eslint-plugin": "^5.28.0",
+    "@typescript-eslint/parser": "^5.28.0",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-react-app": "^7.0.1",
     "eslint-config-sanity": "^5.1.0",
-    "eslint-plugin-import": "^2.24.2",
-    "eslint-plugin-react": "^7.26.1",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.30.0",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
     "husky": "^7.0.4",
     "lint-staged": "^12.3.7",
-    "prettier": "^2.4.1",
+    "parcel": "^2.6.1",
+    "prettier": "^2.7.1",
     "prettier-plugin-packagejson": "^2.2.18",
-    "react": "^17.0.1",
-    "sanipack": "^2.0.1",
-    "semantic-release": "^19.0.3"
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-is": "^17.0.2",
+    "sanity": "dev-preview",
+    "semantic-release": "^19.0.3",
+    "styled-components": "^5.3.5",
+    "typescript": "^4.7.4"
   },
   "peerDependencies": {
-    "@sanity/base": "^2.11.0",
-    "react": "^16.9 || ^17 || ^18",
-    "styled-components": "^5.0.0"
+    "react": "^17 || ^18",
+    "react-dom": "^17 || ^18",
+    "react-is": "^17 || ^18",
+    "sanity": "dev-preview || ^3",
+    "styled-components": "^5.2.0"
   },
   "publishConfig": {
     "access": "public"
   },
-  "sanityExchangeUrl": "https://www.sanity.io/plugins/sanity-plugin-mux-input"
+  "sanityExchangeUrl": "https://www.sanity.io/plugins/sanity-plugin-mux-input",
+  "engines": {
+    "node": ">=14.0.0"
+  }
 }

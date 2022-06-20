@@ -1,0 +1,21 @@
+/*@import 'part:sanity/theme/variables-style';*/
+
+.videoContainer {
+  position: relative;
+  min-height: 150px;
+}
+
+.videoContainer media-controller {
+  max-width: 100%;
+}
+
+.progressBar {
+  position: relative;
+  margin-top: var(--large-padding);
+  margin-bottom: 2.5em;
+  padding: var(--medium-padding);
+}
+
+.uploadCancelButton {
+  text-align: center;
+}

@@ -1,0 +1,28 @@
+/*@import 'part:sanity/theme/variables-style';*/
+
+.uploadProgress {
+  text-align: center;
+  padding: var(--medium-padding);
+}
+
+.progressBar {
+  margin-top: var(--large-padding);
+  margin-bottom: 2.5em;
+  text-align: left;
+}
+
+.errorMessage {
+  background: #fff;
+  color: var(--state-danger-color);
+}
+
+.hiddenTextField {
+  position: absolute;
+  border: 0;
+  color: white;
+  opacity: 0;
+}
+
+.hiddenTextField:focus {
+  outline: none;
+}

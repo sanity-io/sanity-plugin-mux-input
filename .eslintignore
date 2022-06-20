@@ -1,2 +1,4 @@
-build/
+commitlint.config.js
+lint-staged.config.js
+lib/
 node_modules/
