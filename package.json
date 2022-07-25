@@ -26,14 +26,14 @@
     ".": {
       "require": "./lib/cjs/index.js",
       "default": "./lib/esm/index.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "main": "./lib/cjs/index.js",
   "module": "./lib/esm/index.js",
   "types": "./lib/types/index.d.ts",
   "files": [
-    "build",
-    "config.dist.json",
+    "lib",
     "sanity.json",
     "v2-incompatible.js"
   ],
