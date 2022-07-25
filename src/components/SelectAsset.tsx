@@ -6,7 +6,7 @@ import client from '../clients/SanityClient'
 import getPosterSrc from '../util/getPosterSrc'
 import styles from './SelectAsset.css'
 
-const PER_PAGE = 200
+const PER_PAGE = 20
 
 function createQuery(start = 0, end = PER_PAGE) {
   return `*[_type == "mux.videoAsset"] | order(_updatedAt desc) [${start}...${end}] {_id, playbackId, thumbTime, data}`
