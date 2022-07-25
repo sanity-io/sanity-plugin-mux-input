@@ -268,7 +268,10 @@ export default withDocument(
       const {onChange} = this.props
       const {_id} = result
       onChange(
-        PatchEvent.from([setIfMissing({asset: {_ref: _id}}, []), set({_ref: _id}, ['asset'])])
+        PatchEvent.from([
+          setIfMissing({asset: {}}),
+          set({_type: 'reference', _ref: _id}, ['asset']),
+        ])
       )
       this.setState({assetDocument: result.document}, () => {
         this.setupAssetListener()
@@ -434,8 +437,8 @@ export default withDocument(
 
       onChange(
         PatchEvent.from([
-          setIfMissing({asset: {_ref: asset._id}}, []),
-          set({_ref: asset._id}, ['asset']),
+          setIfMissing({asset: {}}),
+          set({_type: 'reference', _ref: asset._id}, ['asset']),
         ])
       )
 
