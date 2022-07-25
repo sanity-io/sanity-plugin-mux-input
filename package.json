@@ -30,7 +30,8 @@
     "build": "sanipack build",
     "prepare": "husky install",
     "prepublishOnly": "npm test",
-    "test": "npm run lint && npm run build && sanipack verify",
+    "type-check": "tsc --noEmit",
+    "test": "npm run lint && npm type-check && npm run build && sanipack verify",
     "lint": "eslint .",
     "watch": "sanipack build --watch"
   },
@@ -85,7 +86,8 @@
     "prettier-plugin-packagejson": "^2.2.18",
     "react": "^17.0.1",
     "sanipack": "^2.0.1",
-    "semantic-release": "^19.0.3"
+    "semantic-release": "^19.0.3",
+    "typescript": "^4.7.4"
   },
   "peerDependencies": {
     "@sanity/base": "^2.11.0",
