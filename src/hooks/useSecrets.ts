@@ -1,6 +1,6 @@
-import {useSource} from 'sanity'
 import type {SanityClient} from '@sanity/client'
 import {useCallback, useMemo} from 'react'
+import {useSource} from 'sanity'
 import {clear, peek, preload, suspend} from 'suspend-react'
 
 import {type Secrets} from '../types'
