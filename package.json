@@ -52,32 +52,34 @@
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "media-chrome": "^0.2.2",
-    "prop-types": "^15.8.1",
-    "react-icons": "^4.3.1",
-    "rxjs": "^6.5.3"
+    "react-icons": "^4.4.0",
+    "rxjs": "^6"
   },
   "devDependencies": {
-    "@commitlint/cli": "^16.2.3",
-    "@commitlint/config-conventional": "^16.2.1",
+    "@commitlint/cli": "^16",
+    "@commitlint/config-conventional": "^16",
+    "@types/react": "^18.0.15",
+    "@types/styled-components": "^5.1.25",
     "cz-conventional-changelog": "^3.3.0",
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-config-sanity": "^5.1.0",
-    "eslint-plugin-import": "^2.24.2",
-    "eslint-plugin-react": "^7.26.1",
-    "husky": "^7.0.4",
-    "lint-staged": "^12.3.7",
-    "prettier": "^2.4.1",
+    "eslint": "^7",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-sanity": "^6.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-react": "^7.30.1",
+    "husky": "^7",
+    "lint-staged": "^12",
+    "prettier": "^2.7.1",
     "prettier-plugin-packagejson": "^2.2.18",
-    "react": "^17.0.1",
-    "sanipack": "^2.0.1",
+    "prop-types": "^15.8.1",
+    "react": "^17",
+    "sanipack": "^2.1.0",
     "semantic-release": "^19.0.3",
     "typescript": "^4.7.4"
   },
   "peerDependencies": {
-    "@sanity/base": "^2.11.0",
-    "react": "^16.9 || ^17 || ^18",
-    "styled-components": "^5.0.0"
+    "prop-types": "^15",
+    "react": "^17 || ^18",
+    "styled-components": "^5.2.0"
   },
   "publishConfig": {
     "access": "public"

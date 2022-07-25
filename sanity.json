@@ -6,11 +6,11 @@
   "parts": [
     {
       "implements": "part:@sanity/base/schema-type",
-      "path": "schema/mux.video.js"
+      "path": "schema/mux.video"
     },
     {
       "implements": "part:@sanity/base/schema-type",
-      "path": "schema/mux.videoAsset.js"
+      "path": "schema/mux.videoAsset"
     }
   ]
 }
