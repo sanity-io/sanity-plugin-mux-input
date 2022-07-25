@@ -1,7 +1,7 @@
-import {Button} from '@sanity/ui'
-import {uniqueId} from 'lodash'
-import React from 'react'
+import {Button, type ButtonProps} from '@sanity/ui'
+import React, {useCallback, useRef} from 'react'
 import styled from 'styled-components'
+import {useId} from '@reach/auto-id'
 
 const HiddenInput = styled.input`
   overflow: hidden;
@@ -16,33 +16,31 @@ const Label = styled.label`
   position: relative;
 `
 
-const handleSelect = ({event, onSelect}) => {
-  if (onSelect) {
-    onSelect(event.target.files)
-  }
+export interface FileInputButtonProps extends ButtonProps {
+  onSelect: (files: FileList) => void
 }
-
-const handleButtonClick = (inputRef) => {
-  if (inputRef && inputRef.current) {
-    inputRef.current.click()
-  }
-}
-
-export const FileInputButton = ({onSelect, type = 'file', ...props}) => {
-  const _inputId = React.useRef(uniqueId('FileSelect'))
-  const inputRef = React.useRef(null)
+export const FileInputButton = ({onSelect, ...props}: FileInputButtonProps) => {
+  const inputId = `FileSelect${useId()}`
+  const inputRef = useRef<HTMLInputElement>(null)
+  const handleSelect = useCallback<React.ChangeEventHandler<HTMLInputElement>>((event) => {
+    if (onSelect) {
+      onSelect(event.target.files)
+    }
+  }, [])
+  const handleButtonClick = useCallback(() => inputRef.current?.click(), [])
   return (
-    <Label htmlFor={_inputId.current}>
+    <Label htmlFor={inputId}>
       <HiddenInput
+        accept="video/*"
         ref={inputRef}
-        tabindex="0"
-        type={type}
-        id={_inputId.current}
-        onChange={(event) => handleSelect({event, onSelect})}
+        tabIndex={0}
+        type="file"
+        id={inputId}
+        onChange={handleSelect}
         value=""
       />
       <Button
-        onClick={() => handleButtonClick(inputRef)}
+        onClick={handleButtonClick}
         mode="default"
         tone="primary"
         style={{width: '100%'}}
@@ -51,5 +49,3 @@ export const FileInputButton = ({onSelect, type = 'file', ...props}) => {
     </Label>
   )
 }
-
-export default FileInputButton

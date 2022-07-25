@@ -5,7 +5,13 @@ module.exports = {
     requireConfigFile: false,
     babelOptions: {configFile: require.resolve('./.babelrc')},
   },
-  extends: ['sanity', 'sanity/react', 'prettier'],
+  extends: [
+    'sanity',
+    'sanity/react',
+    'sanity/typescript',
+    'plugin:react-hooks/recommended',
+    'prettier',
+  ],
   rules: {
     'react/forbid-prop-types': 'off',
     'react/jsx-boolean-value': 'off',

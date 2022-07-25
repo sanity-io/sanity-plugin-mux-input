@@ -28,11 +28,11 @@
   ],
   "scripts": {
     "build": "sanipack build",
+    "lint": "eslint .",
     "prepare": "husky install",
     "prepublishOnly": "npm test",
-    "type-check": "tsc --noEmit",
     "test": "npm run lint && npm run type-check && npm run build && sanipack verify",
-    "lint": "eslint .",
+    "type-check": "tsc --noEmit",
     "watch": "sanipack build --watch"
   },
   "prettier": {
@@ -45,6 +45,7 @@
   },
   "dependencies": {
     "@mux/upchunk": "2.2.2",
+    "@reach/auto-id": "^0.17.0",
     "@sanity/icons": "^1.2.1",
     "@sanity/ui": "^0.36.12",
     "@sanity/uuid": "^3.0.1",

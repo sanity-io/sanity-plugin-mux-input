@@ -13,7 +13,7 @@ import {takeUntil, tap} from 'rxjs/operators'
 import {uploadFile, uploadUrl} from '../actions/upload'
 import client from '../clients/SanityClient'
 import {extractDroppedFiles} from '../util/extractFiles'
-import FileInputButton from './FileInputButton'
+import {FileInputButton} from './FileInputButton'
 import styles from './Uploader.css'
 import UploadPlaceholder from './UploadPlaceholder'
 
@@ -246,7 +246,6 @@ class MuxVideoInputUploader extends Component {
           <FileInputButton
             icon={<FiUpload data-sanity-icon="upload" />}
             onSelect={(files) => this.handleUploadFile(files[0])}
-            accept={'video/*'}
             text="Upload"
           />
           <Button mode="ghost" tone="default" text="Browse" onClick={this.props.onBrowse} />
