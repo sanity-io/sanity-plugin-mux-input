@@ -43,22 +43,6 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "eslintConfig": {
-    "root": true,
-    "parser": "sanipack/babel/eslint-parser",
-    "extends": [
-      "sanity",
-      "sanity/react",
-      "prettier"
-    ],
-    "rules": {
-      "react/forbid-prop-types": "off",
-      "react/jsx-boolean-value": "off",
-      "react/jsx-no-bind": "off",
-      "react/no-did-mount-set-state": "off",
-      "react/prop-types": "off"
-    }
-  },
   "dependencies": {
     "@mux/upchunk": "2.2.2",
     "@sanity/icons": "^1.2.1",
