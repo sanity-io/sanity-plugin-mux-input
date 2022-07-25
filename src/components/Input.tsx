@@ -1,7 +1,6 @@
 import {Box, Button, Card, Checkbox, Dialog, Flex, Grid, Inline, Stack, Text} from '@sanity/ui'
 import SetupIcon from 'part:@sanity/base/plugin-icon'
 import {observePaths} from 'part:@sanity/base/preview'
-import FullscreenDialog from 'part:@sanity/components/dialogs/fullscreen'
 import FormField from 'part:@sanity/components/formfields/default'
 import Spinner from 'part:@sanity/components/loading/spinner'
 import {withDocument} from 'part:@sanity/form-builder'
@@ -9,18 +8,19 @@ import PatchEvent, {set, setIfMissing, unset} from 'part:@sanity/form-builder/pa
 import React, {Component} from 'react'
 import {of} from 'rxjs'
 import {tap} from 'rxjs/operators'
+
 import {deleteAsset, getAsset} from '../actions/assets'
 import {fetchSecrets} from '../actions/secrets'
 import client from '../clients/SanityClient'
+import config from '../config'
 import getPosterSrc from '../util/getPosterSrc'
 import styles from './Input.css'
+import InputBrowser from './InputBrowser'
+import InputError from './InputError'
 import MuxLogo from './MuxLogo'
-import SelectAsset from './SelectAsset'
 import Setup from './Setup'
 import Uploader from './Uploader'
 import Video from './Video'
-import config from '../config'
-import InputError from './InputError'
 
 const NOOP = () => {
   /* intentional noop */
@@ -411,7 +411,7 @@ export default withDocument(
       this.setState({showBrowser: true})
     }
 
-    handleCloseBrowser = (event) => {
+    handleCloseBrowser = () => {
       this.setState({showBrowser: false})
     }
 
@@ -554,14 +554,6 @@ export default withDocument(
       return null
     }
 
-    renderBrowser() {
-      return (
-        <FullscreenDialog title="Select video" onClose={this.handleCloseBrowser} isOpen>
-          <SelectAsset onSelect={this.handleSelectAsset} />
-        </FullscreenDialog>
-      )
-    }
-
     render() {
       const {type, level, markers} = this.props
       const {
@@ -668,7 +660,9 @@ export default withDocument(
               </Dialog>
             )}
 
-            {showBrowser && this.renderBrowser()}
+            {showBrowser && (
+              <InputBrowser onClose={this.handleCloseBrowser} onSelect={this.handleSelectAsset} />
+            )}
 
             {confirmRemove && (
               <Dialog header="Remove video" zOffset={1000} onClose={this.handleCancelRemove}>

@@ -1,10 +1,12 @@
+import 'media-chrome'
+
 import {Card, Stack, Text} from '@sanity/ui'
 import Hls from 'hls.js'
-import 'media-chrome'
 import Button from 'part:@sanity/components/buttons/default'
 import ProgressBar from 'part:@sanity/components/progress/bar'
 import PropTypes from 'prop-types'
 import React, {Component} from 'react'
+
 import {getAsset} from '../actions/assets'
 import {fetchSecrets} from '../actions/secrets'
 import getPosterSrc from '../util/getPosterSrc'

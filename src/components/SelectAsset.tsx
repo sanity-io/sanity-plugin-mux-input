@@ -1,5 +1,6 @@
 import {Button} from '@sanity/ui'
 import React from 'react'
+
 import {fetchSecrets} from '../actions/secrets'
 import client from '../clients/SanityClient'
 import getPosterSrc from '../util/getPosterSrc'
@@ -11,6 +12,9 @@ function createQuery(start = 0, end = PER_PAGE) {
   return `*[_type == "mux.videoAsset"] | order(_updatedAt desc) [${start}...${end}] {_id, playbackId, thumbTime, data}`
 }
 
+export interface Props {
+  onSelect: never
+}
 export default class SelectAsset extends React.Component {
   pageNo = 0
 

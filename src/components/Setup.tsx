@@ -4,6 +4,7 @@ import FormField from 'part:@sanity/components/formfields/default'
 import TextInput from 'part:@sanity/components/textinputs/default'
 import PropTypes from 'prop-types'
 import React, {Component} from 'react'
+
 import {createSigningKeys, haveValidSigningKeys, saveSecrets} from '../actions/secrets'
 import styles from './Setup.css'
 

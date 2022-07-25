@@ -1,4 +1,5 @@
 import {defer} from 'rxjs'
+
 import client from '../clients/SanityClient'
 
 const cache = {

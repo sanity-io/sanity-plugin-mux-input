@@ -1,9 +1,10 @@
 module.exports = {
   root: true,
-  parser: 'sanipack/babel/eslint-parser',
+  parser: '@typescript-eslint/parser',
   parserOptions: {
-    requireConfigFile: false,
-    babelOptions: {configFile: require.resolve('./.babelrc')},
+    ecmaFeatures: {
+      jsx: true,
+    },
   },
   extends: [
     'sanity',
@@ -12,14 +13,29 @@ module.exports = {
     'plugin:react-hooks/recommended',
     'prettier',
   ],
+  overrides: [
+    {
+      files: ['*.{ts,tsx}'],
+      rules: {
+        'no-undef': 0,
+      },
+    },
+  ],
   plugins: ['simple-import-sort'],
   rules: {
-    'react/forbid-prop-types': 'off',
-    'react/jsx-boolean-value': 'off',
-    'react/jsx-no-bind': 'off',
-    'react/no-did-mount-set-state': 'off',
-    'react/prop-types': 'off',
+    '@typescript-eslint/explicit-function-return-type': 0,
+    '@typescript-eslint/explicit-module-boundary-types': 0,
+    '@typescript-eslint/no-shadow': 'error',
+    '@typescript-eslint/no-unused-vars': 1,
     'simple-import-sort/imports': 'warn',
     'simple-import-sort/exports': 'warn',
+    'no-unused-vars': 0,
+    'no-shadow': 'off',
+    'react/display-name': 0,
+    'react/jsx-no-bind': 0,
+    'react/jsx-handler-names': 0,
+    camelcase: 0,
+    'symbol-description': 0,
+    'no-void': 0,
   },
 }

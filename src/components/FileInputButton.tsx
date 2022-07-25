@@ -1,7 +1,7 @@
-import {Button, type ButtonProps} from '@sanity/ui'
+import {useId} from '@reach/auto-id'
+import {type ButtonProps,Button} from '@sanity/ui'
 import React, {useCallback, useRef} from 'react'
 import styled from 'styled-components'
-import {useId} from '@reach/auto-id'
 
 const HiddenInput = styled.input`
   overflow: hidden;
@@ -26,7 +26,7 @@ export const FileInputButton = ({onSelect, ...props}: FileInputButtonProps) => {
     if (onSelect) {
       onSelect(event.target.files)
     }
-  }, [])
+  }, [onSelect])
   const handleButtonClick = useCallback(() => inputRef.current?.click(), [])
   return (
     <Label htmlFor={inputId}>

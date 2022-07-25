@@ -1,13 +1,14 @@
 /* eslint-disable camelcase */
 import {uuid as generateUuid} from '@sanity/uuid'
-import config from '../config'
 import {isString} from 'lodash'
 import {concat, defer, from, of, throwError} from 'rxjs'
 import {catchError, mergeMap, mergeMapTo, switchMap} from 'rxjs/operators'
-import {getAsset} from './assets'
-import {testSecretsObservable} from './secrets'
+
 import client from '../clients/SanityClient'
 import {createUpChunkObservable} from '../clients/upChunkObservable'
+import config from '../config'
+import {getAsset} from './assets'
+import {testSecretsObservable} from './secrets'
 
 export function cancelUpload(uuid) {
   return client.observable.request({

@@ -2,6 +2,7 @@ import {Flex} from '@sanity/ui'
 import PropTypes from 'prop-types'
 import React from 'react'
 import {FiCopy, FiUpload} from 'react-icons/fi'
+
 import styles from './UploadPlaceholder.css'
 
 export default class UploadPlaceholder extends React.PureComponent {
