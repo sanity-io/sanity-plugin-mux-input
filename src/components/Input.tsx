@@ -1,20 +1,6 @@
-import {
-  Box,
-  Button,
-  Card,
-  Checkbox,
-  Dialog,
-  Flex,
-  Grid,
-  Inline,
-  Stack,
-  studioTheme,
-  Text,
-  ThemeProvider,
-} from '@sanity/ui'
+import {Box, Button, Card, Checkbox, Dialog, Flex, Grid, Inline, Stack, Text} from '@sanity/ui'
 import SetupIcon from 'part:@sanity/base/plugin-icon'
 import {observePaths} from 'part:@sanity/base/preview'
-import DialogContent from 'part:@sanity/components/dialogs/content'
 import FullscreenDialog from 'part:@sanity/components/dialogs/fullscreen'
 import FormField from 'part:@sanity/components/formfields/default'
 import Spinner from 'part:@sanity/components/loading/spinner'
@@ -34,6 +20,7 @@ import Setup from './Setup'
 import Uploader from './Uploader'
 import Video from './Video'
 import config from '../config'
+import InputError from './InputError'
 
 const NOOP = () => {
   /* intentional noop */
@@ -410,11 +397,7 @@ export default withDocument(
         })
     }
 
-    handleErrorClose = (event) => {
-      if (event) {
-        event.preventDefault()
-      }
-
+    handleErrorClose = () => {
       this.setState({
         error: null,
       })
@@ -579,18 +562,6 @@ export default withDocument(
       )
     }
 
-    renderError() {
-      const {error} = this.state
-      if (!error) {
-        return null
-      }
-      return (
-        <Dialog header="Error" onClose={this.handleErrorClose}>
-          <DialogContent size="small">{error.message}</DialogContent>
-        </Dialog>
-      )
-    }
-
     render() {
       const {type, level, markers} = this.props
       const {
@@ -608,7 +579,7 @@ export default withDocument(
       const cssAspectRatio = assetDocument?.data?.aspect_ratio?.split(':')?.join('/') || 'auto'
 
       return (
-        <ThemeProvider theme={studioTheme}>
+        <>
           <Box style={{position: 'relative'}}>
             <Flex align="center" justify="space-between">
               <FormField
@@ -741,9 +712,9 @@ export default withDocument(
               </Dialog>
             )}
 
-            {error && this.renderError()}
+            {error && <InputError error={error} onClose={this.handleErrorClose} />}
           </Box>
-        </ThemeProvider>
+        </>
       )
     }
   }
