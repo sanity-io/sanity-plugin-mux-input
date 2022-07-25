@@ -1,6 +1,12 @@
 # Mux Video Input Sanity Plugin
 
-This is a plugin which let you use [Mux](https://www.mux.com) video assets in your Sanity studio.
+> **NOTE**
+>
+> This is the **Sanity Studio v2 version** of sanity-plugin-mux-input.
+>
+> For the v3 version, please refer to the [main branch](https://github.com/sanity-io/sanity-plugin-mux-input).
+
+This is a plugin that let you use [Mux](https://www.mux.com) video assets in your Sanity studio.
 
 The Mux plugin for Sanity gives you a way to upload and preview videos easily.
 
@@ -43,11 +49,11 @@ Not familiar with Sanity? [Visit www.sanity.io](https://www.sanity.io/)
   The token is stored in the dataset as a document of the type `mux.apiKey` with the id `secrets.mux`.
   Having the ID be non-root ensures that only editors are able to see it.
 
-  The Mux plugin will find it’s access tokens by fetching this document.
+  The Mux plugin will find its access tokens by fetching this document.
 
 # Playing videos in the frontend
 
-We have made an own player which supports poster images for the videos as set with this plugin, see [`sanity-mux-player`](https://github.com/sanity-io/sanity-mux-player)
+We have made our own player which supports poster images for the videos as set with this plugin, see [`sanity-mux-player`](https://github.com/sanity-io/sanity-mux-player)
 
 You could use any player which supports HLS, just point the video source to:
 
@@ -69,7 +75,7 @@ To enable [static MP4 renditions](https://docs.mux.com/guides/video/enable-stati
 }
 ```
 
-Currently `mp4_support` is the only supported MUX option and this supports a value of either `standard` or `none` (the default).
+Currently, `mp4_support` is the only supported MUX option and this supports a value of either `standard` or `none` (the default).
 
 # Contributing
 
@@ -78,19 +84,29 @@ Issues are actively monitored and PRs are welcome. When developing this plugin t
 1. Fork this repo.
 1. Install the sanity cli and create a sanity project: `npm install -g @sanity/cli && sanity init`. Follow the prompts, starting out with the blog template is a good way to go.
 1. `cd` into your project directory, run `npm install && npm start` - your sanity studio should be running on http://localhost:3333.
-1. `cd` into the `plugins` director of your project.
+1. `cd` into the `plugins` directory of your project.
 1. Fork this repo and clone your fork into the `plugins` directory inside your project `git clone git@github.com:your-fork/sanity-plugin-mux-input.git`.
 1. Open `sanity.json`, go to the `plugins` array and add `mux-input`.
 1. Re-start the sanity studio server with `npm start`.
 1. Edit `schemas/post.js` and add follow the plugin documentation to add a `mux.video` type field.
-1. Your studio should reload, and now when you edit the plugin code it should reload the studio, when you're done create a branch, put in a PR and a maintainer will review it. Thank you!
+1. Your studio should reload, and now when you edit the plugin code it should reload the studio, when you're done creating a branch, put in a PR and a maintainer will review it. Thank you!
 
-## Publishing
+# Publishing
 
-### Test
+Publishing is done by pushing [Conventional Commits](https://github.com/semantic-release/semantic-release#how-does-it-work).
+On the [studio-v2](/tree/studio-v2) branch this will result in:
 
-`yarn semantic-release`
+- a new version on the `latest` dist-tag.
+- running `yarn add sanity-plugin-mux-input` or `npm i sanity-plugin-mux-input` will fetch the new version.
+- running `sanity install mux-input` will fetch the new version.
+- studio-v3 users are unaffected.
+  On the [main](/tree/main) branch this will result in:
+- a new prerelease version on the `studio-v3` dist-tag.
+- running `yarn add sanity-plugin-mux-input@studio-v3` or `npm i sanity-plugin-mux-input@studio-v3` will fetch the new version.
+- running `sanity install mux-input` won't fetch the new version.
 
-### Go live
+After Studio v3 turns stable this behavior will change. The v2 version will then be available on the `studio-v2` dist-tag, and `studio-v3` is upgraded to live on `latest`.
 
-`yarn semantic-release -- --no-ci`
+# Test
+
+`npm test`

@@ -1,7 +1,6 @@
 {
   "branches": [
     {"name": "studio-v2", "channel": "latest"},
-    {"name": "studio-v2", "channel": "studio-v2"},
     {"name": "main", "channel": "studio-v3", "prerelease": true}
   ],
   "plugins": [
