@@ -21,7 +21,6 @@ function normalizeItems(items: DataTransferItem[]) {
         let entry: FileSystemEntry | File[]
         // Edge throws
         try {
-          // @ts-expect-error
           entry = item.webkitGetAsEntry()
         } catch (err) {
           return [item.getAsFile()]
@@ -29,7 +28,6 @@ function normalizeItems(items: DataTransferItem[]) {
         if (!entry) {
           return []
         }
-        // @ts-expect-error
         return entry.isDirectory ? walk(entry) : [item.getAsFile()]
       }
 
@@ -40,7 +38,6 @@ function normalizeItems(items: DataTransferItem[]) {
       }
 
       // others
-      // @ts-expect-error
       return new Promise((resolve) => item.getAsString(resolve)).then((str?: string) =>
         str ? [new File([str], 'unknown.txt', {type: item.type})] : []
       )
@@ -55,7 +52,6 @@ function isDirectory(entry: FileSystemEntry): entry is FileSystemDirectoryEntry 
   return entry.isDirectory
 }
 
-// @ts-expect-error
 function walk(entry: FileSystemEntry) {
   if (isFile(entry)) {
     return new Promise((resolve) => entry.file(resolve)).then((file) => [file])
@@ -63,12 +59,9 @@ function walk(entry: FileSystemEntry) {
 
   if (isDirectory(entry)) {
     const dir = entry.createReader()
-    return (
-      new Promise((resolve) => dir.readEntries(resolve))
-        // @ts-expect-error
-        .then((entries: FileSystemEntry[]) => entries.filter((entr) => !entr.name.startsWith('.')))
-        .then((entries) => Promise.all(entries.map(walk)).then((arr) => arr.flat()))
-    )
+    return new Promise((resolve) => dir.readEntries(resolve))
+      .then((entries: FileSystemEntry[]) => entries.filter((entr) => !entr.name.startsWith('.')))
+      .then((entries) => Promise.all(entries.map(walk)).then((arr) => arr.flat()))
   }
   return Promise.resolve([])
 }
