@@ -31,7 +31,7 @@
     "lint": "eslint .",
     "prepare": "husky install",
     "prepublishOnly": "npm test",
-    "test": "npm run lint && npm run type-check && npm run build && sanipack verify",
+    "test": "npm run lint && npm run type-check && npm run build",
     "type-check": "tsc --noEmit",
     "watch": "sanipack build --watch"
   },
