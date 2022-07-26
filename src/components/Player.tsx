@@ -99,8 +99,6 @@ class MuxVideo extends Component<Props, State> {
   }
 
   componentDidMount() {
-    this.video = React.createRef()
-
     const style = document.createElement('style')
     style.innerHTML = 'button svg { vertical-align: middle; }'
 

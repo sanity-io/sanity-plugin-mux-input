@@ -1,7 +1,0 @@
-@import 'part:@sanity/base/theme/variables-style';
-
-.error {
-  color: var(--state-danger-color);
-  font-size: var(--font-size-small);
-  margin: 0;
-}

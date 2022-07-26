@@ -1,122 +1,85 @@
-import {Box, Button, Card, Checkbox, Code, Flex, Inline, Stack, Text} from '@sanity/ui'
+import {Box, Button, Card, Checkbox, Code, Flex, Inline, Stack, Text,TextInput} from '@sanity/ui'
 import {uniqueId} from 'lodash'
 import FormField from 'part:@sanity/components/formfields/default'
-import TextInput from 'part:@sanity/components/textinputs/default'
-import PropTypes from 'prop-types'
 import React, {Component} from 'react'
 
 import {createSigningKeys, haveValidSigningKeys, saveSecrets} from '../actions/secrets'
-import styles from './Setup.css'
+import type {Secrets} from '../util/types'
 
-const propTypes = {
-  onSave: PropTypes.func.isRequired,
-  onCancel: PropTypes.func.isRequired,
-  secrets: PropTypes.shape({
-    token: PropTypes.string,
-    secretKey: PropTypes.string,
-    enableSignedUrls: PropTypes.bool,
-    signingKeyId: PropTypes.string,
-    signingKeyPrivate: PropTypes.string,
-  }),
+interface Props {
+  onSave: (secrets: Secrets) => void
+  onCancel: () => void
+  secrets: Secrets
 }
-class MuxVideoInputSetup extends Component {
+interface State extends Secrets {
+  isLoading: boolean
+  error: string | null
+}
+class MuxVideoInputSetup extends Component<Props, State> {
   tokenInputId = uniqueId('MuxTokenInput')
   secretKeyInputId = uniqueId('MuxSecretInput')
   enableSignedUrlsInputId = uniqueId('MuxEnableSignedUrlsInput')
 
-  state = {
-    token: null,
-    secretKey: null,
-    enableSignedUrls: false,
+  state: State = {
+    token: this.props.secrets?.token,
+    secretKey: this.props.secrets?.secretKey,
+    enableSignedUrls: this.props.secrets?.enableSignedUrls,
+    signingKeyId: this.props.secrets?.signingKeyId,
+    signingKeyPrivate: this.props.secrets?.signingKeyPrivate,
     isLoading: false,
     error: null,
   }
 
-  static getDerivedStateFromProps(nextProps, nextState) {
-    if (!nextState.secrets) {
-      return null
-    }
-    if (nextProps.secrets) {
-      return {
-        token: nextProps.secrets.token,
-        secretKey: nextProps.secrets.secretKey,
-        enableSignedUrls: nextProps.secrets.enableSignedUrls,
-        signingKeyId: nextProps.secrets.signingKeyId,
-        signingKeyPrivate: nextProps.secrets.signingKeyPrivate,
-      }
-    }
-    return null
-  }
-
-  constructor(props) {
-    super(props)
-    if (props.secrets) {
-      const {token, secretKey, enableSignedUrls, signingKeyId, signingKeyPrivate} = props.secrets
-      this.state.token = token
-      this.state.secretKey = secretKey
-      this.state.enableSignedUrls = enableSignedUrls
-      this.state.signingKeyId = signingKeyId
-      this.state.signingKeyPrivate = signingKeyPrivate
-    }
-    this.firstField = React.createRef()
-  }
+  firstField = React.createRef<HTMLInputElement>()
 
   componentDidMount() {
-    this.firstField.current.focus()
+    this.firstField.current!.focus()
   }
 
-  handleTokenChanged = (event) => {
+  handleTokenChanged: React.FormEventHandler<HTMLInputElement> = (event) => {
     this.setState({token: event.currentTarget.value})
   }
 
-  handleSecretKeyChanged = (event) => {
+  handleSecretKeyChanged: React.FormEventHandler<HTMLInputElement> = (event) => {
     this.setState({secretKey: event.currentTarget.value})
   }
 
-  handleEnableSignedUrls = (event) => this.setState({enableSignedUrls: event.currentTarget.checked})
+  handleEnableSignedUrls : React.FormEventHandler<HTMLInputElement>= (event) => this.setState({enableSignedUrls: event.currentTarget.checked})
 
-  handleCancel = (event) => {
-    this.props.onCancel()
-  }
-
-  handleOnSubmit = (event) => {
+  handleOnSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault()
   }
 
   handleSaveToken = async () => {
-    const handleError = (err) => {
-      console.error(err) // eslint-disable-line no-console
+    this.setState({isLoading: true})
+
+    const {token, secretKey, enableSignedUrls} = this.state
+    let {signingKeyId, signingKeyPrivate} = this.state
+
+    try {
+      await saveSecrets(token!, secretKey!, enableSignedUrls, signingKeyId!, signingKeyPrivate!)
+    } catch (err) {
+      console.error('Error while trying to save secrets:', err) // eslint-disable-line no-console
       this.setState({
         isLoading: false,
         error: 'Something went wrong saving the token. See console.error for more info.',
       })
-    }
-
-    this.setState({isLoading: true})
-
-    const {token, secretKey, enableSignedUrls} = this.state || {}
-    let {signingKeyId, signingKeyPrivate} = this.state || {}
-
-    try {
-      await saveSecrets(token, secretKey, enableSignedUrls, signingKeyId, signingKeyPrivate)
-    } catch (err) {
-      handleError('Error while trying to save secrets:', err)
       return
     }
 
     if (enableSignedUrls) {
-      const hasValidSigningKeys = await haveValidSigningKeys(signingKeyId, signingKeyPrivate)
+      const hasValidSigningKeys = await haveValidSigningKeys(signingKeyId!, signingKeyPrivate!)
 
       if (!hasValidSigningKeys) {
         try {
           const {data} = await createSigningKeys()
           signingKeyId = data.id
           signingKeyPrivate = data.private_key
-          await saveSecrets(token, secretKey, enableSignedUrls, signingKeyId, signingKeyPrivate)
-        } catch ({message}) {
+          await saveSecrets(token!, secretKey!, enableSignedUrls, signingKeyId, signingKeyPrivate)
+        } catch (err:any) {
           // eslint-disable-next-line no-console
-          console.log('Error while creating and saving signing key:', message)
-          this.setState({error: message})
+          console.log('Error while creating and saving signing key:', err?.message)
+          this.setState({error: err?.message!})
         }
       }
     }
@@ -229,27 +192,16 @@ class MuxVideoInputSetup extends Component {
                 onClick={this.handleSaveToken}
               />
 
-              <Button text="Cancel" tone="primary" mode="bleed" onClick={this.handleCancel} />
+              <Button text="Cancel" tone="primary" mode="bleed" onClick={this.props.onCancel} />
             </Inline>
-
-            {error && <p className={styles.error}>{error}</p>}
+            {error && <Card padding={[3, 3, 3]} radius={2} shadow={1} tone="critical">
+                <Text>{error}</Text>
+              </Card>}
           </Stack>
         </form>
       </Box>
     )
   }
-}
-
-MuxVideoInputSetup.propTypes = propTypes
-
-MuxVideoInputSetup.defaultProps = {
-  secrets: {
-    token: null,
-    secretKey: null,
-    enableSignedUrls: false,
-    signingKeyId: null,
-    signingKeyPrivate: null,
-  },
 }
 
 export default MuxVideoInputSetup
