@@ -5,15 +5,15 @@ import DialogContent from 'part:@sanity/components/dialogs/content'
 import Dialog from 'part:@sanity/components/dialogs/default'
 import FormField from 'part:@sanity/components/formfields/default'
 import ProgressBar from 'part:@sanity/components/progress/bar'
-import PropTypes from 'prop-types'
 import React, {Component} from 'react'
 import {FiUpload} from 'react-icons/fi'
-import {Subject} from 'rxjs'
+import {type Observable, Subject} from 'rxjs'
 import {takeUntil, tap} from 'rxjs/operators'
 
 import {uploadFile, uploadUrl} from '../actions/upload'
 import client from '../clients/SanityClient'
 import {extractDroppedFiles} from '../util/extractFiles'
+import type {Secrets} from '../util/types'
 import {FileInputButton} from './FileInputButton'
 import styles from './Uploader.css'
 import UploadPlaceholder from './UploadPlaceholder'
@@ -21,55 +21,73 @@ import UploadPlaceholder from './UploadPlaceholder'
 const ctrlKey = 17
 const cmdKey = 91
 
-const propTypes = {
-  hasFocus: PropTypes.bool,
-  onFocus: PropTypes.func,
-  onBlur: PropTypes.func,
-  onBrowse: PropTypes.func.isRequired,
-  onSetupButtonClicked: PropTypes.func.isRequired,
-  onUploadComplete: PropTypes.func,
-  secrets: PropTypes.shape({
-    token: PropTypes.string,
-    secretKey: PropTypes.string,
-    enableSignedUrls: PropTypes.bool,
-  }),
-  buttons: PropTypes.node,
-  children: PropTypes.node,
+
+interface Props {
+  hasFocus?: boolean
+  onFocus?: () => void
+  onBlur?: () => void
+  onBrowse: () => void
+  onSetupButtonClicked: () => void
+  onUploadComplete?: () => void
+  secrets: Secrets
+  buttons?: React.ReactNode
+  children?: React.ReactNode
 }
 
-function createEventHandler() {
-  const events$ = new Subject()
-  const handler = (event) => events$.next(event)
-  return [events$.asObservable(), handler]
+interface State {
+  isDraggingOver: boolean
+  invalidPaste: boolean
+  invalidFile: boolean
+  fileInfo: {name?: string, type?: string} | null
+  uuid: null
+  uploadProgress: number | null
+  error: null
+  url?: string
 }
 
-class MuxVideoInputUploader extends Component {
-  state = {
+class MuxVideoInputUploader extends Component<Props, State> {
+
+  static defaultProps = {
+    hasFocus: false,
+    onFocus: null,
+    onBlur: null,
+    onUploadComplete: null,
+    buttons: null,
+    children: null,
+  }
+
+  state: State = {
     isDraggingOver: false,
     invalidPaste: false,
     invalidFile: false,
     uploadProgress: null,
     fileInfo: null,
     uuid: null,
+    error: null
   }
   dragEnteredEls = []
 
-  upload = null
-
   ctrlDown = false
+
+  // eslint-disable-next-line no-warning-comments
+  // @TODO add proper typings for the return values of uploadFile and uploadUrl
+  upload: any | null = null
 
   cancelUploadButton = React.createRef()
   hiddenTextField = React.createRef()
   container = React.createRef()
+
+  onCancelUploadButtonClick$: (Observable<unknown>) | undefined
+  handleCancelUploadButtonClick: React.MouseEventHandler<HTMLButtonElement> | undefined
 
   componentWillUnmount() {
     this.unSubscribeToUpload()
   }
 
   componentDidMount() {
-    const [onClick$, onClick] = createEventHandler()
-    this.onCancelUploadButtonClick$ = onClick$
-    this.handleCancelUploadButtonClick = onClick
+    const events$ = new Subject()
+    this.onCancelUploadButtonClick$ = events$.asObservable()
+    this.handleCancelUploadButtonClick = (event) => events$.next(event)
   }
 
   unSubscribeToUpload() {
@@ -78,21 +96,16 @@ class MuxVideoInputUploader extends Component {
     }
   }
 
-  handleProgress = (evt) => {
-    if (evt.percent) {
-      this.setState({uploadProgress: evt.percent})
-    }
-    if (evt.file) {
-      this.setState({fileInfo: evt.file})
-    }
+  handleProgress = (evt: {percent: number}) => {
+    this.setState({uploadProgress: evt.percent})
   }
 
-  handleUploadFile = (file) => {
+  handleUploadFile = (file: File) => {
     this.setState({uploadProgress: 0, fileInfo: null, uuid: null})
     this.upload = uploadFile(file, {enableSignedUrls: this.props.secrets.enableSignedUrls})
       .pipe(
         takeUntil(
-          this.onCancelUploadButtonClick$.pipe(
+          this.onCancelUploadButtonClick$!.pipe(
             tap(() => {
               if (this.state.uuid) {
                 client.delete(this.state.uuid)
@@ -114,7 +127,8 @@ class MuxVideoInputUploader extends Component {
       })
   }
 
-  handleUploadEvent = (event) => {
+  // @TODO add proper typings for the Observable events
+  handleUploadEvent = (event: any) => {
     switch (event.type) {
       case 'success':
         return this.handleUploadSuccess(event.asset)
@@ -407,22 +421,6 @@ class MuxVideoInputUploader extends Component {
       </Card>
     )
   }
-}
-
-MuxVideoInputUploader.propTypes = propTypes
-
-MuxVideoInputUploader.defaultProps = {
-  hasFocus: false,
-  onFocus: null,
-  onBlur: null,
-  onUploadComplete: null,
-  secrets: {
-    token: '',
-    secretKey: '',
-    enableSignedUrls: false,
-  },
-  buttons: null,
-  children: null,
 }
 
 export default MuxVideoInputUploader

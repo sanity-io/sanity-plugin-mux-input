@@ -1,4 +1,6 @@
-import sanityClient from 'part:@sanity/base/client'
+import type {SanityClient} from '@sanity/client'
+import _sanityClient from 'part:@sanity/base/client'
+const sanityClient = _sanityClient as SanityClient
 
 const isContentLakeSupported = typeof sanityClient.withConfig === 'function'
 
