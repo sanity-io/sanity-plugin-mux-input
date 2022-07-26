@@ -269,7 +269,7 @@ export default withDocument(
       this.setState({showSetup: false})
     }
 
-    handleOnUploadComplete = (result) => {
+    handleOnUploadComplete = (result: any) => {
       const {onChange} = this.props
       const {_id} = result
       onChange(
@@ -291,7 +291,7 @@ export default withDocument(
       const {assetDocument} = this.state
       this.setState({isLoading: true})
       const unsetAsset = () => {
-        return new Promise<void>((resolve, reject) => {
+        return new Promise<any>((resolve, reject) => {
           this.setState(
             {
               assetDocument: null,
@@ -306,12 +306,12 @@ export default withDocument(
                   .commit({returnDocuments: false})
                   .then(() => {
                     if (!assetDocument) {
-                      return resolve()
+                      return resolve(undefined)
                     }
                     return client
                       .delete(assetDocument._id!)
                       .then(() => {
-                        resolve()
+                        resolve(undefined)
                       })
                       .catch((error) => {
                         reject(error)
@@ -330,7 +330,7 @@ export default withDocument(
               this.setState({error})
             })
           }
-          return true
+          return true as any
         })
         .catch((error) => {
           this.setState({error})
@@ -457,7 +457,7 @@ export default withDocument(
             )}
 
             {this.state.confirmRemove && (
-              <Dialog header="Remove video" zOffset={1000} onClose={this.handleCancelRemove}>
+              <Dialog id="remove-video" header="Remove video" zOffset={1000} onClose={this.handleCancelRemove}>
                 <Box padding={4}>
                   <Stack space={3}>
                     <Flex align="center">
