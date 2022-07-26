@@ -1,14 +1,13 @@
+/* eslint-disable no-nested-ternary */
 import {useId} from '@reach/auto-id'
 import {Box, Button, Card, Dialog, Flex, Grid, Stack, Text} from '@sanity/ui'
 import cx from 'classnames'
-import FormField from 'part:@sanity/components/formfields/default'
 import ProgressBar from 'part:@sanity/components/progress/bar'
 import React, {forwardRef, useCallback, useRef} from 'react'
 import {FiCopy, FiUpload} from 'react-icons/fi'
-import styled from 'styled-components'
+import styled, {keyframes} from 'styled-components'
 
 import {FileInputButton, FileInputButtonProps} from './FileInputButton'
-import styles from './UploadPlaceholder.css'
 
 interface ErrorDialogProps {
   message: string
@@ -63,7 +62,7 @@ export const UploadProgress = ({
     text = `Uploading ${url}`
   }
   return (
-    <UploadProgressCard padding={4}>
+    <UploadProgressCard>
       <UploadProgressStack space={5}>
         <ProgressBar
           percent={uploadProgress}
@@ -74,19 +73,19 @@ export const UploadProgress = ({
           color="primary"
         />
         {(uploadProgress < 100 || error) && (
-          <UploadCancelButton text="Cancel upload" padding={3} tone="critical" onClick={onCancel} />
+          <UploadCancelButton text="Cancel upload" onClick={onCancel} />
         )}
       </UploadProgressStack>
     </UploadProgressCard>
   )
 }
-const UploadProgressCard = styled(Card)`
+export const UploadProgressCard = styled(Card).attrs({padding: 4})`
   box-sizing: border-box;
 `
-const UploadCancelButton = styled(Button)`
+export const UploadCancelButton = styled(Button).attrs({padding: 3, tone: 'critical'})`
   justify-self: center;
 `
-const UploadProgressStack = styled(Stack)`
+export const UploadProgressStack = styled(Stack).attrs({space: 5})`
   text-align: left;
 `
 
@@ -176,53 +175,87 @@ export const UploadPlaceholder = ({
   hasFocus,
   isDraggingOver,
 }: UploadPlaceholderProps) => {
-  const fileClassNames = [styles.dropFile]
-  const pasteClassNames = [styles.pasteFile]
-  if (invalidFile) {
-    fileClassNames.push(styles.invalidFile)
-  }
-  if (isDraggingOver) {
-    fileClassNames.push(styles.isDraggingOver)
-  }
-  if (invalidPaste) {
-    pasteClassNames.push(styles.invalidPaste)
-  }
-  if (hasFocus) {
-    pasteClassNames.push(styles.hasFocus)
-  }
   return (
-    <div>
-      <FormField level={0}>
-        <div>
-          <Flex justify="center" align="center" padding={3}>
-            <div className={cx(fileClassNames)}>
-              <div className={styles.iconContainer}>
-                <FiUpload size="0.5em" />
-              </div>
-              <p className={styles.strong}>
-                <span>Drop file {invalidFile}</span>
-              </p>
-            </div>
-            <div className={pasteClassNames.join(' ')}>
-              <div className={styles.iconContainer}>
-                <FiCopy {...(invalidPaste ? {color: 'red'} : {})} size="0.5em" />
-              </div>
-              <div>
-                <p className={styles.strong}>
-                  <span>Paste URL</span>
-                </p>
-              </div>
-            </div>
+    <UploaderCard
+      className={cx({
+        'is-invalid-file': invalidFile,
+        'is-invalid-paste': invalidPaste,
+        'has-focus': hasFocus,
+      })}
+    >
+      <Flex justify="center" align="center" padding={3}>
+        <UploaderCardDrop
+          display={['none', 'block']}
+          radius={2}
+          padding={4}
+          tone={invalidFile ? 'critical' : isDraggingOver ? 'positive' : undefined}
+        >
+          <Flex align="center" justify="center" padding={4}>
+            <Text>
+              <FiUpload size="1.25em" />
+            </Text>
           </Flex>
-        </div>
-      </FormField>
+          <Text weight="medium">Drop file</Text>
+        </UploaderCardDrop>
+        <UploaderCardPaste
+          display={['none', 'block']}
+          radius={2}
+          padding={4}
+          tone={invalidPaste ? 'critical' : undefined}
+        >
+          <Flex align="center" justify="center" padding={4}>
+            <Text>
+              <FiCopy size="1.25em" />
+            </Text>
+          </Flex>
+          <Text weight="medium">Paste URL</Text>
+        </UploaderCardPaste>
+      </Flex>
       <Grid columns={2} gap={2}>
         <UploadButton onSelect={onUpload} />
         <Button mode="ghost" tone="default" text="Browse" onClick={onBrowse} />
       </Grid>
-    </div>
+    </UploaderCard>
   )
 }
+const shake = keyframes`
+10%,
+  90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+
+  20%,
+  80% {
+    transform: translate3d(2px, 0, 0);
+  }
+
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+
+  40%,
+  60% {
+    transform: translate3d(4px, 0, 0);
+  }
+`
+const UploaderCardDrop = styled(Card)``
+const UploaderCardPaste = styled(Card)`
+  opacity: 0.2;
+  transition: opacity linear 0.2s;
+`
+const UploaderCard = styled(Card)`
+  &.is-invalid-file ${UploaderCardDrop}, &.is-invalid-paste ${UploaderCardPaste} {
+    animation: ${shake} 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+  &.has-focus ${UploaderCardPaste} {
+    opacity: 1;
+  }
+`
 
 interface UploadButtonProps extends Pick<FileInputButtonProps, 'onSelect'> {}
 export const UploadButton = ({onSelect}: UploadButtonProps) => {

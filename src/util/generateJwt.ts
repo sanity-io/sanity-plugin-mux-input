@@ -19,7 +19,7 @@ export function generateJwt<T extends Audience>(
   signingKeyId: string,
   signingKeyPrivate: string,
   aud: T,
-  payload: Payload<T>
+  payload?: Payload<T>
 ): string {
   const privateKey = Buffer.from(signingKeyPrivate, 'base64')
   return sign(
@@ -35,6 +35,3 @@ export function generateJwt<T extends Audience>(
     }
   )
 }
-
-// @TODO update imports to use named
-export default generateJwt

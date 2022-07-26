@@ -16,7 +16,10 @@ export interface SignableSecrets extends Omit<Secrets, 'signingKeyId' | 'signing
 
 export type MuxImageOrigin = `https://image.mux.com`
 export type MuxThumbnailUrl = `${MuxImageOrigin}/${string}/thumbnail.png?${string}`
-export type MuxApiUrl = string
+export type MuxStoryboardUrl = `${MuxImageOrigin}/${string}/storyboard.vtt?${string}`
+export type MuxVideoOrigin = `https://stream.mux.com`
+export type MuxVideoUrl = `${MuxVideoOrigin}/${string}.m3u8?${string}`
+export type MuxApiUrl = MuxThumbnailUrl | MuxStoryboardUrl | MuxVideoUrl
 
 // 'preserve' by default
 // @url: https://docs.mux.com/guides/video/get-images-from-a-video#thumbnail-query-string-parameters
@@ -26,7 +29,7 @@ export interface ThumbnailOptions {
   fit_mode?: FitMode
   height?: number
   time?: number
-  width: number
+  width?: number
 }
 
 export type PlaybackPolicy = 'signed' | 'public'

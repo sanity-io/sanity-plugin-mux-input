@@ -1,4 +1,4 @@
-import generateJwt from './generateJwt'
+import {generateJwt} from './generateJwt'
 import {getPlaybackId} from './getPlaybackId'
 import {isSigned} from './isSigned'
 import type {
@@ -13,6 +13,7 @@ interface PosterSrcOptions extends ThumbnailOptions {
   asset: VideoAssetDocument
   secrets: Secrets | SignableSecrets
 }
+
 export default function getPosterSrc({
   asset,
   secrets,

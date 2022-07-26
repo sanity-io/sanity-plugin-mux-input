@@ -2,75 +2,94 @@ import 'media-chrome'
 
 import {Card, Stack, Text} from '@sanity/ui'
 import Hls from 'hls.js'
-import Button from 'part:@sanity/components/buttons/default'
 import ProgressBar from 'part:@sanity/components/progress/bar'
-import PropTypes from 'prop-types'
 import React, {Component} from 'react'
+import styled from 'styled-components'
 
 import {getAsset} from '../actions/assets'
 import {fetchSecrets} from '../actions/secrets'
 import getPosterSrc from '../util/getPosterSrc'
 import getStoryboardSrc from '../util/getStoryboardSrc'
 import getVideoSrc from '../util/getVideoSrc'
-import styles from './Video.css'
+import type {Secrets, VideoAssetDocument} from '../util/types'
+import {UploadCancelButton, UploadProgressCard, UploadProgressStack} from './Uploader.styles'
 
-const NOOP = () => {
-  /* intentional noop */
-}
+const VideoContainer = styled.div`
+  position: relative;
+  min-height: 150px;
+`
 
-const propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
-  assetDocument: PropTypes.object.isRequired,
-  autoload: PropTypes.bool,
-  onCancel: PropTypes.func,
-  onReady: PropTypes.func,
-}
-
-class MuxVideo extends Component {
-  videoContainer = React.createRef()
-  hls = null
-
-  constructor(props) {
-    super(props)
-    this.state = {
-      storyboardUrl: null,
-      posterUrl: null,
-      source: null,
-      isLoading: true,
-      error: null,
-      isDeletedOnMux: false,
-      isPreparingStaticRenditions: false,
-      secrets: null,
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      ['media-controller']: JSX.IntrinsicElements['div']
+      ['media-control-bar']: JSX.IntrinsicElements['div']
+      ['media-play-button']: JSX.IntrinsicElements['div']
+      ['media-mute-button']: JSX.IntrinsicElements['div']
+      ['media-time-range']: JSX.IntrinsicElements['div']
     }
-    this.playRef = React.createRef()
-    this.muteRef = React.createRef()
+  }
+}
+
+interface Props {
+  asset: VideoAssetDocument
+  onCancel: () => void
+  onReady: () => void
+}
+interface State {
+  isLoading: boolean | string
+  secrets: Secrets | null
+  storyboardUrl: string | null
+  posterUrl: string | null
+  source: string | null
+  error: Hls.errorData | null
+  isDeletedOnMux: boolean
+  isPreparingStaticRenditions: boolean
+}
+
+class MuxVideo extends Component<Props, State> {
+  videoContainer = React.createRef<HTMLDivElement>()
+  playRef = React.createRef<HTMLDivElement>()
+  muteRef = React.createRef<HTMLDivElement>()
+  video = React.createRef<HTMLVideoElement>()
+  hls: Hls | null = null
+
+  state: State = {
+    storyboardUrl: null,
+    posterUrl: null,
+    source: null,
+    isLoading: true,
+    error: null,
+    isDeletedOnMux: false,
+    isPreparingStaticRenditions: false,
+    secrets: null,
   }
 
   // eslint-disable-next-line complexity
-  static getDerivedStateFromProps(nextProps) {
-    let isLoading = true
+  static getDerivedStateFromProps(nextProps: Props) {
+    let isLoading: boolean | string = true
     let isPreparingStaticRenditions = false
-    const {assetDocument} = nextProps
+    const {asset} = nextProps
 
-    if (assetDocument && assetDocument.status === 'preparing') {
+    if (asset && asset.status === 'preparing') {
       isLoading = 'Preparing the video'
     }
-    if (assetDocument && assetDocument.status === 'waiting_for_upload') {
+    if (asset && asset.status === 'waiting_for_upload') {
       isLoading = 'Waiting for upload to start'
     }
-    if (assetDocument && assetDocument.status === 'waiting') {
+    if (asset && asset.status === 'waiting') {
       isLoading = 'Processing upload'
     }
-    if (assetDocument && assetDocument.status === 'ready') {
+    if (asset && asset.status === 'ready') {
       isLoading = false
     }
-    if (assetDocument && typeof assetDocument.status === 'undefined') {
+    if (asset && typeof asset.status === 'undefined') {
       isLoading = false
     }
-    if (assetDocument?.data?.static_renditions?.status === 'preparing') {
+    if (asset?.data?.static_renditions?.status === 'preparing') {
       isPreparingStaticRenditions = true
     }
-    if (assetDocument?.data?.static_renditions?.status === 'ready') {
+    if (asset?.data?.static_renditions?.status === 'ready') {
       isPreparingStaticRenditions = false
     }
     return {
@@ -85,7 +104,7 @@ class MuxVideo extends Component {
     const style = document.createElement('style')
     style.innerHTML = 'button svg { vertical-align: middle; }'
 
-    if (this.playRef?.current?.shadowRoot) {
+    if (this.playRef.current?.shadowRoot) {
       this.playRef.current.shadowRoot.appendChild(style)
     }
     if (this.muteRef?.current?.shadowRoot) {
@@ -96,16 +115,16 @@ class MuxVideo extends Component {
     fetchSecrets().then(({secrets}) => this.setState({secrets}))
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    const previousVideo = prevProps.assetDocument.playbackId
-    const newVideo = this.props.assetDocument.playbackId
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    const previousVideo = prevProps.asset.playbackId
+    const newVideo = this.props.asset.playbackId
 
     if (
       !this.state.isLoading &&
       this.state.secrets &&
       (this.state.source === null || previousVideo !== newVideo)
     ) {
-      this.resolveSourceAndPoster(this.props.assetDocument)
+      this.resolveSourceAndPoster(this.props.asset)
     }
 
     if (this.state.source !== null && this.video.current && !this.video.current.src) {
@@ -116,7 +135,7 @@ class MuxVideo extends Component {
 
     if (this.state.source !== null && this.state.source !== prevState.source) {
       // eslint-disable-next-line react/no-did-update-set-state
-      this.setState({error: null, showControls: false})
+      this.setState({error: null})
       if (this.hls) {
         this.hls.destroy()
       }
@@ -124,17 +143,12 @@ class MuxVideo extends Component {
     }
   }
 
-  resolveSourceAndPoster(assetDocument) {
-    const playbackId = assetDocument.playbackId
-    const options = {
-      isSigned: assetDocument.data.playback_ids[0].policy === 'signed',
-      signingKeyId: this.state.secrets.signingKeyId || null,
-      signingKeyPrivate: this.state.secrets.signingKeyPrivate || null,
-    }
+  resolveSourceAndPoster(asset: VideoAssetDocument) {
+    const options = {asset, secrets: this.state.secrets!}
 
-    const source = getVideoSrc(playbackId, options)
-    const posterUrl = getPosterSrc(playbackId, options)
-    const storyboardUrl = getStoryboardSrc(playbackId, options)
+    const source = getVideoSrc(options)
+    const posterUrl = getPosterSrc(options)
+    const storyboardUrl = getStoryboardSrc(options)
     this.setState({source, posterUrl, storyboardUrl})
   }
 
@@ -143,13 +157,13 @@ class MuxVideo extends Component {
   }
 
   attachVideo() {
-    const {assetDocument, autoload} = this.props
+    const {asset} = this.props
 
     if (Hls.isSupported()) {
-      this.hls = new Hls({autoStartLoad: autoload})
-      this.hls.loadSource(this.state.source)
-      this.hls.attachMedia(this.video.current)
-      this.hls.on(Hls.Events.MANIFEST_PARSED, (e) => {
+      this.hls = new Hls({autoStartLoad: true})
+      this.hls.loadSource(this.state.source!)
+      this.hls.attachMedia(this.video.current!)
+      this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
         if (this.videoContainer.current) {
           this.videoContainer.current.style.display = 'block'
         }
@@ -164,8 +178,8 @@ class MuxVideo extends Component {
               this.videoContainer.current.style.display = 'none'
             }
             this.setState({error: data})
-            getAsset(assetDocument.assetId)
-              .then((response) => {
+            getAsset(asset.assetId)
+              .then(() => {
                 this.setState({isDeletedOnMux: false})
               })
               .catch((err) => {
@@ -180,41 +194,27 @@ class MuxVideo extends Component {
             console.error(data) // eslint-disable-line no-console
         }
       })
-    } else if (this.video.current.canPlayType('application/vnd.apple.mpegurl')) {
-      this.video.current.src = this.state.source
-      this.video.current.addEventListener('loadedmetadata', () => {
-        this.hls.loadSource(this.state.source)
-        this.hls.attachMedia(this.video.current)
+    } else if (this.video.current!.canPlayType('application/vnd.apple.mpegurl')) {
+      this.video.current!.src = this.state.source!
+      this.video.current!.addEventListener('loadedmetadata', () => {
+        this.hls!.loadSource(this.state.source!)
+        this.hls!.attachMedia(this.video.current!)
       })
-    }
-  }
-
-  handleVideoClick = (event) => {
-    this.setState({showControls: true})
-    this.hls.startLoad(0)
-    if (this.props.onReady) {
-      this.props.onReady(event)
-    }
-  }
-
-  handleCancelButtonClicked = (event) => {
-    if (this.props.onCancel) {
-      this.props.onCancel(event)
     }
   }
 
   // eslint-disable-next-line complexity
   render() {
     const {posterUrl, isLoading, error} = this.state
-    const {assetDocument, autoload} = this.props
-    if (!assetDocument || !assetDocument.status) {
+    const {asset} = this.props
+    if (!asset || !asset.status) {
       return null
     }
 
     if (isLoading) {
       return (
-        <div>
-          <div className={styles.progressBar}>
+        <UploadProgressCard>
+          <UploadProgressStack>
             <ProgressBar
               percent={100}
               text={(isLoading !== true && isLoading) || 'Waiting for Mux to complete the file'}
@@ -223,23 +223,19 @@ class MuxVideo extends Component {
               animation
               color="primary"
             />
-          </div>
-          <div className={styles.uploadCancelButton}>
-            <Button onClick={this.handleCancelButtonClicked}>Cancel</Button>
-          </div>
-        </div>
+
+            <UploadCancelButton onClick={this.props.onCancel}>Cancel</UploadCancelButton>
+          </UploadProgressStack>
+        </UploadProgressCard>
       )
     }
 
-    const showControls = autoload || this.state.showControls
-
     return (
-      <div ref={this.videoContainer} className={styles.videoContainer}>
+      <VideoContainer ref={this.videoContainer}>
         <media-controller>
           <video
-            onClick={autoload ? NOOP : this.handleVideoClick}
             ref={this.video}
-            poster={posterUrl}
+            poster={posterUrl ?? undefined}
             slot="media"
             crossOrigin="anonomous"
           >
@@ -247,16 +243,13 @@ class MuxVideo extends Component {
               <track label="thumbnails" default kind="metadata" src={this.state.storyboardUrl} />
             )}
           </video>
-
-          {showControls && (
-            <media-control-bar>
-              <media-play-button ref={this.playRef} />
-              <media-mute-button ref={this.muteRef} />
-              {/* The media volume range is causing an error to be logged in the studio: Failed to construct 'CustomElement': The result must not have attributes */}
-              {/* <media-volume-range /> */}
-              <media-progress-range />
-            </media-control-bar>
-          )}
+          <media-control-bar>
+            <media-play-button ref={this.playRef} />
+            <media-mute-button ref={this.muteRef} />
+            {/* The media volume range is causing an error to be logged in the studio: Failed to construct 'CustomElement': The result must not have attributes */}
+            {/* <media-volume-range /> */}
+            <media-time-range />
+          </media-control-bar>
         </media-controller>
         {error && (
           <Card padding={3} radius={2} shadow={1} tone="critical" marginTop={2}>
@@ -283,17 +276,9 @@ class MuxVideo extends Component {
             </Text>
           </Card>
         )}
-      </div>
+      </VideoContainer>
     )
   }
-}
-
-MuxVideo.propTypes = propTypes
-
-MuxVideo.defaultProps = {
-  autoload: true,
-  onCancel: undefined,
-  onReady: undefined,
 }
 
 export default MuxVideo

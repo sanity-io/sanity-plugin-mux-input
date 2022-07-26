@@ -1,11 +1,28 @@
-import generateJwt from './generateJwt'
+import {generateJwt} from './generateJwt'
+import {getPlaybackId} from './getPlaybackId'
+import {isSigned} from './isSigned'
+import type {MuxVideoUrl, Secrets, SignableSecrets, VideoAssetDocument} from './types'
 
-export default function getVideoSrc(playbackId, options = {}) {
-  let qs = ''
-  if (options.isSigned && options.signingKeyId && options.signingKeyPrivate) {
-    const token = generateJwt(playbackId, options.signingKeyId, options.signingKeyPrivate, 'v')
-    qs = `?token=${token}`
+interface VideoSrcOptions {
+  asset: VideoAssetDocument
+  secrets: Secrets | SignableSecrets
+}
+
+export default function getVideoSrc({asset, secrets}: VideoSrcOptions): MuxVideoUrl {
+  const playbackId = getPlaybackId(asset)
+  const searchParams = new URLSearchParams()
+
+  if (isSigned(asset, secrets as SignableSecrets)) {
+    const token = generateJwt(
+      playbackId,
+      // eslint-disable-next-line no-warning-comments
+      // @TODO figure out why isSigned doesn't manage to narrow down secrets to SignableSecrets
+      (secrets as SignableSecrets).signingKeyId,
+      (secrets as SignableSecrets).signingKeyPrivate,
+      'v'
+    )
+    searchParams.set('token', token)
   }
 
-  return `https://stream.mux.com/${playbackId}.m3u8${qs}`
+  return `https://stream.mux.com/${playbackId}.m3u8?${searchParams}`
 }
