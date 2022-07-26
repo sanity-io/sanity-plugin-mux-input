@@ -157,3 +157,5 @@ yarn.lock
 *.iml
 
 lib/
+.parcel-cache
+.husky

@@ -22,5 +22,5 @@
     "baseUrl": ".",
     "resolveJsonModule": true
   },
-  "include": ["./node_modules/@sanity/base/types/**/*.ts", "src/**/*"]
+  "include": ["src/**/*"]
 }

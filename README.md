@@ -2,9 +2,9 @@
 
 > **NOTE**
 >
-> This is the **Sanity Studio v2 version** of sanity-plugin-mux-input.
+> This is the **Sanity Studio v3 version** of sanity-plugin-mux-input.
 >
-> For the v3 version, please refer to the [main branch](https://github.com/sanity-io/sanity-plugin-mux-input).
+> For the v2 version, please refer to the [studio-v2 branch](https://github.com/sanity-io/sanity-plugin-mux-input).
 
 This is a plugin that let you use [Mux](https://www.mux.com) video assets in your Sanity studio.
 
@@ -16,8 +16,8 @@ Not familiar with Sanity? [Visit www.sanity.io](https://www.sanity.io/)
 
 ## Quick start
 
-- While in your project folder, run `sanity install mux-input`.
-  Read more about [using plugins in Sanity here](https://www.sanity.io/docs/plugins).
+- While in your project folder, run `npm i sanity-plugin-mux-input`.
+  Read more about [using plugins in Sanity here](https://beta.sanity.io/docs/platform/studio/plugin).
 
 * Make a schema type that uses the plugin's type `mux.video`, for example:
 
@@ -67,12 +67,24 @@ More information for this feature of the plugin can be found on Mux's [documenta
 
 # Enabling MP4 support
 
-To enable [static MP4 renditions](https://docs.mux.com/guides/video/enable-static-mp4-renditions), create or open the config file found in `config/mux-input.json` in your studio folder. This file is automatically created the first time the studio starts after adding the plugin.
+To enable [static MP4 renditions](https://docs.mux.com/guides/video/enable-static-mp4-renditions), add `mp4_support: 'standard'` to the `options` of your `mux.video` schema type.
 
-```
+js```
 {
-  "mp4_support": "standard"
+title: "Video blog post",
+name: "videoBlogPost",
+type: "document",
+fields: [
+{ title: "Title", name: "title", type: "string" },
+{
+title: "Video file",
+name: "video",
+type: "mux.video",
+options: {mp4_support: 'standard'}
 }
+]
+}
+
 ```
 
 Currently, `mp4_support` is the only supported MUX option and this supports a value of either `standard` or `none` (the default).
@@ -82,7 +94,7 @@ Currently, `mp4_support` is the only supported MUX option and this supports a va
 Issues are actively monitored and PRs are welcome. When developing this plugin the easiest setup is:
 
 1. Fork this repo.
-1. Install the sanity cli and create a sanity project: `npm install -g @sanity/cli && sanity init`. Follow the prompts, starting out with the blog template is a good way to go.
+1. Create a studio v3 project: `npm create sanity@dev-preview`. Follow the prompts, starting out with the blog template is a good way to go.
 1. `cd` into your project directory, run `npm install && npm start` - your sanity studio should be running on http://localhost:3333.
 1. `cd` into the `plugins` directory of your project.
 1. Fork this repo and clone your fork into the `plugins` directory inside your project `git clone git@github.com:your-fork/sanity-plugin-mux-input.git`.
@@ -110,3 +122,4 @@ After Studio v3 turns stable this behavior will change. The v2 version will then
 # Test
 
 `npm test`
+```

@@ -7,11 +7,12 @@ module.exports = {
     },
   },
   extends: [
-    'sanity',
-    'sanity/react',
+    'react-app',
+    'sanity/react', // must come before sanity/typescript
     'sanity/typescript',
     'plugin:react-hooks/recommended',
-    'prettier',
+    'plugin:prettier/recommended',
+    '@sanity/no-v2-imports',
   ],
   overrides: [
     {
@@ -21,7 +22,7 @@ module.exports = {
       },
     },
   ],
-  plugins: ['simple-import-sort'],
+  plugins: ['simple-import-sort', 'prettier'],
   rules: {
     '@typescript-eslint/explicit-function-return-type': 0,
     '@typescript-eslint/explicit-module-boundary-types': 0,
@@ -37,5 +38,14 @@ module.exports = {
     camelcase: 0,
     'symbol-description': 0,
     'no-void': 0,
+  },
+  settings: {
+    'import/ignore': ['\\.css$', '.*node_modules.*'],
+    'import/resolver': {
+      node: {
+        paths: ['src'],
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      },
+    },
   },
 }
