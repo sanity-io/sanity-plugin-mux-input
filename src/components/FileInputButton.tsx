@@ -25,7 +25,7 @@ export const FileInputButton = ({onSelect, ...props}: FileInputButtonProps) => {
   const handleSelect = useCallback<React.ChangeEventHandler<HTMLInputElement>>(
     (event) => {
       if (onSelect) {
-        onSelect(event.target.files)
+        onSelect(event.target.files!)
       }
     },
     [onSelect]

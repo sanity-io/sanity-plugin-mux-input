@@ -1,61 +1,43 @@
-import {UploadIcon} from '@sanity/icons'
-import {Button, Card, Grid} from '@sanity/ui'
-import ButtonCollection from 'part:@sanity/components/buttons/button-collection'
-import DialogContent from 'part:@sanity/components/dialogs/content'
-import Dialog from 'part:@sanity/components/dialogs/default'
-import FormField from 'part:@sanity/components/formfields/default'
-import ProgressBar from 'part:@sanity/components/progress/bar'
 import React, {Component} from 'react'
-import {FiUpload} from 'react-icons/fi'
 import {type Observable, Subject} from 'rxjs'
 import {takeUntil, tap} from 'rxjs/operators'
 
 import {uploadFile, uploadUrl} from '../actions/upload'
 import client from '../clients/SanityClient'
 import {extractDroppedFiles} from '../util/extractFiles'
-import type {Secrets} from '../util/types'
-import {FileInputButton} from './FileInputButton'
-import styles from './Uploader.css'
-import UploadPlaceholder from './UploadPlaceholder'
-
-const ctrlKey = 17
-const cmdKey = 91
-
+import type {Secrets, VideoAssetDocument} from '../util/types'
+import {
+  ErrorDialog,
+  UploadButtonGrid,
+  UploadCard,
+  UploadPlaceholder,
+  UploadProgress,
+} from './Uploader.styles'
 
 interface Props {
-  hasFocus?: boolean
-  onFocus?: () => void
-  onBlur?: () => void
+  hasFocus: boolean
+  onFocus: React.FocusEventHandler<HTMLDivElement>
+  onBlur: React.FocusEventHandler<HTMLDivElement>
   onBrowse: () => void
   onSetupButtonClicked: () => void
-  onUploadComplete?: () => void
+  onUploadComplete: (asset: VideoAssetDocument) => void
   secrets: Secrets
-  buttons?: React.ReactNode
-  children?: React.ReactNode
+  buttons: React.ReactNode
+  children: React.ReactNode
 }
 
 interface State {
   isDraggingOver: boolean
   invalidPaste: boolean
   invalidFile: boolean
-  fileInfo: {name?: string, type?: string} | null
+  fileInfo: {name?: string; type?: string} | null
   uuid: null
   uploadProgress: number | null
-  error: null
-  url?: string
+  error: Error | null
+  url: string | null
 }
 
 class MuxVideoInputUploader extends Component<Props, State> {
-
-  static defaultProps = {
-    hasFocus: false,
-    onFocus: null,
-    onBlur: null,
-    onUploadComplete: null,
-    buttons: null,
-    children: null,
-  }
-
   state: State = {
     isDraggingOver: false,
     invalidPaste: false,
@@ -63,9 +45,10 @@ class MuxVideoInputUploader extends Component<Props, State> {
     uploadProgress: null,
     fileInfo: null,
     uuid: null,
-    error: null
+    error: null,
+    url: null,
   }
-  dragEnteredEls = []
+  dragEnteredEls: EventTarget[] = []
 
   ctrlDown = false
 
@@ -73,11 +56,9 @@ class MuxVideoInputUploader extends Component<Props, State> {
   // @TODO add proper typings for the return values of uploadFile and uploadUrl
   upload: any | null = null
 
-  cancelUploadButton = React.createRef()
-  hiddenTextField = React.createRef()
-  container = React.createRef()
+  container = React.createRef<HTMLDivElement>()
 
-  onCancelUploadButtonClick$: (Observable<unknown>) | undefined
+  onCancelUploadButtonClick$: Observable<unknown> | undefined
   handleCancelUploadButtonClick: React.MouseEventHandler<HTMLButtonElement> | undefined
 
   componentWillUnmount() {
@@ -100,9 +81,9 @@ class MuxVideoInputUploader extends Component<Props, State> {
     this.setState({uploadProgress: evt.percent})
   }
 
-  handleUploadFile = (file: File) => {
+  handleUploadFile = (files: FileList) => {
     this.setState({uploadProgress: 0, fileInfo: null, uuid: null})
-    this.upload = uploadFile(file, {enableSignedUrls: this.props.secrets.enableSignedUrls})
+    this.upload = uploadFile(files[0], {enableSignedUrls: this.props.secrets.enableSignedUrls})
       .pipe(
         takeUntil(
           this.onCancelUploadButtonClick$!.pipe(
@@ -127,6 +108,7 @@ class MuxVideoInputUploader extends Component<Props, State> {
       })
   }
 
+  // eslint-disable-next-line no-warning-comments
   // @TODO add proper typings for the Observable events
   handleUploadEvent = (event: any) => {
     switch (event.type) {
@@ -146,15 +128,13 @@ class MuxVideoInputUploader extends Component<Props, State> {
     }
   }
 
-  handleUploadSuccess = (assetDocument) => {
+  handleUploadSuccess = (asset: VideoAssetDocument) => {
     this.setState({uploadProgress: 100})
-    if (this.props.onUploadComplete) {
-      this.props.onUploadComplete(assetDocument)
-    }
+    this.props.onUploadComplete(asset)
   }
 
-  handlePaste = (event) => {
-    const clipboardData = event.clipboardData || window.clipboardData
+  handlePaste: React.ClipboardEventHandler<HTMLInputElement> = (event) => {
+    const clipboardData = event.clipboardData || (window as any).clipboardData
     const url = clipboardData.getData('text')
     const options = {enableSignedUrls: this.props.secrets.enableSignedUrls}
 
@@ -180,29 +160,31 @@ class MuxVideoInputUploader extends Component<Props, State> {
     })
   }
 
-  handleDrop = (event) => {
+  handleDrop: React.DragEventHandler<HTMLDivElement> = (event) => {
     this.setState({isDraggingOver: false})
     event.preventDefault()
     event.stopPropagation()
-    extractDroppedFiles(event.nativeEvent.dataTransfer).then((files) => {
+    extractDroppedFiles(event.nativeEvent.dataTransfer!).then((files) => {
       if (files) {
-        this.handleUploadFile(files[0])
+        // eslint-disable-next-line no-warning-comments
+        // @TODO fix the typing on files
+        this.handleUploadFile(files as any)
       }
     })
   }
 
-  handleDragOver = (event) => {
+  handleDragOver: React.DragEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault()
     event.stopPropagation()
   }
 
-  handleDragEnter = (event) => {
+  handleDragEnter: React.DragEventHandler<HTMLDivElement> = (event) => {
     event.stopPropagation()
     this.dragEnteredEls.push(event.target)
     this.setState({isDraggingOver: true})
   }
 
-  handleDragLeave = (event) => {
+  handleDragLeave: React.DragEventHandler<HTMLDivElement> = (event) => {
     event.stopPropagation()
     const idx = this.dragEnteredEls.indexOf(event.target)
     if (idx > -1) {
@@ -213,212 +195,77 @@ class MuxVideoInputUploader extends Component<Props, State> {
     }
   }
 
-  handleCancelUploadButtonClicked = (event) => {
-    this.setState({uploadProgress: null, error: null})
-    this.container.current.focus()
-  }
-
-  handleErrorClose = (event) => {
-    if (event) {
-      event.preventDefault()
-    }
+  handleErrorClose = () => {
     if (this.state.uploadProgress !== null) {
       return
     }
-    this.setState({
-      invalidFile: false,
-      invalidPaste: false,
-      error: null,
-      uploadProgress: null,
-    })
-    this.container.current.focus()
+    this.setState(
+      {
+        invalidFile: false,
+        invalidPaste: false,
+        error: null,
+        uploadProgress: null,
+      },
+      () => this.container.current?.focus()
+    )
   }
 
-  handleSetupButtonClicked = (event) => {
-    this.handleErrorClose(event)
+  handleSetupButtonClicked = () => {
+    this.handleErrorClose()
     this.props.onSetupButtonClicked()
   }
 
-  renderUploadPlaceHolder() {
-    if (this.props.children) {
-      return null
-    }
-    if (this.state.uploadProgress !== null) {
-      return null
-    }
-    const {invalidFile, invalidPaste, isDraggingOver} = this.state
-    return (
-      <div>
-        <FormField level={0}>
-          <UploadPlaceholder
-            isDraggingOver={isDraggingOver}
-            hasFocus={this.props.hasFocus}
-            invalidPaste={invalidPaste}
-            invalidFile={invalidFile}
-          />
-        </FormField>
-        <ButtonCollection>
-          <FileInputButton
-            icon={<FiUpload data-sanity-icon="upload" />}
-            onSelect={(files) => this.handleUploadFile(files[0])}
-            text="Upload"
-          />
-          <Button mode="ghost" tone="default" text="Browse" onClick={this.props.onBrowse} />
-        </ButtonCollection>
-      </div>
-    )
-  }
-
-  // eslint-disable-next-line complexity
-  renderUploadProgress() {
-    const {uploadProgress, fileInfo, url} = this.state
-    if (uploadProgress === null) {
-      return null
-    }
-    let text =
-      uploadProgress < 100
-        ? `Uploading ${fileInfo ? `'${fileInfo.name}'` : 'file'}`
-        : 'Waiting for Mux to complete the file'
-    if (this.state.error) {
-      text = this.state.error.message
-    }
-    if (url) {
-      text = `Uploading ${url}`
-    }
-    return (
-      <div className={styles.uploadProgress}>
-        <div className={styles.progressBar}>
-          <ProgressBar
-            percent={uploadProgress}
-            text={text}
-            isInProgress={uploadProgress === 100 && !this.state.error}
-            showPercent
-            animation
-            color="primary"
-          />
-        </div>
-        {(uploadProgress < 100 || this.state.error) && (
-          <div ref={this.cancelUploadButton}>
-            <Button
-              text="Cancel upload"
-              padding={3}
-              tone="critical"
-              onClick={this.handleCancelUploadButtonClick}
-            />
-          </div>
-        )}
-      </div>
-    )
-  }
-
-  renderError() {
-    const {uploadProgress, error} = this.state
-    if (!error) {
-      return null
-    }
-    if (uploadProgress !== null) {
-      return null
-    }
-    let message = this.state.error.message
-    if (message === 'Invalid credentials') {
-      message = (
-        <div>
-          <h3>Invalid credentials</h3>
-          <p>You need to check your Mux access token and secret key.</p>
-          <Button
-            text="Run setup"
-            tone="primary"
-            padding={3}
-            onClick={this.handleSetupButtonClicked}
-          />
-        </div>
-      )
-    }
-    return (
-      <Dialog
-        title="Upload failed"
-        color="danger"
-        useOverlay
-        onClose={this.handleErrorClose}
-        onEscape={this.handleErrorClose}
-        onClickOutside={this.handleErrorClose}
-      >
-        <DialogContent size="small">{message}</DialogContent>
-      </Dialog>
-    )
-  }
-
-  renderButtons() {
-    if (this.state.uploadProgress === null && this.props.buttons) {
-      return (
-        <Grid columns={4} gap={2}>
-          <FileInputButton
-            icon={<UploadIcon data-sanity-icon="upload" />}
-            onSelect={(files) => this.handleUploadFile(files[0])}
-            text="Upload"
-          />
-          {this.props.buttons}
-        </Grid>
-      )
-    }
-    return null
-  }
-
-  renderChildren() {
-    if (this.state.uploadProgress !== null) {
-      return null
-    }
-    return this.props.children
-  }
-
-  handleKeyDown = (event) => {
-    if (event.keyCode == ctrlKey || event.keyCode == cmdKey) {
-      this.ctrlDown = true
-    }
-    const vKey = 86
-    if (this.ctrlDown && event.keyCode == vKey) {
-      this.hiddenTextField.current.focus()
-    }
-  }
-
-  handleKeyUp = (event) => {
-    if (event.keyCode == ctrlKey || event.keyCode == cmdKey) {
-      this.ctrlDown = false
-    }
-  }
-
-  handleFocus = (event) => {
-    this.props.onFocus(event)
-  }
-
   render() {
+    if (this.state.uploadProgress !== null) {
+      return (
+        <UploadProgress
+          error={this.state.error}
+          onCancel={this.handleCancelUploadButtonClick!}
+          progress={this.state.uploadProgress}
+          fileInfo={this.state.fileInfo}
+          url={this.state.url}
+        />
+      )
+    }
+
     return (
-      <Card
-        padding={0}
-        radius={0}
-        shadow={0}
-        tabIndex={0}
+      <UploadCard
         onBlur={this.props.onBlur}
         onFocus={this.props.onFocus}
         onDrop={this.handleDrop}
-        onKeyDown={this.handleKeyDown}
         onDragOver={this.handleDragOver}
         onDragLeave={this.handleDragLeave}
         onDragEnter={this.handleDragEnter}
+        onPaste={this.handlePaste}
         ref={this.container}
       >
-        <input
-          ref={this.hiddenTextField}
-          className={styles.hiddenTextField}
-          type="text"
-          onPaste={this.handlePaste}
-        />
-        {this.renderError()}
-        {this.renderUploadProgress()}
-        {this.renderUploadPlaceHolder()}
-        {this.renderChildren()}
-        {this.renderButtons()}
-      </Card>
+        {this.state.error && (
+          <ErrorDialog
+            message={this.state.error.message}
+            onClose={this.handleErrorClose}
+            onSetup={this.handleSetupButtonClicked}
+          />
+        )}
+        {this.props.children ? (
+          <>
+            {this.props.children}
+            {this.props.buttons && (
+              <UploadButtonGrid onUpload={this.handleUploadFile}>
+                {this.props.buttons}
+              </UploadButtonGrid>
+            )}
+          </>
+        ) : (
+          <UploadPlaceholder
+            onBrowse={this.props.onBrowse}
+            onUpload={this.handleUploadFile}
+            isDraggingOver={this.state.isDraggingOver}
+            hasFocus={this.props.hasFocus}
+            invalidPaste={this.state.invalidPaste}
+            invalidFile={this.state.invalidFile}
+          />
+        )}
+      </UploadCard>
     )
   }
 }

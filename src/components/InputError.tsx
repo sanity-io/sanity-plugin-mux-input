@@ -7,7 +7,7 @@ interface Props {
   onClose: () => void
 }
 export default function InputError({onClose, error}: Props) {
-  const id = useId()
+  const id = `InputError${useId()}`
   return (
     <Dialog header={error.name} id={id} onClose={onClose}>
       <Box padding={4}>
