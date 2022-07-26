@@ -1,4 +1,4 @@
-import {Box, Button, Card, Checkbox, Code, Flex, Inline, Stack, Text,TextInput} from '@sanity/ui'
+import {Box, Button, Card, Checkbox, Code, Flex, Inline, Stack, Text, TextInput} from '@sanity/ui'
 import {uniqueId} from 'lodash'
 import FormField from 'part:@sanity/components/formfields/default'
 import React, {Component} from 'react'
@@ -44,7 +44,8 @@ class MuxVideoInputSetup extends Component<Props, State> {
     this.setState({secretKey: event.currentTarget.value})
   }
 
-  handleEnableSignedUrls : React.FormEventHandler<HTMLInputElement>= (event) => this.setState({enableSignedUrls: event.currentTarget.checked})
+  handleEnableSignedUrls: React.FormEventHandler<HTMLInputElement> = (event) =>
+    this.setState({enableSignedUrls: event.currentTarget.checked})
 
   handleOnSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault()
@@ -76,7 +77,7 @@ class MuxVideoInputSetup extends Component<Props, State> {
           signingKeyId = data.id
           signingKeyPrivate = data.private_key
           await saveSecrets(token!, secretKey!, enableSignedUrls, signingKeyId, signingKeyPrivate)
-        } catch (err:any) {
+        } catch (err: any) {
           // eslint-disable-next-line no-console
           console.log('Error while creating and saving signing key:', err?.message)
           this.setState({error: err?.message!})
@@ -194,9 +195,11 @@ class MuxVideoInputSetup extends Component<Props, State> {
 
               <Button text="Cancel" tone="primary" mode="bleed" onClick={this.props.onCancel} />
             </Inline>
-            {error && <Card padding={[3, 3, 3]} radius={2} shadow={1} tone="critical">
+            {error && (
+              <Card padding={[3, 3, 3]} radius={2} shadow={1} tone="critical">
                 <Text>{error}</Text>
-              </Card>}
+              </Card>
+            )}
           </Stack>
         </form>
       </Box>

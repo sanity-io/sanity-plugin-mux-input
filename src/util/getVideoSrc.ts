@@ -8,7 +8,7 @@ interface VideoSrcOptions {
   secrets: Secrets | SignableSecrets
 }
 
-export default function getVideoSrc({asset, secrets}: VideoSrcOptions): MuxVideoUrl {
+export function getVideoSrc({asset, secrets}: VideoSrcOptions): MuxVideoUrl {
   const playbackId = getPlaybackId(asset)
   const searchParams = new URLSearchParams()
 

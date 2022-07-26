@@ -8,7 +8,7 @@ interface StoryboardSrcOptions {
   secrets: Secrets | SignableSecrets
 }
 
-export default function getStoryboardSrc({asset, secrets}: StoryboardSrcOptions): MuxStoryboardUrl {
+export function getStoryboardSrc({asset, secrets}: StoryboardSrcOptions): MuxStoryboardUrl {
   const playbackId = getPlaybackId(asset)
   const searchParams = new URLSearchParams()
 

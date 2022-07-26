@@ -8,9 +8,9 @@ import styled from 'styled-components'
 
 import {getAsset} from '../actions/assets'
 import {fetchSecrets} from '../actions/secrets'
-import getPosterSrc from '../util/getPosterSrc'
-import getStoryboardSrc from '../util/getStoryboardSrc'
-import getVideoSrc from '../util/getVideoSrc'
+import {getPosterSrc} from '../util/getPosterSrc'
+import {getStoryboardSrc} from '../util/getStoryboardSrc'
+import {getVideoSrc} from '../util/getVideoSrc'
 import type {Secrets, VideoAssetDocument} from '../util/types'
 import {UploadCancelButton, UploadProgressCard, UploadProgressStack} from './Uploader.styles'
 
@@ -120,7 +120,7 @@ class MuxVideo extends Component<Props, State> {
     if (
       !this.state.isLoading &&
       this.state.secrets &&
-      (this.state.source === null || previousVideo !== newVideo)
+      (this.state.source === null || previousVideo !== newVideo)!
     ) {
       this.resolveSourceAndPoster(this.props.asset)
     }
@@ -142,6 +142,10 @@ class MuxVideo extends Component<Props, State> {
   }
 
   resolveSourceAndPoster(asset: VideoAssetDocument) {
+    if (asset.assetId === undefined) {
+      return
+    }
+
     const options = {asset, secrets: this.state.secrets!}
 
     const source = getVideoSrc(options)
@@ -176,7 +180,7 @@ class MuxVideo extends Component<Props, State> {
               this.videoContainer.current.style.display = 'none'
             }
             this.setState({error: data})
-            getAsset(asset.assetId)
+            getAsset(asset.assetId!)
               .then(() => {
                 this.setState({isDeletedOnMux: false})
               })

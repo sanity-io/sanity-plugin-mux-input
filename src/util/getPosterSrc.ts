@@ -9,12 +9,12 @@ import type {
   VideoAssetDocument,
 } from './types'
 
-interface PosterSrcOptions extends ThumbnailOptions {
+export interface PosterSrcOptions extends ThumbnailOptions {
   asset: VideoAssetDocument
   secrets: Secrets | SignableSecrets
 }
 
-export default function getPosterSrc({
+export function getPosterSrc({
   asset,
   secrets,
   fit_mode,

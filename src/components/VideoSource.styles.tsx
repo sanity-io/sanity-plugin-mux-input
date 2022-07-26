@@ -7,7 +7,7 @@ import {suspend} from 'suspend-react'
 import {useErrorBoundary} from 'use-error-boundary'
 
 import {getPlaybackPolicy} from '../util/getPlaybackPolicy'
-import getPosterSrc from '../util/getPosterSrc'
+import {getPosterSrc} from '../util/getPosterSrc'
 import {isSigned} from '../util/isSigned'
 import type {Secrets, VideoAssetDocument} from '../util/types'
 
@@ -74,8 +74,7 @@ const PosterImage = ({asset, height, width, secrets}: PosterImageProps) => {
   )
 }
 
-interface VideoThumbnailProps extends Omit<PosterImageProps, 'height'> {
-  asset: VideoAssetDocument
+export interface VideoThumbnailProps extends Omit<PosterImageProps, 'height'> {
   width: number
 }
 export const VideoThumbnail = memo(function VideoThumbnail({

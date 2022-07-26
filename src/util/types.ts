@@ -1,4 +1,5 @@
 import {type SanityDocument} from '@sanity/types'
+import type {PartialDeep} from 'type-fest'
 
 export interface Secrets {
   token: string | null
@@ -140,13 +141,13 @@ export interface MuxAsset {
   }
 }
 
-export interface VideoAssetDocument extends SanityDocument {
-  type: 'mux.videoAsset'
-  status: string
-  assetId: string
-  playbackId: string
-  filename: string
-  thumbTime: number
+export interface VideoAssetDocument extends Partial<SanityDocument> {
+  type?: 'mux.videoAsset'
+  status?: string
+  assetId?: string
+  playbackId?: string
+  filename?: string
+  thumbTime?: number
   // Docs for what goes in `data` https://docs.mux.com/api-reference/video#tag/assets
-  data?: MuxAsset
+  data?: PartialDeep<MuxAsset>
 }

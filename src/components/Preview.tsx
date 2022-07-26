@@ -1,47 +1,42 @@
 import {SanityDefaultPreview} from 'part:@sanity/base/preview'
-import PropTypes from 'prop-types'
-import React from 'react'
+import React, {useEffect, useMemo} from 'react'
 
 import {fetchSecrets} from '../actions/secrets'
-import getPosterSrc from '../util/getPosterSrc'
-import styles from './Preview.css'
+import type {MuxAsset, Secrets, VideoAssetDocument} from '../util/types'
+import {VideoThumbnail} from './VideoSource.styles'
 
-const MuxVideoPreview = (props) => {
-  const [secrets, setSecrets] = React.useState(undefined)
-  const [posterSrc, setPosterSrc] = React.useState(undefined)
+export interface MuxVideoPreviewProps {
+  value: {
+    playbackId?: VideoAssetDocument['playbackId']
+    status?: VideoAssetDocument['status']
+    thumbTime?: VideoAssetDocument['thumbTime']
+    filename?: VideoAssetDocument['filename']
+    duration?: MuxAsset['duration']
+    playbackIds?: MuxAsset['playback_ids']
+  }
+}
+const MuxVideoPreview = ({value = {}}: MuxVideoPreviewProps) => {
+  const [secrets, setSecrets] = React.useState<Secrets | null>(null)
 
-  React.useEffect(() => {
-    fetchSecrets().then((data) => setSecrets(data.secrets))
-  }, [])
+  useEffect(() => void fetchSecrets().then(({secrets: _secrets}) => setSecrets(_secrets!)), [])
 
-  React.useEffect(() => {
-    if (props.value === null || secrets === undefined) return
+  const asset = useMemo(() => {
+    if (!value || value.status !== 'ready' || !value.playbackId || !value.playbackIds) return null
 
-    if (props.value.status !== 'ready') return
-
-    const {signingKeyId, signingKeyPrivate} = secrets
-    const playbackId = props.value.playbackIds[0]
-
-    setPosterSrc(
-      getPosterSrc(playbackId.id, {
-        time: props.value.thumbTime,
-        fitMode: 'crop',
-        width: 640,
-        height: 360,
-        isSigned: playbackId.policy === 'signed',
-        signingKeyId,
-        signingKeyPrivate,
-      })
-    )
-  }, [props.value, secrets])
-
-  if (!props.value) return null
-
-  if (posterSrc !== undefined) {
-    return <div className={styles.poster} style={{backgroundImage: `url(${posterSrc})`}} />
+    return {
+      playbackId: value.playbackId,
+      status: value.status,
+      thumbTime: value.thumbTime,
+      filename: value.filename,
+      duration: value.duration,
+      data: {playback_ids: value.playbackIds},
+    }
+  }, [value])
+  if (asset && secrets) {
+    return <VideoThumbnail asset={asset} secrets={secrets} width={640} />
   }
 
-  const {filename, playbackId, status} = props.value
+  const {filename, playbackId, status} = value ?? {}
 
   return (
     <SanityDefaultPreview
@@ -49,14 +44,6 @@ const MuxVideoPreview = (props) => {
       subtitle={status ? `status: ${status}` : null}
     />
   )
-}
-
-MuxVideoPreview.propTypes = {
-  value: PropTypes.object,
-}
-
-MuxVideoPreview.defaultProps = {
-  value: null,
 }
 
 export default MuxVideoPreview
