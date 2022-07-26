@@ -4,14 +4,14 @@ import React from 'react'
 
 import SelectAsset, {type Props as SelectAssetProps} from './SelectAsset'
 
-interface Props extends Pick<SelectAssetProps, 'onSelect'> {
+interface Props extends Pick<SelectAssetProps, 'onSelect' | 'secrets'> {
   onClose: () => void
 }
-export default function InputBrowser({onClose, onSelect}: Props) {
-  const id = useId()
+export default function InputBrowser({onClose, onSelect, secrets}: Props) {
+  const id = `InputBrowser${useId()}`
   return (
     <Dialog __unstable_autoFocus header="Select video" id={id} onClose={onClose} width={2}>
-      <SelectAsset onSelect={onSelect} />
+      <SelectAsset onSelect={onSelect} secrets={secrets} />
     </Dialog>
   )
 }

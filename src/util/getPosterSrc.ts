@@ -1,29 +1,44 @@
-/* eslint-disable camelcase */
 import generateJwt from './generateJwt'
+import {getPlaybackId} from './getPlaybackId'
+import {isSigned} from './isSigned'
+import type {
+  MuxThumbnailUrl,
+  Secrets,
+  SignableSecrets,
+  ThumbnailOptions,
+  VideoAssetDocument,
+} from './types'
 
-export default function getPosterSrc(playbackId, options = {}) {
-  const {width = 640, height = null, time = 1, fit_mode = 'preserve', isSigned = false} = options
-  const params = {width, time, fit_mode}
+interface PosterSrcOptions extends ThumbnailOptions {
+  asset: VideoAssetDocument
+  secrets: Secrets | SignableSecrets
+}
+export default function getPosterSrc({
+  asset,
+  secrets,
+  fit_mode,
+  height,
+  time = asset.thumbTime,
+  width,
+}: PosterSrcOptions): MuxThumbnailUrl {
+  const params = {fit_mode, height, time, width}
+  const playbackId = getPlaybackId(asset)
 
-  if (options.height) {
-    params.height = height.toString()
-  }
-
-  let qs
-  if (isSigned && options.signingKeyId && options.signingKeyPrivate) {
+  let searchParams = new URLSearchParams(
+    JSON.parse(JSON.stringify(params, (_, v) => v ?? undefined))
+  )
+  if (isSigned(asset, secrets as SignableSecrets)) {
     const token = generateJwt(
       playbackId,
-      options.signingKeyId,
-      options.signingKeyPrivate,
+      // eslint-disable-next-line no-warning-comments
+      // @TODO figure out why isSigned doesn't manage to narrow down secrets to SignableSecrets
+      (secrets as SignableSecrets).signingKeyId,
+      (secrets as SignableSecrets).signingKeyPrivate,
       't',
       params
     )
-    qs = `token=${token}`
-  } else {
-    qs = Object.keys(params)
-      .map((key) => `${key}=${params[key]}`)
-      .join('&')
+    searchParams = new URLSearchParams({token})
   }
 
-  return `https://image.mux.com/${playbackId}/thumbnail.png?${qs}`
+  return `https://image.mux.com/${playbackId}/thumbnail.png?${searchParams}`
 }

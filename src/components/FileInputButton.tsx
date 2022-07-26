@@ -1,5 +1,5 @@
 import {useId} from '@reach/auto-id'
-import {type ButtonProps,Button} from '@sanity/ui'
+import {type ButtonProps, Button} from '@sanity/ui'
 import React, {useCallback, useRef} from 'react'
 import styled from 'styled-components'
 
@@ -22,11 +22,14 @@ export interface FileInputButtonProps extends ButtonProps {
 export const FileInputButton = ({onSelect, ...props}: FileInputButtonProps) => {
   const inputId = `FileSelect${useId()}`
   const inputRef = useRef<HTMLInputElement>(null)
-  const handleSelect = useCallback<React.ChangeEventHandler<HTMLInputElement>>((event) => {
-    if (onSelect) {
-      onSelect(event.target.files)
-    }
-  }, [onSelect])
+  const handleSelect = useCallback<React.ChangeEventHandler<HTMLInputElement>>(
+    (event) => {
+      if (onSelect) {
+        onSelect(event.target.files)
+      }
+    },
+    [onSelect]
+  )
   const handleButtonClick = useCallback(() => inputRef.current?.click(), [])
   return (
     <Label htmlFor={inputId}>
