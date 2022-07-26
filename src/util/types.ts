@@ -1,4 +1,4 @@
-import {type SanityDocument} from '@sanity/types'
+import type {SanityDocument} from 'sanity'
 import type {PartialDeep} from 'type-fest'
 
 export interface Secrets {

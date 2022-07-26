@@ -1,10 +1,10 @@
+import type {SanityClient} from '@sanity/client'
 import {Card, Stack, Text} from '@sanity/ui'
 import React, {Component} from 'react'
 import {type Observable, Subject} from 'rxjs'
 import {takeUntil, tap} from 'rxjs/operators'
 
 import {uploadFile, uploadUrl} from '../actions/upload'
-import client from '../clients/SanityClient'
 import {extractDroppedFiles} from '../util/extractFiles'
 import type {Secrets, VideoAssetDocument} from '../util/types'
 import Player from './Player'

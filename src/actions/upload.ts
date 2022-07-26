@@ -1,17 +1,17 @@
 /* eslint-disable camelcase */
+import type {SanityClient} from '@sanity/client'
 import {uuid as generateUuid} from '@sanity/uuid'
 import {isString} from 'lodash'
 import {type Observable, concat, defer, from, of, throwError} from 'rxjs'
 import {catchError, mergeMap, mergeMapTo, switchMap} from 'rxjs/operators'
 
-import client from '../clients/SanityClient'
 import {createUpChunkObservable} from '../clients/upChunkObservable'
 import config from '../config'
 import type {MuxAsset} from '../util/types'
 import {getAsset} from './assets'
 import {testSecretsObservable} from './secrets'
 
-export function cancelUpload(uuid: string) {
+export function cancelUpload(client: SanityClient, uuid: string) {
   return client.observable.request({
     url: `/addons/mux/uploads/${client.clientConfig.dataset}/${uuid}`,
     withCredentials: true,
@@ -19,12 +19,16 @@ export function cancelUpload(uuid: string) {
   })
 }
 
-export function uploadUrl(url: string, options: {enableSignedUrls?: boolean} = {}) {
+export function uploadUrl(
+  client: SanityClient,
+  url: string,
+  options: {enableSignedUrls?: boolean} = {}
+) {
   return testUrl(url).pipe(
     switchMap((validUrl) => {
       return concat(
         of({type: 'url', url: validUrl}),
-        testSecretsObservable().pipe(
+        testSecretsObservable(client).pipe(
           switchMap((json) => {
             if (!json || !json.status) {
               return throwError(new Error('Invalid credentials'))
@@ -72,12 +76,16 @@ export function uploadUrl(url: string, options: {enableSignedUrls?: boolean} = {
   )
 }
 
-export function uploadFile(file: File, options: {enableSignedUrls?: boolean} = {}) {
+export function uploadFile(
+  client: SanityClient,
+  file: File,
+  options: {enableSignedUrls?: boolean} = {}
+) {
   return testFile(file).pipe(
     switchMap((fileOptions) => {
       return concat(
         of({type: 'file', file: fileOptions}),
-        testSecretsObservable().pipe(
+        testSecretsObservable(client).pipe(
           switchMap((json) => {
             if (!json || !json.status) {
               return throwError(new Error('Invalid credentials'))
@@ -126,7 +134,7 @@ export function uploadFile(file: File, options: {enableSignedUrls?: boolean} = {
                       if (event.type !== 'success') {
                         return of(event)
                       }
-                      return from(updateAssetDocumentFromUpload(uuid)).pipe(
+                      return from(updateAssetDocumentFromUpload(client, uuid)).pipe(
                         // eslint-disable-next-line max-nested-callbacks
                         mergeMap((doc) => of({...event, asset: doc}))
                       )
@@ -134,7 +142,7 @@ export function uploadFile(file: File, options: {enableSignedUrls?: boolean} = {
                     // eslint-disable-next-line max-nested-callbacks
                     catchError((err) => {
                       // Delete asset document
-                      return cancelUpload(uuid).pipe(mergeMapTo(throwError(err)))
+                      return cancelUpload(client, uuid).pipe(mergeMapTo(throwError(err)))
                     })
                   )
                 })
@@ -161,15 +169,16 @@ type UploadResponse = {
     timeout: number
   }
 }
-export function getUpload(assetId: string) {
+export function getUpload(client: SanityClient, assetId: string) {
+  const {dataset} = client.config()
   return client.request<UploadResponse>({
-    url: `/addons/mux/uploads/${client.clientConfig.dataset}/${assetId}`,
+    url: `/addons/mux/uploads/${dataset}/${assetId}`,
     withCredentials: true,
     method: 'GET',
   })
 }
 
-function pollUpload(uuid: string): Promise<UploadResponse> {
+function pollUpload(client: SanityClient, uuid: string): Promise<UploadResponse> {
   const maxTries = 10
   let pollInterval: number
   let tries = 0
@@ -178,7 +187,7 @@ function pollUpload(uuid: string): Promise<UploadResponse> {
   return new Promise((resolve, reject) => {
     pollInterval = (setInterval as typeof window.setInterval)(async () => {
       try {
-        upload = await getUpload(uuid)
+        upload = await getUpload(client, uuid)
       } catch (err) {
         reject(err)
         return
@@ -197,16 +206,16 @@ function pollUpload(uuid: string): Promise<UploadResponse> {
   })
 }
 
-async function updateAssetDocumentFromUpload(uuid: string) {
+async function updateAssetDocumentFromUpload(client: SanityClient, uuid: string) {
   let upload: UploadResponse
   let asset: {data: MuxAsset}
   try {
-    upload = await pollUpload(uuid)
+    upload = await pollUpload(client, uuid)
   } catch (err) {
     return Promise.reject(err)
   }
   try {
-    asset = await getAsset(upload.data.asset_id)
+    asset = await getAsset(client, upload.data.asset_id)
   } catch (err) {
     return Promise.reject(err)
   }

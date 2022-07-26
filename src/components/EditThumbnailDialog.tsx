@@ -1,9 +1,9 @@
 import {useId} from '@reach/auto-id'
 import {Button, Dialog, Stack, Text} from '@sanity/ui'
 import React, {useCallback, useMemo, useState} from 'react'
+import {useClient} from 'sanity'
 import {getDevicePixelRatio} from 'use-device-pixel-ratio'
 
-import client from '../clients/SanityClient'
 import type {Secrets, VideoAssetDocument} from '../util/types'
 import {VideoThumbnail} from './VideoSource.styles'
 
@@ -21,6 +21,7 @@ export default function EditThumbnailDialog({
   videoReadyToPlay,
   secrets,
 }: Props) {
+  const client = useClient()
   const dialogId = `EditThumbnailDialog${useId()}`
   const nextTime = useMemo(() => getCurrentTime(), [getCurrentTime])
   const assetWithNewThumbnail = useMemo(() => ({...asset, thumbTime: nextTime}), [asset, nextTime])
@@ -34,7 +35,7 @@ export default function EditThumbnailDialog({
       .commit({returnDocuments: false})
       .catch(setError)
       .finally(() => setSaving(false))
-  }, [asset._id, nextTime])
+  }, [asset._id, nextTime, client])
   const width = 300 * getDevicePixelRatio({maxDpr: 2})
 
   if (error) {

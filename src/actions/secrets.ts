@@ -1,6 +1,6 @@
+import type {SanityClient} from '@sanity/client'
 import {defer} from 'rxjs'
 
-import client from '../clients/SanityClient'
 import type {Secrets} from '../util/types'
 
 const cache: {secrets: Secrets | null; exists: boolean} = {
@@ -8,7 +8,7 @@ const cache: {secrets: Secrets | null; exists: boolean} = {
   exists: false,
 }
 
-export function fetchSecrets() {
+export function fetchSecrets(client: SanityClient) {
   if (cache.exists) {
     return Promise.resolve(cache)
   }
@@ -26,7 +26,9 @@ export function fetchSecrets() {
   })
 }
 
+// eslint-disable-next-line max-params
 export function saveSecrets(
+  client: SanityClient,
   token: string,
   secretKey: string,
   enableSignedUrls: boolean,
@@ -56,8 +58,8 @@ export function saveSecrets(
   })
 }
 
-export function createSigningKeys() {
-  const dataset = client.clientConfig.dataset
+export function createSigningKeys(client: SanityClient) {
+  const {dataset} = client.config()
   return client.request<{data: {private_key: string; id: string; created_at: string}}>({
     url: `/addons/mux/signing-keys/${dataset}`,
     withCredentials: true,
@@ -65,8 +67,8 @@ export function createSigningKeys() {
   })
 }
 
-export function testSecrets() {
-  const dataset = client.clientConfig.dataset
+export function testSecrets(client: SanityClient) {
+  const {dataset} = client.config()
   return client.request<{status: boolean}>({
     url: `/addons/mux/secrets/${dataset}/test`,
     withCredentials: true,
@@ -74,12 +76,16 @@ export function testSecrets() {
   })
 }
 
-export async function haveValidSigningKeys(signingKeyId: string, signingKeyPrivate: string) {
+export async function haveValidSigningKeys(
+  client: SanityClient,
+  signingKeyId: string,
+  signingKeyPrivate: string
+) {
   if (!(signingKeyId && signingKeyPrivate)) {
     return false
   }
 
-  const dataset = client.clientConfig.dataset
+  const {dataset} = client.config()
   try {
     const res = await client.request<{data: {id: string; created_at: string}}>({
       url: `/addons/mux/signing-keys/${dataset}/${signingKeyId}`,
@@ -96,8 +102,8 @@ export async function haveValidSigningKeys(signingKeyId: string, signingKeyPriva
   }
 }
 
-export function testSecretsObservable() {
-  const dataset = client.clientConfig.dataset
+export function testSecretsObservable(client: SanityClient) {
+  const {dataset} = client.config()
   return defer(() =>
     client.observable.request<{status: boolean}>({
       url: `/addons/mux/secrets/${dataset}/test`,

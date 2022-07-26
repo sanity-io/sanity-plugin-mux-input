@@ -1,8 +1,9 @@
-import client from '../clients/SanityClient'
+import type {SanityClient} from '@sanity/client'
+
 import type {MuxAsset} from '../util/types'
 
-export function deleteAsset(assetId: string) {
-  const dataset = client.clientConfig.dataset
+export function deleteAsset(client: SanityClient, assetId: string) {
+  const {dataset} = client.config()
   return client.request<void>({
     url: `/addons/mux/assets/${dataset}/${assetId}`,
     withCredentials: true,
@@ -10,8 +11,8 @@ export function deleteAsset(assetId: string) {
   })
 }
 
-export function getAsset(assetId: string) {
-  const dataset = client.clientConfig.dataset
+export function getAsset(client: SanityClient, assetId: string) {
+  const {dataset} = client.config()
   return client.request<{data: MuxAsset}>({
     url: `/addons/mux/assets/${dataset}/data/${assetId}`,
     withCredentials: true,

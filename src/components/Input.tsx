@@ -1,4 +1,4 @@
-import type {SanityDocument} from '@sanity/types'
+import type {SanityClient} from '@sanity/client'
 import {Box, Button, Checkbox, Dialog, Flex, Grid, Inline, Stack, Text} from '@sanity/ui'
 import {observePaths} from 'part:@sanity/base/preview'
 import FormField from 'part:@sanity/components/formfields/default'
@@ -8,10 +8,10 @@ import PatchEvent, {set, setIfMissing, unset} from 'part:@sanity/form-builder/pa
 import React, {Component} from 'react'
 import {of} from 'rxjs'
 import {tap} from 'rxjs/operators'
+import type {SanityDocument} from 'sanity'
 
 import {deleteAsset, getAsset} from '../actions/assets'
 import {fetchSecrets} from '../actions/secrets'
-import client from '../clients/SanityClient'
 import config from '../config'
 import type {Secrets, VideoAssetDocument} from '../util/types'
 import styles from './Input.css'
@@ -457,7 +457,12 @@ export default withDocument(
             )}
 
             {this.state.confirmRemove && (
-              <Dialog id="remove-video" header="Remove video" zOffset={1000} onClose={this.handleCancelRemove}>
+              <Dialog
+                id="remove-video"
+                header="Remove video"
+                zOffset={1000}
+                onClose={this.handleCancelRemove}
+              >
                 <Box padding={4}>
                   <Stack space={3}>
                     <Flex align="center">

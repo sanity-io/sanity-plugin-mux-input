@@ -1,6 +1,6 @@
+import type {SanityClient} from '@sanity/client'
 import React, {useCallback, useEffect, useRef, useState} from 'react'
 
-import client from '../clients/SanityClient'
 import type {Secrets, VideoAssetDocument} from '../util/types'
 import VideoSource, {type Props as VideoSourceProps} from './VideoSource'
 
