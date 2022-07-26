@@ -3,11 +3,13 @@ import {useId} from '@reach/auto-id'
 import {Box, Button, Card, Dialog, Flex, Grid, Stack, Text} from '@sanity/ui'
 import cx from 'classnames'
 import ProgressBar from 'part:@sanity/components/progress/bar'
-import React, {forwardRef, useCallback, useRef} from 'react'
+import React, {forwardRef, useCallback, useRef, useState} from 'react'
 import {FiCopy, FiUpload} from 'react-icons/fi'
 import styled, {keyframes} from 'styled-components'
 
-import {FileInputButton, FileInputButtonProps} from './FileInputButton'
+import type {Secrets, VideoAssetDocument} from '../util/types'
+import EditThumbnailDialog from './EditThumbnailDialog'
+import {type FileInputButtonProps, FileInputButton} from './FileInputButton'
 
 interface ErrorDialogProps {
   message: string
@@ -269,32 +271,50 @@ export const UploadButton = ({onSelect}: UploadButtonProps) => {
 }
 
 interface UploadButtonGridProps {
-  onUpload: FileInputButtonProps['onSelect']
+  asset: VideoAssetDocument
+  getCurrentTime: () => number
   onBrowse: () => void
-  onThumbnail: () => void
   onRemove: () => void
+  onUpload: FileInputButtonProps['onSelect']
+  secrets: Secrets
   videoReadyToPlay: boolean
 }
 export const UploadButtonGrid = ({
+  asset,
+  getCurrentTime,
   onBrowse,
-  videoReadyToPlay,
-  onThumbnail,
   onRemove,
   onUpload,
+  secrets,
+  videoReadyToPlay,
 }: UploadButtonGridProps) => {
+  const [open, setOpen] = useState<'thumbnail' | false>(false)
+  const handleClose = useCallback(() => setOpen(false), [])
+
   return (
-    <Grid columns={4} gap={2}>
-      <UploadButton onSelect={onUpload} />
-      <Button key="browse" mode="ghost" tone="primary" onClick={onBrowse} text="Browse" />
-      <Button
-        key="thumbnail"
-        mode="ghost"
-        tone="primary"
-        disabled={videoReadyToPlay === false}
-        onClick={onThumbnail}
-        text="Thumbnail"
-      />
-      <Button key="remove" onClick={onRemove} mode="ghost" tone="critical" text="Remove" />
-    </Grid>
+    <>
+      <Grid columns={4} gap={2}>
+        <UploadButton onSelect={onUpload} />
+        <Button key="browse" mode="ghost" tone="primary" onClick={onBrowse} text="Browse" />
+        <Button
+          key="thumbnail"
+          mode="ghost"
+          tone="primary"
+          disabled={videoReadyToPlay === false}
+          onClick={() => setOpen('thumbnail')}
+          text="Thumbnail"
+        />
+        <Button key="remove" onClick={onRemove} mode="ghost" tone="critical" text="Remove" />
+      </Grid>
+      {open === 'thumbnail' && (
+        <EditThumbnailDialog
+          asset={asset}
+          getCurrentTime={getCurrentTime}
+          onClose={handleClose}
+          secrets={secrets}
+          videoReadyToPlay={videoReadyToPlay}
+        />
+      )}
+    </>
   )
 }

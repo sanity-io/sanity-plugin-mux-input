@@ -1,3 +1,4 @@
+import {Card, Stack, Text} from '@sanity/ui'
 import React, {Component} from 'react'
 import {type Observable, Subject} from 'rxjs'
 import {takeUntil, tap} from 'rxjs/operators'
@@ -6,13 +7,8 @@ import {uploadFile, uploadUrl} from '../actions/upload'
 import client from '../clients/SanityClient'
 import {extractDroppedFiles} from '../util/extractFiles'
 import type {Secrets, VideoAssetDocument} from '../util/types'
-import {
-  ErrorDialog,
-  UploadButtonGrid,
-  UploadCard,
-  UploadPlaceholder,
-  UploadProgress,
-} from './Uploader.styles'
+import Player from './Player'
+import {ErrorDialog, UploadCard, UploadPlaceholder, UploadProgress} from './Uploader.styles'
 
 interface Props {
   hasFocus: boolean
@@ -20,14 +16,14 @@ interface Props {
   onBlur: React.FocusEventHandler<HTMLDivElement>
   onBrowse: () => void
   onRemove: () => void
-  onThumbnail: () => void
   onSetupButtonClicked: () => void
   onUploadComplete: (asset: VideoAssetDocument) => void
   secrets: Secrets
-  children: React.ReactNode
   asset: VideoAssetDocument
   readOnly: boolean
   videoReadyToPlay: boolean
+  handleVideoReadyToPlay: () => void
+  handleRemoveVideo: () => void
 }
 
 interface State {
@@ -85,7 +81,7 @@ class MuxVideoInputUploader extends Component<Props, State> {
     this.setState({uploadProgress: evt.percent})
   }
 
-  handleUploadFile = (files: FileList) => {
+  onUpload = (files: FileList) => {
     this.setState({uploadProgress: 0, fileInfo: null, uuid: null})
     this.upload = uploadFile(files[0], {enableSignedUrls: this.props.secrets.enableSignedUrls})
       .pipe(
@@ -172,7 +168,7 @@ class MuxVideoInputUploader extends Component<Props, State> {
       if (files) {
         // eslint-disable-next-line no-warning-comments
         // @TODO fix the typing on files
-        this.handleUploadFile(files as any)
+        this.onUpload(files as any)
       }
     })
   }
@@ -232,7 +228,7 @@ class MuxVideoInputUploader extends Component<Props, State> {
       )
     }
 
-    const shouldRenderButtons = this.props.asset && this.props.asset.status === 'ready' && !this.props.readOnly
+    const isSigned = this.props.asset?.data?.playback_ids?.[0]?.policy === 'signed'
 
     return (
       <UploadCard
@@ -252,17 +248,29 @@ class MuxVideoInputUploader extends Component<Props, State> {
             onSetup={this.handleSetupButtonClicked}
           />
         )}
-        {this.props.children ? (
-          <>
-            {this.props.children}
-            {shouldRenderButtons && (
-              <UploadButtonGrid onUpload={this.handleUploadFile} onBrowse={this.props.onBrowse} onRemove={this.props.onRemove} onThumbnail={this.props.onThumbnail} videoReadyToPlay={this.props.videoReadyToPlay}  />
+        {this.props.asset ? (
+          <Stack space={2}>
+            {isSigned && (
+              <Card padding={3} radius={2} shadow={1} tone="positive">
+                <Text size={1}>This Mux asset is using a signed url.</Text>
+              </Card>
             )}
-          </>
+            <Player
+              secrets={this.props.secrets}
+              readOnly={this.props.readOnly}
+              videoReadyToPlay={this.props.videoReadyToPlay}
+              onBrowse={this.props.onBrowse}
+              onRemove={this.props.onRemove}
+              onUpload={this.onUpload}
+              asset={this.props.asset}
+              handleVideoReadyToPlay={this.props.handleVideoReadyToPlay}
+              handleRemoveVideo={this.props.handleRemoveVideo}
+            />
+          </Stack>
         ) : (
           <UploadPlaceholder
             onBrowse={this.props.onBrowse}
-            onUpload={this.handleUploadFile}
+            onUpload={this.onUpload}
             isDraggingOver={this.state.isDraggingOver}
             hasFocus={this.props.hasFocus}
             invalidPaste={this.state.invalidPaste}

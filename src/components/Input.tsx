@@ -1,5 +1,5 @@
-import type {SanityDocument} from "@sanity/types"
-import {Box, Button, Card, Checkbox, Dialog, Flex, Grid, Inline, Stack, Text} from '@sanity/ui'
+import type {SanityDocument} from '@sanity/types'
+import {Box, Button, Checkbox, Dialog, Flex, Grid, Inline, Stack, Text} from '@sanity/ui'
 import {observePaths} from 'part:@sanity/base/preview'
 import FormField from 'part:@sanity/components/formfields/default'
 import Spinner from 'part:@sanity/components/loading/spinner'
@@ -13,12 +13,10 @@ import {deleteAsset, getAsset} from '../actions/assets'
 import {fetchSecrets} from '../actions/secrets'
 import client from '../clients/SanityClient'
 import config from '../config'
-import {getPosterSrc} from '../util/getPosterSrc'
 import type {Secrets, VideoAssetDocument} from '../util/types'
 import styles from './Input.css'
 import InputBrowser from './InputBrowser'
 import InputError from './InputError'
-import Player from './Player'
 import SetupButton from './SetupButton'
 import SetupNotice from './SetupNotice'
 import Uploader from './Uploader'
@@ -37,7 +35,7 @@ function validateSecrets(secrets: Secrets) {
   return true
 }
 
-function getSecrets() {
+function getSecrets(): Promise<{isInitialSetup: boolean; needsSetup: boolean; secrets: Secrets}> {
   if (cachedSecrets.token) {
     return Promise.resolve({
       isInitialSetup: true,
@@ -62,10 +60,29 @@ function getSecrets() {
 
 interface Props {
   document: SanityDocument
-  value?: null | {asset?: {_type: "reference", _ref: string}}
+  value?: null | {asset?: {_type: 'reference'; _ref: string}}
+  type: any
+  level: any
+  markers: any
+  onChange: any
+  readOnly: boolean
 }
 
-interface State {}
+interface State {
+  assetDocument: VideoAssetDocument | null
+  confirmRemove: boolean
+  deleteOnMuxChecked: boolean
+  deleteAssetDocumentChecked: boolean
+  error: Error | null
+  hasFocus: boolean
+  isInitialSetup: boolean
+  isLoading: boolean | 'secrets'
+  needsSetup: boolean
+  secrets: Secrets | null
+  showSetup: boolean
+  showBrowser: boolean
+  videoReadyToPlay: boolean
+}
 
 export default withDocument(
   class MuxVideoInput extends Component<Props, State> {
@@ -80,18 +97,13 @@ export default withDocument(
       isLoading: 'secrets',
       needsSetup: true,
       secrets: null,
-      isSigned: false,
       showSetup: false,
       showBrowser: false,
       videoReadyToPlay: false,
-      thumbLoading: false,
     }
 
-    setupButton = React.createRef<HTMLButtonElement>()
     pollInterval?: number
-    video = React.createRef<HTMLVideoElement>()
-    removeVideoButton = React.createRef<HTMLButtonElement>()
-    videoPlayer = React.createRef<HTMLDivElement>()
+    // eslint-disable-next-line no-warning-comments
     // @TODO setup proper Observable typings
     subscription?: any
 
@@ -102,7 +114,8 @@ export default withDocument(
             secrets,
             isInitialSetup,
             needsSetup,
-            isLoading: this.props.value?.asset, // If there is an asset continue loading
+            // If there is an asset continue loading
+            isLoading: !!this.props.value?.asset,
           })
         })
         .catch((error) => this.setState({error}))
@@ -190,9 +203,10 @@ export default withDocument(
               }
             }
 
-            // eslint-disable-next-line camelcase
-            const isSigned = assetDocument?.data?.playback_ids?.[0]?.policy === 'signed'
-            this.setState({assetDocument, isSigned, isLoading: false})
+            this.setState({
+              assetDocument,
+              isLoading: false,
+            })
 
             return of(assetDocument)
           })
@@ -209,12 +223,12 @@ export default withDocument(
         return
       }
       this.pollInterval = (setInterval as typeof window.setInterval)(() => {
-        getAsset(assetDocument.assetId)
+        getAsset(assetDocument.assetId!)
           .then((response) => {
             const props = response.data
 
             client
-              .patch(assetDocument._id)
+              .patch(assetDocument._id!)
               .set({
                 status: props.status,
                 data: props,
@@ -228,10 +242,16 @@ export default withDocument(
     }
 
     handleSetupButtonClicked = () => {
-      this.setState((prevState) => ({showSetup: !prevState.showStetup}))
+      this.setState((prevState) => ({showSetup: !prevState.showSetup}))
     }
 
-    handleSaveSetup = ({token, secretKey, enableSignedUrls, signingKeyId, signingKeyPrivate}) => {
+    handleSaveSetup = ({
+      token,
+      secretKey,
+      enableSignedUrls,
+      signingKeyId,
+      signingKeyPrivate,
+    }: Secrets) => {
       cachedSecrets.token = token
       cachedSecrets.secretKey = secretKey
       cachedSecrets.enableSignedUrls = enableSignedUrls
@@ -263,9 +283,7 @@ export default withDocument(
       })
     }
 
-    handleRemoveVideoButtonClicked = (event) => {
-      event.preventDefault()
-      event.stopPropagation()
+    handleRemoveVideoButtonClicked = () => {
       this.setState({confirmRemove: true})
     }
 
@@ -291,7 +309,7 @@ export default withDocument(
                       return resolve()
                     }
                     return client
-                      .delete(assetDocument._id)
+                      .delete(assetDocument._id!)
                       .then(() => {
                         resolve()
                       })
@@ -308,7 +326,7 @@ export default withDocument(
       return unsetAsset()
         .then(() => {
           if (this.state.deleteOnMuxChecked) {
-            return deleteAsset(assetDocument.assetId).catch((error) => {
+            return deleteAsset(assetDocument!.assetId!).catch((error) => {
               this.setState({error})
             })
           }
@@ -339,83 +357,10 @@ export default withDocument(
       }))
     }
 
-    handleOpenThumb = () => {
-      if (!this.videoPlayer.current) {
-        return
-      }
-      const {assetDocument, isSigned} = this.state
-      const currentTime = this.videoPlayer.current.getVideoElement().currentTime
-      const options = {
-        time: assetDocument.thumbTime,
-        width: 320,
-        height: 320,
-        fitMode: 'crop',
-        isSigned,
-        signingKeyId: cachedSecrets.signingKeyId,
-        signingKeyPrivate: cachedSecrets.signingKeyPrivate,
-      }
-
-      const thumb = getPosterSrc({
-        asset: assetDocument,
-        width: 320,
-        height: 320,
-        fitMode: 'crop',
-        secrets: cachedSecrets,
-      })
-      const newThumb = getPosterSrc(assetDocument.playbackId, {...options, time: currentTime})
-
-      this.setState({thumb, newThumb})
-    }
-
-    handleSetThumbButton = () => {
-      if (!this.videoPlayer.current) {
-        return
-      }
-
-      this.setState({thumbLoading: true})
-      const {assetDocument, isSigned} = this.state
-      const currentTime = this.videoPlayer.current.getVideoElement().currentTime
-      client
-        .patch(assetDocument._id)
-        .set({
-          thumbTime: currentTime,
-        })
-        .commit({returnDocuments: false})
-        .then(() => {
-          const options = {
-            time: currentTime,
-            width: 320,
-            height: 320,
-            fitMode: 'crop',
-            isSigned,
-            signingKeyId: cachedSecrets.signingKeyId,
-            signingKeyPrivate: cachedSecrets.signingKeyPrivate,
-          }
-
-          const thumb = getPosterSrc({
-            asset: assetDocument.playbackId,
-            time: currentTime,
-            width: 320,
-            height: 320,
-            fitMode: 'crop',
-            secrets: cachedSecrets,
-          })
-
-          this.setState({thumb, thumbLoading: false})
-        })
-        .catch((error) => {
-          this.setState({error, thumbLoading: false})
-        })
-    }
-
     handleErrorClose = () => {
       this.setState({
         error: null,
       })
-    }
-
-    handleCloseThumbPreview = () => {
-      this.setState({thumb: null})
     }
 
     handleBrowseButton = () => {
@@ -426,7 +371,7 @@ export default withDocument(
       this.setState({showBrowser: false})
     }
 
-    handleSelectAsset = (asset) => {
+    handleSelectAsset = (asset: VideoAssetDocument) => {
       const {onChange} = this.props
 
       onChange(
@@ -445,37 +390,8 @@ export default withDocument(
       this.setState({videoReadyToPlay: true})
     }
 
-    // eslint-disable-next-line complexity
-    renderAsset() {
-      const {assetDocument, isSigned} = this.state
-      const renderAsset = !!assetDocument
-      if (!renderAsset) {
-        return null
-      }
-      const isSignedAlert = isSigned ? (
-        <Card padding={3} radius={2} shadow={1} tone="positive">
-          <Text size={1}>This Mux asset is using a signed url.</Text>
-        </Card>
-      ) : null
-      return (
-        <Stack space={2} marginBottom={2}>
-          {isSignedAlert}
-          <Player
-            asset={assetDocument}
-            ref={this.videoPlayer}
-            onReady={this.handleVideoReadyToPlay}
-            onCancel={this.handleRemoveVideo}
-          />
-        </Stack>
-      )
-    }
-
-
     render() {
       const {type, level, markers} = this.props
-
-      const cssAspectRatio =
-        this.state.assetDocument?.data?.aspect_ratio?.split(':')?.join('/') || 'auto'
 
       return (
         <>
@@ -500,7 +416,7 @@ export default withDocument(
             </Flex>
             {this.state.isLoading === 'secrets' && (
               <Box marginBottom={2}>
-                <Inline align="center" space={2}>
+                <Inline space={2}>
                   <Spinner inline />
                   <Text size={1}>Fetching credentials</Text>
                 </Inline>
@@ -523,58 +439,13 @@ export default withDocument(
                 onUploadComplete={this.handleOnUploadComplete}
                 secrets={this.state.secrets}
                 onBrowse={this.handleBrowseButton}
-                asset={this.state.assetDocument}
-              >
-                {this.renderAsset()}
-              </Uploader>
-            )}
-
-            {this.state.thumb && (
-              <Dialog header="Thumbnail" zOffset={1000} onClose={this.handleCloseThumbPreview}>
-                <Stack space={3} padding={3}>
-                  <Stack space={3}>
-                    <Stack space={2}>
-                      <Text size={1} weight="semibold">
-                        Current:
-                      </Text>
-                      <img
-                        style={{
-                          maxWidth: '100%',
-                          borderRadius: '0.1875rem',
-                          display: 'block',
-                          aspectRatio: cssAspectRatio,
-                        }}
-                        src={this.state.thumb}
-                        width={400}
-                      />
-                    </Stack>
-                    <Stack space={2}>
-                      <Text size={1} weight="semibold">
-                        New:
-                      </Text>
-                      <img
-                        style={{
-                          maxWidth: '100%',
-                          borderRadius: '0.1875rem',
-                          display: 'block',
-                          aspectRatio: cssAspectRatio,
-                        }}
-                        src={this.state.newThumb}
-                        width={400}
-                      />
-                    </Stack>
-                  </Stack>
-                  <Button
-                    key="thumbnail"
-                    mode="ghost"
-                    tone="primary"
-                    disabled={this.state.videoReadyToPlay === false}
-                    onClick={this.handleSetThumbButton}
-                    loading={this.state.thumbLoading}
-                    text="Set new thumbnail"
-                  />
-                </Stack>
-              </Dialog>
+                asset={this.state.assetDocument!}
+                onRemove={this.handleRemoveVideoButtonClicked}
+                readOnly={this.props.readOnly}
+                handleVideoReadyToPlay={this.handleVideoReadyToPlay}
+                videoReadyToPlay={this.state.videoReadyToPlay}
+                handleRemoveVideo={this.handleRemoveVideo}
+              />
             )}
 
             {this.state.showBrowser && (

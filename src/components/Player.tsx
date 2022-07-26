@@ -12,7 +12,13 @@ import {getPosterSrc} from '../util/getPosterSrc'
 import {getStoryboardSrc} from '../util/getStoryboardSrc'
 import {getVideoSrc} from '../util/getVideoSrc'
 import type {Secrets, VideoAssetDocument} from '../util/types'
-import {UploadCancelButton, UploadProgressCard, UploadProgressStack} from './Uploader.styles'
+import {type FileInputButtonProps} from './FileInputButton'
+import {
+  UploadButtonGrid,
+  UploadCancelButton,
+  UploadProgressCard,
+  UploadProgressStack,
+} from './Uploader.styles'
 
 const VideoContainer = styled.div`
   position: relative;
@@ -32,9 +38,15 @@ declare global {
 }
 
 interface Props {
+  onUpload: FileInputButtonProps['onSelect']
   asset: VideoAssetDocument
-  onCancel: () => void
-  onReady: () => void
+  handleRemoveVideo: () => void
+  onBrowse: () => void
+  onRemove: () => void
+  handleVideoReadyToPlay: () => void
+  readOnly: boolean
+  videoReadyToPlay: boolean
+  secrets: Secrets
 }
 interface State {
   isLoading: boolean | string
@@ -169,9 +181,7 @@ class MuxVideo extends Component<Props, State> {
         if (this.videoContainer.current) {
           this.videoContainer.current.style.display = 'block'
         }
-        if (this.props.onReady) {
-          this.props.onReady()
-        }
+        this.props.handleVideoReadyToPlay()
       })
       this.hls.on(Hls.Events.ERROR, (event, data) => {
         switch (data.type) {
@@ -205,6 +215,8 @@ class MuxVideo extends Component<Props, State> {
     }
   }
 
+  getCurrentTime = () => this.video.current?.currentTime ?? 0
+
   // eslint-disable-next-line complexity
   render() {
     const {posterUrl, isLoading, error} = this.state
@@ -226,59 +238,75 @@ class MuxVideo extends Component<Props, State> {
               color="primary"
             />
 
-            <UploadCancelButton onClick={this.props.onCancel}>Cancel</UploadCancelButton>
+            <UploadCancelButton onClick={this.props.handleRemoveVideo}>Cancel</UploadCancelButton>
           </UploadProgressStack>
         </UploadProgressCard>
       )
     }
 
-    return (
-      <VideoContainer ref={this.videoContainer}>
-        <media-controller>
-          <video
-            ref={this.video}
-            poster={posterUrl ?? undefined}
-            slot="media"
-            crossOrigin="anonomous"
-          >
-            {this.state.storyboardUrl && (
-              <track label="thumbnails" default kind="metadata" src={this.state.storyboardUrl} />
-            )}
-          </video>
-          <media-control-bar>
-            <media-play-button ref={this.playRef} />
-            <media-mute-button ref={this.muteRef} />
-            {/* The media volume range is causing an error to be logged in the studio: Failed to construct 'CustomElement': The result must not have attributes */}
-            {/* <media-volume-range /> */}
-            <media-time-range />
-          </media-control-bar>
-        </media-controller>
-        {error && (
-          <Card padding={3} radius={2} shadow={1} tone="critical" marginTop={2}>
-            <Stack space={2}>
-              <Text size={1}>There was an error loading this video ({error.type}).</Text>
-              {this.state.isDeletedOnMux && <Text size={1}>The video is deleted on Mux</Text>}
-            </Stack>
-          </Card>
-        )}
+    const shouldRenderButtons =
+      this.props.asset && this.props.asset.status === 'ready' && !this.props.readOnly
 
-        {this.state.isPreparingStaticRenditions && (
-          <Card
-            padding={2}
-            radius={1}
-            style={{
-              background: 'var(--card-fg-color)',
-              position: 'absolute',
-              top: '0.5em',
-              left: '0.5em',
-            }}
-          >
-            <Text size={1} style={{color: 'var(--card-bg-color)'}}>
-              MUX is preparing static renditions, please stand by
-            </Text>
-          </Card>
+    return (
+      <>
+        <VideoContainer ref={this.videoContainer}>
+          <media-controller>
+            <video
+              ref={this.video}
+              poster={posterUrl ?? undefined}
+              slot="media"
+              crossOrigin="anonomous"
+            >
+              {this.state.storyboardUrl && (
+                <track label="thumbnails" default kind="metadata" src={this.state.storyboardUrl} />
+              )}
+            </video>
+            <media-control-bar>
+              <media-play-button ref={this.playRef} />
+              <media-mute-button ref={this.muteRef} />
+              {/* The media volume range is causing an error to be logged in the studio: Failed to construct 'CustomElement': The result must not have attributes */}
+              {/* <media-volume-range /> */}
+              <media-time-range />
+            </media-control-bar>
+          </media-controller>
+          {error && (
+            <Card padding={3} radius={2} shadow={1} tone="critical" marginTop={2}>
+              <Stack space={2}>
+                <Text size={1}>There was an error loading this video ({error.type}).</Text>
+                {this.state.isDeletedOnMux && <Text size={1}>The video is deleted on Mux</Text>}
+              </Stack>
+            </Card>
+          )}
+
+          {this.state.isPreparingStaticRenditions && (
+            <Card
+              padding={2}
+              radius={1}
+              style={{
+                background: 'var(--card-fg-color)',
+                position: 'absolute',
+                top: '0.5em',
+                left: '0.5em',
+              }}
+            >
+              <Text size={1} style={{color: 'var(--card-bg-color)'}}>
+                MUX is preparing static renditions, please stand by
+              </Text>
+            </Card>
+          )}
+        </VideoContainer>
+        {shouldRenderButtons && (
+          <UploadButtonGrid
+            asset={this.props.asset}
+            getCurrentTime={this.getCurrentTime}
+            onUpload={this.props.onUpload}
+            onBrowse={this.props.onBrowse}
+            onRemove={this.props.onRemove}
+            videoReadyToPlay={this.props.videoReadyToPlay}
+            secrets={this.props.secrets}
+          />
         )}
-      </VideoContainer>
+      </>
     )
   }
 }
