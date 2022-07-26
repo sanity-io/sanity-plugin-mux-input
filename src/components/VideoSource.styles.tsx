@@ -1,7 +1,7 @@
 import {MediaPreview} from '@sanity/base/components'
 import {LockIcon, UnknownIcon} from '@sanity/icons'
 import {Box, Card, Grid, Inline} from '@sanity/ui'
-import React, {Suspense, useMemo} from 'react'
+import React, {memo, Suspense, useMemo} from 'react'
 import styled from 'styled-components'
 import {suspend} from 'suspend-react'
 import {useErrorBoundary} from 'use-error-boundary'
@@ -19,7 +19,7 @@ interface ImageLoaderProps {
   height: number
   width: number
 }
-const ImageLoader = ({alt, src, height, width}: ImageLoaderProps) => {
+const ImageLoader = memo(function ImageLoader({alt, src, height, width}: ImageLoaderProps) {
   suspend(async () => {
     const img = new Image(width, height)
     img.decoding = 'async'
@@ -28,7 +28,7 @@ const ImageLoader = ({alt, src, height, width}: ImageLoaderProps) => {
   }, ['sanity-plugin-mux-input', 'image', src])
 
   return <img alt={alt} src={src} height={height} width={width} />
-}
+})
 
 const VideoMediaPreview = styled(MediaPreview)`
   img {
@@ -78,7 +78,11 @@ interface VideoThumbnailProps extends Omit<PosterImageProps, 'height'> {
   asset: VideoAssetDocument
   width: number
 }
-export const VideoThumbnail = ({asset, secrets, width}: VideoThumbnailProps) => {
+export const VideoThumbnail = memo(function VideoThumbnail({
+  asset,
+  secrets,
+  width,
+}: VideoThumbnailProps) {
   const {ErrorBoundary, didCatch, error} = useErrorBoundary()
   const height = Math.round((width * 9) / 16)
   const subtitle = useMemo(
@@ -130,7 +134,7 @@ export const VideoThumbnail = ({asset, secrets, width}: VideoThumbnailProps) => 
       </Suspense>
     </ErrorBoundary>
   )
-}
+})
 
 export const ThumbGrid = styled(Grid)`
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
