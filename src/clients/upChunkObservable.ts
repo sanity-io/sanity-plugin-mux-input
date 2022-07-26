@@ -1,12 +1,12 @@
 import * as UpChunk from '@mux/upchunk'
 import {Observable} from 'rxjs'
 
-export function createUpChunkObservable(uuid, uploadUrl, source) {
+export function createUpChunkObservable(uuid: string, uploadUrl: string, source: File) {
   return new Observable((subscriber) => {
     const upchunk = UpChunk.createUpload({
       endpoint: uploadUrl,
       file: source,
-      chunkSize: 5120, // Uploads the file in ~5mb chunks
+      chunkSize: 30720, // Uploads the file in 30 MB chunks
     })
 
     const successHandler = () => {
@@ -17,13 +17,13 @@ export function createUpChunkObservable(uuid, uploadUrl, source) {
       subscriber.complete()
     }
 
-    const errorHandler = (data) => subscriber.error(new Error(data.detail.message))
+    const errorHandler = (data: CustomEvent) => subscriber.error(new Error(data.detail.message))
 
-    const progressHandler = (data) => {
+    const progressHandler = (data: CustomEvent) => {
       return subscriber.next({type: 'progress', percent: data.detail})
     }
 
-    const offlineHandler = (data) => {
+    const offlineHandler = () => {
       upchunk.pause()
       subscriber.next({
         type: 'pause',
@@ -31,7 +31,7 @@ export function createUpChunkObservable(uuid, uploadUrl, source) {
       })
     }
 
-    const onlineHandler = (data) => {
+    const onlineHandler = () => {
       upchunk.resume()
       subscriber.next({
         type: 'resume',
