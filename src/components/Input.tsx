@@ -1,5 +1,4 @@
 import {Box, Button, Card, Checkbox, Dialog, Flex, Grid, Inline, Stack, Text} from '@sanity/ui'
-import SetupIcon from 'part:@sanity/base/plugin-icon'
 import {observePaths} from 'part:@sanity/base/preview'
 import FormField from 'part:@sanity/components/formfields/default'
 import Spinner from 'part:@sanity/components/loading/spinner'
@@ -14,20 +13,20 @@ import {fetchSecrets} from '../actions/secrets'
 import client from '../clients/SanityClient'
 import config from '../config'
 import {getPosterSrc} from '../util/getPosterSrc'
+import type {Secrets} from '../util/types'
 import styles from './Input.css'
 import InputBrowser from './InputBrowser'
 import InputError from './InputError'
-import MuxLogo from './MuxLogo'
 import Player from './Player'
 import SetupButton from './SetupButton'
-import SetupDialog from './SetupDialog'
+import SetupNotice from './SetupNotice'
 import Uploader from './Uploader'
 
 const NOOP = () => {
   /* intentional noop */
 }
 
-const cachedSecrets = {
+const cachedSecrets: Secrets = {
   token: null,
   secretKey: null,
   enableSignedUrls: false,
@@ -35,7 +34,7 @@ const cachedSecrets = {
   signingKeyPrivate: null,
 }
 
-function validateSecrets(secrets) {
+function validateSecrets(secrets: Secrets) {
   if (!secrets.token || !secrets.secretKey) return false
 
   return true
@@ -50,11 +49,11 @@ function getSecrets() {
     })
   }
   return fetchSecrets().then(({secrets, exists}) => {
-    cachedSecrets.token = secrets.token
-    cachedSecrets.secretKey = secrets.secretKey
-    cachedSecrets.enableSignedUrls = secrets.enableSignedUrls
-    cachedSecrets.signingKeyId = secrets.signingKeyId
-    cachedSecrets.signingKeyPrivate = secrets.signingKeyPrivate
+    cachedSecrets.token = secrets?.token ?? null
+    cachedSecrets.secretKey = secrets?.secretKey ?? null
+    cachedSecrets.enableSignedUrls = secrets?.enableSignedUrls ?? false
+    cachedSecrets.signingKeyId = secrets?.signingKeyId ?? null
+    cachedSecrets.signingKeyPrivate = secrets?.signingKeyPrivate ?? null
 
     return {
       isInitialSetup: !exists,
@@ -116,10 +115,6 @@ export default withDocument(
         clearInterval(this.pollInterval)
         this.pollInterval = null
       }
-    }
-
-    focus = () => {
-      this.handleFocus()
     }
 
     handleFocus = () => {
@@ -448,30 +443,6 @@ export default withDocument(
       this.setState({videoReadyToPlay: true})
     }
 
-    renderSetupNotice() {
-      const {isLoading, isInitialSetup} = this.state
-
-      if (isLoading) {
-        return null
-      }
-
-      return (
-        <Stack padding={4} space={5} style={{backgroundColor: '#efefefef', borderRadius: 3}}>
-          <MuxLogo />
-          <Stack space={4}>
-            {isInitialSetup && (
-              <Text>
-                Looks like this is the first time you are using the Mux video plugin in this
-                dataset. Great!
-              </Text>
-            )}
-            <Text>Before you can upload video, you must set your Mux credentials.</Text>
-            <Text>Click the plugin button in the field title to open Setup.</Text>
-          </Stack>
-        </Stack>
-      )
-    }
-
     // eslint-disable-next-line complexity
     renderAsset() {
       const {assetDocument, isSigned} = this.state
@@ -532,19 +503,9 @@ export default withDocument(
 
     render() {
       const {type, level, markers} = this.props
-      const {
-        isLoading,
-        secrets,
-        hasFocus,
-        needsSetup,
-        error,
-        showBrowser,
-        confirmRemove,
-        thumb,
-        assetDocument,
-      } = this.state
 
-      const cssAspectRatio = assetDocument?.data?.aspect_ratio?.split(':')?.join('/') || 'auto'
+
+      const cssAspectRatio = this.state.assetDocument?.data?.aspect_ratio?.split(':')?.join('/') || 'auto'
 
       return (
         <>
@@ -558,17 +519,16 @@ export default withDocument(
                 className={styles.formField}
               />
               <SetupButton
-          isLoading={this.state.isLoading}
-          needsSetup={this.state.needsSetup}
-          onCancel={this.handleCancelSaveSetup}
-          onSave={this.handleSaveSetup}
-          onSetup={this.handleSetupButtonClicked}
-          secrets={this.state.secrets}
-          showSetup={this.state.showSetup}
-        />
+                isLoading={this.state.isLoading}
+                needsSetup={this.state.needsSetup}
+                onCancel={this.handleCancelSaveSetup}
+                onSave={this.handleSaveSetup}
+                onSetup={this.handleSetupButtonClicked}
+                secrets={this.state.secrets}
+                showSetup={this.state.showSetup}
+              />
             </Flex>
-
-            {isLoading === 'secrets' && (
+            {this.state.isLoading === 'secrets' && (
               <Box marginBottom={2}>
                 <Inline align="center" space={2}>
                   <Spinner inline />
@@ -577,26 +537,24 @@ export default withDocument(
               </Box>
             )}
 
-            {needsSetup && this.renderSetupNotice()}
+            {this.state.needsSetup && <SetupNotice isLoading={this.state.isLoading} isInitialSetup={this.state.isInitialSetup } />}
 
-            {!needsSetup && secrets && (
+            {!this.state.needsSetup && this.state.secrets && (
               <Uploader
                 buttons={this.renderVideoButtons()}
-                hasFocus={hasFocus}
-                // eslint-disable-next-line react/jsx-handler-names
-                onBlur={this.blur}
-                // eslint-disable-next-line react/jsx-handler-names
-                onFocus={this.focus}
+                hasFocus={this.state.hasFocus}
+                onBlur={this.handleBlur}
+                onFocus={this.handleFocus}
                 onSetupButtonClicked={this.handleSetupButtonClicked}
                 onUploadComplete={this.handleOnUploadComplete}
-                secrets={secrets}
+                secrets={this.state.secrets}
                 onBrowse={this.handleBrowseButton}
               >
                 {this.renderAsset()}
               </Uploader>
             )}
 
-            {thumb && (
+            {this.state.thumb && (
               <Dialog header="Thumbnail" zOffset={1000} onClose={this.handleCloseThumbPreview}>
                 <Stack space={3} padding={3}>
                   <Stack space={3}>
@@ -644,7 +602,7 @@ export default withDocument(
               </Dialog>
             )}
 
-            {showBrowser && (
+            {this.state.showBrowser && (
               <InputBrowser
                 onClose={this.handleCloseBrowser}
                 onSelect={this.handleSelectAsset}
@@ -652,7 +610,7 @@ export default withDocument(
               />
             )}
 
-            {confirmRemove && (
+            {this.state.confirmRemove && (
               <Dialog header="Remove video" zOffset={1000} onClose={this.handleCancelRemove}>
                 <Box padding={4}>
                   <Stack space={3}>
@@ -679,14 +637,14 @@ export default withDocument(
                         tone="default"
                         text="Cancel"
                         onClick={this.handleCancelRemove}
-                        loading={!!isLoading}
+                        loading={!!this.state.isLoading}
                       />
                       <Button
                         mode="default"
                         tone="critical"
                         text="Remove"
                         onClick={this.handleRemoveVideo}
-                        loading={!!isLoading}
+                        loading={!!this.state.isLoading}
                       />
                     </Grid>
                   </Stack>
@@ -694,7 +652,7 @@ export default withDocument(
               </Dialog>
             )}
 
-            {error && <InputError error={error} onClose={this.handleErrorClose} />}
+            {this.state.error && <InputError error={this.state.error} onClose={this.handleErrorClose} />}
           </Box>
         </>
       )
