@@ -1,3 +1,4 @@
+import type {SanityDocument} from "@sanity/types"
 import {Box, Button, Card, Checkbox, Dialog, Flex, Grid, Inline, Stack, Text} from '@sanity/ui'
 import {observePaths} from 'part:@sanity/base/preview'
 import FormField from 'part:@sanity/components/formfields/default'
@@ -13,7 +14,7 @@ import {fetchSecrets} from '../actions/secrets'
 import client from '../clients/SanityClient'
 import config from '../config'
 import {getPosterSrc} from '../util/getPosterSrc'
-import type {Secrets} from '../util/types'
+import type {Secrets, VideoAssetDocument} from '../util/types'
 import styles from './Input.css'
 import InputBrowser from './InputBrowser'
 import InputError from './InputError'
@@ -21,10 +22,6 @@ import Player from './Player'
 import SetupButton from './SetupButton'
 import SetupNotice from './SetupNotice'
 import Uploader from './Uploader'
-
-const NOOP = () => {
-  /* intentional noop */
-}
 
 const cachedSecrets: Secrets = {
   token: null,
@@ -63,9 +60,16 @@ function getSecrets() {
   })
 }
 
+interface Props {
+  document: SanityDocument
+  value?: null | {asset?: {_type: "reference", _ref: string}}
+}
+
+interface State {}
+
 export default withDocument(
-  class MuxVideoInput extends Component {
-    state = {
+  class MuxVideoInput extends Component<Props, State> {
+    state: State = {
       assetDocument: null,
       confirmRemove: false,
       deleteOnMuxChecked: false,
@@ -83,27 +87,25 @@ export default withDocument(
       thumbLoading: false,
     }
 
-    constructor(props) {
-      super(props)
+    setupButton = React.createRef<HTMLButtonElement>()
+    pollInterval?: number
+    video = React.createRef<HTMLVideoElement>()
+    removeVideoButton = React.createRef<HTMLButtonElement>()
+    videoPlayer = React.createRef<HTMLDivElement>()
+    // @TODO setup proper Observable typings
+    subscription?: any
+
+    componentDidMount() {
       getSecrets()
         .then(({secrets, isInitialSetup, needsSetup}) => {
           this.setState({
             secrets,
             isInitialSetup,
             needsSetup,
-            isLoading: props.value?.asset, // If there is an asset continue loading
+            isLoading: this.props.value?.asset, // If there is an asset continue loading
           })
         })
         .catch((error) => this.setState({error}))
-
-      this.setupButton = React.createRef()
-      this.pollInterval = null
-      this.video = React.createRef()
-      this.removeVideoButton = React.createRef()
-      this.videoPlayer = React.createRef()
-    }
-
-    componentDidMount() {
       this.setupAssetListener()
     }
 
@@ -113,7 +115,7 @@ export default withDocument(
       }
       if (this.pollInterval) {
         clearInterval(this.pollInterval)
-        this.pollInterval = null
+        this.pollInterval = undefined
       }
     }
 
@@ -147,17 +149,17 @@ export default withDocument(
         'status',
       ])
         .pipe(
-          tap((assetDocument) => {
+          tap((assetDocument: VideoAssetDocument) => {
             this.setState({assetDocument})
             if (assetDocument && assetDocument.status === 'errored') {
               clearInterval(this.pollInterval)
-              this.pollInterval = null
+              this.pollInterval = undefined
               // eslint-disable-next-line no-warning-comments
               // todo: use client.observable
               return this.handleRemoveVideo().then(() => {
                 this.setState({
                   isLoading: false,
-                  error: new Error(assetDocument.data.errors.messages.join(' ')),
+                  error: new Error(assetDocument.data?.errors?.messages?.join(' ')),
                 })
               })
             }
@@ -177,19 +179,19 @@ export default withDocument(
                 case 'standard':
                   if (assetDocument?.data?.static_renditions?.status === 'ready') {
                     clearInterval(this.pollInterval)
-                    this.pollInterval = null
+                    this.pollInterval = undefined
                   }
                   break
                 case 'none':
                 default:
                   clearInterval(this.pollInterval)
-                  this.pollInterval = null
+                  this.pollInterval = undefined
                   break
               }
             }
 
             // eslint-disable-next-line camelcase
-            const isSigned = assetDocument?.data?.playback_ids[0]?.policy === 'signed'
+            const isSigned = assetDocument?.data?.playback_ids?.[0]?.policy === 'signed'
             this.setState({assetDocument, isSigned, isLoading: false})
 
             return of(assetDocument)
@@ -206,7 +208,7 @@ export default withDocument(
       if (this.pollInterval) {
         return
       }
-      this.pollInterval = setInterval(() => {
+      this.pollInterval = (setInterval as typeof window.setInterval)(() => {
         getAsset(assetDocument.assetId)
           .then((response) => {
             const props = response.data
@@ -271,7 +273,7 @@ export default withDocument(
       const {assetDocument} = this.state
       this.setState({isLoading: true})
       const unsetAsset = () => {
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
           this.setState(
             {
               assetDocument: null,
@@ -317,7 +319,7 @@ export default withDocument(
         })
     }
 
-    handleCancelRemove = (event) => {
+    handleCancelRemove = () => {
       this.setState({
         confirmRemove: false,
         deleteOnMuxChecked: true,
@@ -325,19 +327,19 @@ export default withDocument(
       })
     }
 
-    handleDeleteOnMuxCheckBoxClicked = (event) => {
+    handleDeleteOnMuxCheckBoxClicked = () => {
       this.setState((prevState) => ({
         deleteOnMuxChecked: !prevState.deleteOnMuxChecked,
       }))
     }
 
-    handleDeleteAssetDocumentCheckBoxClicked = (event) => {
+    handleDeleteAssetDocumentCheckBoxClicked = () => {
       this.setState((prevState) => ({
         deleteAssetDocumentChecked: !prevState.deleteAssetDocumentChecked,
       }))
     }
 
-    handleOpenThumb = (event) => {
+    handleOpenThumb = () => {
       if (!this.videoPlayer.current) {
         return
       }
@@ -365,7 +367,7 @@ export default withDocument(
       this.setState({thumb, newThumb})
     }
 
-    handleSetThumbButton = (event) => {
+    handleSetThumbButton = () => {
       if (!this.videoPlayer.current) {
         return
       }
@@ -379,7 +381,7 @@ export default withDocument(
           thumbTime: currentTime,
         })
         .commit({returnDocuments: false})
-        .then((response) => {
+        .then(() => {
           const options = {
             time: currentTime,
             width: 320,
@@ -468,44 +470,12 @@ export default withDocument(
       )
     }
 
-    renderVideoButtons() {
-      const {assetDocument, confirmRemove} = this.state
-      const {readOnly} = this.props
-      if (assetDocument && assetDocument.status === 'ready' && !readOnly) {
-        return [
-          <Button
-            key="browse"
-            mode="ghost"
-            tone="primary"
-            onClick={this.handleBrowseButton}
-            text="Browse"
-          />,
-          <Button
-            key="thumbnail"
-            mode="ghost"
-            tone="primary"
-            disabled={this.state.videoReadyToPlay === false}
-            onClick={this.handleOpenThumb}
-            text="Thumbnail"
-          />,
-          <Button
-            key="remove"
-            ref={this.removeVideoButton}
-            onClick={confirmRemove ? NOOP : this.handleRemoveVideoButtonClicked}
-            mode="ghost"
-            tone="critical"
-            text="Remove"
-          />,
-        ]
-      }
-      return null
-    }
 
     render() {
       const {type, level, markers} = this.props
 
-
-      const cssAspectRatio = this.state.assetDocument?.data?.aspect_ratio?.split(':')?.join('/') || 'auto'
+      const cssAspectRatio =
+        this.state.assetDocument?.data?.aspect_ratio?.split(':')?.join('/') || 'auto'
 
       return (
         <>
@@ -537,11 +507,15 @@ export default withDocument(
               </Box>
             )}
 
-            {this.state.needsSetup && <SetupNotice isLoading={this.state.isLoading} isInitialSetup={this.state.isInitialSetup } />}
+            {this.state.needsSetup && (
+              <SetupNotice
+                isLoading={this.state.isLoading}
+                isInitialSetup={this.state.isInitialSetup}
+              />
+            )}
 
             {!this.state.needsSetup && this.state.secrets && (
               <Uploader
-                buttons={this.renderVideoButtons()}
                 hasFocus={this.state.hasFocus}
                 onBlur={this.handleBlur}
                 onFocus={this.handleFocus}
@@ -549,6 +523,7 @@ export default withDocument(
                 onUploadComplete={this.handleOnUploadComplete}
                 secrets={this.state.secrets}
                 onBrowse={this.handleBrowseButton}
+                asset={this.state.assetDocument}
               >
                 {this.renderAsset()}
               </Uploader>
@@ -652,7 +627,9 @@ export default withDocument(
               </Dialog>
             )}
 
-            {this.state.error && <InputError error={this.state.error} onClose={this.handleErrorClose} />}
+            {this.state.error && (
+              <InputError error={this.state.error} onClose={this.handleErrorClose} />
+            )}
           </Box>
         </>
       )

@@ -269,14 +269,32 @@ export const UploadButton = ({onSelect}: UploadButtonProps) => {
 }
 
 interface UploadButtonGridProps {
-  children: React.ReactNode
   onUpload: FileInputButtonProps['onSelect']
+  onBrowse: () => void
+  onThumbnail: () => void
+  onRemove: () => void
+  videoReadyToPlay: boolean
 }
-export const UploadButtonGrid = ({children, onUpload}: UploadButtonGridProps) => {
+export const UploadButtonGrid = ({
+  onBrowse,
+  videoReadyToPlay,
+  onThumbnail,
+  onRemove,
+  onUpload,
+}: UploadButtonGridProps) => {
   return (
     <Grid columns={4} gap={2}>
       <UploadButton onSelect={onUpload} />
-      {children}
+      <Button key="browse" mode="ghost" tone="primary" onClick={onBrowse} text="Browse" />
+      <Button
+        key="thumbnail"
+        mode="ghost"
+        tone="primary"
+        disabled={videoReadyToPlay === false}
+        onClick={onThumbnail}
+        text="Thumbnail"
+      />
+      <Button key="remove" onClick={onRemove} mode="ghost" tone="critical" text="Remove" />
     </Grid>
   )
 }

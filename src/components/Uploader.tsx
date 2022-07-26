@@ -19,11 +19,15 @@ interface Props {
   onFocus: React.FocusEventHandler<HTMLDivElement>
   onBlur: React.FocusEventHandler<HTMLDivElement>
   onBrowse: () => void
+  onRemove: () => void
+  onThumbnail: () => void
   onSetupButtonClicked: () => void
   onUploadComplete: (asset: VideoAssetDocument) => void
   secrets: Secrets
-  buttons: React.ReactNode
   children: React.ReactNode
+  asset: VideoAssetDocument
+  readOnly: boolean
+  videoReadyToPlay: boolean
 }
 
 interface State {
@@ -228,6 +232,8 @@ class MuxVideoInputUploader extends Component<Props, State> {
       )
     }
 
+    const shouldRenderButtons = this.props.asset && this.props.asset.status === 'ready' && !this.props.readOnly
+
     return (
       <UploadCard
         onBlur={this.props.onBlur}
@@ -249,10 +255,8 @@ class MuxVideoInputUploader extends Component<Props, State> {
         {this.props.children ? (
           <>
             {this.props.children}
-            {this.props.buttons && (
-              <UploadButtonGrid onUpload={this.handleUploadFile}>
-                {this.props.buttons}
-              </UploadButtonGrid>
+            {shouldRenderButtons && (
+              <UploadButtonGrid onUpload={this.handleUploadFile} onBrowse={this.props.onBrowse} onRemove={this.props.onRemove} onThumbnail={this.props.onThumbnail} videoReadyToPlay={this.props.videoReadyToPlay}  />
             )}
           </>
         ) : (

@@ -1,4 +1,3 @@
-
 import {Stack, Text} from '@sanity/ui'
 import React from 'react'
 
@@ -10,7 +9,6 @@ export interface Props {
 }
 
 const SetupNotice = ({isLoading, isInitialSetup}: Props) => {
-
   if (isLoading) {
     return null
   }
@@ -21,8 +19,8 @@ const SetupNotice = ({isLoading, isInitialSetup}: Props) => {
       <Stack space={4}>
         {isInitialSetup && (
           <Text>
-            Looks like this is the first time you are using the Mux video plugin in this
-            dataset. Great!
+            Looks like this is the first time you are using the Mux video plugin in this dataset.
+            Great!
           </Text>
         )}
         <Text>Before you can upload video, you must set your Mux credentials.</Text>
