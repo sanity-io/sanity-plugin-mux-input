@@ -1,16 +1,17 @@
 /* eslint-disable camelcase */
 import {uuid as generateUuid} from '@sanity/uuid'
 import {isString} from 'lodash'
-import {concat, defer, from, of, throwError} from 'rxjs'
+import {type Observable, concat, defer, from, of, throwError} from 'rxjs'
 import {catchError, mergeMap, mergeMapTo, switchMap} from 'rxjs/operators'
 
 import client from '../clients/SanityClient'
 import {createUpChunkObservable} from '../clients/upChunkObservable'
 import config from '../config'
+import type {MuxAsset} from '../util/types'
 import {getAsset} from './assets'
 import {testSecretsObservable} from './secrets'
 
-export function cancelUpload(uuid) {
+export function cancelUpload(uuid: string) {
   return client.observable.request({
     url: `/addons/mux/uploads/${client.clientConfig.dataset}/${uuid}`,
     withCredentials: true,
@@ -18,7 +19,7 @@ export function cancelUpload(uuid) {
   })
 }
 
-export function uploadUrl(url, options = {}) {
+export function uploadUrl(url: string, options: {enableSignedUrls?: boolean} = {}) {
   return testUrl(url).pipe(
     switchMap((validUrl) => {
       return concat(
@@ -71,7 +72,7 @@ export function uploadUrl(url, options = {}) {
   )
 }
 
-export function uploadFile(file, options = {}) {
+export function uploadFile(file: File, options: {enableSignedUrls?: boolean} = {}) {
   return testFile(file).pipe(
     switchMap((fileOptions) => {
       return concat(
@@ -91,7 +92,21 @@ export function uploadFile(file, options = {}) {
             return concat(
               of({type: 'uuid', uuid}),
               defer(() =>
-                client.observable.request({
+                client.observable.request<{
+                  sanityAssetId: string
+                  upload: {
+                    cors_origin: string
+                    id: string
+                    new_asset_settings: {
+                      mp4_support: 'standard' | 'none'
+                      passthrough: string
+                      playback_policies: ['public' | 'signed']
+                    }
+                    status: 'waiting'
+                    timeout: number
+                    url: string
+                  }
+                }>({
                   url: `/addons/mux/uploads/${client.clientConfig.dataset}`,
                   withCredentials: true,
                   method: 'POST',
@@ -104,8 +119,10 @@ export function uploadFile(file, options = {}) {
               ).pipe(
                 mergeMap((result) => {
                   return createUpChunkObservable(uuid, result.upload.url, file).pipe(
+                    // eslint-disable-next-line no-warning-comments
+                    // @TODO type the observable events
                     // eslint-disable-next-line max-nested-callbacks
-                    mergeMap((event) => {
+                    mergeMap((event: any) => {
                       if (event.type !== 'success') {
                         return of(event)
                       }
@@ -130,24 +147,36 @@ export function uploadFile(file, options = {}) {
   )
 }
 
-export function getUpload(assetId) {
-  return client.request({
+type UploadResponse = {
+  data: {
+    asset_id: string
+    cors_origin: string
+    id: string
+    new_asset_settings: {
+      mp4_support: 'standard' | 'none'
+      passthrough: string
+      playback_policies: ['public' | 'signed']
+    }
+    status: string
+    timeout: number
+  }
+}
+export function getUpload(assetId: string) {
+  return client.request<UploadResponse>({
     url: `/addons/mux/uploads/${client.clientConfig.dataset}/${assetId}`,
     withCredentials: true,
     method: 'GET',
   })
 }
 
-export default {uploadUrl, uploadFile, getUpload}
-
-function pollUpload(uuid) {
+function pollUpload(uuid: string): Promise<UploadResponse> {
   const maxTries = 10
-  let pollInterval
+  let pollInterval: number
   let tries = 0
-  let assetId
-  let upload
+  let assetId: string
+  let upload: UploadResponse
   return new Promise((resolve, reject) => {
-    pollInterval = setInterval(async () => {
+    pollInterval = (setInterval as typeof window.setInterval)(async () => {
       try {
         upload = await getUpload(uuid)
       } catch (err) {
@@ -168,9 +197,9 @@ function pollUpload(uuid) {
   })
 }
 
-async function updateAssetDocumentFromUpload(uuid) {
-  let upload
-  let asset
+async function updateAssetDocumentFromUpload(uuid: string) {
+  let upload: UploadResponse
+  let asset: {data: MuxAsset}
   try {
     upload = await pollUpload(uuid)
   } catch (err) {
@@ -196,15 +225,15 @@ async function updateAssetDocumentFromUpload(uuid) {
   })
 }
 
-function testFile(file) {
+function testFile(file: File) {
   if (typeof window !== 'undefined' && file instanceof window.File) {
-    const fileOptions = optionsFromFile(file)
+    const fileOptions = optionsFromFile({}, file)
     return of(fileOptions)
   }
   return throwError(new Error('Invalid file'))
 }
 
-function testUrl(url) {
+function testUrl(url: string): Observable<string> {
   const error = new Error('Invalid URL')
   if (!isString(url)) {
     return throwError(error)
@@ -221,20 +250,12 @@ function testUrl(url) {
   return of(url)
 }
 
-function optionsFromFile(opts, file) {
+function optionsFromFile(opts: {preserveFilename?: boolean}, file: File) {
   if (typeof window === 'undefined' || !(file instanceof window.File)) {
     return opts
   }
-  const fileOpts = {
-    filename: opts.preserveFilename === false ? undefined : file.name,
-    contentType: file.type,
-  }
-
   return {
-    ...{
-      filename: opts.preserveFilename === false ? undefined : file.name,
-      contentType: file.type,
-    },
-    fileOpts,
+    name: opts.preserveFilename === false ? undefined : file.name,
+    type: file.type,
   }
 }
