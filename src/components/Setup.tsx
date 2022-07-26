@@ -6,10 +6,10 @@ import React, {Component} from 'react'
 import {createSigningKeys, haveValidSigningKeys, saveSecrets} from '../actions/secrets'
 import type {Secrets} from '../util/types'
 
-interface Props {
+export interface Props {
   onSave: (secrets: Secrets) => void
   onCancel: () => void
-  secrets: Secrets
+  secrets: Secrets | null
 }
 interface State extends Secrets {
   isLoading: boolean
@@ -21,11 +21,11 @@ class MuxVideoInputSetup extends Component<Props, State> {
   enableSignedUrlsInputId = uniqueId('MuxEnableSignedUrlsInput')
 
   state: State = {
-    token: this.props.secrets?.token,
-    secretKey: this.props.secrets?.secretKey,
-    enableSignedUrls: this.props.secrets?.enableSignedUrls,
-    signingKeyId: this.props.secrets?.signingKeyId,
-    signingKeyPrivate: this.props.secrets?.signingKeyPrivate,
+    token: this.props.secrets?.token ?? null,
+    secretKey: this.props.secrets?.secretKey ?? null,
+    enableSignedUrls: this.props.secrets?.enableSignedUrls ?? false,
+    signingKeyId: this.props.secrets?.signingKeyId ?? null,
+    signingKeyPrivate: this.props.secrets?.signingKeyPrivate ?? null,
     isLoading: false,
     error: null,
   }

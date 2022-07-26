@@ -13,14 +13,15 @@ import {deleteAsset, getAsset} from '../actions/assets'
 import {fetchSecrets} from '../actions/secrets'
 import client from '../clients/SanityClient'
 import config from '../config'
-import getPosterSrc from '../util/getPosterSrc'
+import {getPosterSrc} from '../util/getPosterSrc'
 import styles from './Input.css'
 import InputBrowser from './InputBrowser'
 import InputError from './InputError'
 import MuxLogo from './MuxLogo'
-import Setup from './Setup'
+import Player from './Player'
+import SetupButton from './SetupButton'
+import SetupDialog from './SetupDialog'
 import Uploader from './Uploader'
-import Video from './Video'
 
 const NOOP = () => {
   /* intentional noop */
@@ -229,7 +230,7 @@ export default withDocument(
       }, 2000)
     }
 
-    handleSetupButtonClicked = (event) => {
+    handleSetupButtonClicked = () => {
       this.setState((prevState) => ({showSetup: !prevState.showStetup}))
     }
 
@@ -357,7 +358,13 @@ export default withDocument(
         signingKeyPrivate: cachedSecrets.signingKeyPrivate,
       }
 
-      const thumb = getPosterSrc(assetDocument.playbackId, options)
+      const thumb = getPosterSrc({
+        asset: assetDocument,
+        width: 320,
+        height: 320,
+        fitMode: 'crop',
+        secrets: cachedSecrets,
+      })
       const newThumb = getPosterSrc(assetDocument.playbackId, {...options, time: currentTime})
 
       this.setState({thumb, newThumb})
@@ -388,7 +395,14 @@ export default withDocument(
             signingKeyPrivate: cachedSecrets.signingKeyPrivate,
           }
 
-          const thumb = getPosterSrc(assetDocument.playbackId, options)
+          const thumb = getPosterSrc({
+            asset: assetDocument.playbackId,
+            time: currentTime,
+            width: 320,
+            height: 320,
+            fitMode: 'crop',
+            secrets: cachedSecrets,
+          })
 
           this.setState({thumb, thumbLoading: false})
         })
@@ -403,11 +417,11 @@ export default withDocument(
       })
     }
 
-    handleCloseThumbPreview = (event) => {
+    handleCloseThumbPreview = () => {
       this.setState({thumb: null})
     }
 
-    handleBrowseButton = (event) => {
+    handleBrowseButton = () => {
       this.setState({showBrowser: true})
     }
 
@@ -432,44 +446,6 @@ export default withDocument(
 
     handleVideoReadyToPlay = () => {
       this.setState({videoReadyToPlay: true})
-    }
-
-    renderSetup() {
-      const {secrets} = this.state
-
-      return (
-        <Dialog
-          header="Mux API Credentials"
-          width={1}
-          onClose={this.handleCancelSaveSetup}
-          zOffset={1000}
-        >
-          <Setup
-            secrets={secrets || null}
-            onSave={this.handleSaveSetup}
-            onCancel={this.handleCancelSaveSetup}
-          />
-        </Dialog>
-      )
-    }
-
-    renderSetupButton() {
-      const {isLoading, showSetup, needsSetup} = this.state
-      const renderSetup = !isLoading && showSetup
-      return (
-        <div className={styles.setupButtonContainer}>
-          <Button
-            tone={needsSetup ? 'critical' : 'positive'}
-            mode="bleed"
-            onClick={this.handleSetupButtonClicked}
-            icon={SetupIcon}
-            padding={3}
-            radius={3}
-            aria-label="Set up Mux credentials"
-          />
-          {renderSetup && this.renderSetup()}
-        </div>
-      )
     }
 
     renderSetupNotice() {
@@ -511,8 +487,8 @@ export default withDocument(
       return (
         <Stack space={2} marginBottom={2}>
           {isSignedAlert}
-          <Video
-            assetDocument={assetDocument}
+          <Player
+            asset={assetDocument}
             ref={this.videoPlayer}
             onReady={this.handleVideoReadyToPlay}
             onCancel={this.handleRemoveVideo}
@@ -581,7 +557,15 @@ export default withDocument(
                 level={level}
                 className={styles.formField}
               />
-              {this.renderSetupButton()}
+              <SetupButton
+          isLoading={this.state.isLoading}
+          needsSetup={this.state.needsSetup}
+          onCancel={this.handleCancelSaveSetup}
+          onSave={this.handleSaveSetup}
+          onSetup={this.handleSetupButtonClicked}
+          secrets={this.state.secrets}
+          showSetup={this.state.showSetup}
+        />
             </Flex>
 
             {isLoading === 'secrets' && (
@@ -595,7 +579,7 @@ export default withDocument(
 
             {needsSetup && this.renderSetupNotice()}
 
-            {!needsSetup && (
+            {!needsSetup && secrets && (
               <Uploader
                 buttons={this.renderVideoButtons()}
                 hasFocus={hasFocus}
@@ -661,7 +645,11 @@ export default withDocument(
             )}
 
             {showBrowser && (
-              <InputBrowser onClose={this.handleCloseBrowser} onSelect={this.handleSelectAsset} />
+              <InputBrowser
+                onClose={this.handleCloseBrowser}
+                onSelect={this.handleSelectAsset}
+                secrets={this.state.secrets!}
+              />
             )}
 
             {confirmRemove && (
