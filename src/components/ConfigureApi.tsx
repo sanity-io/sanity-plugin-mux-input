@@ -1,68 +1,27 @@
 import {useId} from '@reach/auto-id'
 import {Box, Button, Card, Checkbox, Code, Flex, Inline, Stack, Text, TextInput} from '@sanity/ui'
 import {Dialog} from '@sanity/ui'
-import React, {memo, useCallback, useEffect, useMemo, useReducer, useRef} from 'react'
-import {unstable_batchedUpdates} from 'react-dom'
+import React, {memo, useCallback, useEffect, useMemo, useRef} from 'react'
 import {useClient} from 'sanity'
-import styled from 'styled-components'
+import {clear, preload} from 'suspend-react'
 
-import {readSecrets} from '../util/readSecrets'
+import {useSaveSecrets} from '../hooks/useSaveSecrets'
+import {useSecretsFormState} from '../hooks/useSecretsFormState'
+import {cacheNs} from '../util/constants'
+import {_id as secretsId, readSecrets} from '../util/readSecrets'
 import type {Secrets} from '../util/types'
+import {Header} from './ConfigureApi.styled'
 import FormField from './FormField'
-import MuxLogo from './MuxLogo'
-
-const Logo = styled.span`
-  display: inline-block;
-  height: 0.8em;
-  margin-right: 1em;
-  transform: translate(0.3em, -0.2em);
-`
-
-export interface State extends Pick<Secrets, 'token' | 'secretKey' | 'enableSignedUrls'> {
-  submitting: boolean
-  error: string | null
-}
-export type Action =
-  | {type: 'submit'}
-  | {type: 'error'; payload: string}
-  | {type: 'reset'; payload: Secrets}
-  | {type: 'change'; payload: {name: 'token'; value: string}}
-  | {type: 'change'; payload: {name: 'secretKey'; value: string}}
-  | {type: 'change'; payload: {name: 'enableSignedUrls'; value: boolean}}
-function init({token, secretKey, enableSignedUrls}: Secrets): State {
-  return {
-    submitting: false,
-    error: null,
-    // Form inputs don't set the state back to null when clearing a field, but uses empty strings
-    // This ensures the `dirty` check works correctly
-    token: token || '',
-    secretKey: secretKey || '',
-    enableSignedUrls,
-  }
-}
-function reducer(state: State, action: Action) {
-  switch (action?.type) {
-    case 'submit':
-      return {...state, submitting: true, error: null}
-    case 'error':
-      return {...state, submitting: false, error: action.payload}
-    case 'reset':
-      return init(action.payload)
-    case 'change':
-      return {...state, [action.payload.name]: action.payload.value}
-    default:
-      throw new Error(`Unknown action type: ${(action as any)?.type}`)
-  }
-}
 
 export interface Props {
+  onSave: (secrets: Secrets) => void
   onClose: () => void
 }
 const fieldNames = ['token', 'secretKey', 'enableSignedUrls'] as const
-function ConfigureApi({onClose}: Props) {
+function ConfigureApi({onSave, onClose}: Props) {
   const client = useClient()
   const secrets = readSecrets(client)
-  const [state, dispatch] = useReducer(reducer, secrets, init)
+  const [state, dispatch] = useSecretsFormState(secrets)
   const hasSecretsInitially = useMemo(() => secrets.token && secrets.secretKey, [secrets])
   const dirty = useMemo(
     () =>
@@ -77,7 +36,7 @@ function ConfigureApi({onClose}: Props) {
     [id]
   )
   const firstField = useRef<HTMLInputElement>(null)
-  const saveSecrets = useSaveSecrets()
+  const handleSaveSecrets = useSaveSecrets(client, secrets)
   const saving = useRef(false)
 
   const handleSubmit = useCallback(
@@ -87,42 +46,41 @@ function ConfigureApi({onClose}: Props) {
         saving.current = true
         dispatch({type: 'submit'})
         const {token, secretKey, enableSignedUrls} = state
-        saveSecrets({token, secretKey, enableSignedUrls})
-          .then(() => void unstable_batchedUpdates(() => onClose()))
-          .catch(
-            (err) =>
-              void unstable_batchedUpdates(() => dispatch({type: 'error', payload: err.message}))
-          )
+        handleSaveSecrets({token, secretKey, enableSignedUrls})
+          .then(async (savedSecrets) => {
+            clear([cacheNs, secretsId])
+            await preload(() => Promise.resolve(savedSecrets), [cacheNs, secretsId])
+            onSave(savedSecrets)
+            onClose()
+          })
+          .catch((err) => dispatch({type: 'error', payload: err.message}))
           .finally(() => {
             saving.current = false
           })
       }
     },
-    [saveSecrets, state]
+    [dispatch, handleSaveSecrets, onClose, onSave, state]
   )
-  const handleChangeToken = useCallback((event: React.FormEvent<HTMLInputElement>) => {
-    dispatch({type: 'change', payload: {name: 'token', value: event.currentTarget.value}})
-  }, [])
-  const handleChangeSecretKey = useCallback((event: React.FormEvent<HTMLInputElement>) => {
-    dispatch({type: 'change', payload: {name: 'secretKey', value: event.currentTarget.value}})
-  }, [])
-  const handleChangeEnableSignedUrls = useCallback((event: React.FormEvent<HTMLInputElement>) => {
-    dispatch({
-      type: 'change',
-      payload: {name: 'enableSignedUrls', value: event.currentTarget.checked},
-    })
-  }, [])
-
-  const header = useMemo(
-    () => (
-      <>
-        <Logo>
-          <MuxLogo />
-        </Logo>
-        API Credentials
-      </>
-    ),
-    []
+  const handleChangeToken = useCallback(
+    (event: React.FormEvent<HTMLInputElement>) => {
+      dispatch({type: 'change', payload: {name: 'token', value: event.currentTarget.value}})
+    },
+    [dispatch]
+  )
+  const handleChangeSecretKey = useCallback(
+    (event: React.FormEvent<HTMLInputElement>) => {
+      dispatch({type: 'change', payload: {name: 'secretKey', value: event.currentTarget.value}})
+    },
+    [dispatch]
+  )
+  const handleChangeEnableSignedUrls = useCallback(
+    (event: React.FormEvent<HTMLInputElement>) => {
+      dispatch({
+        type: 'change',
+        payload: {name: 'enableSignedUrls', value: event.currentTarget.checked},
+      })
+    },
+    [dispatch]
   )
 
   useEffect(() => {
@@ -132,7 +90,7 @@ function ConfigureApi({onClose}: Props) {
   }, [firstField])
 
   return (
-    <Dialog id={id} header={header} width={1} onClose={onClose}>
+    <Dialog id={id} header={<Header />} width={1} onClose={onClose}>
       <Box
         paddingRight={4}
         paddingLeft={4}
@@ -172,7 +130,7 @@ function ConfigureApi({onClose}: Props) {
                 ref={firstField}
                 onChange={handleChangeToken}
                 type="text"
-                value={state.token}
+                value={state.token ?? ''}
               />
             </FormField>
             <FormField title="Secret Key" inputId={secretKeyId}>
@@ -180,7 +138,7 @@ function ConfigureApi({onClose}: Props) {
                 id={secretKeyId}
                 onChange={handleChangeSecretKey}
                 type="text"
-                value={state.secretKey}
+                value={state.secretKey ?? ''}
               />
             </FormField>
 

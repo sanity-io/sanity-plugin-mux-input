@@ -5,21 +5,29 @@
 import type {SanityClient} from '@sanity/client'
 import {suspend} from 'suspend-react'
 
+import {cacheNs} from '../util/constants'
 import {type Secrets} from '../util/types'
 
 export const _id = 'secrets.mux' as const
 
 export function readSecrets(client: SanityClient): Secrets {
   return suspend(async () => {
-    const data = await client.fetch(/* groq */ `*[_id == $_id][0]`, {_id})
+    const data = await client.fetch(
+      /* groq */ `*[_id == $_id][0]{
+        token,
+        secretKey,
+        enableSignedUrls,
+        signingKeyId,
+        signingKeyPrivate
+      }`,
+      {_id}
+    )
     return {
       token: data?.token || null,
       secretKey: data?.secretKey || null,
       enableSignedUrls: Boolean(data?.enableSignedUrls) || false,
       signingKeyId: data?.signingKeyId || null,
       signingKeyPrivate: data?.signingKeyPrivate || null,
-      createdAt: data?._createdAt || null,
-      updatedAt: data?._updatedAt || null,
     }
-  }, ['sanity-plugin-mux-input', _id])
+  }, [cacheNs, _id])
 }
