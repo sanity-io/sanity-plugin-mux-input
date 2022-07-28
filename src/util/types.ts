@@ -1,4 +1,4 @@
-import type {SanityDocument, ObjectInputProps} from 'sanity'
+import type {ObjectInputProps, SanityDocument} from 'sanity'
 import type {PartialDeep} from 'type-fest'
 
 export interface Config {

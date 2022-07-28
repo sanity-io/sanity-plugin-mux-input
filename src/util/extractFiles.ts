@@ -18,7 +18,7 @@ function normalizeItems(items: DataTransferItem[]) {
     items.map((item) => {
       // directory
       if (item.kind === 'file' && item.webkitGetAsEntry) {
-        let entry: FileSystemEntry | File[]
+        let entry: FileSystemEntry | File[] | null
         // Edge throws
         try {
           entry = item.webkitGetAsEntry()
@@ -52,7 +52,7 @@ function isDirectory(entry: FileSystemEntry): entry is FileSystemDirectoryEntry 
   return entry.isDirectory
 }
 
-function walk(entry: FileSystemEntry) {
+function walk(entry: FileSystemEntry): any {
   if (isFile(entry)) {
     return new Promise((resolve) => entry.file(resolve)).then((file) => [file])
   }

@@ -11,7 +11,7 @@ import {PatchEvent, set, setIfMissing, unset} from 'sanity/form'
 
 import {deleteAsset, getAsset} from '../actions/assets'
 import {fetchSecrets} from '../actions/secrets'
-import type {Config, InputProps, Secrets, VideoAssetDocument} from '../util/types'
+import type {Config, MuxInputProps, Secrets, VideoAssetDocument} from '../util/types'
 import Uploader from './__legacy__Uploader'
 import {StyledFormField} from './Input.styles'
 import InputBrowser from './InputBrowser'
@@ -58,12 +58,11 @@ function getSecrets(
   })
 }
 
-interface Props extends Pick<InputProps, 'schemaType'> {
+interface Props extends MuxInputProps {
   config: Config
   client: SanityClient
-  document: SanityDocument
   observePaths: ObservePathsFn
-  value?: null | {asset?: {_type: 'reference'; _ref: string}}
+  // value?: null | {asset?: {_type: 'reference'; _ref: string}}
 }
 
 interface State {
@@ -263,7 +262,7 @@ export default class MuxVideoInput extends Component<Props, State> {
     this.setState({showSetup: false})
   }
 
-  handleOnUploadComplete = (result: any) => {
+  handleOnUploadComplete = (result: VideoAssetDocument) => {
     const {onChange} = this.props
     const {_id} = result
     onChange(
@@ -382,15 +381,10 @@ export default class MuxVideoInput extends Component<Props, State> {
   }
 
   render() {
-    const {schemaType: type, level} = this.props
-
     return (
       <>
         <Box style={{position: 'relative'}}>
           <Flex align="center" justify="space-between">
-            <StyledFormField label={type.title} description={type.description} level={level}>
-              @TODO
-            </StyledFormField>
             <SetupButton
               client={this.props.client}
               isLoading={this.state.isLoading}
