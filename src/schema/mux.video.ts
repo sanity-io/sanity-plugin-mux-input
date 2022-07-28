@@ -1,8 +1,12 @@
-import Input from '../components/__legacy__Input'
-import Preview from '../components/Preview'
+import {defineField} from 'sanity'
 
-export default {
-  name: 'mux.video',
+import Preview from '../components/Preview'
+import {name as muxVideoAssetType} from './mux.videoAsset'
+
+export const name = 'mux.video' as const
+
+const video = defineField({
+  name,
   type: 'object',
   title: 'Video asset reference',
   fields: [
@@ -11,10 +15,13 @@ export default {
       name: 'asset',
       type: 'reference',
       weak: true,
-      to: [{type: 'mux.videoAsset'}],
+      to: [{type: muxVideoAssetType}],
     },
   ],
-  inputComponent: Input,
+  //components: {
+  //  input: Input,
+  //},
+  // inputComponent: Input,
   preview: {
     select: {
       playbackId: 'asset.playbackId',
@@ -26,4 +33,6 @@ export default {
     },
     component: Preview,
   },
-}
+})
+
+export default video

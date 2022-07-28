@@ -20,7 +20,9 @@
     "outDir": "lib",
     "baseUrl": ".",
     "resolveJsonModule": true,
-    "declaration": true
+    "declaration": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true
   },
   "include": ["**/*.ts", "**/*.tsx"]
 }

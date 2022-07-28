@@ -1,5 +1,9 @@
-export default {
-  name: 'mux.videoAsset',
+import {defineField} from 'sanity'
+
+export const name = 'mux.videoAsset' as const
+
+const videoAsset = defineField({
+  name,
   type: 'object',
   title: 'Video asset',
   fields: [
@@ -24,4 +28,6 @@ export default {
       name: 'thumbTime',
     },
   ],
-}
+})
+
+export default videoAsset

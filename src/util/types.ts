@@ -1,4 +1,4 @@
-import type {SanityDocument} from 'sanity'
+import type {SanityDocument, ObjectInputProps} from 'sanity'
 import type {PartialDeep} from 'type-fest'
 
 export interface Config {
@@ -155,3 +155,6 @@ export interface VideoAssetDocument extends Partial<SanityDocument> {
   // Docs for what goes in `data` https://docs.mux.com/api-reference/video#tag/assets
   data?: PartialDeep<MuxAsset>
 }
+
+// @TODO add Reference, and ReferenceSchemaType in the generic
+export type MuxInputProps = ObjectInputProps

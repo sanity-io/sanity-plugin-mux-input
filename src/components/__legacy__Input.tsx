@@ -11,7 +11,7 @@ import {PatchEvent, set, setIfMissing, unset} from 'sanity/form'
 
 import {deleteAsset, getAsset} from '../actions/assets'
 import {fetchSecrets} from '../actions/secrets'
-import type {Config, Secrets, VideoAssetDocument} from '../util/types'
+import type {Config, InputProps, Secrets, VideoAssetDocument} from '../util/types'
 import Uploader from './__legacy__Uploader'
 import {StyledFormField} from './Input.styles'
 import InputBrowser from './InputBrowser'
@@ -58,16 +58,12 @@ function getSecrets(
   })
 }
 
-interface Props {
+interface Props extends Pick<InputProps, 'schemaType'> {
   config: Config
   client: SanityClient
   document: SanityDocument
   observePaths: ObservePathsFn
   value?: null | {asset?: {_type: 'reference'; _ref: string}}
-  type: any
-  level: any
-  onChange: any
-  readOnly: boolean
 }
 
 interface State {
@@ -386,7 +382,7 @@ export default class MuxVideoInput extends Component<Props, State> {
   }
 
   render() {
-    const {type, level} = this.props
+    const {schemaType: type, level} = this.props
 
     return (
       <>
