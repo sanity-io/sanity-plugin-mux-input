@@ -66,7 +66,6 @@
     "@sanity/uuid": "^3.0.1",
     "classnames": "^2.3.1",
     "hls.js": "^1.1.5",
-    "jsonwebtoken": "^8.5.1",
     "jsonwebtoken-esm": "^1.0.3",
     "lodash": "^4.17.21",
     "lodash.memoize": "^4.1.2",
@@ -128,13 +127,13 @@
     "sanity": "dev-preview || ^3",
     "styled-components": "^5.2.0"
   },
+  "engines": {
+    "node": ">=14.0.0"
+  },
   "publishConfig": {
     "access": "public"
   },
   "sanityExchangeUrl": "https://www.sanity.io/plugins/sanity-plugin-mux-input",
-  "engines": {
-    "node": ">=14.0.0"
-  },
   "sanityPlugin": {
     "verifyPackage": {
       "eslintImports": false

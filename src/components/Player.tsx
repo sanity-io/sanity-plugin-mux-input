@@ -61,10 +61,20 @@ const MuxVideo = ({
   videoReadyToPlay,
 }: Props) => {
   const client = useClient()
-  const options = useMemo(() => ({asset, secrets}), [asset, secrets])
-  const source = useMemo(() => getVideoSrc(options), [options])
-  const posterUrl = useMemo(() => getPosterSrc(options), [options])
-  const storyboardUrl = useMemo(() => getStoryboardSrc(options), [options])
+  const hasPlaybackId = !!asset.playbackId
+  const options = useMemo(() => ({asset, client, secrets}), [asset, client, secrets])
+  const source = useMemo(
+    () => (hasPlaybackId ? getVideoSrc(options) : null),
+    [hasPlaybackId, options]
+  )
+  const posterUrl = useMemo(
+    () => (hasPlaybackId ? getPosterSrc(options) : null),
+    [hasPlaybackId, options]
+  )
+  const storyboardUrl = useMemo(
+    () => (hasPlaybackId ? getStoryboardSrc(options) : null),
+    [hasPlaybackId, options]
+  )
   const isLoading = useMemo<boolean | string>(() => {
     if (asset && asset.status === 'preparing') {
       return 'Preparing the video'

@@ -68,13 +68,13 @@ export default function EditThumbnailDialog({
           <Text size={1} weight="semibold">
             Current:
           </Text>
-          <VideoThumbnail asset={asset} secrets={secrets} width={width} />
+          <VideoThumbnail asset={asset} width={width} />
         </Stack>
         <Stack space={2}>
           <Text size={1} weight="semibold">
             New:
           </Text>
-          <VideoThumbnail asset={assetWithNewThumbnail} secrets={secrets} width={width} />
+          <VideoThumbnail asset={assetWithNewThumbnail} width={width} />
         </Stack>
       </Stack>
     </Dialog>

@@ -1,7 +1,12 @@
-import type {ObjectInputProps, SanityDocument} from 'sanity'
+import type {ObjectInputProps, PreviewProps, SanityDocument, SchemaType} from 'sanity'
 import type {PartialDeep} from 'type-fest'
 
 export interface Config {
+  /**
+   * Enable static renditions by setting this to 'standard'
+   * @see {@link https://docs.mux.com/guides/video/enable-static-mp4-renditions#why-enable-mp4-support}
+   * @defaultValue 'none'
+   */
   mp4_support: 'none' | 'standard'
 }
 
@@ -157,4 +162,13 @@ export interface VideoAssetDocument extends Partial<SanityDocument> {
 }
 
 // @TODO add Reference, and ReferenceSchemaType in the generic
-export type MuxInputProps = ObjectInputProps
+export type MuxInputProps = ObjectInputProps<{
+  asset?: {_type: 'reference'; _ref: string}
+}>
+
+export interface MuxInputPreviewProps extends Omit<PreviewProps, 'value'> {
+  schemaType: SchemaType
+  value?: {
+    asset?: {_type: 'reference'; _ref: string}
+  } | null
+}

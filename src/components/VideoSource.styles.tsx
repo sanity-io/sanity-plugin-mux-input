@@ -1,6 +1,7 @@
 import {LockIcon, UnknownIcon} from '@sanity/icons'
 import {Box, Card, Grid, Inline} from '@sanity/ui'
 import React, {memo, Suspense, useMemo} from 'react'
+import {useClient} from 'sanity'
 import {MediaPreview} from 'sanity/_unstable'
 import styled from 'styled-components'
 import {suspend} from 'suspend-react'
@@ -8,7 +9,6 @@ import {useErrorBoundary} from 'use-error-boundary'
 
 import {getPlaybackPolicy} from '../util/getPlaybackPolicy'
 import {getPosterSrc} from '../util/getPosterSrc'
-import {isSigned} from '../util/isSigned'
 import type {Secrets, VideoAssetDocument} from '../util/types'
 
 const mediaDimensions = {aspect: 16 / 9}
@@ -53,13 +53,14 @@ const VideoMediaPreviewSignedSubtitle = ({solo}: VideoMediaPreviewSignedSubtitle
 
 interface PosterImageProps extends Omit<ImageLoaderProps, 'src' | 'alt'> {
   asset: VideoAssetDocument
-  secrets: Secrets
 }
-const PosterImage = ({asset, height, width, secrets}: PosterImageProps) => {
-  const src = getPosterSrc({asset, secrets, height, width, fit_mode: 'smartcrop'})
+const PosterImage = ({asset, height, width}: PosterImageProps) => {
+  const client = useClient()
+  const src = getPosterSrc({asset, client, height, width, fit_mode: 'smartcrop'})
   const subtitle = useMemo(
-    () => (isSigned(asset, secrets) ? <VideoMediaPreviewSignedSubtitle solo /> : undefined),
-    [asset, secrets]
+    () =>
+      getPlaybackPolicy(asset) === 'signed' ? <VideoMediaPreviewSignedSubtitle solo /> : undefined,
+    [asset]
   )
 
   // eslint-disable-next-line no-warning-comments
@@ -77,11 +78,7 @@ const PosterImage = ({asset, height, width, secrets}: PosterImageProps) => {
 export interface VideoThumbnailProps extends Omit<PosterImageProps, 'height'> {
   width: number
 }
-export const VideoThumbnail = memo(function VideoThumbnail({
-  asset,
-  secrets,
-  width,
-}: VideoThumbnailProps) {
+export const VideoThumbnail = memo(function VideoThumbnail({asset, width}: VideoThumbnailProps) {
   const {ErrorBoundary, didCatch, error} = useErrorBoundary()
   const height = Math.round((width * 9) / 16)
   const subtitle = useMemo(
@@ -129,7 +126,7 @@ export const VideoThumbnail = memo(function VideoThumbnail({
           />
         }
       >
-        <PosterImage asset={asset} secrets={secrets} height={height} width={width} />
+        <PosterImage asset={asset} height={height} width={width} />
       </Suspense>
     </ErrorBoundary>
   )

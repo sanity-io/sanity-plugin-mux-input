@@ -13,7 +13,6 @@ import {deleteAsset, getAsset} from '../actions/assets'
 import {fetchSecrets} from '../actions/secrets'
 import type {Config, MuxInputProps, Secrets, VideoAssetDocument} from '../util/types'
 import Uploader from './__legacy__Uploader'
-import {StyledFormField} from './Input.styles'
 import InputBrowser from './InputBrowser'
 import InputError from './InputError'
 import SetupButton from './SetupButton'
@@ -62,7 +61,6 @@ interface Props extends MuxInputProps {
   config: Config
   client: SanityClient
   observePaths: ObservePathsFn
-  // value?: null | {asset?: {_type: 'reference'; _ref: string}}
 }
 
 interface State {
@@ -136,17 +134,12 @@ export default class MuxVideoInput extends Component<Props, State> {
     this.setState({hasFocus: false})
   }
 
-  getAsset() {
-    const {value} = this.props
-    return value ? value.asset : null
-  }
-
   setupAssetListener() {
     if (this.subscription) {
       this.subscription.unsubscribe()
     }
     this.setState({videoReadyToPlay: false})
-    const asset = this.getAsset()
+    const asset = this.props.value?.asset
     if (!asset) {
       return
     }
@@ -289,7 +282,8 @@ export default class MuxVideoInput extends Component<Props, State> {
             isLoading: false,
           },
           () => {
-            if (this.state.deleteOnMuxChecked || this.state.deleteAssetDocumentChecked) {
+            // @TODO implement the delete modal in the asset selector menu instead
+            if (false) {
               return this.props.client
                 .patch(this.props.document._id)
                 .unset(['video'])

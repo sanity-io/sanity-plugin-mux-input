@@ -1,22 +1,18 @@
+import type {SanityClient} from '@sanity/client'
+
 import {generateJwt} from './generateJwt'
 import {getPlaybackId} from './getPlaybackId'
-import {isSigned} from './isSigned'
-import type {
-  MuxThumbnailUrl,
-  Secrets,
-  SignableSecrets,
-  ThumbnailOptions,
-  VideoAssetDocument,
-} from './types'
+import {getPlaybackPolicy} from './getPlaybackPolicy'
+import type {MuxThumbnailUrl, ThumbnailOptions, VideoAssetDocument} from './types'
 
 export interface PosterSrcOptions extends ThumbnailOptions {
   asset: VideoAssetDocument
-  secrets: Secrets | SignableSecrets
+  client: SanityClient
 }
 
 export function getPosterSrc({
   asset,
-  secrets,
+  client,
   fit_mode,
   height,
   time = asset.thumbTime,
@@ -28,16 +24,8 @@ export function getPosterSrc({
   let searchParams = new URLSearchParams(
     JSON.parse(JSON.stringify(params, (_, v) => v ?? undefined))
   )
-  if (isSigned(asset, secrets as SignableSecrets)) {
-    const token = generateJwt(
-      playbackId,
-      // eslint-disable-next-line no-warning-comments
-      // @TODO figure out why isSigned doesn't manage to narrow down secrets to SignableSecrets
-      (secrets as SignableSecrets).signingKeyId,
-      (secrets as SignableSecrets).signingKeyPrivate,
-      't',
-      params
-    )
+  if (getPlaybackPolicy(asset) === 'signed') {
+    const token = generateJwt(client, playbackId, 't', params)
     searchParams = new URLSearchParams({token})
   }
 

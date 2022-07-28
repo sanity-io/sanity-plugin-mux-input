@@ -2,9 +2,10 @@ import React from 'react'
 import {createPlugin} from 'sanity'
 
 import Input from './components/Input'
+import Preview from './components/Preview'
 import muxVideo from './schema/mux.video'
 import videoAsset from './schema/mux.videoAsset'
-import {isMuxInputProps} from './util/asserters'
+import {isMuxInputPreviewProps, isMuxInputProps} from './util/asserters'
 import {type Config} from './util/types'
 
 /*
@@ -28,7 +29,7 @@ export const defaultConfig: Config = {
   mp4_support: 'none',
 }
 
-export const muxInput = createPlugin<Config>((userConfig) => {
+export const muxInput = createPlugin<Partial<Config> | void>((userConfig) => {
   const config: Config = {...defaultConfig, ...userConfig}
   return {
     name: 'mux-input',
@@ -39,10 +40,15 @@ export const muxInput = createPlugin<Config>((userConfig) => {
         }
         return next(props)
       },
+      renderPreview(props, next) {
+        if (isMuxInputPreviewProps(props)) {
+          return <Preview {...props} />
+        }
+        return next(props)
+      },
     },
     schema: {types: [muxVideo, videoAsset]},
   }
 })
 
-export {Input}
-export {default as Preview} from './components/Preview'
+export {Input, Preview}

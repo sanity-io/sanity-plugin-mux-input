@@ -13,7 +13,7 @@ export function fetchSecrets(client: SanityClient) {
     return Promise.resolve(cache)
   }
 
-  return client.fetch('*[_id == "secrets.mux"][0]').then((secrets: Secrets | null) => {
+  return client.fetch(/* groq */ `*[_id == "secrets.mux"][0]`).then((secrets: Secrets | null) => {
     cache.exists = Boolean(secrets)
     cache.secrets = {
       token: secrets?.token || null,
