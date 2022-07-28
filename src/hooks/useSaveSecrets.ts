@@ -1,7 +1,7 @@
 import type {SanityClient} from '@sanity/client'
 import {useCallback} from 'react'
 
-import {createSigningKeys, haveValidSigningKeys, saveSecrets} from '../actions/secrets'
+import {createSigningKeys, haveValidSigningKeys, saveSecrets, testSecrets} from '../actions/secrets'
 import type {Secrets} from '../util/types'
 
 export const useSaveSecrets = (client: SanityClient, secrets: Secrets) => {
@@ -22,6 +22,10 @@ export const useSaveSecrets = (client: SanityClient, secrets: Secrets) => {
           signingKeyId!,
           signingKeyPrivate!
         )
+        const valid = await testSecrets(client)
+        if (!valid?.status && token && secretKey) {
+          throw new Error('Invalid secrets')
+        }
       } catch (err) {
         console.error('Error while trying to save secrets:', err)
         throw err

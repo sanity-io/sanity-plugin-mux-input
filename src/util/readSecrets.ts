@@ -11,6 +11,7 @@ import {type Secrets} from '../util/types'
 export const _id = 'secrets.mux' as const
 
 export function readSecrets(client: SanityClient): Secrets {
+  const {projectId, dataset} = client.config()
   return suspend(async () => {
     const data = await client.fetch(
       /* groq */ `*[_id == $_id][0]{
@@ -29,5 +30,5 @@ export function readSecrets(client: SanityClient): Secrets {
       signingKeyId: data?.signingKeyId || null,
       signingKeyPrivate: data?.signingKeyPrivate || null,
     }
-  }, [cacheNs, _id])
+  }, [cacheNs, _id, projectId, dataset])
 }

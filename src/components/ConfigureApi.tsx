@@ -40,14 +40,19 @@ function ConfigureApi({onSave, onClose}: Props) {
   const handleSubmit = useCallback(
     (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault()
-      if (!saving.current) {
+
+      if (!saving.current && event.currentTarget.reportValidity()) {
         saving.current = true
         dispatch({type: 'submit'})
         const {token, secretKey, enableSignedUrls} = state
         handleSaveSecrets({token, secretKey, enableSignedUrls})
           .then(async (savedSecrets) => {
-            clear([cacheNs, secretsId])
-            await preload(() => Promise.resolve(savedSecrets), [cacheNs, secretsId])
+            const {projectId, dataset} = client.config()
+            clear([cacheNs, secretsId, projectId, dataset])
+            await preload(
+              () => Promise.resolve(savedSecrets),
+              [cacheNs, secretsId, projectId, dataset]
+            )
             onSave(savedSecrets)
             onClose()
           })
@@ -57,7 +62,7 @@ function ConfigureApi({onSave, onClose}: Props) {
           })
       }
     },
-    [dispatch, handleSaveSecrets, onClose, onSave, state]
+    [client, dispatch, handleSaveSecrets, onClose, onSave, state]
   )
   const handleChangeToken = useCallback(
     (event: React.FormEvent<HTMLInputElement>) => {
@@ -88,7 +93,7 @@ function ConfigureApi({onSave, onClose}: Props) {
   }, [firstField])
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} noValidate>
       <Stack space={4}>
         {!hasSecretsInitially && (
           <Card padding={[3, 3, 3]} radius={2} shadow={1} tone="primary">
@@ -121,6 +126,7 @@ function ConfigureApi({onSave, onClose}: Props) {
             onChange={handleChangeToken}
             type="text"
             value={state.token ?? ''}
+            required={!!state.secretKey || state.enableSignedUrls}
           />
         </FormField>
         <FormField title="Secret Key" inputId={secretKeyId}>
@@ -129,6 +135,7 @@ function ConfigureApi({onSave, onClose}: Props) {
             onChange={handleChangeSecretKey}
             type="text"
             value={state.secretKey ?? ''}
+            required={!!state.token || state.enableSignedUrls}
           />
         </FormField>
 
