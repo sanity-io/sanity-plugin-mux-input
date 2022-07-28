@@ -8,7 +8,6 @@
     "esModuleInterop": true,
     "sourceMap": false,
     "inlineSourceMap": false,
-    "declaration": true,
     "allowSyntheticDefaultImports": true,
     "downlevelIteration": true,
     "forceConsistentCasingInFileNames": true,
@@ -20,7 +19,8 @@
     "noUnusedParameters": false,
     "outDir": "lib",
     "baseUrl": ".",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "declaration": true
   },
-  "include": ["src/**/*"]
+  "include": ["**/*.ts", "**/*.tsx"]
 }

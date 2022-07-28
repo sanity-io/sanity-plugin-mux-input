@@ -9,3 +9,7 @@ export const muxInput = createPlugin(() => ({
     types: [muxVideo, videoAsset],
   },
 }))
+
+export {default as Preview} from './components/Preview'
+// @TODO add this export
+// export {default as Input} from './components/Input'

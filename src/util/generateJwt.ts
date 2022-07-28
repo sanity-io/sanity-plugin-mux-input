@@ -1,4 +1,4 @@
-import {sign} from 'jsonwebtoken'
+// import {sign} from 'jsonwebtoken'
 
 import type {ThumbnailOptions} from './types'
 
@@ -22,6 +22,8 @@ export function generateJwt<T extends Audience>(
   payload?: Payload<T>
 ): string {
   const privateKey = Buffer.from(signingKeyPrivate, 'base64')
+  return '123'
+
   return sign(
     payload ? JSON.parse(JSON.stringify(payload, (_, v) => v ?? undefined)) : {},
     privateKey,

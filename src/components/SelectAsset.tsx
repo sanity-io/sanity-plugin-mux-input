@@ -1,5 +1,5 @@
-import type {SanityClient} from '@sanity/client'
 import React, {useCallback, useEffect, useRef, useState} from 'react'
+import {useClient} from 'sanity'
 
 import type {Secrets, VideoAssetDocument} from '../util/types'
 import VideoSource, {type Props as VideoSourceProps} from './VideoSource'
@@ -16,23 +16,27 @@ export interface Props {
 }
 
 export default function SelectAssets({onSelect, secrets}: Props) {
+  const client = useClient()
   const pageNoRef = useRef(0)
   const [isLastPage, setLastPage] = useState(false)
   const [isLoading, setLoading] = useState(false)
   const [assets, setAssets] = useState<VideoAssetDocument[]>([])
 
-  const fetchPage = useCallback((pageNo: number) => {
-    const start = pageNo * PER_PAGE
-    const end = start + PER_PAGE
-    setLoading(true)
-    return client
-      .fetch(createQuery(start, end))
-      .then((result: VideoAssetDocument[]) => {
-        setLastPage(result.length < PER_PAGE)
-        setAssets((prev) => prev.concat(result))
-      })
-      .finally(() => setLoading(false))
-  }, [])
+  const fetchPage = useCallback(
+    (pageNo: number) => {
+      const start = pageNo * PER_PAGE
+      const end = start + PER_PAGE
+      setLoading(true)
+      return client
+        .fetch(createQuery(start, end))
+        .then((result: VideoAssetDocument[]) => {
+          setLastPage(result.length < PER_PAGE)
+          setAssets((prev) => prev.concat(result))
+        })
+        .finally(() => setLoading(false))
+    },
+    [client]
+  )
   const handleSelect = useCallback<VideoSourceProps['onSelect']>(
     (id) => {
       const selected = assets.find((doc) => doc._id === id)

@@ -6,8 +6,7 @@ import {type Observable, concat, defer, from, of, throwError} from 'rxjs'
 import {catchError, mergeMap, mergeMapTo, switchMap} from 'rxjs/operators'
 
 import {createUpChunkObservable} from '../clients/upChunkObservable'
-import config from '../config'
-import type {MuxAsset} from '../util/types'
+import type {MuxAsset, Config} from '../util/types'
 import {getAsset} from './assets'
 import {testSecretsObservable} from './secrets'
 
@@ -20,6 +19,7 @@ export function cancelUpload(client: SanityClient, uuid: string) {
 }
 
 export function uploadUrl(
+  config: Config,
   client: SanityClient,
   url: string,
   options: {enableSignedUrls?: boolean} = {}
@@ -77,6 +77,7 @@ export function uploadUrl(
 }
 
 export function uploadFile(
+  config: Config,
   client: SanityClient,
   file: File,
   options: {enableSignedUrls?: boolean} = {}

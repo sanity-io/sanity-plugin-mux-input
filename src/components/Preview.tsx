@@ -1,5 +1,6 @@
-import {SanityDefaultPreview} from 'part:@sanity/base/preview'
 import React, {useEffect, useMemo} from 'react'
+import {useClient} from 'sanity'
+import {SanityDefaultPreview} from 'sanity/_unstable'
 
 import {fetchSecrets} from '../actions/secrets'
 import type {MuxAsset, Secrets, VideoAssetDocument} from '../util/types'
@@ -16,9 +17,13 @@ export interface MuxVideoPreviewProps {
   }
 }
 const MuxVideoPreview = ({value = {}}: MuxVideoPreviewProps) => {
+  const client = useClient()
   const [secrets, setSecrets] = React.useState<Secrets | null>(null)
 
-  useEffect(() => void fetchSecrets().then(({secrets: _secrets}) => setSecrets(_secrets!)), [])
+  useEffect(
+    () => void fetchSecrets(client).then(({secrets: _secrets}) => setSecrets(_secrets!)),
+    [client]
+  )
 
   const asset = useMemo(() => {
     if (!value || value.status !== 'ready' || !value.playbackId || !value.playbackIds) return null

@@ -1,6 +1,10 @@
 import type {SanityDocument} from 'sanity'
 import type {PartialDeep} from 'type-fest'
 
+export interface Config {
+  mp4_support: 'none' | 'standard'
+}
+
 export interface Secrets {
   token: string | null
   secretKey: string | null

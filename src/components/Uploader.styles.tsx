@@ -2,9 +2,9 @@
 import {useId} from '@reach/auto-id'
 import {Box, Button, Card, Dialog, Flex, Grid, Stack, Text} from '@sanity/ui'
 import cx from 'classnames'
-import ProgressBar from 'part:@sanity/components/progress/bar'
 import React, {forwardRef, useCallback, useRef, useState} from 'react'
 import {FiCopy, FiUpload} from 'react-icons/fi'
+import {LinearProgress} from 'sanity/_unstable'
 import styled, {keyframes} from 'styled-components'
 
 import type {Secrets, VideoAssetDocument} from '../util/types'
@@ -66,14 +66,14 @@ export const UploadProgress = ({
   return (
     <UploadProgressCard>
       <UploadProgressStack space={5}>
-        <ProgressBar
+        {/* <ProgressBar
           percent={uploadProgress}
           text={text}
           isInProgress={uploadProgress === 100 && !error}
           showPercent
           animation
           color="primary"
-        />
+        /> */}
         {(uploadProgress < 100 || error) && (
           <UploadCancelButton text="Cancel upload" onClick={onCancel} />
         )}

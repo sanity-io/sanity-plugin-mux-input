@@ -1,12 +1,16 @@
+// This component needs to be refactored into a functional component
+
+import type {SanityClient} from '@sanity/client'
 import {Box, Button, Card, Checkbox, Code, Flex, Inline, Stack, Text, TextInput} from '@sanity/ui'
 import {uniqueId} from 'lodash'
-import FormField from 'part:@sanity/components/formfields/default'
 import React, {Component} from 'react'
 
 import {createSigningKeys, haveValidSigningKeys, saveSecrets} from '../actions/secrets'
 import type {Secrets} from '../util/types'
+import {StyledFormField as FormField} from './Input.styles'
 
 export interface Props {
+  client: SanityClient
   onSave: (secrets: Secrets) => void
   onCancel: () => void
   secrets: Secrets | null
@@ -58,7 +62,14 @@ class MuxVideoInputSetup extends Component<Props, State> {
     let {signingKeyId, signingKeyPrivate} = this.state
 
     try {
-      await saveSecrets(token!, secretKey!, enableSignedUrls, signingKeyId!, signingKeyPrivate!)
+      await saveSecrets(
+        this.props.client,
+        token!,
+        secretKey!,
+        enableSignedUrls,
+        signingKeyId!,
+        signingKeyPrivate!
+      )
     } catch (err) {
       console.error('Error while trying to save secrets:', err) // eslint-disable-line no-console
       this.setState({
@@ -69,14 +80,25 @@ class MuxVideoInputSetup extends Component<Props, State> {
     }
 
     if (enableSignedUrls) {
-      const hasValidSigningKeys = await haveValidSigningKeys(signingKeyId!, signingKeyPrivate!)
+      const hasValidSigningKeys = await haveValidSigningKeys(
+        this.props.client,
+        signingKeyId!,
+        signingKeyPrivate!
+      )
 
       if (!hasValidSigningKeys) {
         try {
-          const {data} = await createSigningKeys()
+          const {data} = await createSigningKeys(this.props.client)
           signingKeyId = data.id
           signingKeyPrivate = data.private_key
-          await saveSecrets(token!, secretKey!, enableSignedUrls, signingKeyId, signingKeyPrivate)
+          await saveSecrets(
+            this.props.client,
+            token!,
+            secretKey!,
+            enableSignedUrls,
+            signingKeyId,
+            signingKeyPrivate
+          )
         } catch (err: any) {
           // eslint-disable-next-line no-console
           console.log('Error while creating and saving signing key:', err?.message)
@@ -127,12 +149,7 @@ class MuxVideoInputSetup extends Component<Props, State> {
                 </Stack>
               </Card>
             )}
-            <FormField
-              changeIndicator={false}
-              label="Access Token"
-              labelFor={this.tokenInputId}
-              level={0}
-            >
+            <FormField label="Access Token" htmlFor={this.tokenInputId} level={0}>
               <TextInput
                 id={this.tokenInputId}
                 ref={this.firstField}
@@ -141,12 +158,7 @@ class MuxVideoInputSetup extends Component<Props, State> {
                 value={this.state.token || ''}
               />
             </FormField>
-            <FormField
-              changeIndicator={false}
-              label="Secret Key"
-              labelFor={this.secretKeyInputId}
-              level={0}
-            >
+            <FormField label="Secret Key" htmlFor={this.secretKeyInputId} level={0}>
               <TextInput
                 id={this.secretKeyInputId}
                 onChange={this.handleSecretKeyChanged}

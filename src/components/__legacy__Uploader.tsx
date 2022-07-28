@@ -1,3 +1,5 @@
+// This component needs to be refactored into a functional component
+
 import type {SanityClient} from '@sanity/client'
 import {Card, Stack, Text} from '@sanity/ui'
 import React, {Component} from 'react'
@@ -6,11 +8,13 @@ import {takeUntil, tap} from 'rxjs/operators'
 
 import {uploadFile, uploadUrl} from '../actions/upload'
 import {extractDroppedFiles} from '../util/extractFiles'
-import type {Secrets, VideoAssetDocument} from '../util/types'
+import type {Config, Secrets, VideoAssetDocument} from '../util/types'
 import Player from './Player'
 import {ErrorDialog, UploadCard, UploadPlaceholder, UploadProgress} from './Uploader.styles'
 
 interface Props {
+  config: Config
+  client: SanityClient
   hasFocus: boolean
   onFocus: React.FocusEventHandler<HTMLDivElement>
   onBlur: React.FocusEventHandler<HTMLDivElement>
@@ -83,13 +87,15 @@ class MuxVideoInputUploader extends Component<Props, State> {
 
   onUpload = (files: FileList) => {
     this.setState({uploadProgress: 0, fileInfo: null, uuid: null})
-    this.upload = uploadFile(files[0], {enableSignedUrls: this.props.secrets.enableSignedUrls})
+    this.upload = uploadFile(this.props.config, this.props.client, files[0], {
+      enableSignedUrls: this.props.secrets.enableSignedUrls,
+    })
       .pipe(
         takeUntil(
           this.onCancelUploadButtonClick$!.pipe(
             tap(() => {
               if (this.state.uuid) {
-                client.delete(this.state.uuid)
+                this.props.client.delete(this.state.uuid)
               }
             })
           )
@@ -138,7 +144,7 @@ class MuxVideoInputUploader extends Component<Props, State> {
     const url = clipboardData.getData('text')
     const options = {enableSignedUrls: this.props.secrets.enableSignedUrls}
 
-    this.upload = uploadUrl(url, options).subscribe({
+    this.upload = uploadUrl(this.props.config, this.props.client, url, options).subscribe({
       complete: () => {
         this.setState({error: null, uploadProgress: null, url: null})
       },

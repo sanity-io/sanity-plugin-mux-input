@@ -1,4 +1,4 @@
-import Input from '../components/Input'
+import Input from '../components/__legacy__Input'
 import Preview from '../components/Preview'
 
 export default {

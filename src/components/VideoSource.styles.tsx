@@ -1,7 +1,7 @@
-import {MediaPreview} from '@sanity/base/components'
 import {LockIcon, UnknownIcon} from '@sanity/icons'
 import {Box, Card, Grid, Inline} from '@sanity/ui'
 import React, {memo, Suspense, useMemo} from 'react'
+import {MediaPreview} from 'sanity/_unstable'
 import styled from 'styled-components'
 import {suspend} from 'suspend-react'
 import {useErrorBoundary} from 'use-error-boundary'

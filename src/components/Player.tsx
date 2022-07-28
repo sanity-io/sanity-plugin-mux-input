@@ -1,9 +1,9 @@
 import 'media-chrome'
 
 import {Card, Stack, Text} from '@sanity/ui'
-import Hls from 'hls.js'
-import ProgressBar from 'part:@sanity/components/progress/bar'
+import Hls, {type ErrorData} from 'hls.js'
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react'
+import {useClient} from 'sanity'
 import styled from 'styled-components'
 import usePrevious from 'use-previous'
 
@@ -60,6 +60,7 @@ const MuxVideo = ({
   readOnly,
   videoReadyToPlay,
 }: Props) => {
+  const client = useClient()
   const options = useMemo(() => ({asset, secrets}), [asset, secrets])
   const source = useMemo(() => getVideoSrc(options), [options])
   const posterUrl = useMemo(() => getPosterSrc(options), [options])
@@ -91,7 +92,7 @@ const MuxVideo = ({
     }
     return false
   }, [asset?.data?.static_renditions?.status])
-  const [error, setError] = useState<Hls.errorData | null>(null)
+  const [error, setError] = useState<ErrorData | null>(null)
   const [isDeletedOnMux, setDeletedOnMux] = useState<boolean>(false)
   const videoContainer = useRef<HTMLDivElement>(null)
   const playRef = useRef<HTMLDivElement>(null)
@@ -130,7 +131,7 @@ const MuxVideo = ({
               videoContainer.current.style.display = 'none'
             }
             setError(data)
-            getAsset(asset.assetId!)
+            getAsset(client, asset.assetId!)
               .then(() => {
                 setDeletedOnMux(false)
               })
@@ -153,7 +154,7 @@ const MuxVideo = ({
         hls.current!.attachMedia(video.current!)
       })
     }
-  }, [asset.assetId, handleVideoReadyToPlay, source])
+  }, [asset.assetId, client, handleVideoReadyToPlay, source])
   const prevSource = usePrevious(source)
   // eslint-disable-next-line consistent-return
   useEffect(() => {
@@ -188,14 +189,14 @@ const MuxVideo = ({
     return (
       <UploadProgressCard>
         <UploadProgressStack>
-          <ProgressBar
+          {/* <ProgressBar
             percent={100}
             text={(isLoading !== true && isLoading) || 'Waiting for Mux to complete the file'}
             isInProgress
             showPercent
             animation
             color="primary"
-          />
+          /> */}
 
           <UploadCancelButton onClick={handleRemoveVideo}>Cancel</UploadCancelButton>
         </UploadProgressStack>
