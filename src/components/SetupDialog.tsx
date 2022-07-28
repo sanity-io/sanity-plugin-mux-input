@@ -1,16 +1,25 @@
 import {useId} from '@reach/auto-id'
-import {Dialog} from '@sanity/ui'
-import React from 'react'
-import {useClient} from 'sanity'
+import {Box, Dialog, Flex, Spinner} from '@sanity/ui'
+import React, {Suspense} from 'react'
 
-import Setup, {type Props} from './__legacy__Setup'
+import ConfigureApi, {type Props} from './ConfigureApi'
+import {Header} from './ConfigureApi.styled'
 
-export default function SetupDialog({onCancel, onSave, secrets}: Props) {
+export default function SetupDialog({onClose, onSave}: Props) {
   const id = `SetupDialog${useId()}`
-  const client = useClient()
   return (
-    <Dialog id={id} onClose={onCancel} header="Mux API Credentials" width={1}>
-      <Setup client={client} onSave={onSave} onCancel={onCancel} secrets={secrets} />
+    <Dialog id={id} onClose={onClose} header={<Header />} width={1}>
+      <Box padding={4} style={{position: 'relative'}}>
+        <Suspense
+          fallback={
+            <Flex justify="center">
+              <Spinner muted />
+            </Flex>
+          }
+        >
+          <ConfigureApi onSave={onSave} onClose={onClose} />
+        </Suspense>
+      </Box>
     </Dialog>
   )
 }

@@ -380,13 +380,11 @@ export default class MuxVideoInput extends Component<Props, State> {
         <Box style={{position: 'relative'}}>
           <Flex align="center" justify="space-between">
             <SetupButton
-              client={this.props.client}
               isLoading={this.state.isLoading}
               needsSetup={this.state.needsSetup}
-              onCancel={this.handleCancelSaveSetup}
+              onClose={this.handleCancelSaveSetup}
               onSave={this.handleSaveSetup}
               onSetup={this.handleSetupButtonClicked}
-              secrets={this.state.secrets}
               showSetup={this.state.showSetup}
             />
           </Flex>

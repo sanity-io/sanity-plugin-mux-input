@@ -1,10 +1,9 @@
 import {PlugIcon} from '@sanity/icons'
 import {Button} from '@sanity/ui'
 import React from 'react'
-import {useClient} from 'sanity'
 import styled from 'styled-components'
 
-import type {Props as SetupProps} from './__legacy__Setup'
+import type {Props as ConfigureApiProps} from './ConfigureApi'
 import SetupDialog from './SetupDialog'
 
 const SetupButtonContainer = styled.div`
@@ -14,22 +13,20 @@ const SetupButtonContainer = styled.div`
   transform: translate(0%, -10%);
 `
 
-export interface Props extends SetupProps {
+export interface Props extends ConfigureApiProps {
   needsSetup: boolean
   isLoading: boolean | string
   showSetup: boolean
   onSetup: () => void
 }
 export default function SetupButton({
-  onCancel,
+  onClose,
   onSave,
-  secrets,
   onSetup,
   isLoading,
   showSetup,
   needsSetup,
 }: Props) {
-  const client = useClient()
   const renderSetup = !isLoading && showSetup
   return (
     <SetupButtonContainer>
@@ -42,9 +39,7 @@ export default function SetupButton({
         radius={3}
         aria-label="Set up Mux credentials"
       />
-      {renderSetup && (
-        <SetupDialog client={client} secrets={secrets} onCancel={onCancel} onSave={onSave} />
-      )}
+      {renderSetup && <SetupDialog onClose={onClose} onSave={onSave} />}
     </SetupButtonContainer>
   )
 }

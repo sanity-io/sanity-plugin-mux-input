@@ -13,7 +13,7 @@ const Logo = styled.span`
 export const Header = () => (
   <>
     <Logo>
-      <MuxLogo />
+      <MuxLogo height={13} />
     </Logo>
     API Credentials
   </>

@@ -23,7 +23,10 @@ const ids = [
   'q',
   'r',
 ] as const
-export default function MuxLogo() {
+export interface Props {
+  height?: number
+}
+export default function MuxLogo({height = 26}) {
   const id = useId()
   const [titleId, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r] = useMemo<typeof ids>(
     () => ids.map((field) => `${id}-${field}`) as unknown as typeof ids,
@@ -37,7 +40,7 @@ export default function MuxLogo() {
       xmlns="http://www.w3.org/2000/svg"
       xmlSpace="preserve"
       viewBox="92.08878326416016 102.66712188720703 692.76123046875 219.99948120117188"
-      style={{height: '26px'}}
+      style={{height: `${height}px`}}
     >
       <title id={titleId}>Mux Logo</title>
       <defs>
