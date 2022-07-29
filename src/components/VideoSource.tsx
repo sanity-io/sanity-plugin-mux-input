@@ -20,7 +20,6 @@ import {
 } from '@sanity/ui'
 import {animate} from 'motion'
 import React, {memo, useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react'
-import {unstable_batchedUpdates} from 'react-dom'
 import {useClient} from 'sanity'
 import styled from 'styled-components'
 import {getDevicePixelRatio} from 'use-device-pixel-ratio'
@@ -42,16 +41,12 @@ function AssetActionsMenu(props: AssetActionsMenuProps) {
 
   const handleDelete = useCallback(() => setDialogState('confirm-delete'), [])
   const handleClick = useCallback(() => {
-    unstable_batchedUpdates(() => {
-      setDialogState(false)
-      setOpen(true)
-    })
+    setDialogState(false)
+    setOpen(true)
   }, [setDialogState])
   const handleClose = useCallback(() => {
-    unstable_batchedUpdates(() => {
-      setDialogState(false)
-      setOpen(false)
-    })
+    setDialogState(false)
+    setOpen(false)
   }, [setDialogState])
 
   useEffect(() => {

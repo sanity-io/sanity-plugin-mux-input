@@ -85,7 +85,6 @@
     "@sanity/plugin-kit": "^0.1.0-v3-studio.1",
     "@sanity/ui": "^0.37.12",
     "@types/react": "^17",
-    "@types/react-dom": "^18.0.6",
     "@types/styled-components": "^5.1.25",
     "@typescript-eslint/eslint-plugin": "^5.31.0",
     "@typescript-eslint/parser": "^5.31.0",
@@ -105,9 +104,8 @@
     "prettier": "^2.7.1",
     "prettier-plugin-packagejson": "^2.2.18",
     "prop-types": "^15.8.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-is": "^18.2.0",
+    "react": "^17",
+    "react-is": "^17",
     "sanipack": "^2.1.0",
     "sanity": "dev-preview",
     "semantic-release": "^19.0.3",
@@ -119,7 +117,6 @@
     "@sanity/ui": "^0.37 || latest",
     "prop-types": "^15",
     "react": "^17 || ^18",
-    "react-dom": "^17 || ^18",
     "react-is": "^17 || ^18",
     "sanity": "dev-preview || ^3",
     "styled-components": "^5.2.0"
@@ -133,7 +130,8 @@
   "sanityExchangeUrl": "https://www.sanity.io/plugins/sanity-plugin-mux-input",
   "sanityPlugin": {
     "verifyPackage": {
-      "eslintImports": false
+      "eslintImports": false,
+      "tsconfig": false
     }
   }
 }
