@@ -2,6 +2,8 @@
 // Not inside event callbacks or a useEffect.
 // They may be called dynamically, unlike useEffect
 
+// @TODO rename to readSigningPair
+
 import type {SanityClient} from '@sanity/client'
 import {suspend} from 'suspend-react'
 

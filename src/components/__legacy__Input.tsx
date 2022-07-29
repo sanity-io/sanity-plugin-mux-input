@@ -5,12 +5,10 @@ import {Box, Button, Checkbox, Dialog, Flex, Grid, Inline, Spinner, Stack, Text}
 import React, {Component} from 'react'
 import {of} from 'rxjs'
 import {tap} from 'rxjs/operators'
-import type {SanityDocument} from 'sanity'
 import type {ObservePathsFn} from 'sanity/_unstable'
 import {PatchEvent, set, setIfMissing, unset} from 'sanity/form'
 
 import {deleteAsset, getAsset} from '../actions/assets'
-import {fetchSecrets} from '../actions/secrets'
 import type {Config, MuxInputProps, Secrets, VideoAssetDocument} from '../util/types'
 import Uploader from './__legacy__Uploader'
 import InputBrowser from './InputBrowser'
@@ -18,48 +16,12 @@ import InputError from './InputError'
 import SetupButton from './SetupButton'
 import SetupNotice from './SetupNotice'
 
-const cachedSecrets: Secrets = {
-  token: null,
-  secretKey: null,
-  enableSignedUrls: false,
-  signingKeyId: null,
-  signingKeyPrivate: null,
-}
-
-function validateSecrets(secrets: Secrets) {
-  if (!secrets.token || !secrets.secretKey) return false
-
-  return true
-}
-
-function getSecrets(
-  client: SanityClient
-): Promise<{isInitialSetup: boolean; needsSetup: boolean; secrets: Secrets}> {
-  if (cachedSecrets.token) {
-    return Promise.resolve({
-      isInitialSetup: true,
-      needsSetup: false,
-      secrets: cachedSecrets,
-    })
-  }
-  return fetchSecrets(client).then(({secrets, exists}) => {
-    cachedSecrets.token = secrets?.token ?? null
-    cachedSecrets.secretKey = secrets?.secretKey ?? null
-    cachedSecrets.enableSignedUrls = secrets?.enableSignedUrls ?? false
-    cachedSecrets.signingKeyId = secrets?.signingKeyId ?? null
-    cachedSecrets.signingKeyPrivate = secrets?.signingKeyPrivate ?? null
-
-    return {
-      isInitialSetup: !exists,
-      needsSetup: !validateSecrets(cachedSecrets),
-      secrets: cachedSecrets,
-    }
-  })
-}
-
 interface Props extends MuxInputProps {
   config: Config
   client: SanityClient
+  secrets: Secrets
+  needsSetup: boolean
+  isInitialSetup: boolean
   observePaths: ObservePathsFn
 }
 
@@ -70,10 +32,7 @@ interface State {
   deleteAssetDocumentChecked: boolean
   error: Error | null
   hasFocus: boolean
-  isInitialSetup: boolean
   isLoading: boolean | 'secrets'
-  needsSetup: boolean
-  secrets: Secrets | null
   showSetup: boolean
   showBrowser: boolean
   videoReadyToPlay: boolean
@@ -87,10 +46,7 @@ export default class MuxVideoInput extends Component<Props, State> {
     deleteAssetDocumentChecked: true,
     error: null,
     hasFocus: false,
-    isInitialSetup: true,
     isLoading: 'secrets',
-    needsSetup: true,
-    secrets: null,
     showSetup: false,
     showBrowser: false,
     videoReadyToPlay: false,
@@ -102,17 +58,10 @@ export default class MuxVideoInput extends Component<Props, State> {
   subscription?: any
 
   componentDidMount() {
-    getSecrets(this.props.client)
-      .then(({secrets, isInitialSetup, needsSetup}) => {
-        this.setState({
-          secrets,
-          isInitialSetup,
-          needsSetup,
-          // If there is an asset continue loading
-          isLoading: !!this.props.value?.asset,
-        })
-      })
-      .catch((error) => this.setState({error}))
+    this.setState({
+      // If there is an asset continue loading
+      isLoading: !!this.props.value?.asset,
+    })
     this.setupAssetListener()
   }
 
@@ -231,23 +180,9 @@ export default class MuxVideoInput extends Component<Props, State> {
     this.setState((prevState) => ({showSetup: !prevState.showSetup}))
   }
 
-  handleSaveSetup = ({
-    token,
-    secretKey,
-    enableSignedUrls,
-    signingKeyId,
-    signingKeyPrivate,
-  }: Secrets) => {
-    cachedSecrets.token = token
-    cachedSecrets.secretKey = secretKey
-    cachedSecrets.enableSignedUrls = enableSignedUrls
-    cachedSecrets.signingKeyId = signingKeyId
-    cachedSecrets.signingKeyPrivate = signingKeyPrivate
-
+  handleSaveSetup = () => {
     this.setState({
       showSetup: false,
-      secrets: cachedSecrets,
-      needsSetup: !validateSecrets(cachedSecrets),
     })
   }
 
@@ -381,11 +316,12 @@ export default class MuxVideoInput extends Component<Props, State> {
           <Flex align="center" justify="space-between">
             <SetupButton
               isLoading={this.state.isLoading}
-              needsSetup={this.state.needsSetup}
+              needsSetup={this.props.needsSetup}
               onClose={this.handleCancelSaveSetup}
               onSave={this.handleSaveSetup}
               onSetup={this.handleSetupButtonClicked}
               showSetup={this.state.showSetup}
+              secrets={this.props.secrets}
             />
           </Flex>
           {this.state.isLoading === 'secrets' && (
@@ -397,14 +333,14 @@ export default class MuxVideoInput extends Component<Props, State> {
             </Box>
           )}
 
-          {this.state.needsSetup && (
+          {this.props.needsSetup && (
             <SetupNotice
               isLoading={this.state.isLoading}
-              isInitialSetup={this.state.isInitialSetup}
+              isInitialSetup={this.props.isInitialSetup}
             />
           )}
 
-          {!this.state.needsSetup && this.state.secrets && (
+          {!this.props.needsSetup && this.props.secrets && (
             <Uploader
               config={this.props.config}
               client={this.props.client}
@@ -413,7 +349,7 @@ export default class MuxVideoInput extends Component<Props, State> {
               onFocus={this.handleFocus}
               onSetupButtonClicked={this.handleSetupButtonClicked}
               onUploadComplete={this.handleOnUploadComplete}
-              secrets={this.state.secrets}
+              secrets={this.props.secrets}
               onBrowse={this.handleBrowseButton}
               asset={this.state.assetDocument!}
               onRemove={this.handleRemoveVideoButtonClicked}
@@ -428,7 +364,7 @@ export default class MuxVideoInput extends Component<Props, State> {
             <InputBrowser
               onClose={this.handleCloseBrowser}
               onSelect={this.handleSelectAsset}
-              secrets={this.state.secrets!}
+              secrets={this.props.secrets!}
             />
           )}
 

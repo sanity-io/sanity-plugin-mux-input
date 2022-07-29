@@ -1,31 +1,6 @@
 import type {SanityClient} from '@sanity/client'
 import {defer} from 'rxjs'
 
-import type {Secrets} from '../util/types'
-
-const cache: {secrets: Secrets | null; exists: boolean} = {
-  secrets: null,
-  exists: false,
-}
-
-export function fetchSecrets(client: SanityClient) {
-  if (cache.exists) {
-    return Promise.resolve(cache)
-  }
-
-  return client.fetch(/* groq */ `*[_id == "secrets.mux"][0]`).then((secrets: Secrets | null) => {
-    cache.exists = Boolean(secrets)
-    cache.secrets = {
-      token: secrets?.token || null,
-      secretKey: secrets?.secretKey || null,
-      enableSignedUrls: secrets?.enableSignedUrls || false,
-      signingKeyId: secrets?.signingKeyId || null,
-      signingKeyPrivate: secrets?.signingKeyPrivate || null,
-    }
-    return cache
-  })
-}
-
 // eslint-disable-next-line max-params
 export function saveSecrets(
   client: SanityClient,
@@ -45,17 +20,7 @@ export function saveSecrets(
     signingKeyPrivate,
   }
 
-  return client.createOrReplace(doc).then(() => {
-    cache.exists = true
-    cache.secrets = {
-      token,
-      secretKey,
-      enableSignedUrls,
-      signingKeyId,
-      signingKeyPrivate,
-    }
-    return cache.secrets
-  })
+  return client.createOrReplace(doc)
 }
 
 export function createSigningKeys(client: SanityClient) {

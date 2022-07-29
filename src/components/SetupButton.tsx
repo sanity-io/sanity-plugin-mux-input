@@ -4,7 +4,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 import type {Props as ConfigureApiProps} from './ConfigureApi'
-import SetupDialog from './SetupDialog'
+import ConfigureApi from './ConfigureApi'
 
 const SetupButtonContainer = styled.div`
   position: relative;
@@ -26,6 +26,7 @@ export default function SetupButton({
   isLoading,
   showSetup,
   needsSetup,
+  secrets,
 }: Props) {
   const renderSetup = !isLoading && showSetup
   return (
@@ -39,7 +40,7 @@ export default function SetupButton({
         radius={3}
         aria-label="Set up Mux credentials"
       />
-      {renderSetup && <SetupDialog onClose={onClose} onSave={onSave} />}
+      {renderSetup && <ConfigureApi onClose={onClose} onSave={onSave} secrets={secrets} />}
     </SetupButtonContainer>
   )
 }
