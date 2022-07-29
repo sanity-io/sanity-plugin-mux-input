@@ -135,7 +135,8 @@
   "targets": {
     "main": {
       "includeNodeModules": [
-        "jsonwebtoken-esm"
+        "jsonwebtoken-esm",
+        "media-chrome"
       ]
     }
   }
