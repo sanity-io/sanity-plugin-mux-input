@@ -20,7 +20,6 @@
   },
   "license": "MIT",
   "author": "Sanity.io <hello@sanity.io>",
-  "sideEffects": false,
   "exports": {
     ".": {
       "require": "./lib/cjs/index.js",
@@ -130,8 +129,7 @@
   "sanityExchangeUrl": "https://www.sanity.io/plugins/sanity-plugin-mux-input",
   "sanityPlugin": {
     "verifyPackage": {
-      "eslintImports": false,
-      "tsconfig": false
+      "eslintImports": false
     }
   }
 }

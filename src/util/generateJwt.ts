@@ -30,20 +30,10 @@ export function generateJwt<T extends Audience>(
     throw new TypeError('Missing signingKeyPrivate')
   }
 
-  const {default: sign}: {default: typeof import('jsonwebtoken-esm/sign')['default']} =
-    suspend(async () => {
-      const local = await import('jsonwebtoken-esm/sign')
-      if (!local.default) {
-        // Fallback to loading on demand if the local bundling minified to agressively for some reason
-        return import(
-          // @ts-expect-error - this is a dynamic import that loads on runtime
-          new URL(
-            'https://cdn.skypack.dev/pin/jsonwebtoken-esm@v1.0.3-p8N0qksX2r9oYz3jfz0a/mode=imports,min/optimized/jsonwebtoken-esm/sign.js'
-          )
-        )
-      }
-      return local
-    }, ['sanity-plugin-mux-input', 'jsonwebtoken-esm/sign'])
+  const {default: sign}: {default: typeof import('jsonwebtoken-esm/sign')['default']} = suspend(
+    () => import('jsonwebtoken-esm/sign'),
+    ['sanity-plugin-mux-input', 'jsonwebtoken-esm/sign']
+  )
 
   return sign(
     payload ? JSON.parse(JSON.stringify(payload, (_, v) => v ?? undefined)) : {},
