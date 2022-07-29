@@ -10,6 +10,7 @@ import styled, {keyframes} from 'styled-components'
 import type {Secrets, VideoAssetDocument} from '../util/types'
 import EditThumbnailDialog from './EditThumbnailDialog'
 import {type FileInputButtonProps, FileInputButton} from './FileInputButton'
+import {withFocusRing} from './withFocusRing'
 
 interface ErrorDialogProps {
   message: string
@@ -94,6 +95,8 @@ export const UploadProgressStack = styled(Stack).attrs({space: 5})`
 const ctrlKey = 17
 const cmdKey = 91
 
+const UploadCardWithFocusRing = withFocusRing(Card)
+
 interface UploadCardProps {
   children: React.ReactNode
   onPaste: React.ClipboardEventHandler<HTMLInputElement>
@@ -127,7 +130,8 @@ export const UploadCard = forwardRef<HTMLDivElement, UploadCardProps>(
     }, [])
 
     return (
-      <Card
+      <UploadCardWithFocusRing
+        height="fill"
         ref={forwardedRef}
         padding={0}
         radius={0}
@@ -145,7 +149,7 @@ export const UploadCard = forwardRef<HTMLDivElement, UploadCardProps>(
       >
         <HiddenInput ref={inputRef} onPaste={onPaste} />
         {children}
-      </Card>
+      </UploadCardWithFocusRing>
     )
   }
 )

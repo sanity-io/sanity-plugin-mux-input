@@ -1,7 +1,9 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react'
 import {useClient} from 'sanity'
+import {PatchEvent, set, setIfMissing} from 'sanity/form'
 
-import type {VideoAssetDocument} from '../util/types'
+import type {SetDialogState} from '../hooks/useDialogState'
+import type {MuxInputProps, VideoAssetDocument} from '../util/types'
 import VideoSource, {type Props as VideoSourceProps} from './VideoSource'
 
 const PER_PAGE = 20
@@ -10,11 +12,12 @@ function createQuery(start = 0, end = PER_PAGE) {
   return /* groq */ `*[_type == "mux.videoAsset"] | order(_updatedAt desc) [${start}...${end}] {_id, playbackId, thumbTime, data}`
 }
 
-export interface Props {
-  onSelect: (asset: VideoAssetDocument) => void
+export interface Props extends Pick<MuxInputProps, 'onChange'> {
+  asset?: VideoAssetDocument | null | undefined
+  setDialogState: SetDialogState
 }
 
-export default function SelectAssets({onSelect}: Props) {
+export default function SelectAssets({asset, onChange, setDialogState}: Props) {
   const client = useClient()
   const pageNoRef = useRef(0)
   const [isLastPage, setLastPage] = useState(false)
@@ -42,9 +45,15 @@ export default function SelectAssets({onSelect}: Props) {
       if (!selected) {
         throw new TypeError(`Failed to find video asset with id: ${id}`)
       }
-      onSelect(selected)
+      onChange(
+        PatchEvent.from([
+          setIfMissing({asset: {}}),
+          set({_type: 'reference', _weak: true, _ref: selected._id}, ['asset']),
+        ])
+      )
+      setDialogState(false)
     },
-    [assets, onSelect]
+    [assets, onChange, setDialogState]
   )
   const handleLoadMore = useCallback<VideoSourceProps['onLoadMore']>(() => {
     fetchPage(++pageNoRef.current)

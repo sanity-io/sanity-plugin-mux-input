@@ -39,7 +39,7 @@ export type MuxApiUrl = MuxThumbnailUrl | MuxStoryboardUrl | MuxVideoUrl
 
 // 'preserve' by default
 // @url: https://docs.mux.com/guides/video/get-images-from-a-video#thumbnail-query-string-parameters
-export type FitMode = 'preserve' | 'crop' | 'smartcrop'
+export type FitMode = 'preserve' | 'crop' | 'smartcrop' | 'pad'
 
 export interface ThumbnailOptions {
   fit_mode?: FitMode

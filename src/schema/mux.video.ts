@@ -13,6 +13,7 @@ const video = defineField({
       title: 'Video',
       name: 'asset',
       type: 'reference',
+      weak: true,
       to: [{type: muxVideoAssetType}],
     },
   ],

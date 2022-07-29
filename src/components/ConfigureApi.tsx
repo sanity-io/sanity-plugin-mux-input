@@ -16,6 +16,7 @@ import React, {memo, useCallback, useEffect, useMemo, useRef} from 'react'
 import {useClient} from 'sanity'
 import {clear, preload} from 'suspend-react'
 
+import type {SetDialogState} from '../hooks/useDialogState'
 import {useSaveSecrets} from '../hooks/useSaveSecrets'
 import {useSecretsFormState} from '../hooks/useSecretsFormState'
 import {cacheNs} from '../util/constants'
@@ -25,15 +26,15 @@ import {Header} from './ConfigureApi.styled'
 import FormField from './FormField'
 
 export interface Props {
-  onClose: () => void
-  onSave: () => void
+  setDialogState: SetDialogState
   secrets: Secrets
 }
 const fieldNames = ['token', 'secretKey', 'enableSignedUrls'] as const
-function ConfigureApi({onSave, onClose, secrets}: Props) {
+function ConfigureApi({secrets, setDialogState}: Props) {
   const client = useClient()
   const [state, dispatch] = useSecretsFormState(secrets)
   const hasSecretsInitially = useMemo(() => secrets.token && secrets.secretKey, [secrets])
+  const handleClose = useCallback(() => setDialogState(false), [setDialogState])
   const dirty = useMemo(
     () =>
       secrets.token !== state.token ||
@@ -66,8 +67,7 @@ function ConfigureApi({onSave, onClose, secrets}: Props) {
               () => Promise.resolve(savedSecrets),
               [cacheNs, secretsId, projectId, dataset]
             )
-            onSave()
-            onClose()
+            setDialogState(false)
           })
           .catch((err) => dispatch({type: 'error', payload: err.message}))
           .finally(() => {
@@ -75,7 +75,7 @@ function ConfigureApi({onSave, onClose, secrets}: Props) {
           })
       }
     },
-    [client, dispatch, handleSaveSecrets, onClose, onSave, state]
+    [client, dispatch, handleSaveSecrets, setDialogState, state]
   )
   const handleChangeToken = useCallback(
     (event: React.FormEvent<HTMLInputElement>) => {
@@ -106,7 +106,7 @@ function ConfigureApi({onSave, onClose, secrets}: Props) {
   }, [firstField])
 
   return (
-    <Dialog id={id} onClose={onClose} header={<Header />} width={1}>
+    <Dialog id={id} onClose={handleClose} header={<Header />} width={1}>
       <Box padding={4} style={{position: 'relative'}}>
         <form onSubmit={handleSubmit} noValidate>
           <Stack space={4}>
@@ -193,7 +193,12 @@ function ConfigureApi({onSave, onClose, secrets}: Props) {
                 mode="default"
                 type="submit"
               />
-              <Button disabled={state.submitting} text="Cancel" mode="bleed" onClick={onClose} />
+              <Button
+                disabled={state.submitting}
+                text="Cancel"
+                mode="bleed"
+                onClick={handleClose}
+              />
             </Inline>
             {state.error && (
               <Card padding={[3, 3, 3]} radius={2} shadow={1} tone="critical">

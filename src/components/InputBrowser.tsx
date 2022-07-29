@@ -1,17 +1,19 @@
 import {useId} from '@reach/auto-id'
 import {Dialog} from '@sanity/ui'
-import React from 'react'
+import React, {useCallback} from 'react'
 
+import type {SetDialogState} from '../hooks/useDialogState'
 import SelectAsset, {type Props as SelectAssetProps} from './SelectAsset'
 
-interface Props extends Pick<SelectAssetProps, 'onSelect'> {
-  onClose: () => void
+interface Props extends Pick<SelectAssetProps, 'onChange' | 'asset'> {
+  setDialogState: SetDialogState
 }
-export default function InputBrowser({onClose, onSelect}: Props) {
+export default function InputBrowser({setDialogState, asset, onChange}: Props) {
   const id = `InputBrowser${useId()}`
+  const handleClose = useCallback(() => setDialogState(false), [setDialogState])
   return (
-    <Dialog __unstable_autoFocus header="Select video" id={id} onClose={onClose} width={2}>
-      <SelectAsset onSelect={onSelect} />
+    <Dialog __unstable_autoFocus header="Select video" id={id} onClose={handleClose} width={2}>
+      <SelectAsset asset={asset} onChange={onChange} setDialogState={setDialogState} />
     </Dialog>
   )
 }

@@ -1,31 +1,32 @@
 // This component needs to be refactored into a functional component
 
 import type {SanityClient} from '@sanity/client'
-import {Card, Stack, Text} from '@sanity/ui'
 import React, {Component} from 'react'
 import {type Observable, Subject} from 'rxjs'
 import {takeUntil, tap} from 'rxjs/operators'
+import {PatchEvent, set, setIfMissing} from 'sanity/form'
 
 import {uploadFile, uploadUrl} from '../actions/upload'
+import {type DialogState, type SetDialogState} from '../hooks/useDialogState'
 import {extractDroppedFiles} from '../util/extractFiles'
-import type {Config, Secrets, VideoAssetDocument} from '../util/types'
+import type {Config, MuxInputProps, Secrets, VideoAssetDocument} from '../util/types'
+import InputBrowser from './InputBrowser'
 import Player from './Player'
-import {ErrorDialog, UploadCard, UploadPlaceholder, UploadProgress} from './Uploader.styles'
+import PlayerActionsMenu from './PlayerActionsMenu'
+import {UploadCard, UploadPlaceholder} from './Uploader.styles'
+import {UploadProgress} from './UploadProgress'
 
-interface Props {
+interface Props extends Pick<MuxInputProps, 'onChange' | 'readOnly'> {
   config: Config
   client: SanityClient
   hasFocus: boolean
   onFocus: React.FocusEventHandler<HTMLDivElement>
   onBlur: React.FocusEventHandler<HTMLDivElement>
   onBrowse: () => void
-  onRemove: () => void
-  onSetupButtonClicked: () => void
-  onUploadComplete: (asset: VideoAssetDocument) => void
   secrets: Secrets
   asset: VideoAssetDocument | null | undefined
-  readOnly: boolean
-  handleRemoveVideo: () => void
+  dialogState: DialogState
+  setDialogState: SetDialogState
 }
 
 interface State {
@@ -83,7 +84,7 @@ class MuxVideoInputUploader extends Component<Props, State> {
     this.setState({uploadProgress: evt.percent})
   }
 
-  onUpload = (files: FileList) => {
+  onUpload = (files: FileList | File[]) => {
     this.setState({uploadProgress: 0, fileInfo: null, uuid: null})
     this.upload = uploadFile(this.props.config, this.props.client, files[0], {
       enableSignedUrls: this.props.secrets.enableSignedUrls,
@@ -134,7 +135,12 @@ class MuxVideoInputUploader extends Component<Props, State> {
 
   handleUploadSuccess = (asset: VideoAssetDocument) => {
     this.setState({uploadProgress: 100})
-    this.props.onUploadComplete(asset)
+    this.props.onChange(
+      PatchEvent.from([
+        setIfMissing({asset: {}}),
+        set({_type: 'reference', _weak: true, _ref: asset._id}, ['asset']),
+      ])
+    )
   }
 
   handlePaste: React.ClipboardEventHandler<HTMLInputElement> = (event) => {
@@ -199,87 +205,71 @@ class MuxVideoInputUploader extends Component<Props, State> {
     }
   }
 
-  handleErrorClose = () => {
-    if (this.state.uploadProgress !== null) {
-      return
-    }
-    this.setState(
-      {
-        invalidFile: false,
-        invalidPaste: false,
-        error: null,
-        uploadProgress: null,
-      },
-      () => this.container.current?.focus()
-    )
-  }
-
-  handleSetupButtonClicked = () => {
-    this.handleErrorClose()
-    this.props.onSetupButtonClicked()
-  }
-
   render() {
     if (this.state.uploadProgress !== null) {
       return (
         <UploadProgress
-          error={this.state.error}
           onCancel={this.handleCancelUploadButtonClick!}
           progress={this.state.uploadProgress}
-          fileInfo={this.state.fileInfo}
-          url={this.state.url}
+          filename={this.state.fileInfo?.name || this.state.url}
         />
       )
     }
 
-    const isSigned = this.props.asset?.data?.playback_ids?.[0]?.policy === 'signed'
+    if (this.state.error) {
+      // @TODO better error handling
+      throw this.state.error
+    }
 
     return (
-      <UploadCard
-        onBlur={this.props.onBlur}
-        onFocus={this.props.onFocus}
-        onDrop={this.handleDrop}
-        onDragOver={this.handleDragOver}
-        onDragLeave={this.handleDragLeave}
-        onDragEnter={this.handleDragEnter}
-        onPaste={this.handlePaste}
-        ref={this.container}
-      >
-        {this.state.error && (
-          <ErrorDialog
-            message={this.state.error.message}
-            onClose={this.handleErrorClose}
-            onSetup={this.handleSetupButtonClicked}
-          />
-        )}
-        {this.props.asset ? (
-          <Stack space={2}>
-            {isSigned && (
-              <Card padding={3} radius={2} shadow={1} tone="positive">
-                <Text size={1}>This Mux asset is using a signed url.</Text>
-              </Card>
-            )}
+      <>
+        <UploadCard
+          onBlur={this.props.onBlur}
+          onFocus={this.props.onFocus}
+          onDrop={this.handleDrop}
+          onDragOver={this.handleDragOver}
+          onDragLeave={this.handleDragLeave}
+          onDragEnter={this.handleDragEnter}
+          onPaste={this.handlePaste}
+          ref={this.container}
+        >
+          {this.props.asset ? (
             <Player
-              secrets={this.props.secrets}
               readOnly={this.props.readOnly}
-              onBrowse={this.props.onBrowse}
-              onRemove={this.props.onRemove}
-              onUpload={this.onUpload}
               asset={this.props.asset}
-              handleRemoveVideo={this.props.handleRemoveVideo}
+              onChange={this.props.onChange}
+              dialogState={this.props.dialogState}
+              setDialogState={this.props.setDialogState}
+              buttons={
+                <PlayerActionsMenu
+                  asset={this.props.asset}
+                  dialogState={this.props.dialogState}
+                  setDialogState={this.props.setDialogState}
+                  onChange={this.props.onChange}
+                  onUpload={this.onUpload}
+                  readOnly={this.props.readOnly}
+                />
+              }
             />
-          </Stack>
-        ) : (
-          <UploadPlaceholder
-            onBrowse={this.props.onBrowse}
-            onUpload={this.onUpload}
-            isDraggingOver={this.state.isDraggingOver}
-            hasFocus={this.props.hasFocus}
-            invalidPaste={this.state.invalidPaste}
-            invalidFile={this.state.invalidFile}
+          ) : (
+            <UploadPlaceholder
+              onBrowse={this.props.onBrowse}
+              onUpload={this.onUpload}
+              isDraggingOver={this.state.isDraggingOver}
+              hasFocus={this.props.hasFocus}
+              invalidPaste={this.state.invalidPaste}
+              invalidFile={this.state.invalidFile}
+            />
+          )}
+        </UploadCard>
+        {this.props.dialogState === 'select-video' && (
+          <InputBrowser
+            asset={this.props.asset}
+            onChange={this.props.onChange}
+            setDialogState={this.props.setDialogState}
           />
         )}
-      </UploadCard>
+      </>
     )
   }
 }
