@@ -70,20 +70,13 @@ More information for this feature of the plugin can be found on Mux's [documenta
 To enable [static MP4 renditions](https://docs.mux.com/guides/video/enable-static-mp4-renditions), add `mp4_support: 'standard'` to the `options` of your `mux.video` schema type.
 
 js```
-{
-title: "Video blog post",
-name: "videoBlogPost",
-type: "document",
-fields: [
-{ title: "Title", name: "title", type: "string" },
-{
-title: "Video file",
-name: "video",
-type: "mux.video",
-options: {mp4_support: 'standard'}
-}
-]
-}
+import {muxInput} from 'sanity-plugin-mux-input'
+
+export deafult createConfig({
+plugins: [muxInput({
+mp4_support: "standard"
+})]
+})
 
 ```
 

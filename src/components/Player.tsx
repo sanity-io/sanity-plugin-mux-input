@@ -132,7 +132,7 @@ const MuxVideo = ({asset, buttons, readOnly, onChange, dialogState, setDialogSta
         progress={100}
         filename={asset?.filename}
         text={(isLoading !== true && isLoading) || 'Waiting for Mux to complete the file'}
-        onCancel={readOnly ? undefined : () => handleCancelUpload().catch(setError)}
+        onCancel={readOnly ? undefined : () => handleCancelUpload()}
       />
     )
   }

@@ -55,6 +55,7 @@ export const muxInput = createPlugin<Partial<Config> | void>((userConfig) => {
         if (isMuxInputPreviewProps(props)) {
           return (
             <AspectRatioCard>
+              {/* @ts-expect-error */}
               <Preview {...props} />
             </AspectRatioCard>
           )

@@ -1,36 +1,25 @@
-import React, {useMemo} from 'react'
+import React from 'react'
 import {SanityDefaultPreview} from 'sanity/_unstable'
 
-import type {MuxAsset, VideoAssetDocument} from '../util/types'
+import {useAssetDocumentValues} from '../hooks/useAssetDocumentValues'
 import {VideoThumbnail} from './VideoSource.styled'
 
 export interface MuxVideoPreviewProps {
   value: {
-    playbackId?: VideoAssetDocument['playbackId']
-    status?: VideoAssetDocument['status']
-    thumbTime?: VideoAssetDocument['thumbTime']
-    filename?: VideoAssetDocument['filename']
-    duration?: MuxAsset['duration']
-    playbackIds?: MuxAsset['playback_ids']
+    asset: {
+      _type: 'reference'
+      _ref: string
+    }
   }
 }
-const MuxVideoPreview = ({value = {}}: MuxVideoPreviewProps) => {
-  const asset = useMemo(() => {
-    if (!value || value.status !== 'ready' || !value.playbackId || !value.playbackIds) return null
+const MuxVideoPreview = ({value}: MuxVideoPreviewProps) => {
+  const assetDocumentValues = useAssetDocumentValues(value?.asset!)
 
-    return {
-      playbackId: value.playbackId,
-      status: value.status,
-      thumbTime: value.thumbTime,
-      filename: value.filename,
-      duration: value.duration,
-      data: {playback_ids: value.playbackIds},
-    }
-  }, [value])
-  if (asset) {
-    return <VideoThumbnail asset={asset} width={640} />
+  if (assetDocumentValues.value) {
+    return <VideoThumbnail asset={assetDocumentValues.value} width={640} />
   }
 
+  // @ts-expect-error
   const {filename, playbackId, status} = value ?? {}
 
   return (
