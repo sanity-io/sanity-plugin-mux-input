@@ -6,7 +6,7 @@ import {getDevicePixelRatio} from 'use-device-pixel-ratio'
 
 import type {SetDialogState} from '../hooks/useDialogState'
 import type {VideoAssetDocument} from '../util/types'
-import {VideoThumbnail} from './VideoSource.styles'
+import {VideoThumbnail} from './VideoSource.styled'
 
 export interface Props {
   asset: VideoAssetDocument

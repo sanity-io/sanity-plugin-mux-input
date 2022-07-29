@@ -70,7 +70,7 @@
     "lodash": "^4.17.21",
     "lodash.memoize": "^4.1.2",
     "media-chrome": "^0.8.1",
-    "react-icons": "^4.4.0",
+    "motion": "^10.13.1",
     "react-rx": "^2.0.4",
     "rxjs": "^6",
     "scroll-into-view-if-needed": "^2.2.29",

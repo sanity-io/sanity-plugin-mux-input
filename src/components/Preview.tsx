@@ -2,7 +2,7 @@ import React, {useMemo} from 'react'
 import {SanityDefaultPreview} from 'sanity/_unstable'
 
 import type {MuxAsset, VideoAssetDocument} from '../util/types'
-import {VideoThumbnail} from './VideoSource.styles'
+import {VideoThumbnail} from './VideoSource.styled'
 
 export interface MuxVideoPreviewProps {
   value: {

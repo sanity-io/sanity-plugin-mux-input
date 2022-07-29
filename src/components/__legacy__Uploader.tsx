@@ -14,7 +14,7 @@ import type {Config, MuxInputProps, Secrets, VideoAssetDocument} from '../util/t
 import InputBrowser from './InputBrowser'
 import Player from './Player'
 import PlayerActionsMenu from './PlayerActionsMenu'
-import {UploadCard} from './Uploader.styles'
+import {UploadCard} from './Uploader.styled'
 import UploadPlaceholder from './UploadPlaceholder'
 import {UploadProgress} from './UploadProgress'
 

@@ -9,7 +9,7 @@ import VideoSource, {type Props as VideoSourceProps} from './VideoSource'
 const PER_PAGE = 20
 
 function createQuery(start = 0, end = PER_PAGE) {
-  return /* groq */ `*[_type == "mux.videoAsset"] | order(_updatedAt desc) [${start}...${end}] {_id, playbackId, thumbTime, data}`
+  return /* groq */ `*[_type == "mux.videoAsset"] | order(_updatedAt desc) [${start}...${end}]`
 }
 
 export interface Props extends Pick<MuxInputProps, 'onChange'> {

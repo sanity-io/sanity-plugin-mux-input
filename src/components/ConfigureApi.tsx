@@ -60,13 +60,10 @@ function ConfigureApi({secrets, setDialogState}: Props) {
         dispatch({type: 'submit'})
         const {token, secretKey, enableSignedUrls} = state
         handleSaveSecrets({token, secretKey, enableSignedUrls})
-          .then(async (savedSecrets) => {
+          .then((savedSecrets) => {
             const {projectId, dataset} = client.config()
             clear([cacheNs, secretsId, projectId, dataset])
-            await preload(
-              () => Promise.resolve(savedSecrets),
-              [cacheNs, secretsId, projectId, dataset]
-            )
+            preload(() => Promise.resolve(savedSecrets), [cacheNs, secretsId, projectId, dataset])
             setDialogState(false)
           })
           .catch((err) => dispatch({type: 'error', payload: err.message}))

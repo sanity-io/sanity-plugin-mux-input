@@ -2,12 +2,12 @@ import type {SanityClient} from '@sanity/client'
 import {suspend} from 'suspend-react'
 
 import {readSecrets} from './readSecrets'
-import type {ThumbnailOptions} from './types'
+import type {ThumbnailOptions, AnimatedThumbnailOptions} from './types'
 
 export type Audience = 'g' | 's' | 't' | 'v'
 
 export type Payload<T extends Audience> = T extends 'g'
-  ? never
+  ? AnimatedThumbnailOptions
   : T extends 's'
   ? never
   : T extends 't'

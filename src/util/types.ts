@@ -32,10 +32,11 @@ export interface SignableSecrets extends Omit<Secrets, 'signingKeyId' | 'signing
 
 export type MuxImageOrigin = `https://image.mux.com`
 export type MuxThumbnailUrl = `${MuxImageOrigin}/${string}/thumbnail.png?${string}`
+export type MuxAnimatedThumbnailUrl = `${MuxImageOrigin}/${string}/animated.gif?${string}`
 export type MuxStoryboardUrl = `${MuxImageOrigin}/${string}/storyboard.vtt?${string}`
 export type MuxVideoOrigin = `https://stream.mux.com`
 export type MuxVideoUrl = `${MuxVideoOrigin}/${string}.m3u8?${string}`
-export type MuxApiUrl = MuxThumbnailUrl | MuxStoryboardUrl | MuxVideoUrl
+export type MuxApiUrl = MuxThumbnailUrl | MuxAnimatedThumbnailUrl | MuxStoryboardUrl | MuxVideoUrl
 
 // 'preserve' by default
 // @url: https://docs.mux.com/guides/video/get-images-from-a-video#thumbnail-query-string-parameters
@@ -46,6 +47,20 @@ export interface ThumbnailOptions {
   height?: number
   time?: number
   width?: number
+}
+
+export interface AnimatedThumbnailOptions {
+  // Starting time code for the animation, if no end is set it'll have a 5s duration
+  // The start and end timecodes uses `asset.thumbTime` to create an iOS `Live Photo` effect by showing you the 5 secodnds before, and after, the thumb time`
+  start?: number
+  // End code, can't be longer than 10s after the start code
+  end?: number
+  // Max 640px, 320px by default
+  width?: number
+  // Preserves aspect ratio, like width, you can't set both the height and width, max 640
+  height?: number
+  // The fps is 15 by default, but can go up to 30
+  fps?: number
 }
 
 export type PlaybackPolicy = 'signed' | 'public'

@@ -1,5 +1,5 @@
 import {LockIcon, UnknownIcon} from '@sanity/icons'
-import {Box, Card, Grid, Inline} from '@sanity/ui'
+import {Box, Card, Grid, Inline, Spinner} from '@sanity/ui'
 import React, {memo, Suspense, useMemo} from 'react'
 import {useClient} from 'sanity'
 import {MediaPreview} from 'sanity/_unstable'
@@ -7,19 +7,27 @@ import styled from 'styled-components'
 import {suspend} from 'suspend-react'
 import {useErrorBoundary} from 'use-error-boundary'
 
+import {getAnimatedPosterSrc} from '../util/getAnimatedPosterSrc'
 import {getPlaybackPolicy} from '../util/getPlaybackPolicy'
 import {getPosterSrc} from '../util/getPosterSrc'
-import type {Secrets, VideoAssetDocument} from '../util/types'
+import type {VideoAssetDocument} from '../util/types'
 
 const mediaDimensions = {aspect: 16 / 9}
 
 interface ImageLoaderProps {
   alt: string
   src: string
-  height: number
+  height?: number
   width: number
+  aspectRatio?: string
 }
-const ImageLoader = memo(function ImageLoader({alt, src, height, width}: ImageLoaderProps) {
+const ImageLoader = memo(function ImageLoader({
+  alt,
+  src,
+  height,
+  width,
+  aspectRatio,
+}: ImageLoaderProps) {
   suspend(async () => {
     const img = new Image(width, height)
     img.decoding = 'async'
@@ -27,7 +35,7 @@ const ImageLoader = memo(function ImageLoader({alt, src, height, width}: ImageLo
     await img.decode()
   }, ['sanity-plugin-mux-input', 'image', src])
 
-  return <img alt={alt} src={src} height={height} width={width} />
+  return <img alt={alt} src={src} height={height} width={width} style={{aspectRatio}} />
 })
 
 const VideoMediaPreview = styled(MediaPreview)`
@@ -53,14 +61,17 @@ const VideoMediaPreviewSignedSubtitle = ({solo}: VideoMediaPreviewSignedSubtitle
 
 interface PosterImageProps extends Omit<ImageLoaderProps, 'src' | 'alt'> {
   asset: VideoAssetDocument
+  showTip?: boolean
 }
-const PosterImage = ({asset, height, width}: PosterImageProps) => {
+const PosterImage = ({asset, height, width, showTip}: PosterImageProps) => {
   const client = useClient()
   const src = getPosterSrc({asset, client, height, width, fit_mode: 'smartcrop'})
   const subtitle = useMemo(
     () =>
-      getPlaybackPolicy(asset) === 'signed' ? <VideoMediaPreviewSignedSubtitle solo /> : undefined,
-    [asset]
+      showTip && getPlaybackPolicy(asset) === 'signed' ? (
+        <VideoMediaPreviewSignedSubtitle solo />
+      ) : undefined,
+    [asset, showTip]
   )
 
   // eslint-disable-next-line no-warning-comments
@@ -78,12 +89,19 @@ const PosterImage = ({asset, height, width}: PosterImageProps) => {
 export interface VideoThumbnailProps extends Omit<PosterImageProps, 'height'> {
   width: number
 }
-export const VideoThumbnail = memo(function VideoThumbnail({asset, width}: VideoThumbnailProps) {
+export const VideoThumbnail = memo(function VideoThumbnail({
+  asset,
+  width,
+  showTip,
+}: VideoThumbnailProps) {
   const {ErrorBoundary, didCatch, error} = useErrorBoundary()
   const height = Math.round((width * 9) / 16)
   const subtitle = useMemo(
-    () => (getPlaybackPolicy(asset) === 'signed' ? <VideoMediaPreviewSignedSubtitle /> : undefined),
-    [asset]
+    () =>
+      showTip && getPlaybackPolicy(asset) === 'signed' ? (
+        <VideoMediaPreviewSignedSubtitle />
+      ) : undefined,
+    [showTip, asset]
   )
 
   if (didCatch) {
@@ -126,11 +144,73 @@ export const VideoThumbnail = memo(function VideoThumbnail({asset, width}: Video
           />
         }
       >
-        <PosterImage asset={asset} height={height} width={width} />
+        <PosterImage showTip={showTip} asset={asset} height={height} width={width} />
       </Suspense>
     </ErrorBoundary>
   )
 })
+
+const AnimatedVideoMediaPreview = styled(MediaPreview)`
+  img {
+    object-fit: contain;
+  }
+`
+
+interface AnimatedPosterImageProps extends Omit<ImageLoaderProps, 'src' | 'alt' | 'height'> {
+  asset: VideoAssetDocument
+}
+const AnimatedPosterImage = ({asset, width}: AnimatedPosterImageProps) => {
+  const client = useClient()
+  const src = getAnimatedPosterSrc({asset, client, width})
+
+  // eslint-disable-next-line no-warning-comments
+  // @TODO support setting the alt text in the schema, like how we deal with images
+  return (
+    <AnimatedVideoMediaPreview
+      withBorder={false}
+      mediaDimensions={mediaDimensions}
+      media={<ImageLoader alt="" src={src} width={width} aspectRatio="16:9" />}
+    />
+  )
+}
+
+export interface AnimatedVideoThumbnailProps extends Omit<PosterImageProps, 'height'> {
+  width: number
+}
+export const AnimatedVideoThumbnail = memo(function AnimatedVideoThumbnail({
+  asset,
+  width,
+}: AnimatedVideoThumbnailProps) {
+  const {ErrorBoundary, didCatch} = useErrorBoundary()
+
+  if (didCatch) {
+    return null
+  }
+
+  return (
+    <ErrorBoundary>
+      <Suspense
+        fallback={
+          <FancyBackdrop>
+            <VideoMediaPreview
+              mediaDimensions={mediaDimensions}
+              withBorder={false}
+              media={<Spinner muted />}
+            />
+          </FancyBackdrop>
+        }
+      >
+        <Card height="fill" tone="transparent">
+          <AnimatedPosterImage asset={asset} width={width} />
+        </Card>
+      </Suspense>
+    </ErrorBoundary>
+  )
+})
+const FancyBackdrop = styled(Box)`
+  backdrop-filter: blur(8px) brightness(0.5) saturate(2);
+  mix-blend-mode: color-dodge;
+`
 
 export const ThumbGrid = styled(Grid)`
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
