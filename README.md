@@ -16,7 +16,7 @@ Not familiar with Sanity? [Visit www.sanity.io](https://www.sanity.io/)
 
 ## Quick start
 
-- While in your project folder, run `npm i sanity-plugin-mux-input`.
+- While in your project folder, run `npm i sanity-plugin-mux-input@studio-v3`.
   Read more about [using plugins in Sanity here](https://beta.sanity.io/docs/platform/studio/plugin).
 
 * Make a schema type that uses the plugin's type `mux.video`, for example:
@@ -37,19 +37,30 @@ Not familiar with Sanity? [Visit www.sanity.io](https://www.sanity.io/)
   }
   ```
 
-  Read more about [schemas in Sanity here](https://www.sanity.io/docs/the-schema).
+  - Add the `muxInput` import to your plugins:
+
+  ```js
+  import {createConfig} from 'sanity'
+  import {muxInput} from 'sanity-plugin-mux-input'
+
+  export default createConfig({
+    plugins: [muxInput()],
+  })
+  ```
+
+Read more about [schemas in Sanity here](https://www.sanity.io/docs/the-schema).
 
 - Get an API Access Token and enter it into the setup screen
   First time you use the plugin you will be asked to enter your Mux credentials.
 
-  The Mux Video API uses an Access Token and Secret Key for authentication.
+The Mux Video API uses an Access Token and Secret Key for authentication.
 
-  If you haven't already, generate a new Access Token in the Access Token settings of your Mux account dashboard, and make sure it got permission to both read and write _video_ and read _data_.
+If you haven't already, generate a new Access Token in the Access Token settings of your Mux account dashboard, and make sure it got permission to both read and write _video_ and read _data_.
 
-  The token is stored in the dataset as a document of the type `mux.apiKey` with the id `secrets.mux`.
-  Having the ID be non-root ensures that only editors are able to see it.
+The token is stored in the dataset as a document of the type `mux.apiKey` with the id `secrets.mux`.
+Having the ID be non-root ensures that only editors are able to see it.
 
-  The Mux plugin will find its access tokens by fetching this document.
+The Mux plugin will find its access tokens by fetching this document.
 
 # Playing videos in the frontend
 
@@ -78,7 +89,7 @@ mp4_support: "standard"
 })]
 })
 
-```
+````
 
 Currently, `mp4_support` is the only supported MUX option and this supports a value of either `standard` or `none` (the default).
 
@@ -115,4 +126,8 @@ After Studio v3 turns stable this behavior will change. The v2 version will then
 # Test
 
 `npm test`
+
 ```
+
+```
+````
