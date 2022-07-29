@@ -276,8 +276,6 @@ interface UploadButtonGridProps {
   onBrowse: () => void
   onRemove: () => void
   onUpload: FileInputButtonProps['onSelect']
-  secrets: Secrets
-  videoReadyToPlay: boolean
 }
 export const UploadButtonGrid = ({
   asset,
@@ -285,8 +283,6 @@ export const UploadButtonGrid = ({
   onBrowse,
   onRemove,
   onUpload,
-  secrets,
-  videoReadyToPlay,
 }: UploadButtonGridProps) => {
   const [open, setOpen] = useState<'thumbnail' | false>(false)
   const handleClose = useCallback(() => setOpen(false), [])
@@ -300,20 +296,13 @@ export const UploadButtonGrid = ({
           key="thumbnail"
           mode="ghost"
           tone="primary"
-          disabled={videoReadyToPlay === false}
           onClick={() => setOpen('thumbnail')}
           text="Thumbnail"
         />
         <Button key="remove" onClick={onRemove} mode="ghost" tone="critical" text="Remove" />
       </Grid>
       {open === 'thumbnail' && (
-        <EditThumbnailDialog
-          asset={asset}
-          getCurrentTime={getCurrentTime}
-          onClose={handleClose}
-          secrets={secrets}
-          videoReadyToPlay={videoReadyToPlay}
-        />
+        <EditThumbnailDialog asset={asset} getCurrentTime={getCurrentTime} onClose={handleClose} />
       )}
     </>
   )

@@ -4,23 +4,15 @@ import React, {useCallback, useMemo, useState} from 'react'
 import {useClient} from 'sanity'
 import {getDevicePixelRatio} from 'use-device-pixel-ratio'
 
-import type {Secrets, VideoAssetDocument} from '../util/types'
+import type {VideoAssetDocument} from '../util/types'
 import {VideoThumbnail} from './VideoSource.styles'
 
 export interface Props {
   asset: VideoAssetDocument
   getCurrentTime: () => number
   onClose: () => void
-  videoReadyToPlay: boolean
-  secrets: Secrets
 }
-export default function EditThumbnailDialog({
-  asset,
-  getCurrentTime,
-  onClose,
-  videoReadyToPlay,
-  secrets,
-}: Props) {
+export default function EditThumbnailDialog({asset, getCurrentTime, onClose}: Props) {
   const client = useClient()
   const dialogId = `EditThumbnailDialog${useId()}`
   const nextTime = useMemo(() => getCurrentTime(), [getCurrentTime])
@@ -57,7 +49,6 @@ export default function EditThumbnailDialog({
             tone="primary"
             loading={saving}
             onClick={handleSave}
-            disabled={videoReadyToPlay === false}
             text="Set new thumbnail"
           />
         </Stack>

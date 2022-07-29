@@ -43,22 +43,18 @@ interface Props {
   handleRemoveVideo: () => void
   onBrowse: () => void
   onRemove: () => void
-  handleVideoReadyToPlay: () => void
   readOnly: boolean
-  videoReadyToPlay: boolean
   secrets: Secrets
 }
 
 const MuxVideo = ({
   asset,
   secrets,
-  handleVideoReadyToPlay,
   handleRemoveVideo,
   onBrowse,
   onRemove,
   onUpload,
   readOnly,
-  videoReadyToPlay,
 }: Props) => {
   const client = useClient()
   const hasPlaybackId = !!asset.playbackId
@@ -132,7 +128,6 @@ const MuxVideo = ({
         if (videoContainer.current) {
           videoContainer.current.style.display = 'block'
         }
-        handleVideoReadyToPlay()
       })
       hls.current.on(Hls.Events.ERROR, (event, data) => {
         switch (data.type) {
@@ -164,7 +159,7 @@ const MuxVideo = ({
         hls.current!.attachMedia(video.current!)
       })
     }
-  }, [asset.assetId, client, handleVideoReadyToPlay, source])
+  }, [asset.assetId, client, source])
   const prevSource = usePrevious(source)
   // eslint-disable-next-line consistent-return
   useEffect(() => {
@@ -266,7 +261,6 @@ const MuxVideo = ({
           onUpload={onUpload}
           onBrowse={onBrowse}
           onRemove={onRemove}
-          videoReadyToPlay={videoReadyToPlay}
           secrets={secrets}
         />
       )}

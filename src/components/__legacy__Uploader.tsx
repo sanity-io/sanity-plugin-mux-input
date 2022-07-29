@@ -25,8 +25,6 @@ interface Props {
   secrets: Secrets
   asset: VideoAssetDocument | null | undefined
   readOnly: boolean
-  videoReadyToPlay: boolean
-  handleVideoReadyToPlay: () => void
   handleRemoveVideo: () => void
 }
 
@@ -264,12 +262,10 @@ class MuxVideoInputUploader extends Component<Props, State> {
             <Player
               secrets={this.props.secrets}
               readOnly={this.props.readOnly}
-              videoReadyToPlay={this.props.videoReadyToPlay}
               onBrowse={this.props.onBrowse}
               onRemove={this.props.onRemove}
               onUpload={this.onUpload}
               asset={this.props.asset}
-              handleVideoReadyToPlay={this.props.handleVideoReadyToPlay}
               handleRemoveVideo={this.props.handleRemoveVideo}
             />
           </Stack>

@@ -36,7 +36,6 @@ interface State {
   isLoading: boolean | 'secrets'
   showSetup: boolean
   showBrowser: boolean
-  videoReadyToPlay: boolean
 }
 
 export default class MuxVideoInput extends Component<Props, State> {
@@ -50,7 +49,6 @@ export default class MuxVideoInput extends Component<Props, State> {
     isLoading: 'secrets',
     showSetup: false,
     showBrowser: false,
-    videoReadyToPlay: false,
   }
 
   // eslint-disable-next-line no-warning-comments
@@ -83,7 +81,6 @@ export default class MuxVideoInput extends Component<Props, State> {
     if (this.subscription) {
       this.subscription.unsubscribe()
     }
-    this.setState({videoReadyToPlay: false})
     const asset = this.props.value?.asset
     if (!asset) {
       return
@@ -246,10 +243,6 @@ export default class MuxVideoInput extends Component<Props, State> {
     })
   }
 
-  handleVideoReadyToPlay = () => {
-    this.setState({videoReadyToPlay: true})
-  }
-
   render() {
     return (
       <>
@@ -295,8 +288,6 @@ export default class MuxVideoInput extends Component<Props, State> {
               asset={this.props.asset}
               onRemove={this.handleRemoveVideoButtonClicked}
               readOnly={this.props.readOnly}
-              handleVideoReadyToPlay={this.handleVideoReadyToPlay}
-              videoReadyToPlay={this.state.videoReadyToPlay}
               handleRemoveVideo={this.handleRemoveVideo}
             />
           )}
