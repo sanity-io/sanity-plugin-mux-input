@@ -1,15 +1,14 @@
-import React, {lazy, Suspense} from 'react'
+import React, {Suspense} from 'react'
 import {createPlugin} from 'sanity'
 
 import ErrorBoundaryCard from './components/ErrorBoundaryCard'
+import Input from './components/Input'
 import {AspectRatioCard, InputFallback} from './components/Input.styled'
+import Preview from './components/Preview'
 import muxVideo from './schema/mux.video'
 import videoAsset from './schema/mux.videoAsset'
 import {isMuxInputPreviewProps, isMuxInputProps} from './util/asserters'
 import {type Config} from './util/types'
-
-const Input = lazy(() => import('./components/Input'))
-const Preview = lazy(() => import('./components/Preview'))
 
 /*
 // @TODO use declaration merging to allow correct typings for userland schemas when they use type: mux.video
