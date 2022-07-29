@@ -131,13 +131,5 @@
     "verifyPackage": {
       "eslintImports": false
     }
-  },
-  "targets": {
-    "main": {
-      "includeNodeModules": [
-        "jsonwebtoken-esm",
-        "media-chrome"
-      ]
-    }
   }
 }

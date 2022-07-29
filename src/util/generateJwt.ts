@@ -1,9 +1,8 @@
-import {sign} from 'jsonwebtoken-esm'
 import type {SanityClient} from '@sanity/client'
-// import {suspend} from 'suspend-react'
+import {suspend} from 'suspend-react'
 
 import {readSecrets} from './readSecrets'
-import type {ThumbnailOptions, AnimatedThumbnailOptions} from './types'
+import type {AnimatedThumbnailOptions, ThumbnailOptions} from './types'
 
 export type Audience = 'g' | 's' | 't' | 'v'
 
@@ -31,12 +30,18 @@ export function generateJwt<T extends Audience>(
     throw new TypeError('Missing signingKeyPrivate')
   }
 
-  /*
-  const {sign}: {sign: typeof import('jsonwebtoken-esm/sign')['default']} = suspend(async () => {
+  // /*
+  const {sign}: {sign: typeof import('jsonwebtoken-esm/sign')['default']} = suspend(() => {
     // eslint-disable-next-line @typescript-eslint/no-shadow
-    const {default: sign} = await import('jsonwebtoken-esm/sign')
+    // const {default: sign} = await import('jsonwebtoken-esm/sign')
     // eslint-disable-next-line @typescript-eslint/no-shadow
-    return {sign: (payload: any, secret: any, options: any) => sign(payload, secret, options)}
+    return import(
+      /* webpackIgnore: true */
+      // @ts-expect-error -- TS don't like HRL classes in dynamic imports even though it's valid
+      new URL(
+        'https://cdn.skypack.dev/pin/jsonwebtoken-esm@v1.0.3-p8N0qksX2r9oYz3jfz0a/mode=imports,min/optimized/jsonwebtoken-esm/sign.js'
+      )
+    )
   }, ['sanity-plugin-mux-input', 'jsonwebtoken-esm/sign'])
   // */
 
