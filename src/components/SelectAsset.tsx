@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react'
 import {useClient} from 'sanity'
 
-import type {Secrets, VideoAssetDocument} from '../util/types'
+import type {VideoAssetDocument} from '../util/types'
 import VideoSource, {type Props as VideoSourceProps} from './VideoSource'
 
 const PER_PAGE = 20
@@ -12,10 +12,9 @@ function createQuery(start = 0, end = PER_PAGE) {
 
 export interface Props {
   onSelect: (asset: VideoAssetDocument) => void
-  secrets: Secrets
 }
 
-export default function SelectAssets({onSelect, secrets}: Props) {
+export default function SelectAssets({onSelect}: Props) {
   const client = useClient()
   const pageNoRef = useRef(0)
   const [isLastPage, setLastPage] = useState(false)
@@ -60,7 +59,6 @@ export default function SelectAssets({onSelect, secrets}: Props) {
       isLastPage={isLastPage}
       isLoading={isLoading}
       onLoadMore={handleLoadMore}
-      secrets={secrets}
     />
   )
 }

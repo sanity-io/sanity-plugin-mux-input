@@ -1,4 +1,10 @@
-import type {ObjectInputProps, PreviewProps, SanityDocument, SchemaType} from 'sanity'
+import type {
+  ObjectInputProps,
+  PreviewProps,
+  SanityDocument,
+  SchemaType,
+  ReferenceSchemaType,
+} from 'sanity'
 import type {PartialDeep} from 'type-fest'
 
 export interface Config {
@@ -161,14 +167,16 @@ export interface VideoAssetDocument extends Partial<SanityDocument> {
   data?: PartialDeep<MuxAsset>
 }
 
+export type Reference = {_type: 'reference'; _ref: string}
+
 // @TODO add Reference, and ReferenceSchemaType in the generic
 export type MuxInputProps = ObjectInputProps<{
-  asset?: {_type: 'reference'; _ref: string}
+  asset?: Reference
 }>
 
 export interface MuxInputPreviewProps extends Omit<PreviewProps, 'value'> {
   schemaType: SchemaType
   value?: {
-    asset?: {_type: 'reference'; _ref: string}
+    asset?: Reference
   } | null
 }

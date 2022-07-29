@@ -3,26 +3,18 @@ import {Box, Button, Card, Flex, Spinner, Text} from '@sanity/ui'
 import React, {useCallback} from 'react'
 import {getDevicePixelRatio} from 'use-device-pixel-ratio'
 
-import type {Secrets, VideoAssetDocument} from '../util/types'
+import type {VideoAssetDocument} from '../util/types'
 import {CardLoadMore, ThumbGrid, VideoThumbnail} from './VideoSource.styles'
 
 export interface Props {
   assets: VideoAssetDocument[]
   isLoading: boolean
   isLastPage: boolean
-  secrets: Secrets
   onSelect: (assetId: string) => void
   onLoadMore: () => void
 }
 
-export default function VideoSource({
-  assets,
-  isLoading,
-  secrets,
-  isLastPage,
-  onSelect,
-  onLoadMore,
-}: Props) {
+export default function VideoSource({assets, isLoading, isLastPage, onSelect, onLoadMore}: Props) {
   const handleClick = useCallback<React.MouseEventHandler<HTMLDivElement>>(
     (event) => onSelect(event.currentTarget.dataset.id!),
     [onSelect]
@@ -55,7 +47,7 @@ export default function VideoSource({
                 style={{lineHeight: 0}}
                 __unstable_focusRing
               >
-                <VideoThumbnail asset={asset} secrets={secrets} width={width} />
+                <VideoThumbnail asset={asset} width={width} />
               </Card>
             )
           })}

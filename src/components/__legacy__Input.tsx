@@ -17,6 +17,7 @@ import SetupButton from './SetupButton'
 import SetupNotice from './SetupNotice'
 
 interface Props extends MuxInputProps {
+  asset: VideoAssetDocument | null | undefined
   config: Config
   client: SanityClient
   secrets: Secrets
@@ -52,7 +53,6 @@ export default class MuxVideoInput extends Component<Props, State> {
     videoReadyToPlay: false,
   }
 
-  pollInterval?: number
   // eslint-disable-next-line no-warning-comments
   // @TODO setup proper Observable typings
   subscription?: any
@@ -68,10 +68,6 @@ export default class MuxVideoInput extends Component<Props, State> {
   componentWillUnmount() {
     if (this.subscription) {
       this.subscription.unsubscribe()
-    }
-    if (this.pollInterval) {
-      clearInterval(this.pollInterval)
-      this.pollInterval = undefined
     }
   }
 
@@ -100,8 +96,6 @@ export default class MuxVideoInput extends Component<Props, State> {
         tap((assetDocument: VideoAssetDocument) => {
           this.setState({assetDocument})
           if (assetDocument && assetDocument.status === 'errored') {
-            clearInterval(this.pollInterval)
-            this.pollInterval = undefined
             // eslint-disable-next-line no-warning-comments
             // todo: use client.observable
             return this.handleRemoveVideo().then(() => {
@@ -110,32 +104,6 @@ export default class MuxVideoInput extends Component<Props, State> {
                 error: new Error(assetDocument.data?.errors?.messages?.join(' ')),
               })
             })
-          }
-          // Poll MUX if it's preparing the main document or its own static renditions
-          if (
-            assetDocument?.status === 'preparing' ||
-            assetDocument?.data?.static_renditions?.status === 'preparing'
-          ) {
-            this.pollMux()
-          }
-          // If MP4 support is enabled: MUX will prepare static_renditions only _after_ an asset
-          // has been successfully uploaded.
-          // A _ready_ asset doesn't mean static mp4s are generated and ready for use!
-          // In these cases, wait for `static_renditions.status === 'ready'` before clearing the poll interval.
-          if (assetDocument && assetDocument.status === 'ready') {
-            switch (this.props.config.mp4_support) {
-              case 'standard':
-                if (assetDocument?.data?.static_renditions?.status === 'ready') {
-                  clearInterval(this.pollInterval)
-                  this.pollInterval = undefined
-                }
-                break
-              case 'none':
-              default:
-                clearInterval(this.pollInterval)
-                this.pollInterval = undefined
-                break
-            }
           }
 
           this.setState({
@@ -147,33 +115,6 @@ export default class MuxVideoInput extends Component<Props, State> {
         })
       )
       .subscribe()
-  }
-
-  pollMux = () => {
-    const assetDocument = this.state.assetDocument
-    if (!assetDocument) {
-      return
-    }
-    if (this.pollInterval) {
-      return
-    }
-    this.pollInterval = (setInterval as typeof window.setInterval)(() => {
-      getAsset(this.props.client, assetDocument.assetId!)
-        .then((response) => {
-          const props = response.data
-
-          this.props.client
-            .patch(assetDocument._id!)
-            .set({
-              status: props.status,
-              data: props,
-            })
-            .commit({returnDocuments: false})
-        })
-        .catch((error) => {
-          this.setState({error})
-        })
-    }, 2000)
   }
 
   handleSetupButtonClicked = () => {
@@ -351,7 +292,7 @@ export default class MuxVideoInput extends Component<Props, State> {
               onUploadComplete={this.handleOnUploadComplete}
               secrets={this.props.secrets}
               onBrowse={this.handleBrowseButton}
-              asset={this.state.assetDocument!}
+              asset={this.props.asset}
               onRemove={this.handleRemoveVideoButtonClicked}
               readOnly={this.props.readOnly}
               handleVideoReadyToPlay={this.handleVideoReadyToPlay}
@@ -361,11 +302,7 @@ export default class MuxVideoInput extends Component<Props, State> {
           )}
 
           {this.state.showBrowser && (
-            <InputBrowser
-              onClose={this.handleCloseBrowser}
-              onSelect={this.handleSelectAsset}
-              secrets={this.props.secrets!}
-            />
+            <InputBrowser onClose={this.handleCloseBrowser} onSelect={this.handleSelectAsset} />
           )}
 
           {this.state.confirmRemove && (

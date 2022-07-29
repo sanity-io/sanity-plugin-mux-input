@@ -1,12 +1,15 @@
-import React from 'react'
+import React, {lazy, Suspense} from 'react'
 import {createPlugin} from 'sanity'
 
-import Input from './components/Input'
-import Preview from './components/Preview'
+import ErrorBoundaryCard from './components/ErrorBoundaryCard'
+import {AspectRatioCard, InputFallback} from './components/Input.styled'
 import muxVideo from './schema/mux.video'
 import videoAsset from './schema/mux.videoAsset'
 import {isMuxInputPreviewProps, isMuxInputProps} from './util/asserters'
 import {type Config} from './util/types'
+
+const Input = lazy(() => import('./components/Input'))
+const Preview = lazy(() => import('./components/Preview'))
 
 /*
 // @TODO use declaration merging to allow correct typings for userland schemas when they use type: mux.video
@@ -36,13 +39,25 @@ export const muxInput = createPlugin<Partial<Config> | void>((userConfig) => {
     form: {
       renderInput(props, next) {
         if (isMuxInputProps(props)) {
-          return <Input config={config} {...props} />
+          return (
+            <AspectRatioCard>
+              <ErrorBoundaryCard schemaType={props.schemaType}>
+                <Suspense fallback={<InputFallback />}>
+                  <Input config={config} {...props} />
+                </Suspense>
+              </ErrorBoundaryCard>
+            </AspectRatioCard>
+          )
         }
         return next(props)
       },
       renderPreview(props, next) {
         if (isMuxInputPreviewProps(props)) {
-          return <Preview {...props} />
+          return (
+            <AspectRatioCard>
+              <Preview {...props} />
+            </AspectRatioCard>
+          )
         }
         return next(props)
       },

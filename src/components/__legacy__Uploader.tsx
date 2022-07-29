@@ -23,7 +23,7 @@ interface Props {
   onSetupButtonClicked: () => void
   onUploadComplete: (asset: VideoAssetDocument) => void
   secrets: Secrets
-  asset: VideoAssetDocument
+  asset: VideoAssetDocument | null | undefined
   readOnly: boolean
   videoReadyToPlay: boolean
   handleVideoReadyToPlay: () => void
