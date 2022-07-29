@@ -1,4 +1,4 @@
-import {type PlaybackEngine, generatePlayerInitTime, initialize} from '@mux-elements/playback-core'
+import {type PlaybackEngine, generatePlayerInitTime, initialize} from '@mux/playback-core'
 import {Card, Text} from '@sanity/ui'
 import {
   MediaControlBar,
