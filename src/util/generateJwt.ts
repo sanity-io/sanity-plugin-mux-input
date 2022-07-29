@@ -31,18 +31,19 @@ export function generateJwt<T extends Audience>(
   }
 
   // /*
-  const {sign}: {sign: typeof import('jsonwebtoken-esm/sign')['default']} = suspend(() => {
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    // const {default: sign} = await import('jsonwebtoken-esm/sign')
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    return import(
-      /* webpackIgnore: true */
-      // @ts-expect-error -- TS don't like HRL classes in dynamic imports even though it's valid
-      new URL(
-        'https://cdn.skypack.dev/pin/jsonwebtoken-esm@v1.0.3-p8N0qksX2r9oYz3jfz0a/mode=imports,min/optimized/jsonwebtoken-esm/sign.js'
+  const {default: sign}: {default: typeof import('jsonwebtoken-esm/sign')['default']} =
+    suspend(() => {
+      // eslint-disable-next-line @typescript-eslint/no-shadow
+      // const {default: sign} = await import('jsonwebtoken-esm/sign')
+      // eslint-disable-next-line @typescript-eslint/no-shadow
+      return import(
+        /* webpackIgnore: true */
+        // @ts-expect-error -- TS don't like HRL classes in dynamic imports even though it's valid
+        new URL(
+          'https://cdn.skypack.dev/pin/jsonwebtoken-esm@v1.0.3-p8N0qksX2r9oYz3jfz0a/mode=imports,min/optimized/jsonwebtoken-esm/sign.js'
+        )
       )
-    )
-  }, ['sanity-plugin-mux-input', 'jsonwebtoken-esm/sign'])
+    }, ['sanity-plugin-mux-input', 'jsonwebtoken-esm/sign'])
   // */
 
   return sign(
