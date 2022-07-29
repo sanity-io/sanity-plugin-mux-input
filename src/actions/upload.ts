@@ -6,7 +6,7 @@ import {type Observable, concat, defer, from, of, throwError} from 'rxjs'
 import {catchError, mergeMap, mergeMapTo, switchMap} from 'rxjs/operators'
 
 import {createUpChunkObservable} from '../clients/upChunkObservable'
-import type {MuxAsset, Config} from '../util/types'
+import type {Config, MuxAsset} from '../util/types'
 import {getAsset} from './assets'
 import {testSecretsObservable} from './secrets'
 

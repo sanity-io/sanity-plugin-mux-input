@@ -1,15 +1,15 @@
 import React, {memo} from 'react'
 import {useClient} from 'sanity'
-import {useDocumentPreviewStore} from 'sanity/_unstable'
 
 import {useAssetDocumentValues} from '../hooks/useAssetDocumentValues'
 import {useDialogState} from '../hooks/useDialogState'
 import {useMuxPolling} from '../hooks/useMuxPolling'
 import {useSecretsDocumentValues} from '../hooks/useSecretsDocumentValues'
 import type {Config, MuxInputProps} from '../util/types'
-import InputLegacy from './__legacy__Input'
+import Uploader from './__legacy__Uploader'
 import ConfigureApi from './ConfigureApi'
 import {InputFallback} from './Input.styled'
+import Onboard from './Onboard'
 
 export interface InputProps extends MuxInputProps {
   config: Config
@@ -39,16 +39,20 @@ const Input = (props: InputProps) => {
         <InputFallback />
       ) : (
         <>
-          <InputLegacy
-            {...props}
-            asset={assetDocumentValues.value}
-            client={client}
-            dialogState={dialogState}
-            setDialogState={setDialogState}
-            secrets={secretDocumentValues.value.secrets}
-            isInitialSetup={secretDocumentValues.value.isInitialSetup}
-            needsSetup={secretDocumentValues.value.needsSetup}
-          />
+          {secretDocumentValues.value.needsSetup && !assetDocumentValues.value ? (
+            <Onboard setDialogState={setDialogState} />
+          ) : (
+            <Uploader
+              {...props}
+              client={client}
+              secrets={secretDocumentValues.value.secrets}
+              asset={assetDocumentValues.value}
+              dialogState={dialogState}
+              setDialogState={setDialogState}
+              needsSetup={secretDocumentValues.value.needsSetup}
+            />
+          )}
+
           {dialogState === 'secrets' && (
             <ConfigureApi
               setDialogState={setDialogState}

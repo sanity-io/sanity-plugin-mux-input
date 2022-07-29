@@ -7,7 +7,6 @@ import React, {Component} from 'react'
 import type {DialogState, SetDialogState} from '../hooks/useDialogState'
 import type {Config, MuxInputProps, Secrets, VideoAssetDocument} from '../util/types'
 import Uploader from './__legacy__Uploader'
-import SetupNotice from './SetupNotice'
 
 interface Props extends MuxInputProps {
   asset: VideoAssetDocument | null | undefined
@@ -15,7 +14,6 @@ interface Props extends MuxInputProps {
   client: SanityClient
   secrets: Secrets
   needsSetup: boolean
-  isInitialSetup: boolean
   dialogState: DialogState
   setDialogState: SetDialogState
 }
@@ -33,7 +31,6 @@ export default class MuxVideoInput extends Component<Props, State> {
     confirmRemove: false,
     deleteOnMuxChecked: false,
     deleteAssetDocumentChecked: true,
-    hasFocus: false,
     isLoading: 'secrets',
   }
 
@@ -46,24 +43,6 @@ export default class MuxVideoInput extends Component<Props, State> {
       // If there is an asset continue loading
       isLoading: !!this.props.value?.asset,
     })
-  }
-
-  componentWillUnmount() {
-    if (this.subscription) {
-      this.subscription.unsubscribe()
-    }
-  }
-
-  handleFocus = () => {
-    this.setState({hasFocus: true})
-  }
-
-  handleBlur = () => {
-    this.setState({hasFocus: false})
-  }
-
-  handleRemoveVideoButtonClicked = () => {
-    this.setState({confirmRemove: true})
   }
 
   handleCancelRemove = () => {
@@ -86,34 +65,20 @@ export default class MuxVideoInput extends Component<Props, State> {
     }))
   }
 
-  handleBrowseButton = () => {
-    this.setState({showBrowser: true})
-  }
-
   render() {
     return (
       <>
-        {this.props.asset || !this.props.needsSetup ? (
-          <Uploader
-            config={this.props.config}
-            client={this.props.client}
-            hasFocus={this.state.hasFocus}
-            onBlur={this.handleBlur}
-            onFocus={this.handleFocus}
-            secrets={this.props.secrets}
-            onBrowse={this.handleBrowseButton}
-            asset={this.props.asset}
-            readOnly={this.props.readOnly}
-            onChange={this.props.onChange}
-            dialogState={this.props.dialogState}
-            setDialogState={this.props.setDialogState}
-          />
-        ) : (
-          <SetupNotice
-            isLoading={this.state.isLoading}
-            isInitialSetup={this.props.isInitialSetup}
-          />
-        )}
+        <Uploader
+          config={this.props.config}
+          client={this.props.client}
+          secrets={this.props.secrets}
+          asset={this.props.asset}
+          readOnly={this.props.readOnly}
+          onChange={this.props.onChange}
+          dialogState={this.props.dialogState}
+          setDialogState={this.props.setDialogState}
+          needsSetup={this.props.needsSetup}
+        />
         {this.state.confirmRemove && (
           <Dialog
             id="remove-video"

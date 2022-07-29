@@ -1,5 +1,5 @@
 import {type PlaybackEngine, generatePlayerInitTime, initialize} from '@mux-elements/playback-core'
-import {Card, Stack, Text} from '@sanity/ui'
+import {Card, Text} from '@sanity/ui'
 import {
   MediaControlBar,
   MediaController,
@@ -71,7 +71,6 @@ const MuxVideo = ({asset, buttons, readOnly, onChange, dialogState, setDialogSta
     (event) => setError(event.currentTarget.error),
     []
   )
-  const [isDeletedOnMux, setDeletedOnMux] = useState<boolean>(false)
   const playRef = useRef<HTMLDivElement>(null)
   const muteRef = useRef<HTMLDivElement>(null)
   const video = useRef<HTMLVideoElement>(null)
@@ -109,22 +108,23 @@ const MuxVideo = ({asset, buttons, readOnly, onChange, dialogState, setDialogSta
     playbackEngineRef.current = nextPlaybackEngineRef
   }, [videoSrc, isLoading, playerInitTime])
 
+  useEffect(() => {
+    if (asset?.status === 'errored') {
+      handleCancelUpload()
+      // eslint-disable-next-line no-warning-comments
+      // @TODO use better error handling
+      throw new Error(asset.data?.errors?.messages?.join(' '))
+    }
+  }, [asset.data?.errors?.messages, asset?.status, handleCancelUpload])
+
+  if (error) {
+    // @TODO better error handling
+    throw error
+  }
+
   if (!asset || !asset.status) {
     return null
   }
-
-  /*
-  if (assetDocument && assetDocument.status === 'errored') {
-            // eslint-disable-next-line no-warning-comments
-            // todo: use client.observable
-            return this.handleRemoveVideo().then(() => {
-              this.setState({
-                isLoading: false,
-                error: new Error(assetDocument.data?.errors?.messages?.join(' ')),
-              })
-            })
-          }
-// */
 
   if (isLoading) {
     return (
@@ -165,15 +165,6 @@ const MuxVideo = ({asset, buttons, readOnly, onChange, dialogState, setDialogSta
             <MediaFullscreenButton />
           </MediaControlBar>
         </MediaController>
-        {error && (
-          <Card padding={3} radius={2} shadow={1} tone="critical" marginTop={2}>
-            <Stack space={2}>
-              <Text size={1}>There was an error loading this video ({error.type}).</Text>
-              {isDeletedOnMux && <Text size={1}>The video is deleted on Mux</Text>}
-            </Stack>
-          </Card>
-        )}
-
         {isPreparingStaticRenditions && (
           <Card
             padding={2}

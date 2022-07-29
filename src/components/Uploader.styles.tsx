@@ -1,44 +1,14 @@
 /* eslint-disable no-nested-ternary */
-import {useId} from '@reach/auto-id'
-import {Box, Button, Card, Dialog, Flex, Grid, Stack, Text} from '@sanity/ui'
+import {type CardTone, Box, Button, Card, Flex, Grid, Stack, Text} from '@sanity/ui'
 import cx from 'classnames'
 import React, {forwardRef, useCallback, useRef, useState} from 'react'
 import {FiCopy, FiUpload} from 'react-icons/fi'
-import {LinearProgress} from 'sanity/_unstable'
 import styled, {keyframes} from 'styled-components'
 
-import type {Secrets, VideoAssetDocument} from '../util/types'
+import type {VideoAssetDocument} from '../util/types'
 import EditThumbnailDialog from './EditThumbnailDialog'
 import {type FileInputButtonProps, FileInputButton} from './FileInputButton'
 import {withFocusRing} from './withFocusRing'
-
-interface ErrorDialogProps {
-  message: string
-  onClose: () => void
-  onSetup: () => void
-}
-export const ErrorDialog = ({message, onClose, onSetup}: ErrorDialogProps) => {
-  const id = `ErrorDialog${useId()}`
-  if (message === 'Invalid credentials') {
-    return (
-      <Dialog id={id} header="Invalid credentials" onClose={onClose}>
-        <Box padding={4}>
-          <Stack space={4}>
-            <Text>You need to check your Mux access token and secret key.</Text>
-            <Button text="Run setup" tone="primary" padding={3} onClick={onSetup} />
-          </Stack>
-        </Box>
-      </Dialog>
-    )
-  }
-  return (
-    <Dialog id={id} header="Upload failed" onClose={onClose}>
-      <Box padding={4}>
-        <Text>{message}</Text>
-      </Box>
-    </Dialog>
-  )
-}
 
 interface UploadProgressProps {
   progress: number
@@ -98,6 +68,7 @@ const cmdKey = 91
 const UploadCardWithFocusRing = withFocusRing(Card)
 
 interface UploadCardProps {
+  tone?: CardTone
   children: React.ReactNode
   onPaste: React.ClipboardEventHandler<HTMLInputElement>
   onFocus: React.FocusEventHandler<HTMLDivElement>
@@ -109,7 +80,7 @@ interface UploadCardProps {
 }
 export const UploadCard = forwardRef<HTMLDivElement, UploadCardProps>(
   (
-    {children, onPaste, onFocus, onBlur, onDrop, onDragEnter, onDragLeave, onDragOver},
+    {children, tone, onPaste, onFocus, onBlur, onDrop, onDragEnter, onDragLeave, onDragOver},
     forwardedRef
   ) => {
     const ctrlDown = useRef(false)
@@ -131,10 +102,11 @@ export const UploadCard = forwardRef<HTMLDivElement, UploadCardProps>(
 
     return (
       <UploadCardWithFocusRing
+        tone={tone}
         height="fill"
         ref={forwardedRef}
         padding={0}
-        radius={0}
+        radius={2}
         shadow={0}
         tabIndex={0}
         onKeyDown={handleKeyDown}
@@ -271,43 +243,5 @@ export const UploadButton = ({onSelect}: UploadButtonProps) => {
       onSelect={onSelect}
       text="Upload"
     />
-  )
-}
-
-interface UploadButtonGridProps {
-  asset: VideoAssetDocument
-  getCurrentTime: () => number
-  onBrowse: () => void
-  onRemove: () => void
-  onUpload: FileInputButtonProps['onSelect']
-}
-export const UploadButtonGrid = ({
-  asset,
-  getCurrentTime,
-  onBrowse,
-  onRemove,
-  onUpload,
-}: UploadButtonGridProps) => {
-  const [open, setOpen] = useState<'thumbnail' | false>(false)
-  const handleClose = useCallback(() => setOpen(false), [])
-
-  return (
-    <>
-      <Grid columns={4} gap={2}>
-        <UploadButton onSelect={onUpload} />
-        <Button key="browse" mode="ghost" tone="primary" onClick={onBrowse} text="Browse" />
-        <Button
-          key="thumbnail"
-          mode="ghost"
-          tone="primary"
-          onClick={() => setOpen('thumbnail')}
-          text="Thumbnail"
-        />
-        <Button key="remove" onClick={onRemove} mode="ghost" tone="critical" text="Remove" />
-      </Grid>
-      {open === 'thumbnail' && (
-        <EditThumbnailDialog asset={asset} getCurrentTime={getCurrentTime} onClose={handleClose} />
-      )}
-    </>
   )
 }

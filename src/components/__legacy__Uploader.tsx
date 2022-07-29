@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 // This component needs to be refactored into a functional component
 
 import type {SanityClient} from '@sanity/client'
@@ -13,20 +14,20 @@ import type {Config, MuxInputProps, Secrets, VideoAssetDocument} from '../util/t
 import InputBrowser from './InputBrowser'
 import Player from './Player'
 import PlayerActionsMenu from './PlayerActionsMenu'
-import {UploadCard, UploadPlaceholder} from './Uploader.styles'
+import {UploadCard} from './Uploader.styles'
+import UploadPlaceholder from './UploadPlaceholder'
 import {UploadProgress} from './UploadProgress'
 
 interface Props extends Pick<MuxInputProps, 'onChange' | 'readOnly'> {
   config: Config
   client: SanityClient
-  hasFocus: boolean
   onFocus: React.FocusEventHandler<HTMLDivElement>
   onBlur: React.FocusEventHandler<HTMLDivElement>
-  onBrowse: () => void
   secrets: Secrets
   asset: VideoAssetDocument | null | undefined
   dialogState: DialogState
   setDialogState: SetDialogState
+  needsSetup: boolean
 }
 
 interface State {
@@ -192,6 +193,8 @@ class MuxVideoInputUploader extends Component<Props, State> {
     event.stopPropagation()
     this.dragEnteredEls.push(event.target)
     this.setState({isDraggingOver: true})
+    const type = event.dataTransfer.items?.[0]?.type
+    this.setState({invalidFile: !type.startsWith('video/')})
   }
 
   handleDragLeave: React.DragEventHandler<HTMLDivElement> = (event) => {
@@ -224,6 +227,13 @@ class MuxVideoInputUploader extends Component<Props, State> {
     return (
       <>
         <UploadCard
+          tone={
+            this.state.isDraggingOver && (this.state.invalidPaste || this.state.invalidFile)
+              ? 'critical'
+              : this.state.isDraggingOver
+              ? 'positive'
+              : undefined
+          }
           onBlur={this.props.onBlur}
           onFocus={this.props.onFocus}
           onDrop={this.handleDrop}
@@ -253,12 +263,11 @@ class MuxVideoInputUploader extends Component<Props, State> {
             />
           ) : (
             <UploadPlaceholder
-              onBrowse={this.props.onBrowse}
-              onUpload={this.onUpload}
-              isDraggingOver={this.state.isDraggingOver}
-              hasFocus={this.props.hasFocus}
-              invalidPaste={this.state.invalidPaste}
-              invalidFile={this.state.invalidFile}
+              hovering={this.state.isDraggingOver}
+              onSelect={this.onUpload}
+              readOnly={this.props.readOnly!}
+              setDialogState={this.props.setDialogState}
+              needsSetup={this.props.needsSetup}
             />
           )}
         </UploadCard>
