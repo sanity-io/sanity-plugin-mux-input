@@ -1,7 +1,6 @@
 /* eslint-disable camelcase */
 import type {SanityClient} from '@sanity/client'
 import {uuid as generateUuid} from '@sanity/uuid'
-import {isString} from 'lodash'
 import {type Observable, concat, defer, from, of, throwError} from 'rxjs'
 import {catchError, mergeMap, mergeMapTo, switchMap} from 'rxjs/operators'
 
@@ -245,7 +244,7 @@ function testFile(file: File) {
 
 function testUrl(url: string): Observable<string> {
   const error = new Error('Invalid URL')
-  if (!isString(url)) {
+  if (typeof url !== 'string') {
     return throwError(error)
   }
   let parsed
