@@ -1,5 +1,6 @@
+import {sign} from 'jsonwebtoken-esm'
 import type {SanityClient} from '@sanity/client'
-import {suspend} from 'suspend-react'
+// import {suspend} from 'suspend-react'
 
 import {readSecrets} from './readSecrets'
 import type {ThumbnailOptions, AnimatedThumbnailOptions} from './types'
@@ -30,10 +31,14 @@ export function generateJwt<T extends Audience>(
     throw new TypeError('Missing signingKeyPrivate')
   }
 
-  const {default: sign}: {default: typeof import('jsonwebtoken-esm/sign')['default']} = suspend(
-    () => import('jsonwebtoken-esm/sign'),
-    ['sanity-plugin-mux-input', 'jsonwebtoken-esm/sign']
-  )
+  /*
+  const {sign}: {sign: typeof import('jsonwebtoken-esm/sign')['default']} = suspend(async () => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const {default: sign} = await import('jsonwebtoken-esm/sign')
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    return {sign: (payload: any, secret: any, options: any) => sign(payload, secret, options)}
+  }, ['sanity-plugin-mux-input', 'jsonwebtoken-esm/sign'])
+  // */
 
   return sign(
     payload ? JSON.parse(JSON.stringify(payload, (_, v) => v ?? undefined)) : {},

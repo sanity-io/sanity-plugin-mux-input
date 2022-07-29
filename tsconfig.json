@@ -18,7 +18,6 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "outDir": "lib",
-    "baseUrl": ".",
     "resolveJsonModule": true,
     "declaration": true,
     "strictNullChecks": true,
