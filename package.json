@@ -24,13 +24,10 @@
   "license": "MIT",
   "author": "Sanity.io <hello@sanity.io>",
   "exports": {
-    ".": {
-      "require": "./lib/cjs/index.js",
-      "default": "./lib/esm/index.js"
-    },
+    ".": "./lib/esm/index.js",
     "./package.json": "./package.json"
   },
-  "main": "./lib/cjs/index.js",
+  "type": "module",
   "module": "./lib/esm/index.js",
   "source": "./src/index.tsx",
   "types": "./lib/types/index.d.ts",
@@ -133,7 +130,8 @@
   "sanityExchangeUrl": "https://www.sanity.io/plugins/sanity-plugin-mux-input",
   "sanityPlugin": {
     "verifyPackage": {
-      "eslintImports": false
+      "eslintImports": false,
+      "module": false
     }
   }
 }
