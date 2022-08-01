@@ -83,12 +83,9 @@ To enable [static MP4 renditions](https://docs.mux.com/guides/video/enable-stati
 ```js
 import {muxInput} from 'sanity-plugin-mux-input'
 
-export deafult createConfig({
-plugins: [muxInput({
-mp4_support: "standard"
-})]
+export default createConfig({
+  plugins: [muxInput({mp4_support: 'standard'})],
 })
-
 ```
 
 Currently, `mp4_support` is the only supported MUX option and this supports a value of either `standard` or `none` (the default).
