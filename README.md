@@ -80,7 +80,7 @@ More information for this feature of the plugin can be found on Mux's [documenta
 
 To enable [static MP4 renditions](https://docs.mux.com/guides/video/enable-static-mp4-renditions), add `mp4_support: 'standard'` to the `options` of your `mux.video` schema type.
 
-js```
+```js
 import {muxInput} from 'sanity-plugin-mux-input'
 
 export deafult createConfig({
@@ -89,7 +89,7 @@ mp4_support: "standard"
 })]
 })
 
-````
+```
 
 Currently, `mp4_support` is the only supported MUX option and this supports a value of either `standard` or `none` (the default).
 
@@ -130,4 +130,3 @@ After Studio v3 turns stable this behavior will change. The v2 version will then
 ```
 
 ```
-````
