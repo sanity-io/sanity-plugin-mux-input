@@ -113,7 +113,8 @@ On the [studio-v2](/tree/studio-v2) branch this will result in:
 - running `yarn add sanity-plugin-mux-input` or `npm i sanity-plugin-mux-input` will fetch the new version.
 - running `sanity install mux-input` will fetch the new version.
 - studio-v3 users are unaffected.
-  On the [main](/tree/main) branch this will result in:
+  
+On the [main](/tree/main) branch this will result in:
 - a new prerelease version on the `studio-v3` dist-tag.
 - running `yarn add sanity-plugin-mux-input@studio-v3` or `npm i sanity-plugin-mux-input@studio-v3` will fetch the new version.
 - running `sanity install mux-input` won't fetch the new version.
