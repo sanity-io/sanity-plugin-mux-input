@@ -6,7 +6,7 @@ import type {SetDialogState} from '../hooks/useDialogState'
 import type {MuxInputProps, VideoAssetDocument} from '../util/types'
 import VideoSource, {type Props as VideoSourceProps} from './VideoSource'
 
-const PER_PAGE = 20
+const PER_PAGE = 200
 
 function createQuery(start = 0, end = PER_PAGE) {
   return /* groq */ `*[_type == "mux.videoAsset"] | order(_updatedAt desc) [${start}...${end}]`
