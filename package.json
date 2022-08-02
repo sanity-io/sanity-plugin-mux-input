@@ -8,7 +8,8 @@
     "mux",
     "input",
     "plugin",
-    "sanity-plugin"
+    "sanity-plugin",
+    "media"
   ],
   "homepage": "https://github.com/sanity-io/sanity-plugin-mux-input#readme",
   "bugs": {
