@@ -67,7 +67,7 @@
     "classnames": "^2.3.1",
     "jsonwebtoken-esm": "^1.0.3",
     "media-chrome": "^0.9.0",
-    "motion": "^10.13.1",
+    "motion": "^10.13.2",
     "rxjs": "^6",
     "scroll-into-view-if-needed": "^2.2.29",
     "suspend-react": "^0.0.8",
