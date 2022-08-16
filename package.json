@@ -82,6 +82,7 @@
     "@parcel/transformer-typescript-types": "^2.7.0",
     "@sanity/eslint-config-no-v2-imports": "^0.0.1-studio-v3.3",
     "@sanity/plugin-kit": "^0.1.0-v3-studio.1",
+    "@sanity/semantic-release-preset": "^1.0.1",
     "@sanity/ui": "^0.37.12",
     "@types/react": "^17",
     "@types/styled-components": "^5.1.25",
@@ -107,7 +108,6 @@
     "react-is": "^17",
     "sanipack": "^2.1.0",
     "sanity": "dev-preview",
-    "semantic-release": "^19.0.3",
     "styled-components": "^5.3.5",
     "type-fest": "^2.18.0",
     "typescript": "^4.7.4"
