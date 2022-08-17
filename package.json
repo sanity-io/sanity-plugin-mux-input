@@ -65,6 +65,7 @@
     "@commitlint/cli": "^16",
     "@commitlint/config-conventional": "^16",
     "@sanity/base": "^2.30.1",
+    "@sanity/semantic-release-preset": "^1.0.1",
     "@sanity/types": "^2.29.5",
     "@types/hls.js": "^0.13.3",
     "@types/jsonwebtoken": "^8.5.8",
@@ -87,7 +88,6 @@
     "prop-types": "^15.8.1",
     "react": "^17",
     "sanipack": "^2.1.0",
-    "semantic-release": "^19.0.3",
     "type-fest": "^2.17.0",
     "typescript": "^4.7.4"
   },
