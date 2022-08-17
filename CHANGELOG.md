@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-v3-studio.11](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.0-v3-studio.10...v2.0.0-v3-studio.11) (2022-08-17)
+
+### Bug Fixes
+
+- dynamic import in vite dev mode ([9b322ef](https://github.com/sanity-io/sanity-plugin-mux-input/commit/9b322ef9b8969b71b8f63df3a7609269df634f7a)), closes [#65](https://github.com/sanity-io/sanity-plugin-mux-input/issues/65)
+
 # [2.0.0-v3-studio.10](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.0-v3-studio.9...v2.0.0-v3-studio.10) (2022-08-17)
 
 ### Bug Fixes
