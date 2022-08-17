@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-v3-studio.9](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.0-v3-studio.8...v2.0.0-v3-studio.9) (2022-08-17)
+
+### Bug Fixes
+
+- **deps:** update dependency @sanity/semantic-release-preset to ^1.1.3 ([#69](https://github.com/sanity-io/sanity-plugin-mux-input/issues/69)) ([6ca170f](https://github.com/sanity-io/sanity-plugin-mux-input/commit/6ca170fdfa87c39179da29b73da6d7c99ec4f278))
+
 # [2.0.0-v3-studio.8](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.0-v3-studio.7...v2.0.0-v3-studio.8) (2022-08-17)
 
 ### Bug Fixes
