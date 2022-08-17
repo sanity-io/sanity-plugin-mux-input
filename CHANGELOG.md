@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-v3-studio.12](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.0-v3-studio.11...v2.0.0-v3-studio.12) (2022-08-17)
+
+### Bug Fixes
+
+- url.startsWith error in vite dev mode ([9f1102d](https://github.com/sanity-io/sanity-plugin-mux-input/commit/9f1102d39fcb0f76dd35bc853e1e8f77c193c212))
+
 # [2.0.0-v3-studio.11](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.0-v3-studio.10...v2.0.0-v3-studio.11) (2022-08-17)
 
 ### Bug Fixes
