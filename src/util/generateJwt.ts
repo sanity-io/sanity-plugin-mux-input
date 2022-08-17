@@ -40,6 +40,7 @@ export function generateJwt<T extends Audience>(
       // eslint-disable-next-line @typescript-eslint/no-shadow
       return import(
         /* webpackIgnore: true */
+        /* @vite-ignore */
         // @ts-expect-error -- TS don't like URL classes in dynamic imports even though it's valid
         new URL(
           'https://cdn.skypack.dev/pin/jsonwebtoken-esm@v1.0.3-p8N0qksX2r9oYz3jfz0a/mode=imports,min/optimized/jsonwebtoken-esm/sign.js'
