@@ -65,7 +65,7 @@
     "@commitlint/cli": "^16",
     "@commitlint/config-conventional": "^16",
     "@sanity/base": "^2.30.1",
-    "@sanity/semantic-release-preset": "^1.0.1",
+    "@sanity/semantic-release-preset": "^1.0.2",
     "@sanity/types": "^2.29.5",
     "@types/hls.js": "^0.13.3",
     "@types/jsonwebtoken": "^8.5.8",
