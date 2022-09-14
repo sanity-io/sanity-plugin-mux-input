@@ -55,7 +55,7 @@
     "lodash": "^4.17.21",
     "media-chrome": "^0.2.2",
     "react-icons": "^4.4.0",
-    "rxjs": "^6",
+    "rxjs": "^7",
     "suspend-react": "^0.0.8",
     "use-device-pixel-ratio": "^1.1.0",
     "use-error-boundary": "^2.0.6",
