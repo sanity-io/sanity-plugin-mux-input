@@ -106,7 +106,11 @@ Issues are actively monitored and PRs are welcome. When developing this plugin t
 
 # Publishing
 
-Publishing is done by pushing [Conventional Commits](https://github.com/semantic-release/semantic-release#how-does-it-work).
+Run the ["CI" workflow](https://github.com/sanity-io/sanity-plugin-mux-input/actions/workflows/ci.yml).
+Make sure to select the main branch and check "Release new version".
+
+Semantic release will only release on configured branches, so it is safe to run release on any branch.
+
 On the [studio-v2](/tree/studio-v2) branch this will result in:
 
 - a new version on the `latest` dist-tag.
@@ -125,3 +129,4 @@ After Studio v3 turns stable this behavior will change. The v2 version will then
 # Test
 
 `npm test`
+
