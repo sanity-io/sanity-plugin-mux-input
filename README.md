@@ -129,4 +129,3 @@ After Studio v3 turns stable this behavior will change. The v2 version will then
 # Test
 
 `npm test`
-
