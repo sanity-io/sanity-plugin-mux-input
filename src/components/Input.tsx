@@ -457,7 +457,12 @@ export default withDocument(
             )}
 
             {this.state.confirmRemove && (
-              <Dialog id="remove-video" header="Remove video" zOffset={1000} onClose={this.handleCancelRemove}>
+              <Dialog
+                id="remove-video"
+                header="Remove video"
+                zOffset={1000}
+                onClose={this.handleCancelRemove}
+              >
                 <Box padding={4}>
                   <Stack space={3}>
                     <Flex align="center">
