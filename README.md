@@ -93,14 +93,20 @@ Issues are actively monitored and PRs are welcome. When developing this plugin t
 
 # Publishing
 
-Publishing is done by pushing [Conventional Commits](https://github.com/semantic-release/semantic-release#how-does-it-work).
+Run the ["CI" workflow](https://github.com/sanity-io/sanity-plugin-mux-input/actions/workflows/ci.yml).
+Make sure to select the studio-v2 branch and check "Release new version".
+
+Semantic release will only release on configured branches, so it is safe to run release on any branch.
+
 On the [studio-v2](/tree/studio-v2) branch this will result in:
 
 - a new version on the `latest` dist-tag.
 - running `yarn add sanity-plugin-mux-input` or `npm i sanity-plugin-mux-input` will fetch the new version.
 - running `sanity install mux-input` will fetch the new version.
 - studio-v3 users are unaffected.
-  On the [main](/tree/main) branch this will result in:
+
+On the [main](/tree/main) branch this will result in:
+
 - a new prerelease version on the `studio-v3` dist-tag.
 - running `yarn add sanity-plugin-mux-input@studio-v3` or `npm i sanity-plugin-mux-input@studio-v3` will fetch the new version.
 - running `sanity install mux-input` won't fetch the new version.
