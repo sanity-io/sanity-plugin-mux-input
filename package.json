@@ -46,7 +46,7 @@
   "dependencies": {
     "@mux/upchunk": "2.2.2",
     "@reach/auto-id": "^0.17.0",
-    "@sanity/icons": "^1.3.1",
+    "@sanity/icons": "1.3.1",
     "@sanity/ui": "^0.36.12",
     "@sanity/uuid": "^3.0.1",
     "classnames": "^2.3.1",
@@ -85,16 +85,14 @@
     "lint-staged": "^13",
     "prettier": "^2.7.1",
     "prettier-plugin-packagejson": "^2.2.18",
-    "prop-types": "^15.8.1",
     "react": "^17",
     "sanipack": "^2.1.0",
     "type-fest": "^2.19.0",
     "typescript": "^4.8.3"
   },
   "peerDependencies": {
-    "prop-types": "^15",
-    "react": "^17 || ^18",
-    "styled-components": "^5.2.0"
+    "react": "^17",
+    "styled-components": "^5.2"
   },
   "publishConfig": {
     "access": "public"
