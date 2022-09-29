@@ -62,8 +62,8 @@
     "use-previous": "^1.1.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "^16",
-    "@commitlint/config-conventional": "^16",
+    "@commitlint/cli": "^17",
+    "@commitlint/config-conventional": "^17",
     "@sanity/base": "^2.30.1",
     "@sanity/semantic-release-preset": "^2.0.1",
     "@sanity/types": "^2.29.5",
