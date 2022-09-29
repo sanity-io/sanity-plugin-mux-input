@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0-v3-studio.15](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.0-v3-studio.14...v2.0.0-v3-studio.15) (2022-09-29)
+
+### Bug Fixes
+
+- use default chunkSize ([2e4b964](https://github.com/sanity-io/sanity-plugin-mux-input/commit/2e4b9645123de3c6c4fd86fd217ba9c4a2b1e093)), closes [#86](https://github.com/sanity-io/sanity-plugin-mux-input/issues/86)
+
 ## [2.0.0-v3-studio.14](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.0-v3-studio.13...v2.0.0-v3-studio.14) (2022-09-29)
 
 ### Bug Fixes
