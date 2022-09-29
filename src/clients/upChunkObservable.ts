@@ -7,6 +7,7 @@ export function createUpChunkObservable(uuid: string, uploadUrl: string, source:
       endpoint: uploadUrl,
       file: source,
       chunkSize: 30720, // Uploads the file in 30 MB chunks
+      dynamicChunkSize: true, // changes the chunk size based on network speeds
     })
 
     const successHandler = () => {
