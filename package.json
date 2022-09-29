@@ -113,7 +113,7 @@
     "sanity": "3.0.0-dev-preview.15",
     "styled-components": "^5.3.5",
     "type-fest": "^2.19.0",
-    "typescript": "^4.8.3"
+    "typescript": "4.7.4"
   },
   "peerDependencies": {
     "@sanity/ui": "^0.37 || latest",
