@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0-v3-studio.14](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.0-v3-studio.13...v2.0.0-v3-studio.14) (2022-09-29)
+
+### Bug Fixes
+
+- enable dynamic chunk size in upChunk ([#88](https://github.com/sanity-io/sanity-plugin-mux-input/issues/88)) ([8e85465](https://github.com/sanity-io/sanity-plugin-mux-input/commit/8e8546575da980f9584c5e8687f965a22194e6d0))
+
 ## [2.0.0-v3-studio.13](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.0-v3-studio.12...v2.0.0-v3-studio.13) (2022-09-29)
 
 ### Bug Fixes
