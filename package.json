@@ -130,6 +130,7 @@
   "sanityExchangeUrl": "https://www.sanity.io/plugins/sanity-plugin-mux-input",
   "sanityPlugin": {
     "verifyPackage": {
+      "tsc": false,
       "eslintImports": false
     }
   }
