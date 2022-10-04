@@ -95,14 +95,14 @@ Currently, `mp4_support` is the only supported MUX option and this supports a va
 Issues are actively monitored and PRs are welcome. When developing this plugin the easiest setup is:
 
 1. Fork this repo.
-1. Create a studio v3 project: `npm create sanity@dev-preview`. Follow the prompts, starting out with the blog template is a good way to go.
-1. `cd` into your project directory, run `npm install && npm start` - your sanity studio should be running on http://localhost:3333.
-1. `cd` into the `plugins` directory of your project.
-1. Fork this repo and clone your fork into the `plugins` directory inside your project `git clone git@github.com:your-fork/sanity-plugin-mux-input.git`.
-1. Open `sanity.json`, go to the `plugins` array and add `mux-input`.
-1. Re-start the sanity studio server with `npm start`.
-1. Edit `schemas/post.js` and add follow the plugin documentation to add a `mux.video` type field.
-1. Your studio should reload, and now when you edit the plugin code it should reload the studio, when you're done creating a branch, put in a PR and a maintainer will review it. Thank you!
+2. Create a studio v3 project: `npm create sanity@dev-preview`. Follow the prompts, starting out with the blog template is a good way to go.
+3. `cd` into your project directory, run `npm install && npm start` - your sanity studio should be running on http://localhost:3333.
+4. `cd` into the `plugins` directory of your project.
+5. Fork this repo and clone your fork into the `plugins` directory inside your project `git clone git@github.com:your-fork/sanity-plugin-mux-input.git`.
+6. Open `sanity.json`, go to the `plugins` array and add `mux-input`.
+7. Re-start the sanity studio server with `npm start`.
+8. Edit `schemas/post.js` and add follow the plugin documentation to add a `mux.video` type field.
+9. Your studio should reload, and now when you edit the plugin code it should reload the studio, when you're done creating a branch, put in a PR and a maintainer will review it. Thank you!
 
 # Publishing
 
