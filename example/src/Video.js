@@ -22,5 +22,5 @@ export default function Video() {
     document.title = title
   }, [title])
 
-  return <MuxPlayer playbackId={playbackId} metadataVideoTitle={title} />
+  return <MuxPlayer playbackId={playbackId} metadata={{ video_title: title }} />
 }
