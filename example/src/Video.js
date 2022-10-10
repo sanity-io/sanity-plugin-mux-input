@@ -28,6 +28,7 @@ export default function Video() {
   return (
     <MuxPlayer
       playbackId={video.playbackId}
+      streamType="on-demand"
       metadata={{
         video_id: video.assetId,
         video_title: title,
