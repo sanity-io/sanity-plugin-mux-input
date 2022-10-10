@@ -31,7 +31,9 @@ export function generateJwt<T extends Audience>(
   }
 
   // /*
-  const {default: sign}: {default: typeof import('jsonwebtoken-esm/sign')['default']} =
+  const {
+    default: sign,
+  }: {default: typeof import('jsonwebtoken-esm/sign')['default']} =
     suspend(() => {
       // eslint-disable-next-line @typescript-eslint/no-shadow
       // This whole skypack thing is an extreme, temporary, measure to get around Parcel bugs with code splitting, dynamic import, and CJS + ESM interop
@@ -49,7 +51,9 @@ export function generateJwt<T extends Audience>(
   // */
 
   return sign(
-    payload ? JSON.parse(JSON.stringify(payload, (_, v) => v ?? undefined)) : {},
+    payload
+      ? JSON.parse(JSON.stringify(payload, (_, v) => v ?? undefined))
+      : {},
     atob(signingKeyPrivate),
     {
       algorithm: 'RS256',

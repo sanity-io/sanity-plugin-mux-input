@@ -59,7 +59,10 @@ export function uploadUrl(
             ).pipe(
               mergeMap((result) => {
                 const asset =
-                  (result && result.results && result.results[0] && result.results[0].document) ||
+                  (result &&
+                    result.results &&
+                    result.results[0] &&
+                    result.results[0].document) ||
                   null
 
                 if (!asset) {
@@ -126,7 +129,11 @@ export function uploadFile(
                 })
               ).pipe(
                 mergeMap((result) => {
-                  return createUpChunkObservable(uuid, result.upload.url, file).pipe(
+                  return createUpChunkObservable(
+                    uuid,
+                    result.upload.url,
+                    file
+                  ).pipe(
                     // eslint-disable-next-line no-warning-comments
                     // @TODO type the observable events
                     // eslint-disable-next-line max-nested-callbacks
@@ -134,7 +141,9 @@ export function uploadFile(
                       if (event.type !== 'success') {
                         return of(event)
                       }
-                      return from(updateAssetDocumentFromUpload(client, uuid)).pipe(
+                      return from(
+                        updateAssetDocumentFromUpload(client, uuid)
+                      ).pipe(
                         // eslint-disable-next-line max-nested-callbacks
                         mergeMap((doc) => of({...event, asset: doc}))
                       )
@@ -142,7 +151,9 @@ export function uploadFile(
                     // eslint-disable-next-line max-nested-callbacks
                     catchError((err) => {
                       // Delete asset document
-                      return cancelUpload(client, uuid).pipe(mergeMapTo(throwError(err)))
+                      return cancelUpload(client, uuid).pipe(
+                        mergeMapTo(throwError(err))
+                      )
                     })
                   )
                 })
@@ -178,7 +189,10 @@ export function getUpload(client: SanityClient, assetId: string) {
   })
 }
 
-function pollUpload(client: SanityClient, uuid: string): Promise<UploadResponse> {
+function pollUpload(
+  client: SanityClient,
+  uuid: string
+): Promise<UploadResponse> {
   const maxTries = 10
   let pollInterval: number
   let tries = 0
@@ -206,7 +220,10 @@ function pollUpload(client: SanityClient, uuid: string): Promise<UploadResponse>
   })
 }
 
-async function updateAssetDocumentFromUpload(client: SanityClient, uuid: string) {
+async function updateAssetDocumentFromUpload(
+  client: SanityClient,
+  uuid: string
+) {
   let upload: UploadResponse
   let asset: {data: MuxAsset}
   try {

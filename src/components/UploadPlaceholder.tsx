@@ -28,8 +28,14 @@ interface UploadPlaceholderProps {
 }
 export default function UploadPlaceholder(props: UploadPlaceholderProps) {
   const {setDialogState, readOnly, onSelect, hovering, needsSetup} = props
-  const handleBrowse = useCallback(() => setDialogState('select-video'), [setDialogState])
-  const handleConfigureApi = useCallback(() => setDialogState('secrets'), [setDialogState])
+  const handleBrowse = useCallback(
+    () => setDialogState('select-video'),
+    [setDialogState]
+  )
+  const handleConfigureApi = useCallback(
+    () => setDialogState('secrets'),
+    [setDialogState]
+  )
 
   return (
     <Box style={{padding: 1, position: 'relative'}} height="stretch">
@@ -80,7 +86,12 @@ export default function UploadPlaceholder(props: UploadPlaceholderProps) {
               text="Upload"
               onSelect={onSelect}
             />
-            <Button mode="ghost" icon={SearchIcon} text="Select" onClick={handleBrowse} />
+            <Button
+              mode="ghost"
+              icon={SearchIcon}
+              text="Select"
+              onClick={handleBrowse}
+            />
           </Inline>
         </Flex>
       </UploadCard>

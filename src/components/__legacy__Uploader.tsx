@@ -10,7 +10,12 @@ import {PatchEvent, set, setIfMissing} from 'sanity/form'
 import {uploadFile, uploadUrl} from '../actions/upload'
 import {type DialogState, type SetDialogState} from '../hooks/useDialogState'
 import {extractDroppedFiles} from '../util/extractFiles'
-import type {Config, MuxInputProps, Secrets, VideoAssetDocument} from '../util/types'
+import type {
+  Config,
+  MuxInputProps,
+  Secrets,
+  VideoAssetDocument,
+} from '../util/types'
 import InputBrowser from './InputBrowser'
 import Player from './Player'
 import PlayerActionsMenu from './PlayerActionsMenu'
@@ -61,7 +66,9 @@ class MuxVideoInputUploader extends Component<Props, State> {
   container = React.createRef<HTMLDivElement>()
 
   onCancelUploadButtonClick$: Observable<unknown> | undefined
-  handleCancelUploadButtonClick: React.MouseEventHandler<HTMLButtonElement> | undefined
+  handleCancelUploadButtonClick:
+    | React.MouseEventHandler<HTMLButtonElement>
+    | undefined
 
   componentWillUnmount() {
     this.unSubscribeToUpload()
@@ -147,7 +154,12 @@ class MuxVideoInputUploader extends Component<Props, State> {
     const url = clipboardData.getData('text')
     const options = {enableSignedUrls: this.props.secrets.enableSignedUrls}
 
-    this.upload = uploadUrl(this.props.config, this.props.client, url, options).subscribe({
+    this.upload = uploadUrl(
+      this.props.config,
+      this.props.client,
+      url,
+      options
+    ).subscribe({
       complete: () => {
         this.setState({error: null, uploadProgress: null, url: null})
       },
@@ -226,7 +238,8 @@ class MuxVideoInputUploader extends Component<Props, State> {
       <>
         <UploadCard
           tone={
-            this.state.isDraggingOver && (this.state.invalidPaste || this.state.invalidFile)
+            this.state.isDraggingOver &&
+            (this.state.invalidPaste || this.state.invalidFile)
               ? 'critical'
               : this.state.isDraggingOver
               ? 'positive'

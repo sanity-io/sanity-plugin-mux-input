@@ -5,7 +5,10 @@ import {PatchEvent, unset} from 'sanity/form'
 import {deleteAsset} from '../actions/assets'
 import type {MuxInputProps, VideoAssetDocument} from '../util/types'
 
-export const useCancelUpload = (asset: VideoAssetDocument, onChange: MuxInputProps['onChange']) => {
+export const useCancelUpload = (
+  asset: VideoAssetDocument,
+  onChange: MuxInputProps['onChange']
+) => {
   const client = useClient()
   return useCallback(() => {
     if (!asset) {

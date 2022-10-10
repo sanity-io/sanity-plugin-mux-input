@@ -11,7 +11,10 @@ interface OnboardProps {
 
 export default function Onboard(props: OnboardProps) {
   const {setDialogState} = props
-  const handleOpen = useCallback(() => setDialogState('secrets'), [setDialogState])
+  const handleOpen = useCallback(
+    () => setDialogState('secrets'),
+    [setDialogState]
+  )
 
   return (
     <>
@@ -19,7 +22,11 @@ export default function Onboard(props: OnboardProps) {
         <Card
           display="flex"
           sizing="border"
-          style={{aspectRatio: '16/9', width: '100%', boxShadow: 'var(--card-bg-color) 0 0 0 2px'}}
+          style={{
+            aspectRatio: '16/9',
+            width: '100%',
+            boxShadow: 'var(--card-bg-color) 0 0 0 2px',
+          }}
           paddingX={[2, 3, 4, 4]}
           radius={1}
           tone="transparent"
@@ -37,7 +44,12 @@ export default function Onboard(props: OnboardProps) {
                 </Heading>
               </Inline>
               <Inline paddingY={1}>
-                <Button mode="ghost" icon={PlugIcon} text="Configure API" onClick={handleOpen} />
+                <Button
+                  mode="ghost"
+                  icon={PlugIcon}
+                  text="Configure API"
+                  onClick={handleOpen}
+                />
               </Inline>
             </Grid>
           </Flex>

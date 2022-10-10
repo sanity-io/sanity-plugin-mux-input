@@ -20,10 +20,15 @@ interface UploadCardProps {
   onDragEnter: React.DragEventHandler<HTMLDivElement>
 }
 export const UploadCard = forwardRef<HTMLDivElement, UploadCardProps>(
-  ({children, tone, onPaste, onDrop, onDragEnter, onDragLeave, onDragOver}, forwardedRef) => {
+  (
+    {children, tone, onPaste, onDrop, onDragEnter, onDragLeave, onDragOver},
+    forwardedRef
+  ) => {
     const ctrlDown = useRef(false)
     const inputRef = useRef<HTMLInputElement>(null)
-    const handleKeyDown = useCallback<React.KeyboardEventHandler<HTMLDivElement>>((event) => {
+    const handleKeyDown = useCallback<
+      React.KeyboardEventHandler<HTMLDivElement>
+    >((event) => {
       if (event.keyCode == ctrlKey || event.keyCode == cmdKey) {
         ctrlDown.current = true
       }
@@ -32,11 +37,14 @@ export const UploadCard = forwardRef<HTMLDivElement, UploadCardProps>(
         inputRef.current!.focus()
       }
     }, [])
-    const handleKeyUp = useCallback<React.KeyboardEventHandler<HTMLDivElement>>((event) => {
-      if (event.keyCode == ctrlKey || event.keyCode == cmdKey) {
-        ctrlDown.current = false
-      }
-    }, [])
+    const handleKeyUp = useCallback<React.KeyboardEventHandler<HTMLDivElement>>(
+      (event) => {
+        if (event.keyCode == ctrlKey || event.keyCode == cmdKey) {
+          ctrlDown.current = false
+        }
+      },
+      []
+    )
 
     return (
       <UploadCardWithFocusRing

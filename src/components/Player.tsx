@@ -1,4 +1,8 @@
-import {type PlaybackEngine, generatePlayerInitTime, initialize} from '@mux/playback-core'
+import {
+  type PlaybackEngine,
+  generatePlayerInitTime,
+  initialize,
+} from '@mux/playback-core'
 import {Card, Text} from '@sanity/ui'
 import {
   MediaControlBar,
@@ -35,7 +39,14 @@ interface Props extends Pick<MuxInputProps, 'onChange' | 'readOnly'> {
   setDialogState: SetDialogState
 }
 
-const MuxVideo = ({asset, buttons, readOnly, onChange, dialogState, setDialogState}: Props) => {
+const MuxVideo = ({
+  asset,
+  buttons,
+  readOnly,
+  onChange,
+  dialogState,
+  setDialogState,
+}: Props) => {
   const client = useClient()
   const isLoading = useMemo<boolean | string>(() => {
     if (asset?.status === 'preparing') {
@@ -65,7 +76,10 @@ const MuxVideo = ({asset, buttons, readOnly, onChange, dialogState, setDialogSta
     }
     return false
   }, [asset?.data?.static_renditions?.status])
-  const videoSrc = useMemo(() => asset.playbackId && getVideoSrc({client, asset}), [asset, client])
+  const videoSrc = useMemo(
+    () => asset.playbackId && getVideoSrc({client, asset}),
+    [asset, client]
+  )
   const [error, setError] = useState<MediaError | Error | null>(null)
   const handleError = useCallback<React.ReactEventHandler<HTMLVideoElement>>(
     (event) => setError(event.currentTarget.error),
@@ -74,7 +88,10 @@ const MuxVideo = ({asset, buttons, readOnly, onChange, dialogState, setDialogSta
   const playRef = useRef<HTMLDivElement>(null)
   const muteRef = useRef<HTMLDivElement>(null)
   const video = useRef<HTMLVideoElement>(null)
-  const getCurrentTime = useCallback(() => video.current?.currentTime ?? 0, [video])
+  const getCurrentTime = useCallback(
+    () => video.current?.currentTime ?? 0,
+    [video]
+  )
   const handleCancelUpload = useCancelUpload(asset, onChange)
 
   useEffect(() => {
@@ -131,7 +148,10 @@ const MuxVideo = ({asset, buttons, readOnly, onChange, dialogState, setDialogSta
       <UploadProgress
         progress={100}
         filename={asset?.filename}
-        text={(isLoading !== true && isLoading) || 'Waiting for Mux to complete the file'}
+        text={
+          (isLoading !== true && isLoading) ||
+          'Waiting for Mux to complete the file'
+        }
         onCancel={readOnly ? undefined : () => handleCancelUpload()}
       />
     )

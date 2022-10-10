@@ -7,7 +7,10 @@ import {focusRingBorderStyle, focusRingStyle} from './helpers'
 export function withFocusRing<Props>(component: ComponentType<Props>) {
   return styled(component as unknown as any)<Props & {$border?: boolean}>(
     (props: {theme: Theme; $border?: boolean}) => {
-      const border = {width: props.$border ? 1 : 0, color: 'var(--card-border-color)'}
+      const border = {
+        width: props.$border ? 1 : 0,
+        color: 'var(--card-border-color)',
+      }
 
       return css`
         --card-focus-box-shadow: ${focusRingBorderStyle(border)};

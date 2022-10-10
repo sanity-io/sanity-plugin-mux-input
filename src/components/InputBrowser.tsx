@@ -20,7 +20,11 @@ export default function InputBrowser({setDialogState, asset, onChange}: Props) {
       onClose={handleClose}
       width={2}
     >
-      <SelectAsset asset={asset} onChange={onChange} setDialogState={setDialogState} />
+      <SelectAsset
+        asset={asset}
+        onChange={onChange}
+        setDialogState={setDialogState}
+      />
     </Dialog>
   )
 }

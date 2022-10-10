@@ -15,7 +15,10 @@ export interface FileInputMenuItemProps extends ButtonProps {
 
 export const FileInputMenuItem = React.forwardRef(function FileInputMenuItem(
   props: FileInputMenuItemProps &
-    Omit<React.HTMLProps<HTMLButtonElement>, 'as' | 'ref' | 'type' | 'value' | 'onSelect'>,
+    Omit<
+      React.HTMLProps<HTMLButtonElement>,
+      'as' | 'ref' | 'type' | 'value' | 'onSelect'
+    >,
   forwardedRef: React.ForwardedRef<HTMLInputElement>
 ) {
   const {

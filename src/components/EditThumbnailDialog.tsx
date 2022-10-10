@@ -13,11 +13,18 @@ export interface Props {
   getCurrentTime: () => number
   setDialogState: SetDialogState
 }
-export default function EditThumbnailDialog({asset, getCurrentTime, setDialogState}: Props) {
+export default function EditThumbnailDialog({
+  asset,
+  getCurrentTime,
+  setDialogState,
+}: Props) {
   const client = useClient()
   const dialogId = `EditThumbnailDialog${useId()}`
   const nextTime = useMemo(() => getCurrentTime(), [getCurrentTime])
-  const assetWithNewThumbnail = useMemo(() => ({...asset, thumbTime: nextTime}), [asset, nextTime])
+  const assetWithNewThumbnail = useMemo(
+    () => ({...asset, thumbTime: nextTime}),
+    [asset, nextTime]
+  )
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<Error | null>(null)
   const handleSave = useCallback(() => {

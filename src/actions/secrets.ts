@@ -25,7 +25,9 @@ export function saveSecrets(
 
 export function createSigningKeys(client: SanityClient) {
   const {dataset} = client.config()
-  return client.request<{data: {private_key: string; id: string; created_at: string}}>({
+  return client.request<{
+    data: {private_key: string; id: string; created_at: string}
+  }>({
     url: `/addons/mux/signing-keys/${dataset}`,
     withCredentials: true,
     method: 'POST',
@@ -62,7 +64,11 @@ export async function haveValidSigningKeys(
     //
     return !!(res.data && res.data.id)
   } catch (e) {
-    console.error('Error fetching signingKeyId', signingKeyId, 'assuming it is not valid')
+    console.error(
+      'Error fetching signingKeyId',
+      signingKeyId,
+      'assuming it is not valid'
+    )
     return false
   }
 }

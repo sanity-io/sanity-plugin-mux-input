@@ -28,10 +28,11 @@ export interface Props {
 }
 export default function MuxLogo({height = 26}) {
   const id = useId()
-  const [titleId, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r] = useMemo<typeof ids>(
-    () => ids.map((field) => `${id}-${field}`) as unknown as typeof ids,
-    [id]
-  )
+  const [titleId, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r] =
+    useMemo<typeof ids>(
+      () => ids.map((field) => `${id}-${field}`) as unknown as typeof ids,
+      [id]
+    )
 
   return (
     <svg
@@ -341,7 +342,10 @@ export default function MuxLogo({height = 26}) {
           <path d="M69.067 242H169.12V141.947H69.067Z" />
         </clipPath>
       </defs>
-      <g clipPath={`url(#${a})`} transform="matrix(1.33333 0 0 -1.33333 0 425.333)">
+      <g
+        clipPath={`url(#${a})`}
+        transform="matrix(1.33333 0 0 -1.33333 0 425.333)"
+      >
         <g
           style={{
             opacity: 0.69999701,
@@ -365,7 +369,10 @@ export default function MuxLogo({height = 26}) {
         d="M558.674 236.858 428.781 106.966c-6.855-6.855-6.855-17.969 0-24.825 6.855-6.854 17.969-6.854 24.823 0l129.894 129.894c6.854 6.855 6.854 17.968 0 24.823A17.498 17.498 0 0 1 571.086 242a17.495 17.495 0 0 1-12.412-5.142"
         transform="matrix(1.33333 0 0 -1.33333 0 425.333)"
       />
-      <g clipPath={`url(#${e})`} transform="matrix(1.33333 0 0 -1.33333 0 425.333)">
+      <g
+        clipPath={`url(#${e})`}
+        transform="matrix(1.33333 0 0 -1.33333 0 425.333)"
+      >
         <g
           style={{
             opacity: 0.69999701,
@@ -427,7 +434,10 @@ export default function MuxLogo({height = 26}) {
         d="M198.96 94.554c0-9.695 7.859-17.554 17.553-17.554 9.695 0 17.554 7.859 17.554 17.554 0 9.694-7.859 17.553-17.554 17.553-9.694 0-17.553-7.859-17.553-17.553"
         transform="matrix(1.33333 0 0 -1.33333 0 425.333)"
       />
-      <g clipPath={`url(#${n})`} transform="matrix(1.33333 0 0 -1.33333 0 425.333)">
+      <g
+        clipPath={`url(#${n})`}
+        transform="matrix(1.33333 0 0 -1.33333 0 425.333)"
+      >
         <g
           style={{
             opacity: 0.69999701,

@@ -1,7 +1,11 @@
 import * as UpChunk from '@mux/upchunk'
 import {Observable} from 'rxjs'
 
-export function createUpChunkObservable(uuid: string, uploadUrl: string, source: File) {
+export function createUpChunkObservable(
+  uuid: string,
+  uploadUrl: string,
+  source: File
+) {
   return new Observable((subscriber) => {
     const upchunk = UpChunk.createUpload({
       endpoint: uploadUrl,
@@ -17,7 +21,8 @@ export function createUpChunkObservable(uuid: string, uploadUrl: string, source:
       subscriber.complete()
     }
 
-    const errorHandler = (data: CustomEvent) => subscriber.error(new Error(data.detail.message))
+    const errorHandler = (data: CustomEvent) =>
+      subscriber.error(new Error(data.detail.message))
 
     const progressHandler = (data: CustomEvent) => {
       return subscriber.next({type: 'progress', percent: data.detail})

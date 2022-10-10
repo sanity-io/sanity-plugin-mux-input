@@ -10,7 +10,10 @@ interface StoryboardSrcOptions {
   client: SanityClient
 }
 
-export function getStoryboardSrc({asset, client}: StoryboardSrcOptions): MuxStoryboardUrl {
+export function getStoryboardSrc({
+  asset,
+  client,
+}: StoryboardSrcOptions): MuxStoryboardUrl {
   const playbackId = getPlaybackId(asset)
   const searchParams = new URLSearchParams()
 

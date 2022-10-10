@@ -1,7 +1,12 @@
 import type {SanityClient} from '@sanity/client'
 import {useCallback} from 'react'
 
-import {createSigningKeys, haveValidSigningKeys, saveSecrets, testSecrets} from '../actions/secrets'
+import {
+  createSigningKeys,
+  haveValidSigningKeys,
+  saveSecrets,
+  testSecrets,
+} from '../actions/secrets'
 import type {Secrets} from '../util/types'
 
 export const useSaveSecrets = (client: SanityClient, secrets: Secrets) => {
@@ -10,7 +15,10 @@ export const useSaveSecrets = (client: SanityClient, secrets: Secrets) => {
       token,
       secretKey,
       enableSignedUrls,
-    }: Pick<Secrets, 'token' | 'secretKey' | 'enableSignedUrls'>): Promise<Secrets> => {
+    }: Pick<
+      Secrets,
+      'token' | 'secretKey' | 'enableSignedUrls'
+    >): Promise<Secrets> => {
       let {signingKeyId, signingKeyPrivate} = secrets
 
       try {
@@ -53,12 +61,21 @@ export const useSaveSecrets = (client: SanityClient, secrets: Secrets) => {
             )
           } catch (err) {
             // eslint-disable-next-line no-console
-            console.log('Error while creating and saving signing key:', err.message)
+            console.log(
+              'Error while creating and saving signing key:',
+              err.message
+            )
             throw err
           }
         }
       }
-      return {token, secretKey, enableSignedUrls, signingKeyId, signingKeyPrivate}
+      return {
+        token,
+        secretKey,
+        enableSignedUrls,
+        signingKeyId,
+        signingKeyPrivate,
+      }
     },
     [client, secrets]
   )
