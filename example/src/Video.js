@@ -10,16 +10,13 @@ const client = createClient({
   withCredentials: false,
   apiVersion: '2022-10-10',
 })
+const query = /* groq */ `*[_type == "trailer"][0]{
+  title,
+  "video": video.asset->{assetId,playbackId}
+}`
 
 export default function Video() {
-  const {title, video} = suspend(
-    () =>
-      client.fetch(/* groq */ `*[_type == "trailer"][0]{
-      title,
-      "video": video.asset->{assetId,playbackId}
-    }`),
-    []
-  )
+  const {title, video} = suspend(() => client.fetch(query), [])
 
   useEffect(() => {
     document.title = title
