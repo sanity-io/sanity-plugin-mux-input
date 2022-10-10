@@ -1,9 +1,9 @@
 import {Card} from '@sanity/ui'
 import {MediaControlBar, MediaPosterImage} from 'media-chrome/dist/react'
 import React, {useEffect, useMemo, useRef, useState} from 'react'
-import {useClient} from 'sanity'
 import styled from 'styled-components'
 
+import {useClient} from '../hooks/useClient'
 import {getPosterSrc} from '../util/getPosterSrc'
 import {getStoryboardSrc} from '../util/getStoryboardSrc'
 import type {VideoAssetDocument} from '../util/types'

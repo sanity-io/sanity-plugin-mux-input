@@ -1,5 +1,5 @@
 import {useCallback} from 'react'
-import {useClient} from 'sanity'
+import {useClient} from '../hooks/useClient'
 import {PatchEvent, unset} from 'sanity/form'
 
 import {deleteAsset} from '../actions/assets'

@@ -1,7 +1,7 @@
 import React, {memo} from 'react'
-import {useClient} from 'sanity'
 
 import {useAssetDocumentValues} from '../hooks/useAssetDocumentValues'
+import {useClient} from '../hooks/useClient'
 import {useDialogState} from '../hooks/useDialogState'
 import {useMuxPolling} from '../hooks/useMuxPolling'
 import {useSecretsDocumentValues} from '../hooks/useSecretsDocumentValues'
@@ -44,6 +44,8 @@ const Input = (props: InputProps) => {
           ) : (
             <Uploader
               {...props}
+              config={props.config}
+              onChange={props.onChange}
               client={client}
               secrets={secretDocumentValues.value.secrets}
               asset={assetDocumentValues.value}

@@ -12,9 +12,9 @@ import {
   MediaTimeRange,
 } from 'media-chrome/dist/react'
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react'
-import {useClient} from 'sanity'
 
 import {useCancelUpload} from '../hooks/useCancelUpload'
+import {useClient} from '../hooks/useClient'
 import type {DialogState, SetDialogState} from '../hooks/useDialogState'
 import {getVideoSrc} from '../util/getVideoSrc'
 import type {MuxInputProps, VideoAssetDocument} from '../util/types'

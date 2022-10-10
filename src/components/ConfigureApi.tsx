@@ -13,9 +13,9 @@ import {
   TextInput,
 } from '@sanity/ui'
 import React, {memo, useCallback, useEffect, useMemo, useRef} from 'react'
-import {useClient} from 'sanity'
 import {clear, preload} from 'suspend-react'
 
+import {useClient} from '../hooks/useClient'
 import type {SetDialogState} from '../hooks/useDialogState'
 import {useSaveSecrets} from '../hooks/useSaveSecrets'
 import {useSecretsFormState} from '../hooks/useSecretsFormState'

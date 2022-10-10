@@ -1,5 +1,6 @@
 import {useMemo} from 'react'
-import {useClient, useDataset, useProjectId} from 'sanity'
+import {useDataset, useProjectId} from 'sanity'
+import {useClient} from '../hooks/useClient'
 import useSWR from 'swr'
 
 import type {MuxAsset, VideoAssetDocument} from '../util/types'
