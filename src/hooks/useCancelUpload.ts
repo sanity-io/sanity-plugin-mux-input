@@ -1,8 +1,8 @@
 import {useCallback} from 'react'
-import {useClient} from '../hooks/useClient'
-import {PatchEvent, unset} from 'sanity/form'
+import {PatchEvent, unset} from 'sanity'
 
 import {deleteAsset} from '../actions/assets'
+import {useClient} from '../hooks/useClient'
 import type {MuxInputProps, VideoAssetDocument} from '../util/types'
 
 export const useCancelUpload = (asset: VideoAssetDocument, onChange: MuxInputProps['onChange']) => {

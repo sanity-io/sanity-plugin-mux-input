@@ -1,5 +1,5 @@
 import {useMemo} from 'react'
-import {useDocumentValues} from 'sanity/_unstable'
+import {useDocumentValues} from 'sanity'
 
 import {muxSecretsDocumentId} from '../util/constants'
 import type {Secrets} from '../util/types'

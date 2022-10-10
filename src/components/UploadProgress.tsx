@@ -2,7 +2,7 @@
 
 import {Button, Card, Code, Flex, Inline, Stack, Text} from '@sanity/ui'
 import React from 'react'
-import {LinearProgress} from 'sanity/_unstable'
+import {LinearProgress} from 'sanity'
 import styled from 'styled-components'
 
 export const CardWrapper = styled(Card)`

@@ -22,7 +22,7 @@ import {
   useClickOutside,
 } from '@sanity/ui'
 import React, {memo, useCallback, useEffect, useMemo, useState} from 'react'
-import {PatchEvent, unset} from 'sanity/form'
+import {PatchEvent, unset} from 'sanity'
 import styled from 'styled-components'
 
 import {type DialogState, type SetDialogState} from '../hooks/useDialogState'

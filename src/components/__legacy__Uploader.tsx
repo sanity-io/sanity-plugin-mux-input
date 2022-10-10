@@ -5,7 +5,7 @@ import type {SanityClient} from '@sanity/client'
 import React, {Component} from 'react'
 import {type Observable, Subject} from 'rxjs'
 import {takeUntil, tap} from 'rxjs/operators'
-import {PatchEvent, set, setIfMissing} from 'sanity/form'
+import {PatchEvent, set, setIfMissing} from 'sanity'
 
 import {uploadFile, uploadUrl} from '../actions/upload'
 import {type DialogState, type SetDialogState} from '../hooks/useDialogState'

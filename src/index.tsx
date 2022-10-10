@@ -18,30 +18,32 @@ export const muxInput = createPlugin<Partial<Config> | void>((userConfig) => {
   return {
     name: 'mux-input',
     form: {
-      renderInput(props, next) {
-        if (isMuxInputProps(props)) {
-          return (
-            <AspectRatioCard>
-              <ErrorBoundaryCard schemaType={props.schemaType}>
-                <Suspense fallback={<InputFallback />}>
-                  <Input config={config} {...props} />
-                </Suspense>
-              </ErrorBoundaryCard>
-            </AspectRatioCard>
-          )
-        }
-        return next(props)
-      },
-      renderPreview(props, next) {
-        if (isMuxInputPreviewProps(props)) {
-          return (
-            <AspectRatioCard>
-              {/* @ts-expect-error */}
-              <Preview {...props} />
-            </AspectRatioCard>
-          )
-        }
-        return next(props)
+      components: {
+        input: (props) => {
+          if (isMuxInputProps(props)) {
+            return (
+              <AspectRatioCard>
+                <ErrorBoundaryCard schemaType={props.schemaType}>
+                  <Suspense fallback={<InputFallback />}>
+                    <Input config={config} {...props} />
+                  </Suspense>
+                </ErrorBoundaryCard>
+              </AspectRatioCard>
+            )
+          }
+          return props.renderDefault(props)
+        },
+        preview: (props) => {
+          if (isMuxInputPreviewProps(props)) {
+            return (
+              <AspectRatioCard>
+                {/* @ts-expect-error */}
+                <Preview {...props} />
+              </AspectRatioCard>
+            )
+          }
+          return props.renderDefault(props)
+        },
       },
     },
     schema: {

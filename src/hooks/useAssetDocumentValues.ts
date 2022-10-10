@@ -1,5 +1,5 @@
 import {isReference} from 'sanity'
-import {useDocumentValues} from 'sanity/_unstable'
+import {useDocumentValues} from 'sanity'
 
 import type {Reference, VideoAssetDocument} from '../util/types'
 

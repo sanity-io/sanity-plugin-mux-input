@@ -1,8 +1,8 @@
 import {useMemo} from 'react'
 import {useDataset, useProjectId} from 'sanity'
-import {useClient} from '../hooks/useClient'
 import useSWR from 'swr'
 
+import {useClient} from '../hooks/useClient'
 import type {MuxAsset, VideoAssetDocument} from '../util/types'
 
 // Poll MUX if it's preparing the main document or its own static renditions

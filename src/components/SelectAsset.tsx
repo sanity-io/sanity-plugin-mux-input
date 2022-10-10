@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react'
-import {useClient} from '../hooks/useClient'
-import {PatchEvent, set, setIfMissing} from 'sanity/form'
+import {PatchEvent, set, setIfMissing} from 'sanity'
 
+import {useClient} from '../hooks/useClient'
 import type {SetDialogState} from '../hooks/useDialogState'
 import type {MuxInputProps, VideoAssetDocument} from '../util/types'
 import VideoSource, {type Props as VideoSourceProps} from './VideoSource'

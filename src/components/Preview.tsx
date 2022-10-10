@@ -1,5 +1,5 @@
 import React from 'react'
-import {SanityDefaultPreview} from 'sanity/_unstable'
+import {SanityDefaultPreview} from 'sanity'
 
 import {useAssetDocumentValues} from '../hooks/useAssetDocumentValues'
 import {VideoThumbnail} from './VideoSource.styled'
