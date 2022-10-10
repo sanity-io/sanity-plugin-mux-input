@@ -5,6 +5,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0-v3-studio.16](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.0-v3-studio.15...v2.0.0-v3-studio.16) (2022-10-10)
+
+### Bug Fixes
+
+- **docs:** refer to mux player ([30cf63e](https://github.com/sanity-io/sanity-plugin-mux-input/commit/30cf63e550da5ff9c46a76c7814a7d728efdad63))
+- parcel bundling error ([#107](https://github.com/sanity-io/sanity-plugin-mux-input/issues/107)) ([3d647d2](https://github.com/sanity-io/sanity-plugin-mux-input/commit/3d647d23411835cbbacaade285e04d18e8869f74))
+
 ## [2.0.0-v3-studio.15](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.0-v3-studio.14...v2.0.0-v3-studio.15) (2022-09-29)
 
 ### Bug Fixes
