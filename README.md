@@ -64,11 +64,7 @@ The Mux plugin will find its access tokens by fetching this document.
 
 # Playing videos in the frontend
 
-We have made our own player which supports poster images for the videos as set with this plugin, see [`sanity-mux-player`](https://github.com/sanity-io/sanity-mux-player)
-
-You could use any player which supports HLS, just point the video source to:
-
-`https://stream.mux.com/${assetDocument.playbackId}.m3u8`
+We recommend using [Mux Player](https://www.mux.com/player), try the [Codesandbox example](https://codesandbox.io/s/github/sanity-io/sanity-plugin-mux-input/tree/main/example).
 
 # Enabling Signed Urls
 

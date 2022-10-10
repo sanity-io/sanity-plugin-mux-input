@@ -12,24 +12,15 @@ const client = createClient({
 })
 const query = /* groq */ `*[_type == "trailer"][0]{
   title,
-  "video": video.asset->{assetId,playbackId}
+  "playbackId": video.asset->playbackId
 }`
 
 export default function Video() {
-  const {title, video} = suspend(() => client.fetch(query), [])
+  const {title, playbackId} = suspend(() => client.fetch(query), [])
 
   useEffect(() => {
     document.title = title
   }, [title])
 
-  return (
-    <MuxPlayer
-      playbackId={video.playbackId}
-      metadata={{
-        video_id: video.assetId,
-        video_title: title,
-        // viewer_user_id: '...',
-      }}
-    />
-  )
+  return <MuxPlayer playbackId={playbackId} metadataVideoTitle={title} />
 }
