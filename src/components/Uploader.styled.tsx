@@ -14,18 +14,13 @@ interface UploadCardProps {
   tone?: CardTone
   children: React.ReactNode
   onPaste: React.ClipboardEventHandler<HTMLInputElement>
-  onFocus: React.FocusEventHandler<HTMLDivElement>
-  onBlur: React.FocusEventHandler<HTMLDivElement>
   onDrop: React.DragEventHandler<HTMLDivElement>
   onDragOver: React.DragEventHandler<HTMLDivElement>
   onDragLeave: React.DragEventHandler<HTMLDivElement>
   onDragEnter: React.DragEventHandler<HTMLDivElement>
 }
 export const UploadCard = forwardRef<HTMLDivElement, UploadCardProps>(
-  (
-    {children, tone, onPaste, onFocus, onBlur, onDrop, onDragEnter, onDragLeave, onDragOver},
-    forwardedRef
-  ) => {
+  ({children, tone, onPaste, onDrop, onDragEnter, onDragLeave, onDragOver}, forwardedRef) => {
     const ctrlDown = useRef(false)
     const inputRef = useRef<HTMLInputElement>(null)
     const handleKeyDown = useCallback<React.KeyboardEventHandler<HTMLDivElement>>((event) => {
@@ -55,8 +50,6 @@ export const UploadCard = forwardRef<HTMLDivElement, UploadCardProps>(
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}
         onPaste={onPaste}
-        onFocus={onFocus}
-        onBlur={onBlur}
         onDrop={onDrop}
         onDragEnter={onDragEnter}
         onDragLeave={onDragLeave}

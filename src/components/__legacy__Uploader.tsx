@@ -21,8 +21,6 @@ import {UploadProgress} from './UploadProgress'
 interface Props extends Pick<MuxInputProps, 'onChange' | 'readOnly'> {
   config: Config
   client: SanityClient
-  onFocus: React.FocusEventHandler<HTMLDivElement>
-  onBlur: React.FocusEventHandler<HTMLDivElement>
   secrets: Secrets
   asset: VideoAssetDocument | null | undefined
   dialogState: DialogState
@@ -234,8 +232,6 @@ class MuxVideoInputUploader extends Component<Props, State> {
               ? 'positive'
               : undefined
           }
-          onBlur={this.props.onBlur}
-          onFocus={this.props.onFocus}
           onDrop={this.handleDrop}
           onDragOver={this.handleDragOver}
           onDragLeave={this.handleDragLeave}
