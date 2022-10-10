@@ -38,7 +38,8 @@ const ImageLoader = memo(function ImageLoader({
   return <img alt={alt} src={src} height={height} width={width} style={{aspectRatio}} />
 })
 
-const VideoMediaPreview = styled(MediaPreview)`
+// @TODO fix typings errors due to props.renderDefault
+const VideoMediaPreview = styled<any>(MediaPreview)`
   img {
     object-fit: cover;
   }
@@ -159,7 +160,8 @@ export const VideoThumbnail = memo(function VideoThumbnail({
   )
 })
 
-const AnimatedVideoMediaPreview = styled(MediaPreview)`
+// @TODO fix typings errors due to props.renderDefault
+const AnimatedVideoMediaPreview = styled<any>(MediaPreview)`
   img {
     object-fit: contain;
   }

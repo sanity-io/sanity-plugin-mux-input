@@ -1,4 +1,10 @@
-import type {ObjectInputProps, PreviewProps, SanityDocument, SchemaType} from 'sanity'
+import type {
+  ObjectInputProps,
+  PreviewLayoutKey,
+  PreviewProps,
+  SanityDocument,
+  SchemaType,
+} from 'sanity'
 import type {PartialDeep} from 'type-fest'
 
 export interface Config {
@@ -183,7 +189,7 @@ export type MuxInputProps = ObjectInputProps<{
   asset?: Reference
 }>
 
-export interface MuxInputPreviewProps extends Omit<PreviewProps, 'value'> {
+export interface MuxInputPreviewProps extends Omit<PreviewProps<PreviewLayoutKey>, 'value'> {
   schemaType: SchemaType
   value?: {
     asset?: Reference
