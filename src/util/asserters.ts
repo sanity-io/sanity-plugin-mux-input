@@ -8,12 +8,12 @@ import {
   isObjectSchemaType,
 } from 'sanity'
 
-import {name} from '../schema/mux.video'
 import type {MuxInputPreviewProps, MuxInputProps} from './types'
 
 export function isMuxInputProps(props: InputProps): props is MuxInputProps {
   return (
-    isObjectSchemaType(props.schemaType) && props.schemaType.type?.name === name
+    isObjectSchemaType(props.schemaType) &&
+    props.schemaType.type?.name === 'mux.video'
   )
 }
 
