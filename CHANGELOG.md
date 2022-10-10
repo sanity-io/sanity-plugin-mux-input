@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0-v3-studio.19](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.0-v3-studio.18...v2.0.0-v3-studio.19) (2022-10-10)
+
+### Bug Fixes
+
+- support `dev-preview.21` and later ([387e2f1](https://github.com/sanity-io/sanity-plugin-mux-input/commit/387e2f16f6804c5c4287509dae0bd3d6770c7ce7))
+
 ## [2.0.0-v3-studio.18](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.0-v3-studio.17...v2.0.0-v3-studio.18) (2022-10-10)
 
 ### Bug Fixes
