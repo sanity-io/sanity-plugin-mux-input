@@ -2,6 +2,5 @@
 import {useClient as useSanityClient} from 'sanity'
 
 export function useClient() {
-  // @ts-expect-error -- added in latest dev-preview
   return useSanityClient({apiVersion: '2022-09-14'})
 }
