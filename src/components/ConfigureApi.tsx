@@ -33,10 +33,7 @@ const fieldNames = ['token', 'secretKey', 'enableSignedUrls'] as const
 function ConfigureApi({secrets, setDialogState}: Props) {
   const client = useClient()
   const [state, dispatch] = useSecretsFormState(secrets)
-  const hasSecretsInitially = useMemo(
-    () => secrets.token && secrets.secretKey,
-    [secrets]
-  )
+  const hasSecretsInitially = useMemo(() => secrets.token && secrets.secretKey, [secrets])
   const handleClose = useCallback(() => setDialogState(false), [setDialogState])
   const dirty = useMemo(
     () =>
@@ -47,10 +44,7 @@ function ConfigureApi({secrets, setDialogState}: Props) {
   )
   const id = `ConfigureApi${useId()}`
   const [tokenId, secretKeyId, enableSignedUrlsId] = useMemo<typeof fieldNames>(
-    () =>
-      fieldNames.map(
-        (field) => `${id}-${field}`
-      ) as unknown as typeof fieldNames,
+    () => fieldNames.map((field) => `${id}-${field}`) as unknown as typeof fieldNames,
     [id]
   )
   const firstField = useRef<HTMLInputElement>(null)
@@ -69,10 +63,7 @@ function ConfigureApi({secrets, setDialogState}: Props) {
           .then((savedSecrets) => {
             const {projectId, dataset} = client.config()
             clear([cacheNs, secretsId, projectId, dataset])
-            preload(
-              () => Promise.resolve(savedSecrets),
-              [cacheNs, secretsId, projectId, dataset]
-            )
+            preload(() => Promise.resolve(savedSecrets), [cacheNs, secretsId, projectId, dataset])
             setDialogState(false)
           })
           .catch((err) => dispatch({type: 'error', payload: err.message}))
@@ -137,12 +128,11 @@ function ConfigureApi({secrets, setDialogState}: Props) {
                     .
                   </Text>
                   <Text size={1}>
-                    The access token needs permissions:{' '}
-                    <strong>Mux Video </strong>
+                    The access token needs permissions: <strong>Mux Video </strong>
                     (Full Access) and <strong>Mux Data</strong> (Read)
                     <br />
-                    The credentials will be stored safely in a hidden document
-                    only available to editors.
+                    The credentials will be stored safely in a hidden document only available to
+                    editors.
                   </Text>
                 </Stack>
               </Card>
@@ -177,9 +167,7 @@ function ConfigureApi({secrets, setDialogState}: Props) {
                 />
                 <Box flex={1} paddingLeft={3}>
                   <Text>
-                    <label htmlFor={enableSignedUrlsId}>
-                      Enable Signed Urls
-                    </label>
+                    <label htmlFor={enableSignedUrlsId}>Enable Signed Urls</label>
                   </Text>
                 </Box>
               </Flex>
@@ -187,16 +175,12 @@ function ConfigureApi({secrets, setDialogState}: Props) {
               {secrets.signingKeyId && state.enableSignedUrls ? (
                 <Card padding={[3, 3, 3]} radius={2} shadow={1} tone="caution">
                   <Stack space={3}>
-                    <Text size={1}>
-                      The signing key ID that Sanity will use is:
-                    </Text>
+                    <Text size={1}>The signing key ID that Sanity will use is:</Text>
                     <Code size={1}>{secrets.signingKeyId}</Code>
                     <Text size={1}>
-                      This key is only used for previewing content in the Sanity
-                      UI.
+                      This key is only used for previewing content in the Sanity UI.
                       <br />
-                      You should generate a different key to use in your
-                      application server.
+                      You should generate a different key to use in your application server.
                     </Text>
                   </Stack>
                 </Card>

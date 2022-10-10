@@ -4,17 +4,12 @@ import {useDocumentValues} from 'sanity/_unstable'
 import {muxSecretsDocumentId} from '../util/constants'
 import type {Secrets} from '../util/types'
 
-const path = [
-  'token',
-  'secretKey',
-  'enableSignedUrls',
-  'signingKeyId',
-  'signingKeyPrivate',
-]
+const path = ['token', 'secretKey', 'enableSignedUrls', 'signingKeyId', 'signingKeyPrivate']
 export const useSecretsDocumentValues = () => {
-  const {error, isLoading, value} = useDocumentValues<
-    Partial<Secrets> | null | undefined
-  >(muxSecretsDocumentId, path)
+  const {error, isLoading, value} = useDocumentValues<Partial<Secrets> | null | undefined>(
+    muxSecretsDocumentId,
+    path
+  )
   const cache = useMemo(() => {
     const exists = Boolean(value)
     const secrets: Secrets = {

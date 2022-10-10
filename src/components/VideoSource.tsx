@@ -19,26 +19,14 @@ import {
   useToast,
 } from '@sanity/ui'
 import {animate} from 'motion'
-import React, {
-  memo,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react'
+import React, {memo, useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react'
 import styled from 'styled-components'
 import {getDevicePixelRatio} from 'use-device-pixel-ratio'
 
 import {deleteAsset} from '../actions/assets'
 import {useClient} from '../hooks/useClient'
 import type {VideoAssetDocument} from '../util/types'
-import {
-  AnimatedVideoThumbnail,
-  CardLoadMore,
-  ThumbGrid,
-  VideoThumbnail,
-} from './VideoSource.styled'
+import {AnimatedVideoThumbnail, CardLoadMore, ThumbGrid, VideoThumbnail} from './VideoSource.styled'
 
 export interface AssetActionsMenuProps {
   asset: VideoAssetDocument
@@ -47,9 +35,7 @@ export interface AssetActionsMenuProps {
 function AssetActionsMenu(props: AssetActionsMenuProps) {
   const {asset} = props
   const id = useId()
-  const [dialogState, setDialogState] = useState<
-    false | 'show-uses' | 'confirm-delete'
-  >()
+  const [dialogState, setDialogState] = useState<false | 'show-uses' | 'confirm-delete'>()
   const [open, setOpen] = useState(false)
   const [menuElement, setMenuRef] = useState<HTMLDivElement | null>(null)
 
@@ -79,29 +65,17 @@ function AssetActionsMenu(props: AssetActionsMenuProps) {
       <MenuButton
         id={`${id}-asset-menu`}
         button={
-          <Button
-            icon={EllipsisVerticalIcon}
-            mode="ghost"
-            onClick={handleClick}
-            padding={2}
-          />
+          <Button icon={EllipsisVerticalIcon} mode="ghost" onClick={handleClick} padding={2} />
         }
         menu={
           <Menu ref={setMenuRef}>
-            <MenuItem
-              tone="critical"
-              icon={TrashIcon}
-              text="Delete"
-              onClick={handleDelete}
-            />
+            <MenuItem tone="critical" icon={TrashIcon} text="Delete" onClick={handleDelete} />
           </Menu>
         }
         portal
         placement="right"
       />
-      {dialogState === 'confirm-delete' && (
-        <DeleteDialog asset={asset} onClose={handleClose} />
-      )}
+      {dialogState === 'confirm-delete' && <DeleteDialog asset={asset} onClose={handleClose} />}
     </>
   )
 }
@@ -187,9 +161,7 @@ function DeleteDialog(props: DeleteDialogProps) {
                   </Flex>
                   <Flex align="center" as="label">
                     <Checkbox disabled checked />
-                    <Text style={{margin: '0 10px'}}>
-                      Delete video from dataset
-                    </Text>
+                    <Text style={{margin: '0 10px'}}>Delete video from dataset</Text>
                   </Flex>
                 </Stack>
               </Box>
@@ -210,20 +182,12 @@ export interface Props {
   onLoadMore: () => void
 }
 
-export default function VideoSource({
-  assets,
-  isLoading,
-  isLastPage,
-  onSelect,
-  onLoadMore,
-}: Props) {
+export default function VideoSource({assets, isLoading, isLastPage, onSelect, onLoadMore}: Props) {
   const handleClick = useCallback<React.MouseEventHandler<HTMLDivElement>>(
     (event) => onSelect(event.currentTarget.dataset.id!),
     [onSelect]
   )
-  const handleKeyPress = useCallback<
-    React.KeyboardEventHandler<HTMLDivElement>
-  >(
+  const handleKeyPress = useCallback<React.KeyboardEventHandler<HTMLDivElement>>(
     (event) => {
       if (event.key === 'Enter') {
         onSelect(event.currentTarget.dataset.id!)
@@ -283,12 +247,7 @@ interface VideoSourceItemProps {
   onKeyPress: React.KeyboardEventHandler<HTMLDivElement>
   width: number
 }
-const _VideoSourceItem = ({
-  asset,
-  onClick,
-  onKeyPress,
-  width,
-}: VideoSourceItemProps) => {
+const _VideoSourceItem = ({asset, onClick, onKeyPress, width}: VideoSourceItemProps) => {
   const [hover, setHover] = useState<boolean | null>(null)
   const ref = useRef<HTMLDivElement>(null)
   useLayoutEffect(() => {
@@ -319,9 +278,7 @@ const _VideoSourceItem = ({
         <VideoThumbnail asset={asset} width={width} showTip />
         {asset?.playbackId && (
           <AnimateWrapper tone="transparent" ref={ref} margin={1} radius={1}>
-            {hover !== null && (
-              <AnimatedVideoThumbnail asset={asset} width={width} />
-            )}
+            {hover !== null && <AnimatedVideoThumbnail asset={asset} width={width} />}
           </AnimateWrapper>
         )}
       </Card>

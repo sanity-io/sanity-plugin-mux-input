@@ -18,13 +18,10 @@ const Input = (props: InputProps) => {
   const client = useClient()
   const secretDocumentValues = useSecretsDocumentValues()
   const assetDocumentValues = useAssetDocumentValues(props.value?.asset)
-  const poll = useMuxPolling(
-    props.readOnly ? undefined : assetDocumentValues?.value || undefined
-  )
+  const poll = useMuxPolling(props.readOnly ? undefined : assetDocumentValues?.value || undefined)
   const [dialogState, setDialogState] = useDialogState()
 
-  const error =
-    secretDocumentValues.error || assetDocumentValues.error || poll.error /*||
+  const error = secretDocumentValues.error || assetDocumentValues.error || poll.error /*||
     // @TODO move errored logic to Uploader, where handleRemoveVideo can be called
     (assetDocumentValues.value?.status === 'errored'
       ? new Error(assetDocumentValues.value.data?.errors?.messages?.join(' '))
@@ -34,8 +31,7 @@ const Input = (props: InputProps) => {
     // @TODO deal with it more gracefully
     throw error
   }
-  const isLoading =
-    secretDocumentValues.isLoading || assetDocumentValues.isLoading
+  const isLoading = secretDocumentValues.isLoading || assetDocumentValues.isLoading
 
   return (
     <>
@@ -43,8 +39,7 @@ const Input = (props: InputProps) => {
         <InputFallback />
       ) : (
         <>
-          {secretDocumentValues.value.needsSetup &&
-          !assetDocumentValues.value ? (
+          {secretDocumentValues.value.needsSetup && !assetDocumentValues.value ? (
             <Onboard setDialogState={setDialogState} />
           ) : (
             <Uploader

@@ -13,24 +13,18 @@ export const useMuxPolling = (asset?: VideoAssetDocument) => {
   const shouldFetch = useMemo(
     () =>
       !!asset?.assetId &&
-      (asset?.status === 'preparing' ||
-        asset?.data?.static_renditions?.status === 'preparing'),
+      (asset?.status === 'preparing' || asset?.data?.static_renditions?.status === 'preparing'),
     [asset?.assetId, asset?.data?.static_renditions?.status, asset?.status]
   )
   return useSWR(
-    shouldFetch
-      ? `/${projectId}/addons/mux/assets/${dataset}/data/${asset?.assetId}`
-      : null,
+    shouldFetch ? `/${projectId}/addons/mux/assets/${dataset}/data/${asset?.assetId}` : null,
     async () => {
       const {data} = await client.request<{data: MuxAsset}>({
         url: `/addons/mux/assets/${dataset}/data/${asset!.assetId}`,
         withCredentials: true,
         method: 'GET',
       })
-      client
-        .patch(asset!._id!)
-        .set({status: data.status, data})
-        .commit({returnDocuments: false})
+      client.patch(asset!._id!).set({status: data.status, data}).commit({returnDocuments: false})
     },
     {refreshInterval: 2000, refreshWhenHidden: true, dedupingInterval: 1000}
   )

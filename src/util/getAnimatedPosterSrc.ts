@@ -3,11 +3,7 @@ import type {SanityClient} from '@sanity/client'
 import {generateJwt} from './generateJwt'
 import {getPlaybackId} from './getPlaybackId'
 import {getPlaybackPolicy} from './getPlaybackPolicy'
-import type {
-  AnimatedThumbnailOptions,
-  MuxAnimatedThumbnailUrl,
-  VideoAssetDocument,
-} from './types'
+import type {AnimatedThumbnailOptions, MuxAnimatedThumbnailUrl, VideoAssetDocument} from './types'
 
 export interface AnimatedPosterSrcOptions extends AnimatedThumbnailOptions {
   asset: VideoAssetDocument

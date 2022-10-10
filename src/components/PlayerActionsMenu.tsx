@@ -51,16 +51,12 @@ export interface Props extends Pick<MuxInputProps, 'onChange' | 'readOnly'> {
   setDialogState: SetDialogState
 }
 function PlayerActionsMenu(props: Props) {
-  const {asset, readOnly, dialogState, setDialogState, onChange, onUpload} =
-    props
+  const {asset, readOnly, dialogState, setDialogState, onChange, onUpload} = props
   const [open, setOpen] = useState(false)
   const [menuElement, setMenuRef] = useState<HTMLDivElement | null>(null)
   const isSigned = useMemo(() => getPlaybackPolicy(asset) === 'signed', [asset])
 
-  const onReset = useCallback(
-    () => onChange(PatchEvent.from(unset([]))),
-    [onChange]
-  )
+  const onReset = useCallback(() => onChange(PatchEvent.from(unset([]))), [onChange])
 
   useEffect(() => {
     if (open && dialogState) {
@@ -93,11 +89,7 @@ function PlayerActionsMenu(props: Props) {
         </Tooltip>
       )}
       {!readOnly && (
-        <Button
-          icon={EditIcon}
-          mode="ghost"
-          onClick={() => setDialogState('edit-thumbnail')}
-        />
+        <Button icon={EditIcon} mode="ghost" onClick={() => setDialogState('edit-thumbnail')} />
       )}
       <Popover
         content={

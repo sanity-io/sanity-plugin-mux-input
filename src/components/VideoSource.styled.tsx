@@ -35,15 +35,7 @@ const ImageLoader = memo(function ImageLoader({
     await img.decode()
   }, ['sanity-plugin-mux-input', 'image', src])
 
-  return (
-    <img
-      alt={alt}
-      src={src}
-      height={height}
-      width={width}
-      style={{aspectRatio}}
-    />
-  )
+  return <img alt={alt} src={src} height={height} width={width} style={{aspectRatio}} />
 })
 
 const VideoMediaPreview = styled(MediaPreview)`
@@ -55,9 +47,7 @@ const VideoMediaPreview = styled(MediaPreview)`
 interface VideoMediaPreviewSignedSubtitleProps {
   solo?: boolean
 }
-const VideoMediaPreviewSignedSubtitle = ({
-  solo,
-}: VideoMediaPreviewSignedSubtitleProps) => {
+const VideoMediaPreviewSignedSubtitle = ({solo}: VideoMediaPreviewSignedSubtitleProps) => {
   return (
     <Inline
       space={1}
@@ -130,11 +120,7 @@ export const VideoThumbnail = memo(function VideoThumbnail({
         mediaDimensions={mediaDimensions}
         title="Error when loading thumbnail"
         media={
-          <Card
-            radius={2}
-            height="fill"
-            style={{position: 'relative', width: '100%'}}
-          >
+          <Card radius={2} height="fill" style={{position: 'relative', width: '100%'}}>
             <Box
               style={{
                 display: 'flex',
@@ -167,12 +153,7 @@ export const VideoThumbnail = memo(function VideoThumbnail({
           />
         }
       >
-        <PosterImage
-          showTip={showTip}
-          asset={asset}
-          height={height}
-          width={width}
-        />
+        <PosterImage showTip={showTip} asset={asset} height={height} width={width} />
       </Suspense>
     </ErrorBoundary>
   )
@@ -184,8 +165,7 @@ const AnimatedVideoMediaPreview = styled(MediaPreview)`
   }
 `
 
-interface AnimatedPosterImageProps
-  extends Omit<ImageLoaderProps, 'src' | 'alt' | 'height'> {
+interface AnimatedPosterImageProps extends Omit<ImageLoaderProps, 'src' | 'alt' | 'height'> {
   asset: VideoAssetDocument
 }
 const AnimatedPosterImage = ({asset, width}: AnimatedPosterImageProps) => {
@@ -203,8 +183,7 @@ const AnimatedPosterImage = ({asset, width}: AnimatedPosterImageProps) => {
   )
 }
 
-export interface AnimatedVideoThumbnailProps
-  extends Omit<PosterImageProps, 'height'> {
+export interface AnimatedVideoThumbnailProps extends Omit<PosterImageProps, 'height'> {
   width: number
 }
 export const AnimatedVideoThumbnail = memo(function AnimatedVideoThumbnail({

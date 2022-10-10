@@ -64,11 +64,7 @@ export async function haveValidSigningKeys(
     //
     return !!(res.data && res.data.id)
   } catch (e) {
-    console.error(
-      'Error fetching signingKeyId',
-      signingKeyId,
-      'assuming it is not valid'
-    )
+    console.error('Error fetching signingKeyId', signingKeyId, 'assuming it is not valid')
     return false
   }
 }

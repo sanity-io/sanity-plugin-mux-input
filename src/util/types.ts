@@ -1,10 +1,4 @@
-import type {
-  ObjectInputProps,
-  PreviewProps,
-  SanityDocument,
-  SchemaType,
-  ReferenceSchemaType,
-} from 'sanity'
+import type {ObjectInputProps, PreviewProps, SanityDocument, SchemaType} from 'sanity'
 import type {PartialDeep} from 'type-fest'
 
 export interface Config {
@@ -25,26 +19,18 @@ export interface Secrets {
 }
 // This narrowed type indicates that there may be assets that are signed, and we have the secrets to access them
 // enabledSignedUrls might be false but that's only relevant for future uploads and their playback policy
-export interface SignableSecrets
-  extends Omit<Secrets, 'signingKeyId' | 'signingKeyPrivate'> {
+export interface SignableSecrets extends Omit<Secrets, 'signingKeyId' | 'signingKeyPrivate'> {
   signingKeyId: string
   signingKeyPrivate: string
 }
 
 export type MuxImageOrigin = `https://image.mux.com`
-export type MuxThumbnailUrl =
-  `${MuxImageOrigin}/${string}/thumbnail.png?${string}`
-export type MuxAnimatedThumbnailUrl =
-  `${MuxImageOrigin}/${string}/animated.gif?${string}`
-export type MuxStoryboardUrl =
-  `${MuxImageOrigin}/${string}/storyboard.vtt?${string}`
+export type MuxThumbnailUrl = `${MuxImageOrigin}/${string}/thumbnail.png?${string}`
+export type MuxAnimatedThumbnailUrl = `${MuxImageOrigin}/${string}/animated.gif?${string}`
+export type MuxStoryboardUrl = `${MuxImageOrigin}/${string}/storyboard.vtt?${string}`
 export type MuxVideoOrigin = `https://stream.mux.com`
 export type MuxVideoUrl = `${MuxVideoOrigin}/${string}.m3u8?${string}`
-export type MuxApiUrl =
-  | MuxThumbnailUrl
-  | MuxAnimatedThumbnailUrl
-  | MuxStoryboardUrl
-  | MuxVideoUrl
+export type MuxApiUrl = MuxThumbnailUrl | MuxAnimatedThumbnailUrl | MuxStoryboardUrl | MuxVideoUrl
 
 // 'preserve' by default
 // @url: https://docs.mux.com/guides/video/get-images-from-a-video#thumbnail-query-string-parameters
@@ -105,11 +91,7 @@ export interface MuxTextTrack {
   id: string
   text_type?: 'subtitles'
   // https://docs.mux.com/api-reference/video#operation/list-assets:~:text=text%20type%20tracks.-,tracks%5B%5D.,text_source,-string
-  text_source?:
-    | 'uploaded'
-    | 'embedded'
-    | 'generated_live'
-    | 'generated_live_final'
+  text_source?: 'uploaded' | 'embedded' | 'generated_live' | 'generated_live_final'
   // BCP 47 language code
   language_code?: 'en' | 'en-US' | string
   // The name of the track containing a human-readable description. The hls manifest will associate a subtitle text track with this value

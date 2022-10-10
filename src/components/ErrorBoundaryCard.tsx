@@ -1,14 +1,5 @@
 /* eslint-disable no-console */
-import {
-  Button,
-  Card,
-  Flex,
-  Grid,
-  Heading,
-  Inline,
-  Text,
-  useToast,
-} from '@sanity/ui'
+import {Button, Card, Flex, Grid, Heading, Inline, Text, useToast} from '@sanity/ui'
 import React, {memo, useCallback, useRef} from 'react'
 import scrollIntoView from 'scroll-into-view-if-needed'
 import {clear} from 'suspend-react'
@@ -79,13 +70,7 @@ function ErrorBoundaryCard(props: Props) {
 
   if (didCatch) {
     return (
-      <Card
-        ref={errorRef}
-        paddingX={[2, 3, 4, 4]}
-        height="fill"
-        shadow={1}
-        overflow="auto"
-      >
+      <Card ref={errorRef} paddingX={[2, 3, 4, 4]} height="fill" shadow={1} overflow="auto">
         <Flex justify="flex-start" align="center" height="fill">
           <Grid columns={1} gap={[2, 3, 4, 4]}>
             <Heading as="h1">

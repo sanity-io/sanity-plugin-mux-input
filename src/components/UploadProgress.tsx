@@ -45,25 +45,13 @@ export const UploadProgress = ({
 }) => {
   return (
     <CardWrapper tone="primary" padding={4} border height="fill">
-      <FlexWrapper
-        align="center"
-        justify="space-between"
-        height="fill"
-        direction="row"
-        gap={2}
-      >
+      <FlexWrapper align="center" justify="space-between" height="fill" direction="row" gap={2}>
         <LeftSection>
-          <Flex
-            justify="center"
-            gap={[3, 3, 2, 2]}
-            direction={['column', 'column', 'row']}
-          >
+          <Flex justify="center" gap={[3, 3, 2, 2]} direction={['column', 'column', 'row']}>
             <Text size={1}>
               <Inline space={2}>
                 {text}
-                <CodeWrapper size={1}>
-                  {filename ? filename : '...'}
-                </CodeWrapper>
+                <CodeWrapper size={1}>{filename ? filename : '...'}</CodeWrapper>
               </Inline>
             </Text>
           </Flex>

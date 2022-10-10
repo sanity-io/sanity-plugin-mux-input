@@ -11,10 +11,7 @@ interface OnboardProps {
 
 export default function Onboard(props: OnboardProps) {
   const {setDialogState} = props
-  const handleOpen = useCallback(
-    () => setDialogState('secrets'),
-    [setDialogState]
-  )
+  const handleOpen = useCallback(() => setDialogState('secrets'), [setDialogState])
 
   return (
     <>
@@ -44,12 +41,7 @@ export default function Onboard(props: OnboardProps) {
                 </Heading>
               </Inline>
               <Inline paddingY={1}>
-                <Button
-                  mode="ghost"
-                  icon={PlugIcon}
-                  text="Configure API"
-                  onClick={handleOpen}
-                />
+                <Button mode="ghost" icon={PlugIcon} text="Configure API" onClick={handleOpen} />
               </Inline>
             </Grid>
           </Flex>

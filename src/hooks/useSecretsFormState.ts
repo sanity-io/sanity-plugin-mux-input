@@ -2,8 +2,7 @@ import {useReducer} from 'react'
 
 import type {Secrets} from '../util/types'
 
-export interface State
-  extends Pick<Secrets, 'token' | 'secretKey' | 'enableSignedUrls'> {
+export interface State extends Pick<Secrets, 'token' | 'secretKey' | 'enableSignedUrls'> {
   submitting: boolean
   error: string | null
 }
@@ -40,5 +39,4 @@ function reducer(state: State, action: Action) {
   }
 }
 
-export const useSecretsFormState = (secrets: Secrets) =>
-  useReducer(reducer, secrets, init)
+export const useSecretsFormState = (secrets: Secrets) => useReducer(reducer, secrets, init)
