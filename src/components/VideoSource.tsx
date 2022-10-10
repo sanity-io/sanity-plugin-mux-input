@@ -20,11 +20,11 @@ import {
 } from '@sanity/ui'
 import {animate} from 'motion'
 import React, {memo, useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react'
-import {useClient} from 'sanity'
 import styled from 'styled-components'
 import {getDevicePixelRatio} from 'use-device-pixel-ratio'
 
 import {deleteAsset} from '../actions/assets'
+import {useClient} from '../hooks/useClient'
 import type {VideoAssetDocument} from '../util/types'
 import {AnimatedVideoThumbnail, CardLoadMore, ThumbGrid, VideoThumbnail} from './VideoSource.styled'
 

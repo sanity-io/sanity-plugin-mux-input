@@ -1,9 +1,9 @@
 import {useId} from '@reach/auto-id'
 import {Button, Dialog, Stack, Text} from '@sanity/ui'
 import React, {useCallback, useMemo, useState} from 'react'
-import {useClient} from 'sanity'
 import {getDevicePixelRatio} from 'use-device-pixel-ratio'
 
+import {useClient} from '../hooks/useClient'
 import type {SetDialogState} from '../hooks/useDialogState'
 import type {VideoAssetDocument} from '../util/types'
 import {VideoThumbnail} from './VideoSource.styled'

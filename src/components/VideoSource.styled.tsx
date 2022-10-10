@@ -1,12 +1,12 @@
 import {LockIcon, UnknownIcon} from '@sanity/icons'
 import {Box, Card, Grid, Inline, Spinner} from '@sanity/ui'
 import React, {memo, Suspense, useMemo} from 'react'
-import {useClient} from 'sanity'
 import {MediaPreview} from 'sanity/_unstable'
 import styled from 'styled-components'
 import {suspend} from 'suspend-react'
 import {useErrorBoundary} from 'use-error-boundary'
 
+import {useClient} from '../hooks/useClient'
 import {getAnimatedPosterSrc} from '../util/getAnimatedPosterSrc'
 import {getPlaybackPolicy} from '../util/getPlaybackPolicy'
 import {getPosterSrc} from '../util/getPosterSrc'

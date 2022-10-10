@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react'
-import {useClient} from 'sanity'
+import {useClient} from '../hooks/useClient'
 import {PatchEvent, set, setIfMissing} from 'sanity/form'
 
 import type {SetDialogState} from '../hooks/useDialogState'
