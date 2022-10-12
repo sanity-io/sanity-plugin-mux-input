@@ -34,7 +34,7 @@
   "types": "./lib/types/index.d.ts",
   "files": [
     "lib",
-    "src,
+    "src",
     "sanity.json",
     "v2-incompatible.js"
   ],
