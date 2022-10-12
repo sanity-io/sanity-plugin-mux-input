@@ -3,10 +3,11 @@ import {PatchEvent, set, setIfMissing} from 'sanity'
 
 import {useClient} from '../hooks/useClient'
 import type {SetDialogState} from '../hooks/useDialogState'
+import {readSecrets} from '../util/readSecrets'
 import type {MuxInputProps, VideoAssetDocument} from '../util/types'
 import VideoSource, {type Props as VideoSourceProps} from './VideoSource'
 
-const PER_PAGE = 200
+const PER_PAGE = 25
 
 function createQuery(start = 0, end = PER_PAGE) {
   return /* groq */ `*[_type == "mux.videoAsset"] | order(_updatedAt desc) [${start}...${end}]`
@@ -23,21 +24,38 @@ export default function SelectAssets({asset, onChange, setDialogState}: Props) {
   const [isLastPage, setLastPage] = useState(false)
   const [isLoading, setLoading] = useState(false)
   const [assets, setAssets] = useState<VideoAssetDocument[]>([])
+  const secrets = readSecrets(client)
 
   const fetchPage = useCallback(
     (pageNo: number) => {
-      const start = pageNo * PER_PAGE
-      const end = start + PER_PAGE
       setLoading(true)
-      return client
-        .fetch(createQuery(start, end))
+      return fetch(
+        `/api/test?limit=${PER_PAGE}&page=${pageNo}&token=${secrets.token}&secretKey=${secrets.secretKey}`,
+        {headers: {authorization: `Basic ${btoa(`${secrets.token}:${secrets.secretKey}`)}`}}
+      )
+        .then((res) => res.json())
+        .then(
+          ({data}) =>
+            data?.map((item: any) => ({
+              _createdAt: new Date(item.created_at).toJSON(),
+              _id: item?.id,
+              _rev: item?.id,
+              _type: 'mux.videoAsset',
+              _updatedAt: new Date(item.created_at).toJSON(),
+              assetId: item?.id,
+              data: item,
+              filename: '17853aa1f885e12fde682c182e83dd599576acfe.mp4',
+              playbackId: item?.playback_ids?.[0]?.id,
+              status: item?.status,
+            })) || []
+        )
         .then((result: VideoAssetDocument[]) => {
           setLastPage(result.length < PER_PAGE)
           setAssets((prev) => prev.concat(result))
         })
         .finally(() => setLoading(false))
     },
-    [client]
+    [secrets.secretKey, secrets.token]
   )
   const handleSelect = useCallback<VideoSourceProps['onSelect']>(
     (id) => {
