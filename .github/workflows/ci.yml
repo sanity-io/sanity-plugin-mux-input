@@ -30,7 +30,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # tag=v3
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3
       - uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516 # tag=v3
         with:
           node-version: lts/*
@@ -52,7 +52,7 @@ jobs:
           - os: ubuntu-latest
             node: current
     steps:
-      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # tag=v3
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3
       - uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516 # tag=v3
         with:
           node-version: ${{ matrix.node }}
@@ -65,7 +65,7 @@ jobs:
     if: always() && github.event.inputs.release == 'true' && needs.test.result != 'failure' && needs.test.result != 'cancelled'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # tag=v3
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3
         with:
           fetch-depth: 0
       - uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516 # tag=v3
