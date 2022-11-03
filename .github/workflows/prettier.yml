@@ -20,6 +20,6 @@ jobs:
       - name: check if workflows needs prettier
         run: npx prettier --ignore-path .gitignore --check ".github/workflows/**/*.yml" || (echo "An action can't make changes to actions, you'll have to run prettier manually" && exit 1)
       - run: npx prettier --ignore-path .gitignore --write .
-      - uses: EndBug/add-and-commit@d4d066316a2a85974a05efb42be78f897793c6d9 # tag=v9
+      - uses: EndBug/add-and-commit@61a88be553afe4206585b31aa72387c64295d08b # tag=v9
         with:
           message: 'chore(prettier): 🤖 ✨'
