@@ -86,7 +86,7 @@
     "@sanity/eslint-config-no-v2-imports": "^0.0.1-studio-v3.3",
     "@sanity/plugin-kit": "^1.1.0",
     "@sanity/semantic-release-preset": "^2.0.2",
-    "@sanity/vision": "3.0.0-purple-unicorn.6",
+    "@sanity/vision": "3.0.0-rc.0",
     "@types/react": "^18.0.24",
     "@types/styled-components": "^5.1.26",
     "@typescript-eslint/eslint-plugin": "^5.42.0",
