@@ -63,7 +63,7 @@
     "@mux/playback-core": "^0.11.0",
     "@mux/upchunk": "^2.6.0",
     "@reach/auto-id": "^0.17.0",
-    "@sanity/icons": "1.3.7-next.30",
+    "@sanity/icons": "1.3.9-beta.3",
     "@sanity/incompatible-plugin": "^1.0.4",
     "@sanity/ui": "0.38.3-next.30",
     "@sanity/uuid": "^3.0.1",
