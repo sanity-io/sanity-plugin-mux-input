@@ -84,7 +84,7 @@
     "@parcel/packager-ts": "2.7.0",
     "@parcel/transformer-typescript-types": "2.7.0",
     "@sanity/eslint-config-no-v2-imports": "^0.0.1-studio-v3.3",
-    "@sanity/plugin-kit": "^1.1.0",
+    "@sanity/plugin-kit": "^2.0.8",
     "@sanity/semantic-release-preset": "^2.0.2",
     "@sanity/vision": "3.0.0-rc.0",
     "@types/react": "^18.0.24",
