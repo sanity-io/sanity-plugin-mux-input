@@ -1,3 +1,17 @@
+## Installation
+
+```
+npm install --save-exact sanity-plugin-mux-input@studio-v3
+```
+
+or
+
+```
+yarn add --exact sanity-plugin-mux-input@studio-v3
+```
+
+## Usage
+
 # Mux Video Input Sanity Plugin
 
 > **NOTE**
@@ -22,28 +36,28 @@ Not familiar with Sanity? [Visit www.sanity.io](https://www.sanity.io/)
 * Make a schema type that uses the plugin's type `mux.video`, for example:
 
   ```js
-  {
-    title: "Video blog post",
-    name: "videoBlogPost",
-    type: "document",
+  export default {
+    title: 'Video blog post',
+    name: 'videoBlogPost',
+    type: 'document',
     fields: [
-      { title: "Title", name: "title", type: "string" },
+      {title: 'Title', name: 'title', type: 'string'},
       {
-        title: "Video file",
-        name: "video",
-        type: "mux.video"
-      }
-    ]
+        title: 'Video file',
+        name: 'video',
+        type: 'mux.video',
+      },
+    ],
   }
   ```
 
   - Add the `muxInput` import to your plugins:
 
   ```js
-  import {createConfig} from 'sanity'
+  import {defineConfig} from 'sanity'
   import {muxInput} from 'sanity-plugin-mux-input'
 
-  export default createConfig({
+  export default defineConfig({
     plugins: [muxInput()],
   })
   ```
@@ -79,7 +93,7 @@ To enable [static MP4 renditions](https://docs.mux.com/guides/video/enable-stati
 ```js
 import {muxInput} from 'sanity-plugin-mux-input'
 
-export default createConfig({
+export default defineConfig({
   plugins: [muxInput({mp4_support: 'standard'})],
 })
 ```
@@ -125,3 +139,22 @@ After Studio v3 turns stable this behavior will change. The v2 version will then
 # Test
 
 `npm test`
+
+## License
+
+MIT-licensed. See LICENSE.
+
+## Develop & test
+
+This plugin uses [@sanity/plugin-kit](https://github.com/sanity-io/plugin-kit)
+with default configuration for build & watch scripts.
+
+See [Testing a plugin in Sanity Studio](https://github.com/sanity-io/plugin-kit#testing-a-plugin-in-sanity-studio)
+on how to run this plugin with hotreload in the studio.
+
+### Release new version
+
+Run ["CI & Release" workflow](https://github.com/sanity-io/sanity-plugin-mux-input/actions/workflows/main.yml).
+Make sure to select the main branch and check "Release new version".
+
+Semantic release will only release on configured branches, so it is safe to run release on any branch.

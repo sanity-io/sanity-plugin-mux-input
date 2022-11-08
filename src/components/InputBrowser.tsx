@@ -1,6 +1,5 @@
-import {useId} from '@reach/auto-id'
 import {Dialog} from '@sanity/ui'
-import React, {useCallback} from 'react'
+import React, {useCallback, useId} from 'react'
 
 import type {SetDialogState} from '../hooks/useDialogState'
 import SelectAsset, {type Props as SelectAssetProps} from './SelectAsset'

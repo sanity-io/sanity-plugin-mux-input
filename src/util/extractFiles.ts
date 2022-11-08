@@ -38,7 +38,7 @@ function normalizeItems(items: DataTransferItem[]) {
       }
 
       // others
-      return new Promise((resolve) => item.getAsString(resolve)).then((str?: string) =>
+      return new Promise((resolve) => item.getAsString(resolve)).then((str?: any) =>
         str ? [new File([str], 'unknown.txt', {type: item.type})] : []
       )
     })
@@ -59,7 +59,7 @@ function walk(entry: FileSystemEntry): any {
 
   if (isDirectory(entry)) {
     const dir = entry.createReader()
-    return new Promise((resolve) => dir.readEntries(resolve))
+    return new Promise<any>((resolve) => dir.readEntries(resolve))
       .then((entries: FileSystemEntry[]) => entries.filter((entr) => !entr.name.startsWith('.')))
       .then((entries) => Promise.all(entries.map(walk)).then((arr) => arr.flat()))
   }

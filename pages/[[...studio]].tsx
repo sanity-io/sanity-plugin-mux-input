@@ -2,12 +2,12 @@
 
 import {visionTool} from '@sanity/vision'
 import {NextStudio} from 'next-sanity/studio'
-import {createConfig, createPlugin} from 'sanity'
+import {defineConfig, definePlugin} from 'sanity'
 import {deskTool} from 'sanity/desk'
 
 import {muxInput} from '../src'
 
-const shared = createPlugin({
+const shared = definePlugin({
   name: 'shared',
   plugins: [deskTool(), visionTool(), muxInput({mp4_support: 'standard'})],
   schema: {
@@ -31,7 +31,7 @@ const shared = createPlugin({
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || ''
 
-const config = createConfig([
+const config = defineConfig([
   {
     basePath: '/production',
     dataset: 'production',

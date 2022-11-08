@@ -1,6 +1,5 @@
-import {useId} from '@reach/auto-id'
 import {Button, Dialog, Stack, Text} from '@sanity/ui'
-import React, {useCallback, useMemo, useState} from 'react'
+import React, {useCallback, useId, useMemo, useState} from 'react'
 import {getDevicePixelRatio} from 'use-device-pixel-ratio'
 
 import {useClient} from '../hooks/useClient'

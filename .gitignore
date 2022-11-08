@@ -159,3 +159,4 @@ yarn.lock
 lib/
 .parcel-cache
 .husky
+tsconfig.tsbuildinfo

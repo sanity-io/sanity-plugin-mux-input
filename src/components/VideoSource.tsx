@@ -1,4 +1,3 @@
-import {useId} from '@reach/auto-id'
 import {EllipsisVerticalIcon, TrashIcon} from '@sanity/icons'
 import {DownloadIcon} from '@sanity/icons'
 import {
@@ -19,7 +18,7 @@ import {
   useToast,
 } from '@sanity/ui'
 import {animate} from 'motion'
-import React, {memo, useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react'
+import React, {memo, useCallback, useEffect, useId, useLayoutEffect, useRef, useState} from 'react'
 import styled from 'styled-components'
 import {getDevicePixelRatio} from 'use-device-pixel-ratio'
 
@@ -106,11 +105,11 @@ function DeleteDialog(props: DeleteDialogProps) {
       document
         .querySelector(`[data-id="${asset._id}"]`)
         ?.parentElement?.setAttribute?.('hidden', 'true')
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed during delete', err)
       pushToast({
         closable: true,
-        description: err.message,
+        description: err?.message,
         duration: 5000,
         title: 'Uncaught error',
         status: 'error',
@@ -297,6 +296,7 @@ const AnimateWrapper = styled(Card)`
   bottom: 0;
   will-change: opacity;
   background: transparent;
+  background-color: hsl(0deg 0% 0% / 33%);
   opacity: 0;
   pointer-events: none;
 `

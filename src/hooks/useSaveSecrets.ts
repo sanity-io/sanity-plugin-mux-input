@@ -51,9 +51,9 @@ export const useSaveSecrets = (client: SanityClient, secrets: Secrets) => {
               signingKeyId,
               signingKeyPrivate
             )
-          } catch (err) {
+          } catch (err: any) {
             // eslint-disable-next-line no-console
-            console.log('Error while creating and saving signing key:', err.message)
+            console.log('Error while creating and saving signing key:', err?.message)
             throw err
           }
         }

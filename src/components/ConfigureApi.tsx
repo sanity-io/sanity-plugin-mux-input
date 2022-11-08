@@ -1,4 +1,3 @@
-import {useId} from '@reach/auto-id'
 import {
   Box,
   Button,
@@ -12,7 +11,7 @@ import {
   Text,
   TextInput,
 } from '@sanity/ui'
-import React, {memo, useCallback, useEffect, useMemo, useRef} from 'react'
+import React, {memo, useCallback, useEffect, useId, useMemo, useRef} from 'react'
 import {clear, preload} from 'suspend-react'
 
 import {useClient} from '../hooks/useClient'

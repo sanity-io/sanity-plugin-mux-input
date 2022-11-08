@@ -1,4 +1,6 @@
+.eslintrc.js
 commitlint.config.js
+lib
 lint-staged.config.js
-lib/
-node_modules/
+package.config.ts
+*.js

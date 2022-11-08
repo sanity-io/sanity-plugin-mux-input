@@ -1,6 +1,5 @@
-import {useId} from '@reach/auto-id'
 import {type ButtonProps, Button} from '@sanity/ui'
-import React, {useCallback, useRef} from 'react'
+import React, {useCallback, useId, useRef} from 'react'
 import styled from 'styled-components'
 
 const HiddenInput = styled.input`
