@@ -30,10 +30,7 @@ export function generateJwt<T extends Audience>(
     throw new TypeError('Missing signingKeyPrivate')
   }
 
-  const {default: sign}: {default: typeof import('jsonwebtoken-esm/sign')['default']} = suspend(
-    () => import('jsonwebtoken-esm/sign'),
-    ['sanity-plugin-mux-input', 'jsonwebtoken-esm/sign']
-  )
+  const {default: sign} = suspend(() => import('jsonwebtoken-esm/sign'), ['jsonwebtoken-esm/sign'])
 
   return sign(
     payload ? JSON.parse(JSON.stringify(payload, (_, v) => v ?? undefined)) : {},
