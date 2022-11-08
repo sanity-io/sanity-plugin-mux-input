@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0-v3-studio.22](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.0-v3-studio.21...v2.0.0-v3-studio.22) (2022-11-08)
+
+### Bug Fixes
+
+- remove `cdn.skypack.dev` workaround ([1d5f2c2](https://github.com/sanity-io/sanity-plugin-mux-input/commit/1d5f2c29da9e77b60203c7fadc6463727f66d184))
+
 ## [2.0.0-v3-studio.21](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.0-v3-studio.20...v2.0.0-v3-studio.21) (2022-11-08)
 
 ### Bug Fixes
