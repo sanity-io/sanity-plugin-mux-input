@@ -30,23 +30,10 @@ export function generateJwt<T extends Audience>(
     throw new TypeError('Missing signingKeyPrivate')
   }
 
-  // /*
-  const {default: sign}: {default: typeof import('jsonwebtoken-esm/sign')['default']} =
-    suspend(() => {
-      // eslint-disable-next-line @typescript-eslint/no-shadow
-      // This whole skypack thing is an extreme, temporary, measure to get around Parcel bugs with code splitting, dynamic import, and CJS + ESM interop
-      // Otherwise known as the unholy trinity of reasons I might consider going back to doing only design work
-      // const {default: sign} = await import('jsonwebtoken-esm/sign')
-      // eslint-disable-next-line @typescript-eslint/no-shadow
-      return import(
-        /* webpackIgnore: true */
-        /* @vite-ignore */
-        new URL(
-          'https://cdn.skypack.dev/pin/jsonwebtoken-esm@v1.0.3-p8N0qksX2r9oYz3jfz0a/mode=imports,min/optimized/jsonwebtoken-esm/sign.js'
-        ).toString()
-      )
-    }, ['sanity-plugin-mux-input', 'jsonwebtoken-esm/sign'])
-  // */
+  const {default: sign}: {default: typeof import('jsonwebtoken-esm/sign')['default']} = suspend(
+    () => import('jsonwebtoken-esm/sign'),
+    ['sanity-plugin-mux-input', 'jsonwebtoken-esm/sign']
+  )
 
   return sign(
     payload ? JSON.parse(JSON.stringify(payload, (_, v) => v ?? undefined)) : {},
