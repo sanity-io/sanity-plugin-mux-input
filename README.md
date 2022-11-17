@@ -1,10 +1,7 @@
 # Mux Video Input Sanity Plugin
 
-> **NOTE**
->
-> This is the **Sanity Studio v2 version** of sanity-plugin-mux-input.
->
-> For the v3 version, please refer to the [main branch](https://github.com/sanity-io/sanity-plugin-mux-input).
+>This is a **Sanity Studio v2** plugin.
+> For the v3 version, please refer to the [v3-branch](https://github.com/sanity-io/sanity-plugin-mux-input).
 
 This is a plugin that let you use [Mux](https://www.mux.com) video assets in your Sanity studio.
 
@@ -14,9 +11,13 @@ The Mux plugin for Sanity gives you a way to upload and preview videos easily.
 
 Not familiar with Sanity? [Visit www.sanity.io](https://www.sanity.io/)
 
+## Installation 
+
+`sanity install mux-input@studio-v2`
+
 ## Quick start
 
-- While in your project folder, run `sanity install mux-input`.
+- While in your project folder, run `sanity install mux-input@studio-v2`.
   Read more about [using plugins in Sanity here](https://www.sanity.io/docs/plugins).
 
 * Make a schema type that uses the plugin's type `mux.video`, for example:
@@ -88,6 +89,8 @@ Issues are actively monitored and PRs are welcome. When developing this plugin t
 1. Your studio should reload, and now when you edit the plugin code it should reload the studio, when you're done creating a branch, put in a PR and a maintainer will review it. Thank you!
 
 # Publishing
+
+CURRENTLY NOT ACCURATE:
 
 Run the ["CI" workflow](https://github.com/sanity-io/sanity-plugin-mux-input/actions/workflows/ci.yml).
 Make sure to select the studio-v2 branch and check "Release new version".
