@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/sanity-io/sanity-plugin-mux-input.git"
+    "url": "git@github.com:sanity-io/sanity-plugin-mux-input.git"
   },
   "license": "MIT",
   "author": "Sanity.io <hello@sanity.io>",
