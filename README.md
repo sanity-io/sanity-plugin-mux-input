@@ -1,24 +1,7 @@
-## Installation
-
-```
-npm install --save-exact sanity-plugin-mux-input@studio-v3
-```
-
-or
-
-```
-yarn add --exact sanity-plugin-mux-input@studio-v3
-```
-
-## Usage
-
 # Mux Video Input Sanity Plugin
 
-> **NOTE**
->
-> This is the **Sanity Studio v3 version** of sanity-plugin-mux-input.
->
-> For the v2 version, please refer to the [studio-v2 branch](https://github.com/sanity-io/sanity-plugin-mux-input/tree/studio-v2).
+>This is a **Sanity Studio v3** plugin.
+> For the v2 version, please refer to the [v2-branch](https://github.com/sanity-io/sanity-plugin-mux-input/tree/studio-v2).
 
 This is a plugin that let you use [Mux](https://www.mux.com) video assets in your Sanity studio.
 
@@ -27,6 +10,18 @@ The Mux plugin for Sanity gives you a way to upload and preview videos easily.
 [Read our blog post](https://www.sanity.io/blog/first-class-responsive-video-support-with-the-new-mux-plugin) about this plugin.
 
 Not familiar with Sanity? [Visit www.sanity.io](https://www.sanity.io/)
+
+## Installation
+
+```
+npm install --save-exact sanity-plugin-mux-input
+```
+
+or
+
+```
+yarn add --exact sanity-plugin-mux-input
+```
 
 ## Quick start
 
