@@ -13,7 +13,16 @@ Not familiar with Sanity? [Visit www.sanity.io](https://www.sanity.io/)
 
 ## Installation
 
-`sanity install mux-input@studio-v2`
+```sh
+yarn add sanity-plugin-mux-input@studio-v2
+```
+
+Next, add `"mux-input"` to `sanity.json` plugins array:
+```json
+"plugins": [
+  "mux-input"
+]
+```
 
 ## Quick start
 

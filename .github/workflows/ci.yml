@@ -1,23 +1,32 @@
-name: CI
+---
+name: CI & Release
+
+# Workflow name based on selected inputs. Fallback to default Github naming when expression evaluates to empty string
+run-name: >-
+  ${{
+    inputs.release && inputs.test && format('Build {0} ➤ Test ➤ Publish to NPM', github.ref_name)  ||
+    inputs.release && !inputs.test && format('Build {0} ➤ Skip Tests ➤ Publish to NPM', github.ref_name) ||
+    github.event_name == 'workflow_dispatch' && inputs.test && format('Build {0} ➤ Test', github.ref_name) ||
+    github.event_name == 'workflow_dispatch' && !inputs.test && format('Build {0} ➤ Skip Tests', github.ref_name) ||
+    ''
+  }}
 
 on:
-  # Build on pushes to release branches
-  push:
-    branches: [main, studio-v2]
-  # Build on pull requests targeting release branches
+  # Build on pushes branches that have a PR (including drafts)
   pull_request:
-    branches: [main, studio-v2]
+  # Build on commits pushed to branches without a PR if it's in the allowlist
+  push:
+    branches: [main,studio-v2]
   # https://docs.github.com/en/actions/managing-workflow-runs/manually-running-a-workflow
-  # https://github.com/sanity-io/semantic-release-preset/actions/workflows/ci.yml
   workflow_dispatch:
     inputs:
       test:
-        description: 'Run tests'
+        description: Run tests
         required: true
         default: true
         type: boolean
       release:
-        description: 'Release new version'
+        description: Release new version
         required: true
         default: false
         type: boolean
