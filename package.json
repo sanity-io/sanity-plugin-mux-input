@@ -120,7 +120,7 @@
   "peerDependencies": {
     "react": "^18",
     "react-is": "^18",
-    "sanity": "^3.0.0",
+    "sanity": "^3.0.0-rc",
     "styled-components": "^5.2"
   },
   "engines": {
