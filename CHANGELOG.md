@@ -5,6 +5,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.2](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.1...v2.0.2) (2022-12-01)
+
+### Bug Fixes
+
+- bump deps ([e894375](https://github.com/sanity-io/sanity-plugin-mux-input/commit/e894375943aab8d369502f66b434b5a6b92a4fe5))
+- **deps:** update dependency @mux/upchunk to v3 (main) ([#164](https://github.com/sanity-io/sanity-plugin-mux-input/issues/164)) ([2b7f2ea](https://github.com/sanity-io/sanity-plugin-mux-input/commit/2b7f2ea1c1b465b2e2c68478620bdb3c5ee2843b))
+
 ## [2.0.1](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.0...v2.0.1) (2022-11-25)
 
 ### Bug Fixes
