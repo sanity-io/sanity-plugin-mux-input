@@ -12,7 +12,6 @@ module.exports = {
     'sanity/typescript',
     'plugin:react-hooks/recommended',
     'plugin:prettier/recommended',
-    '@sanity/no-v2-imports',
   ],
   overrides: [
     {
