@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import type {SanityClient} from '@sanity/client'
+import type {SanityClient} from 'sanity'
 import {uuid as generateUuid} from '@sanity/uuid'
 import {type Observable, concat, defer, from, of, throwError} from 'rxjs'
 import {catchError, mergeMap, mergeMapTo, switchMap} from 'rxjs/operators'

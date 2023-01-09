@@ -1,4 +1,4 @@
-import type {SanityClient} from '@sanity/client'
+import type {SanityClient} from 'sanity'
 import {suspend} from 'suspend-react'
 
 import {readSecrets} from './readSecrets'
