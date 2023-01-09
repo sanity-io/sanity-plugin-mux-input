@@ -1,4 +1,4 @@
-import type {SanityClient} from '@sanity/client'
+import type {SanityClient} from 'sanity'
 import {defer} from 'rxjs'
 
 // eslint-disable-next-line max-params

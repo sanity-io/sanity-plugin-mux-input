@@ -4,7 +4,7 @@
 
 // @TODO rename to readSigningPair
 
-import type {SanityClient} from '@sanity/client'
+import type {SanityClient} from 'sanity'
 import {suspend} from 'suspend-react'
 
 import {cacheNs} from '../util/constants'

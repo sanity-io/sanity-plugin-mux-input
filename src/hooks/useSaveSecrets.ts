@@ -1,4 +1,4 @@
-import type {SanityClient} from '@sanity/client'
+import type {SanityClient} from 'sanity'
 import {useCallback} from 'react'
 
 import {createSigningKeys, haveValidSigningKeys, saveSecrets, testSecrets} from '../actions/secrets'
