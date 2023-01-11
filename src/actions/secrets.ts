@@ -1,6 +1,15 @@
 import type {SanityClient} from 'sanity'
 import {defer} from 'rxjs'
 
+interface SecretsDocument {
+  _id: 'secrets.mux'
+  _type: 'mux.apiKey'
+  token: string
+  secretKey: string
+  enableSignedUrls: boolean
+  signingKeyId: string
+  signingKeyPrivate: string
+}
 // eslint-disable-next-line max-params
 export function saveSecrets(
   client: SanityClient,
@@ -9,8 +18,8 @@ export function saveSecrets(
   enableSignedUrls: boolean,
   signingKeyId: string,
   signingKeyPrivate: string
-) {
-  const doc = {
+): Promise<SecretsDocument> {
+  const doc: SecretsDocument = {
     _id: 'secrets.mux',
     _type: 'mux.apiKey',
     token,
