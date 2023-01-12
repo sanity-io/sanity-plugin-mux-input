@@ -58,3 +58,13 @@ yalc.lock
 
 # Compiled plugin
 lib
+
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+.husky
+tsconfig.tsbuildinfo
+.next
