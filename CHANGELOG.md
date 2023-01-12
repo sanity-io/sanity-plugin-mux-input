@@ -5,6 +5,15 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.4](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.3...v2.0.4) (2023-01-12)
+
+### Bug Fixes
+
+- better shared dependencies deduping ([09619e2](https://github.com/sanity-io/sanity-plugin-mux-input/commit/09619e2aa65aab919f8354dba0f4d480d3761587))
+- **deps:** regenerate package-lock.json ([6ff5560](https://github.com/sanity-io/sanity-plugin-mux-input/commit/6ff55607f1907d04d4acad9603d8fb94cb6909e4))
+- **deps:** upgrade rxjs to v7 ([01175e1](https://github.com/sanity-io/sanity-plugin-mux-input/commit/01175e1b42ec43947f064f366c2b7d4bf031a26a))
+- properly type secrets document ([5de146e](https://github.com/sanity-io/sanity-plugin-mux-input/commit/5de146e3b2b608c6877baf51c7fa360c48b16f44))
+
 ## [2.0.3](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.2...v2.0.3) (2023-01-04)
 
 ### Bug Fixes
