@@ -1,7 +1,10 @@
 /* eslint-disable react/react-in-jsx-scope */
 
 import {visionTool} from '@sanity/vision'
+import Head from 'next/head'
 import {NextStudio} from 'next-sanity/studio'
+import {NextStudioHead} from 'next-sanity/studio/head'
+import React from 'react'
 import {defineConfig, definePlugin} from 'sanity'
 import {deskTool} from 'sanity/desk'
 
@@ -50,5 +53,13 @@ const config = defineConfig([
 
 export default function StudioPage() {
   // Loads the Studio, with all the needed neta tags and global CSS reqiired for it to render correctly
-  return <NextStudio config={config} />
+  return (
+    <>
+      <Head>
+        <NextStudioHead />
+        <style dangerouslySetInnerHTML={{__html: `body {margin: 0; overscroll-behavior: none;}`}} />
+      </Head>
+      <NextStudio config={config} />
+    </>
+  )
 }

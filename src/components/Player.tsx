@@ -1,4 +1,4 @@
-import {type PlaybackEngine, generatePlayerInitTime, initialize} from '@mux/playback-core'
+import MuxVideo from '@mux/mux-video-react'
 import {Card, Text} from '@sanity/ui'
 import {
   MediaControlBar,
@@ -35,7 +35,7 @@ interface Props extends Pick<MuxInputProps, 'onChange' | 'readOnly'> {
   setDialogState: SetDialogState
 }
 
-const MuxVideo = ({asset, buttons, readOnly, onChange, dialogState, setDialogState}: Props) => {
+const MuxVideoOld = ({asset, buttons, readOnly, onChange, dialogState, setDialogState}: Props) => {
   const client = useClient()
   const isLoading = useMemo<boolean | string>(() => {
     if (asset?.status === 'preparing') {
@@ -88,25 +88,6 @@ const MuxVideo = ({asset, buttons, readOnly, onChange, dialogState, setDialogSta
       muteRef.current.shadowRoot.appendChild(style.cloneNode(true))
     }
   }, [])
-  const [playerInitTime] = useState(() => generatePlayerInitTime())
-  const playbackEngineRef = useRef<PlaybackEngine | undefined>(undefined)
-
-  useEffect(() => {
-    if (isLoading || !videoSrc) {
-      return
-    }
-    const nextPlaybackEngineRef = initialize(
-      {
-        src: videoSrc,
-        playerInitTime,
-        playerSoftwareName: 'sanity-plugin-mux-input',
-        playerSoftwareVersion: 'dev-preview',
-      },
-      video.current,
-      playbackEngineRef.current
-    )
-    playbackEngineRef.current = nextPlaybackEngineRef
-  }, [videoSrc, isLoading, playerInitTime])
 
   useEffect(() => {
     if (asset?.status === 'errored') {
@@ -116,6 +97,15 @@ const MuxVideo = ({asset, buttons, readOnly, onChange, dialogState, setDialogSta
       throw new Error(asset.data?.errors?.messages?.join(' '))
     }
   }, [asset.data?.errors?.messages, asset?.status, handleCancelUpload])
+
+  const signedToken = useMemo(() => {
+    try {
+      const url = new URL(videoSrc!)
+      return url.searchParams.get('token')
+    } catch {
+      return false
+    }
+  }, [videoSrc])
 
   if (error) {
     // @TODO better error handling
@@ -141,16 +131,17 @@ const MuxVideo = ({asset, buttons, readOnly, onChange, dialogState, setDialogSta
     <>
       <VideoContainer shadow={1} tone="transparent" scheme="dark">
         <MediaController>
-          <video
+          <MuxVideo
             playsInline
             ref={video}
+            playbackId={`${asset.playbackId}${signedToken ? `?token=${signedToken}` : ''}`}
             onError={handleError}
             slot="media"
             preload="metadata"
             crossOrigin="anonomous"
           >
             <ThumbnailsMetadataTrack asset={asset} />
-          </video>
+          </MuxVideo>
           <PosterImage asset={asset} />
           <MediaLoadingIndicator slot="centered-chrome" noAutoHide />
           <StyledCenterControls slot="centered-chrome">
@@ -193,4 +184,4 @@ const MuxVideo = ({asset, buttons, readOnly, onChange, dialogState, setDialogSta
   )
 }
 
-export default MuxVideo
+export default MuxVideoOld
