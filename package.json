@@ -11,8 +11,6 @@
     "sanity-plugin",
     "media"
   ],
-  "sideEffects": false,
-  "type": "module",
   "homepage": "https://github.com/sanity-io/sanity-plugin-mux-input#readme",
   "bugs": {
     "url": "https://github.com/sanity-io/sanity-plugin-mux-input/issues"
@@ -23,6 +21,8 @@
   },
   "license": "MIT",
   "author": "Sanity.io <hello@sanity.io>",
+  "sideEffects": false,
+  "type": "module",
   "exports": {
     ".": {
       "types": "./lib/index.d.ts",
