@@ -5,6 +5,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.5](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.4...v2.0.5) (2023-01-14)
+
+### Bug Fixes
+
+- **deps:** update dependency swr to v2 ([d60f0a6](https://github.com/sanity-io/sanity-plugin-mux-input/commit/d60f0a65c04280235ce42668787a56664fcede5c))
+- use `@mux/mux-video-react` ([f289350](https://github.com/sanity-io/sanity-plugin-mux-input/commit/f2893507bd99b1ba8fb4f0d355189f70f69caa26))
+
 ## [2.0.4](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.3...v2.0.4) (2023-01-12)
 
 ### Bug Fixes
