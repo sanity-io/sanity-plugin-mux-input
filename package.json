@@ -56,7 +56,7 @@
     "format": "prettier --write --cache --ignore-unknown ."
   },
   "dependencies": {
-    "@mux/playback-core": "^0.11.0",
+    "@mux/playback-core": "^0.15.0",
     "@mux/upchunk": "^3.0.0",
     "@sanity/icons": "^2",
     "@sanity/incompatible-plugin": "^1",
@@ -64,13 +64,13 @@
     "@sanity/uuid": "^3",
     "classnames": "^2.3.2",
     "jsonwebtoken-esm": "^1.0.3",
-    "media-chrome": "^0.16.0",
-    "motion": "^10.14.3",
+    "media-chrome": "^0.17.0",
+    "motion": "^10.15.5",
     "rxjs": "^7",
-    "scroll-into-view-if-needed": "^3.0.3",
-    "suspend-react": "^0.0.8",
+    "scroll-into-view-if-needed": "^3.0.4",
+    "suspend-react": "^0.0.9",
     "swr": "^2.0.0",
-    "use-device-pixel-ratio": "^1.1.0",
+    "use-device-pixel-ratio": "^1.1.2",
     "use-error-boundary": "^2.0.6"
   },
   "devDependencies": {
