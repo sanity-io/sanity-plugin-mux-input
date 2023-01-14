@@ -1,6 +1,6 @@
 {
   "name": "sanity-plugin-mux-input",
-  "version": "2.0.5",
+  "version": "2.0.6-debug.3",
   "description": "An input component that integrates Sanity Studio with Mux video encoding/hosting service.",
   "keywords": [
     "sanity",
@@ -11,6 +11,8 @@
     "sanity-plugin",
     "media"
   ],
+  "sideEffects": false,
+  "type": "module",
   "homepage": "https://github.com/sanity-io/sanity-plugin-mux-input#readme",
   "bugs": {
     "url": "https://github.com/sanity-io/sanity-plugin-mux-input/issues"
@@ -25,14 +27,18 @@
     ".": {
       "types": "./lib/index.d.ts",
       "source": "./src/index.ts",
-      "require": "./lib/index.js",
-      "import": "./lib/index.esm.js",
-      "default": "./lib/index.esm.js"
+      "require": "./lib/index.cjs",
+      "node": {
+        "import": "./lib/index.cjs.js",
+        "require": "./lib/index.cjs"
+      },
+      "import": "./lib/index.js",
+      "default": "./lib/index.js"
     },
     "./package.json": "./package.json"
   },
-  "main": "./lib/index.js",
-  "module": "./lib/index.esm.js",
+  "main": "./lib/index.cjs",
+  "module": "./lib/index.js",
   "source": "./src/index.ts",
   "types": "./lib/index.d.ts",
   "files": [
@@ -42,7 +48,6 @@
     "v2-incompatible.js"
   ],
   "scripts": {
-    "prebuild": "npm run clean && plugin-kit verify-package --silent && pkg-utils",
     "build": "run-s clean && plugin-kit verify-package --silent && pkg-utils build --strict && pkg-utils --strict",
     "clean": "rimraf lib",
     "dev": "next dev",
@@ -76,6 +81,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.4.2",
     "@commitlint/config-conventional": "^17.4.2",
+    "@rollup/plugin-alias": "^4.0.2",
     "@sanity/pkg-utils": "^2.2.1",
     "@sanity/plugin-kit": "^3.1.4",
     "@sanity/semantic-release-preset": "^3.0.2",
@@ -105,6 +111,7 @@
     "react-dom": "^18.2.0",
     "react-is": "^18.2.0",
     "rimraf": "^4.0.4",
+    "rollup": "^3.10.0",
     "sanity": "^3.2.3",
     "styled-components": "^5.3.6",
     "type-fest": "^3.5.1",
