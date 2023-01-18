@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.7](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.6...v2.0.7) (2023-01-18)
+
+### Bug Fixes
+
+- **deps:** update dependency swr to ^2.0.1 ([b3a249e](https://github.com/sanity-io/sanity-plugin-mux-input/commit/b3a249e1d26b7ec09daa199908d4ef60721501d8))
+
 ## [2.0.6](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.5...v2.0.6) (2023-01-14)
 
 ### Bug Fixes
