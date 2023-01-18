@@ -74,7 +74,7 @@
     "rxjs": "^7",
     "scroll-into-view-if-needed": "^3",
     "suspend-react": "^0.0.9",
-    "swr": "^2.0.0",
+    "swr": "^2.0.1",
     "use-device-pixel-ratio": "^1.1.2",
     "use-error-boundary": "^2.0.6"
   },
