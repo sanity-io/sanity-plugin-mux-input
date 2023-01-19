@@ -69,7 +69,7 @@
     "@sanity/uuid": "^3",
     "classnames": "^2.3.2",
     "jsonwebtoken-esm": "^1.0.3",
-    "media-chrome": "^0.17.0",
+    "media-chrome": "^0.17.1",
     "motion": "^10",
     "rxjs": "^7",
     "scroll-into-view-if-needed": "^3",
