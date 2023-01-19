@@ -11,6 +11,9 @@ The Mux plugin for Sanity gives you a way to upload and preview videos easily.
 
 Not familiar with Sanity? [Visit www.sanity.io](https://www.sanity.io/)
 
+<img width="623" alt="image" src="https://user-images.githubusercontent.com/81981/213587541-5646267e-66b4-4a47-bae7-c5c8e83fc01d.png">
+
+
 ## Installation
 
 ```
