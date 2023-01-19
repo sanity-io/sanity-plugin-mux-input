@@ -138,7 +138,7 @@ const MuxVideoOld = ({asset, buttons, readOnly, onChange, dialogState, setDialog
             onError={handleError}
             slot="media"
             preload="metadata"
-            crossOrigin="anonomous"
+            crossOrigin="anonymous"
           >
             <ThumbnailsMetadataTrack asset={asset} />
           </MuxVideo>
