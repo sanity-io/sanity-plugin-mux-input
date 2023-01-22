@@ -81,8 +81,8 @@
   "devDependencies": {
     "@commitlint/cli": "^17.4.2",
     "@commitlint/config-conventional": "^17.4.2",
-    "@rollup/plugin-alias": "^4.0.2",
-    "@sanity/pkg-utils": "^2.2.1",
+    "@rollup/plugin-alias": "^4.0.3",
+    "@sanity/pkg-utils": "^2.2.3",
     "@sanity/plugin-kit": "^3.1.4",
     "@sanity/semantic-release-preset": "^3.0.2",
     "@sanity/vision": "^3.2.4",
@@ -102,7 +102,7 @@
     "eslint-plugin-simple-import-sort": "^9.0.0",
     "husky": "^8.0.3",
     "lint-staged": "^13.1.0",
-    "next": "^13.1.2",
+    "next": "^13.1.4",
     "next-sanity": "^4.1.1",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.8.3",
@@ -111,10 +111,10 @@
     "react-dom": "^18.2.0",
     "react-is": "^18.2.0",
     "rimraf": "^4.1.1",
-    "rollup": "^3.10.0",
+    "rollup": "^3.10.1",
     "sanity": "^3.2.4",
     "styled-components": "^5.3.6",
-    "type-fest": "^3.5.2",
+    "type-fest": "^3.5.3",
     "typescript": "^4.9.4"
   },
   "peerDependencies": {
