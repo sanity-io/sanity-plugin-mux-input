@@ -84,7 +84,7 @@
     "@rollup/plugin-alias": "^4.0.2",
     "@sanity/pkg-utils": "^2.2.1",
     "@sanity/plugin-kit": "^3.1.4",
-    "@sanity/semantic-release-preset": "^3.0.2",
+    "@sanity/semantic-release-preset": "^4.0.0",
     "@sanity/vision": "^3.2.4",
     "@types/react": "^18.0.27",
     "@types/styled-components": "^5.1.26",
