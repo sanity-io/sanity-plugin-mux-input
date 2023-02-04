@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.10](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.9...v2.0.10) (2023-02-04)
+
+### Bug Fixes
+
+- **deps:** update dependency jsonwebtoken-esm to v2 ([#195](https://github.com/sanity-io/sanity-plugin-mux-input/issues/195)) ([d13760f](https://github.com/sanity-io/sanity-plugin-mux-input/commit/d13760fa540bb3c5e9a68283f7b5f00e9e40f4fb))
+
 ## [2.0.9](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.8...v2.0.9) (2023-02-02)
 
 ### Bug Fixes
