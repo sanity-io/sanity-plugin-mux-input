@@ -23,7 +23,7 @@
     ]
   },
   "dependencies": {
-    "@mux/mux-player-react": "^1.7.0",
+    "@mux/mux-player-react": "^1.7.1",
     "@sanity/client": "^4.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
