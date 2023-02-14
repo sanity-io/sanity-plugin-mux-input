@@ -1,5 +1,5 @@
-import type {SanityClient} from 'sanity'
 import {useCallback} from 'react'
+import type {SanityClient} from 'sanity'
 
 import {createSigningKeys, haveValidSigningKeys, saveSecrets, testSecrets} from '../actions/secrets'
 import type {Secrets} from '../util/types'

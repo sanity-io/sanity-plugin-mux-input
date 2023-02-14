@@ -1,8 +1,8 @@
 /* eslint-disable camelcase */
-import type {SanityClient} from 'sanity'
 import {uuid as generateUuid} from '@sanity/uuid'
-import {type Observable, concat, defer, from, of, throwError} from 'rxjs'
+import {concat, defer, from, type Observable, of, throwError} from 'rxjs'
 import {catchError, mergeMap, mergeMapTo, switchMap} from 'rxjs/operators'
+import type {SanityClient} from 'sanity'
 
 import {createUpChunkObservable} from '../clients/upChunkObservable'
 import type {Config, MuxAsset} from '../util/types'

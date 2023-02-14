@@ -5,7 +5,7 @@ import React, {useCallback} from 'react'
 import styled from 'styled-components'
 
 import type {SetDialogState} from '../hooks/useDialogState'
-import {type FileInputButtonProps, FileInputButton} from './FileInputButton'
+import {FileInputButton, type FileInputButtonProps} from './FileInputButton'
 
 const UploadCard = styled(Card)`
   && {

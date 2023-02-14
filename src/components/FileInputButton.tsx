@@ -1,4 +1,4 @@
-import {type ButtonProps, Button} from '@sanity/ui'
+import {Button, type ButtonProps} from '@sanity/ui'
 import React, {useCallback, useId, useRef} from 'react'
 import styled from 'styled-components'
 

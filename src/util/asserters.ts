@@ -1,4 +1,4 @@
-import {type InputProps, type PreviewLayoutKey, type PreviewProps, isObjectInputProps} from 'sanity'
+import {type InputProps, isObjectInputProps, type PreviewLayoutKey, type PreviewProps} from 'sanity'
 
 import type {MuxInputPreviewProps, MuxInputProps} from './types'
 

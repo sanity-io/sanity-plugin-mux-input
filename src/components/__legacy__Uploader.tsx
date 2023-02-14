@@ -1,10 +1,10 @@
 /* eslint-disable no-nested-ternary */
 // This component needs to be refactored into a functional component
 
-import type {SanityClient} from 'sanity'
 import React, {Component} from 'react'
 import {type Observable, Subject} from 'rxjs'
 import {takeUntil, tap} from 'rxjs/operators'
+import type {SanityClient} from 'sanity'
 import {PatchEvent, set, setIfMissing} from 'sanity'
 
 import {uploadFile, uploadUrl} from '../actions/upload'

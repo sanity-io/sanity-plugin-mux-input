@@ -1,5 +1,5 @@
-import type {SanityClient} from 'sanity'
 import {defer} from 'rxjs'
+import type {SanityClient} from 'sanity'
 
 interface SecretsDocument {
   _id: 'secrets.mux'

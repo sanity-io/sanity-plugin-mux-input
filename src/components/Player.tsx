@@ -18,6 +18,7 @@ import {useClient} from '../hooks/useClient'
 import type {DialogState, SetDialogState} from '../hooks/useDialogState'
 import {getVideoSrc} from '../util/getVideoSrc'
 import type {MuxInputProps, VideoAssetDocument} from '../util/types'
+import pluginPkg from './../../package.json'
 import EditThumbnailDialog from './EditThumbnailDialog'
 import {
   PosterImage,
@@ -27,7 +28,6 @@ import {
   VideoContainer,
 } from './Player.styled'
 import {UploadProgress} from './UploadProgress'
-import pluginPkg from './../../package.json'
 
 interface Props extends Pick<MuxInputProps, 'onChange' | 'readOnly'> {
   buttons?: React.ReactNode
