@@ -27,6 +27,7 @@ import {
   VideoContainer,
 } from './Player.styled'
 import {UploadProgress} from './UploadProgress'
+import pluginPkg from './../../package.json'
 
 interface Props extends Pick<MuxInputProps, 'onChange' | 'readOnly'> {
   buttons?: React.ReactNode
@@ -139,6 +140,11 @@ const MuxVideoOld = ({asset, buttons, readOnly, onChange, dialogState, setDialog
             slot="media"
             preload="metadata"
             crossOrigin="anonymous"
+            metadata={{
+              player_name: "Sanity Admin Dashboard",
+              player_version: pluginPkg.version,
+              page_type: "Preview Player",
+            }}
           >
             <ThumbnailsMetadataTrack asset={asset} />
           </MuxVideo>
