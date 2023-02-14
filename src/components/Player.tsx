@@ -141,9 +141,9 @@ const MuxVideoOld = ({asset, buttons, readOnly, onChange, dialogState, setDialog
             preload="metadata"
             crossOrigin="anonymous"
             metadata={{
-              player_name: "Sanity Admin Dashboard",
+              player_name: 'Sanity Admin Dashboard',
               player_version: pluginPkg.version,
-              page_type: "Preview Player",
+              page_type: 'Preview Player',
             }}
           >
             <ThumbnailsMetadataTrack asset={asset} />
