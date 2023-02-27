@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.15](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.14...v2.0.15) (2023-02-27)
+
+### Bug Fixes
+
+- **deps:** update dependency media-chrome to ^0.18.5 ([#220](https://github.com/sanity-io/sanity-plugin-mux-input/issues/220)) ([ce5183c](https://github.com/sanity-io/sanity-plugin-mux-input/commit/ce5183ce11d4d8970b058e0f4c5dc2f5736e7c1d))
+
 ## [2.0.14](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.13...v2.0.14) (2023-02-27)
 
 ### Bug Fixes
