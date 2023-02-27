@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.14](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.13...v2.0.14) (2023-02-27)
+
+### Bug Fixes
+
+- **hls.js:** remove vite workaround ([#219](https://github.com/sanity-io/sanity-plugin-mux-input/issues/219)) ([0d2b8e4](https://github.com/sanity-io/sanity-plugin-mux-input/commit/0d2b8e427a1e6e97d131aa8e6ce83384f856a516))
+
 ## [2.0.13](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.12...v2.0.13) (2023-02-27)
 
 ### Bug Fixes
