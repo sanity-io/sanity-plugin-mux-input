@@ -61,7 +61,7 @@
     "format": "prettier --write --cache --ignore-unknown ."
   },
   "dependencies": {
-    "@mux/mux-video-react": "^0.7",
+    "@mux/mux-video-react": "^0.7.7",
     "@mux/upchunk": "^3",
     "@sanity/icons": "^2",
     "@sanity/incompatible-plugin": "^1",
@@ -81,7 +81,6 @@
   "devDependencies": {
     "@commitlint/cli": "^17.4.4",
     "@commitlint/config-conventional": "^17.4.4",
-    "@rollup/plugin-alias": "^4.0.3",
     "@sanity/pkg-utils": "^2.2.6",
     "@sanity/plugin-kit": "^3.1.7",
     "@sanity/semantic-release-preset": "^4.0.0",
@@ -111,7 +110,6 @@
     "react-dom": "^18.2.0",
     "react-is": "^18.2.0",
     "rimraf": "^4.1.2",
-    "rollup": "^3.17.3",
     "sanity": "^3.5.0",
     "styled-components": "^5.3.6",
     "type-fest": "^3.6.1",
