@@ -11,7 +11,7 @@ import {testSecretsObservable} from './secrets'
 
 export function cancelUpload(client: SanityClient, uuid: string) {
   return client.observable.request({
-    url: `/addons/mux/uploads/${client.clientConfig.dataset}/${uuid}`,
+    url: `/addons/mux/uploads/${client.config().dataset}/${uuid}`,
     withCredentials: true,
     method: 'DELETE',
   })
@@ -44,7 +44,7 @@ export function uploadUrl(
               filename: validUrl.split('/').slice(-1)[0],
             }
 
-            const dataset = client.clientConfig.dataset
+            const dataset = client.config().dataset
             return defer(() =>
               client.observable.request({
                 url: `/addons/mux/assets/${dataset}`,
@@ -115,7 +115,7 @@ export function uploadFile(
                     url: string
                   }
                 }>({
-                  url: `/addons/mux/uploads/${client.clientConfig.dataset}`,
+                  url: `/addons/mux/uploads/${client.config().dataset}`,
                   withCredentials: true,
                   method: 'POST',
                   headers: {
