@@ -72,7 +72,7 @@
     "media-chrome": "^0.18.8",
     "motion": "^10",
     "rxjs": "^7",
-    "scroll-into-view-if-needed": "^3",
+    "scroll-into-view-if-needed": "^3.0.6",
     "suspend-react": "^0.0.9",
     "swr": "^2.1.0",
     "use-device-pixel-ratio": "^1.1.2",
