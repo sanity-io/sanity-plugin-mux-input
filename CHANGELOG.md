@@ -5,6 +5,15 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.17](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.16...v2.0.17) (2023-04-08)
+
+### Bug Fixes
+
+- **deps:** update dependencies (non-major) ([#240](https://github.com/sanity-io/sanity-plugin-mux-input/issues/240)) ([08cb480](https://github.com/sanity-io/sanity-plugin-mux-input/commit/08cb480594093eb4d749f6da6073432d8a42d981))
+- **deps:** update dependency media-chrome to ^0.18.8 ([#228](https://github.com/sanity-io/sanity-plugin-mux-input/issues/228)) ([0756cbc](https://github.com/sanity-io/sanity-plugin-mux-input/commit/0756cbce81f4f8121592bc64388f0a8a7166a1ee))
+- **deps:** update dependency scroll-into-view-if-needed to v3.0.8 ([#254](https://github.com/sanity-io/sanity-plugin-mux-input/issues/254)) ([281f5c0](https://github.com/sanity-io/sanity-plugin-mux-input/commit/281f5c06e15029d99581de1b7670a5bc65e1976a))
+- pin jsonwebtoken version to ^1.0.5 ([#253](https://github.com/sanity-io/sanity-plugin-mux-input/issues/253)) ([9b7fb30](https://github.com/sanity-io/sanity-plugin-mux-input/commit/9b7fb30d1513fb68db3da3c85186b8c9953cd2ca))
+
 ## [2.0.16](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.15...v2.0.16) (2023-03-08)
 
 ### Bug Fixes
