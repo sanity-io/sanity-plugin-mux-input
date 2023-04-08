@@ -68,7 +68,7 @@
     "@sanity/ui": "^1",
     "@sanity/uuid": "^3",
     "classnames": "^2.3.2",
-    "jsonwebtoken-esm": "^1.0.5",
+    "jsonwebtoken-esm": "^2.0.0",
     "media-chrome": "^0.18.8",
     "motion": "^10",
     "rxjs": "^7",
