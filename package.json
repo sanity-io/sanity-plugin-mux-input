@@ -42,23 +42,23 @@
   "source": "./src/index.ts",
   "types": "./lib/index.d.ts",
   "files": [
+    "src",
     "lib",
     "sanity.json",
-    "src",
     "v2-incompatible.js"
   ],
   "scripts": {
     "build": "run-s clean && plugin-kit verify-package --silent && pkg-utils build --strict && pkg-utils --strict",
     "clean": "rimraf lib",
     "dev": "next dev",
+    "format": "prettier --write --cache --ignore-unknown .",
     "link-watch": "plugin-kit link-watch",
     "lint": "eslint .",
     "prepare": "husky install || true",
     "prepublishOnly": "run-s build",
     "test": "npm run lint && npm run type-check && npm run build",
     "type-check": "tsc --noEmit",
-    "watch": "pkg-utils watch --strict",
-    "format": "prettier --write --cache --ignore-unknown ."
+    "watch": "pkg-utils watch --strict"
   },
   "dependencies": {
     "@mux/mux-video-react": "^0.7.7",
@@ -117,7 +117,6 @@
   },
   "peerDependencies": {
     "react": "^18",
-    "react-is": "^18",
     "sanity": "^3",
     "styled-components": "^5.2"
   },
