@@ -29,7 +29,7 @@
       "source": "./src/index.ts",
       "require": "./lib/index.cjs",
       "node": {
-        "import": "./lib/index.cjs.js",
+        "import": "./lib/index.js",
         "require": "./lib/index.cjs"
       },
       "import": "./lib/index.js",
