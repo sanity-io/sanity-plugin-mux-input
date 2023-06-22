@@ -1,8 +1,6 @@
 import {defineConfig} from '@sanity/pkg-utils'
 
 export default defineConfig({
-  // @TODO stop pre-bundling @mux/mux-video-react once this is fixed https://github.com/video-dev/hls.js/issues/5146
-  external: (externals) => externals.filter((e) => e !== '@mux/mux-video-react'),
   dist: 'lib',
   tsconfig: 'tsconfig.lib.json',
 
