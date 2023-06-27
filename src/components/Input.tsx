@@ -1,4 +1,4 @@
-import React, {memo} from 'react'
+import React, {memo, Suspense} from 'react'
 
 import {useAssetDocumentValues} from '../hooks/useAssetDocumentValues'
 import {useClient} from '../hooks/useClient'
@@ -8,7 +8,8 @@ import {useSecretsDocumentValues} from '../hooks/useSecretsDocumentValues'
 import type {Config, MuxInputProps} from '../util/types'
 import Uploader from './__legacy__Uploader'
 import ConfigureApi from './ConfigureApi'
-import {InputFallback} from './Input.styled'
+import ErrorBoundaryCard from './ErrorBoundaryCard'
+import {AspectRatioCard, InputFallback} from './Input.styled'
 import Onboard from './Onboard'
 
 export interface InputProps extends MuxInputProps {
@@ -34,36 +35,40 @@ const Input = (props: InputProps) => {
   const isLoading = secretDocumentValues.isLoading || assetDocumentValues.isLoading
 
   return (
-    <>
-      {isLoading ? (
-        <InputFallback />
-      ) : (
-        <>
-          {secretDocumentValues.value.needsSetup && !assetDocumentValues.value ? (
-            <Onboard setDialogState={setDialogState} />
+    <AspectRatioCard>
+      <ErrorBoundaryCard schemaType={props.schemaType}>
+        <Suspense fallback={<InputFallback />}>
+          {isLoading ? (
+            <InputFallback />
           ) : (
-            <Uploader
-              {...props}
-              config={props.config}
-              onChange={props.onChange}
-              client={client}
-              secrets={secretDocumentValues.value.secrets}
-              asset={assetDocumentValues.value}
-              dialogState={dialogState}
-              setDialogState={setDialogState}
-              needsSetup={secretDocumentValues.value.needsSetup}
-            />
-          )}
+            <>
+              {secretDocumentValues.value.needsSetup && !assetDocumentValues.value ? (
+                <Onboard setDialogState={setDialogState} />
+              ) : (
+                <Uploader
+                  {...props}
+                  config={props.config}
+                  onChange={props.onChange}
+                  client={client}
+                  secrets={secretDocumentValues.value.secrets}
+                  asset={assetDocumentValues.value}
+                  dialogState={dialogState}
+                  setDialogState={setDialogState}
+                  needsSetup={secretDocumentValues.value.needsSetup}
+                />
+              )}
 
-          {dialogState === 'secrets' && (
-            <ConfigureApi
-              setDialogState={setDialogState}
-              secrets={secretDocumentValues.value.secrets}
-            />
+              {dialogState === 'secrets' && (
+                <ConfigureApi
+                  setDialogState={setDialogState}
+                  secrets={secretDocumentValues.value.secrets}
+                />
+              )}
+            </>
           )}
-        </>
-      )}
-    </>
+        </Suspense>
+      </ErrorBoundaryCard>
+    </AspectRatioCard>
   )
 }
 
