@@ -5,6 +5,19 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.17...v2.1.0) (2023-06-27)
+
+### Features
+
+- **34584:** use studio v3 plugin API ([7bf2dbe](https://github.com/sanity-io/sanity-plugin-mux-input/commit/7bf2dbe9867f15a54a43bff2946bd734c2ea48ef))
+
+### Bug Fixes
+
+- **deps:** update dependencies (non-major) ([#260](https://github.com/sanity-io/sanity-plugin-mux-input/issues/260)) ([5ea7949](https://github.com/sanity-io/sanity-plugin-mux-input/commit/5ea794991ff62106b439d8a7931bf9afb81b74ec))
+- **deps:** update dependencies (non-major) ([#272](https://github.com/sanity-io/sanity-plugin-mux-input/issues/272)) ([30595bb](https://github.com/sanity-io/sanity-plugin-mux-input/commit/30595bb1ab484779a01ab12e720eb672295e5875))
+- **deps:** update dependencies (non-major) ([#276](https://github.com/sanity-io/sanity-plugin-mux-input/issues/276)) ([c5582c5](https://github.com/sanity-io/sanity-plugin-mux-input/commit/c5582c54a1c985c4e7c5d62e31b7b4f8cad1ac1d))
+- **deps:** update dependency scroll-into-view-if-needed to v3.0.10 ([#259](https://github.com/sanity-io/sanity-plugin-mux-input/issues/259)) ([f82b6e7](https://github.com/sanity-io/sanity-plugin-mux-input/commit/f82b6e7d385d44a073ec895f891789ca98dfe0c7))
+
 ## [2.0.17](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.16...v2.0.17) (2023-04-08)
 
 ### Bug Fixes
