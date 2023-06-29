@@ -1,4 +1,4 @@
-import * as UpChunk from '@mux/upchunk'
+import {UpChunk} from '@mux/upchunk'
 import {Observable} from 'rxjs'
 
 export function createUpChunkObservable(uuid: string, uploadUrl: string, source: File) {
