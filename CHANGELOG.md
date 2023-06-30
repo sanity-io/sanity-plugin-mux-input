@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.1](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.1.0...v2.1.1) (2023-06-30)
+
+### Bug Fixes
+
+- Fix nextjs production build ([#292](https://github.com/sanity-io/sanity-plugin-mux-input/issues/292)) ([03307b3](https://github.com/sanity-io/sanity-plugin-mux-input/commit/03307b3d3783a2ec9ba0f9ac372a554b7ac1e886))
+
 ## [2.1.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.0.17...v2.1.0) (2023-06-27)
 
 ### Features
