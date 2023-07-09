@@ -7,9 +7,11 @@
   ],
   "packageRules": [
     {
-      "matchFiles": ["example/package.json"],
+      "matchFileNames": ["example/package.json"],
       "extends": [":semanticCommitTypeAll(chore)"],
-      "ignorePresets": ["github>sanity-io/renovate-presets//ecosystem/group-update-types"],
+      "ignorePresets": [
+        "github>sanity-io/renovate-presets//ecosystem/group-update-types"
+      ],
       "groupName": "example dependencies",
       "groupSlug": "example",
       "matchPackagePatterns": ["*"],
