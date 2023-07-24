@@ -1,15 +1,15 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "github>sanity-io/renovate-presets//ecosystem/auto",
-    "github>sanity-io/renovate-presets//ecosystem/studio-v3",
+    "github>sanity-io/renovate-config",
+    "github>sanity-io/renovate-config:studio-v3",
     ":reviewer(team:ecosystem)"
   ],
   "packageRules": [
     {
-      "matchFiles": ["example/package.json"],
+      "matchFileNames": ["example/package.json"],
       "extends": [":semanticCommitTypeAll(chore)"],
-      "ignorePresets": ["github>sanity-io/renovate-presets//ecosystem/group-update-types"],
+      "ignorePresets": ["github>sanity-io/renovate-config:group-recommended"],
       "groupName": "example dependencies",
       "groupSlug": "example",
       "matchPackagePatterns": ["*"],
