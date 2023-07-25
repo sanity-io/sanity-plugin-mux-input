@@ -108,7 +108,15 @@ function ConfigureApi({secrets, setDialogState}: Props) {
   }, [firstField])
 
   return (
-    <Dialog id={id} onClose={handleClose} header={<Header />} width={0}>
+    <Dialog
+      id={id}
+      onClose={handleClose}
+      header={<Header />}
+      width={1}
+      style={{
+        maxWidth: '550px',
+      }}
+    >
       <Box padding={4} style={{position: 'relative'}}>
         <form onSubmit={handleSubmit} noValidate>
           <Stack space={4}>

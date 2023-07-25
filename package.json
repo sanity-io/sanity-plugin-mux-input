@@ -61,7 +61,7 @@
     "watch": "pkg-utils watch --strict"
   },
   "dependencies": {
-    "@mux/mux-video-react": "^0.7.7",
+    "@mux/mux-player-react": "^1.11.4",
     "@mux/upchunk": "^3",
     "@sanity/icons": "^2",
     "@sanity/incompatible-plugin": "^1",
@@ -69,7 +69,6 @@
     "@sanity/uuid": "^3",
     "classnames": "^2.3.2",
     "jsonwebtoken-esm": "^1.0.5",
-    "media-chrome": "^0.21.0",
     "motion": "^10",
     "rxjs": "^7",
     "scroll-into-view-if-needed": "^3",

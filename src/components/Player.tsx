@@ -1,17 +1,6 @@
-import MuxVideo from '@mux/mux-video-react'
+import MuxPlayer from '@mux/mux-player-react'
 import {Card, Text} from '@sanity/ui'
-import {
-  MediaControlBar,
-  MediaController,
-  MediaDurationDisplay,
-  MediaFullscreenButton,
-  MediaLoadingIndicator,
-  MediaMuteButton,
-  MediaPlayButton,
-  MediaTimeDisplay,
-  MediaTimeRange,
-} from 'media-chrome/dist/react'
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react'
+import React, {useCallback, useEffect, useMemo, useRef} from 'react'
 
 import {useCancelUpload} from '../hooks/useCancelUpload'
 import {useClient} from '../hooks/useClient'
@@ -20,13 +9,7 @@ import {getVideoSrc} from '../util/getVideoSrc'
 import type {MuxInputProps, VideoAssetDocument} from '../util/types'
 import pluginPkg from './../../package.json'
 import EditThumbnailDialog from './EditThumbnailDialog'
-import {
-  PosterImage,
-  StyledCenterControls,
-  ThumbnailsMetadataTrack,
-  TopControls,
-  VideoContainer,
-} from './Player.styled'
+import {TopControls, VideoContainer} from './Player.styled'
 import {UploadProgress} from './UploadProgress'
 
 interface Props extends Pick<MuxInputProps, 'onChange' | 'readOnly'> {
@@ -36,7 +19,7 @@ interface Props extends Pick<MuxInputProps, 'onChange' | 'readOnly'> {
   setDialogState: SetDialogState
 }
 
-const MuxVideoOld = ({asset, buttons, readOnly, onChange, dialogState, setDialogState}: Props) => {
+const Player = ({asset, buttons, readOnly, onChange, dialogState, setDialogState}: Props) => {
   const client = useClient()
   const isLoading = useMemo<boolean | string>(() => {
     if (asset?.status === 'preparing') {
@@ -67,16 +50,13 @@ const MuxVideoOld = ({asset, buttons, readOnly, onChange, dialogState, setDialog
     return false
   }, [asset?.data?.static_renditions?.status])
   const videoSrc = useMemo(() => asset.playbackId && getVideoSrc({client, asset}), [asset, client])
-  const [error, setError] = useState<MediaError | Error | null>(null)
-  const handleError = useCallback<React.ReactEventHandler<HTMLVideoElement>>(
-    (event) => setError(event.currentTarget.error),
-    []
-  )
   const playRef = useRef<HTMLDivElement>(null)
   const muteRef = useRef<HTMLDivElement>(null)
   const video = useRef<HTMLVideoElement>(null)
   const getCurrentTime = useCallback(() => video.current?.currentTime ?? 0, [video])
   const handleCancelUpload = useCancelUpload(asset, onChange)
+
+  const aspectRatio = asset?.data?.aspect_ratio ?? 16 / 9
 
   useEffect(() => {
     const style = document.createElement('style')
@@ -108,11 +88,6 @@ const MuxVideoOld = ({asset, buttons, readOnly, onChange, dialogState, setDialog
     }
   }, [videoSrc])
 
-  if (error) {
-    // @TODO better error handling
-    throw error
-  }
-
   if (!asset || !asset.status) {
     return null
   }
@@ -130,38 +105,25 @@ const MuxVideoOld = ({asset, buttons, readOnly, onChange, dialogState, setDialog
 
   return (
     <>
-      <VideoContainer shadow={1} tone="transparent" scheme="dark">
-        <MediaController>
-          <MuxVideo
-            playsInline
-            ref={video}
-            playbackId={`${asset.playbackId}${signedToken ? `?token=${signedToken}` : ''}`}
-            onError={handleError}
-            slot="media"
-            preload="metadata"
-            crossOrigin="anonymous"
-            metadata={{
-              player_name: 'Sanity Admin Dashboard',
-              player_version: pluginPkg.version,
-              page_type: 'Preview Player',
-            }}
-          >
-            <ThumbnailsMetadataTrack asset={asset} />
-          </MuxVideo>
-          <PosterImage asset={asset} />
-          <MediaLoadingIndicator slot="centered-chrome" noAutoHide />
-          <StyledCenterControls slot="centered-chrome">
-            <MediaPlayButton />
-          </StyledCenterControls>
-          {buttons && <TopControls slot="top-chrome">{buttons}</TopControls>}
-          <MediaControlBar>
-            <MediaMuteButton />
-            <MediaTimeDisplay />
-            <MediaTimeRange />
-            <MediaDurationDisplay />
-            <MediaFullscreenButton />
-          </MediaControlBar>
-        </MediaController>
+      <VideoContainer
+        shadow={1}
+        tone="transparent"
+        scheme="dark"
+        style={{'--video-aspect-ratio': aspectRatio} as any}
+      >
+        <MuxPlayer
+          playsInline
+          playbackId={`${asset.playbackId}${signedToken ? `?token=${signedToken}` : ''}`}
+          streamType="on-demand"
+          preload="metadata"
+          crossOrigin="anonymous"
+          metadata={{
+            player_name: 'Sanity Admin Dashboard',
+            player_version: pluginPkg.version,
+            page_type: 'Preview Player',
+          }}
+        />
+        {buttons && <TopControls slot="top-chrome">{buttons}</TopControls>}
         {isPreparingStaticRenditions && (
           <Card
             padding={2}
@@ -190,4 +152,4 @@ const MuxVideoOld = ({asset, buttons, readOnly, onChange, dialogState, setDialog
   )
 }
 
-export default MuxVideoOld
+export default Player

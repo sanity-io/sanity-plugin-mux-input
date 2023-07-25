@@ -1,7 +1,7 @@
 /* eslint-disable no-nested-ternary */
 // This component needs to be refactored into a functional component
 
-import React, {lazy, Component} from 'react'
+import React, {Component} from 'react'
 import {type Observable, Subject} from 'rxjs'
 import {takeUntil, tap} from 'rxjs/operators'
 import type {SanityClient} from 'sanity'
@@ -12,16 +12,11 @@ import {type DialogState, type SetDialogState} from '../hooks/useDialogState'
 import {extractDroppedFiles} from '../util/extractFiles'
 import type {Config, MuxInputProps, Secrets, VideoAssetDocument} from '../util/types'
 import InputBrowser from './InputBrowser'
+import Player from './Player'
 import PlayerActionsMenu from './PlayerActionsMenu'
 import {UploadCard} from './Uploader.styled'
 import UploadPlaceholder from './UploadPlaceholder'
 import {UploadProgress} from './UploadProgress'
-
-// TODO: Without this lazy load call a build error occurs in the Player component from the import
-// of media-chrome components. media-chrome ships separate ESM and CJS compatible modules in versions >=1.0.0.
-// Once the plugin is updated to media-chrome >= 1.0.0, remove this lazy load.
-// import Player from './Player'
-const Player = lazy(() => import('./Player'))
 
 interface Props extends Pick<MuxInputProps, 'onChange' | 'readOnly'> {
   config: Config
