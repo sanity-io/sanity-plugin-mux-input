@@ -235,7 +235,7 @@ const VideoDetails: React.FC<FileDetailsProps> = (props) => {
         </Dialog>
       )}
       <Card padding={4} sizing="border">
-        <Flex sizing="border" wrap="wrap" gap={4} align="flex-start">
+        <Flex sizing="border" wrap="wrap" gap={4} align="center">
           <Stack space={4} flex={1} sizing="border">
             <VideoPlayer asset={props.asset} />
           </Stack>
@@ -298,8 +298,8 @@ const VideoDetails: React.FC<FileDetailsProps> = (props) => {
                   <IconInfo
                     text={`Uploaded on: ${displayInfo.createdAt.toLocaleDateString('en', {
                       year: 'numeric',
-                      month: 'numeric',
-                      day: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit',
                       hour: '2-digit',
                       minute: '2-digit',
                       hour12: true,

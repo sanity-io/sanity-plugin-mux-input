@@ -6,14 +6,6 @@ import {useClient} from '../hooks/useClient'
 import {getStoryboardSrc} from '../util/getStoryboardSrc'
 import type {VideoAssetDocument} from '../util/types'
 
-export const VideoContainer = styled(Card)`
-  position: relative;
-  min-height: 150px;
-  aspect-ratio: var(--video-aspect-ratio);
-  overflow: hidden;
-  border-radius: 1px;
-`
-
 export const StyledCenterControls = styled.div`
   && {
     --media-background-color: transparent;

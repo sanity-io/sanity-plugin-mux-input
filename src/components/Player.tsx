@@ -4,7 +4,7 @@ import React, {useEffect, useMemo, useRef} from 'react'
 import {useCancelUpload} from '../hooks/useCancelUpload'
 import type {DialogState, SetDialogState} from '../hooks/useDialogState'
 import type {MuxInputProps, VideoAssetDocument} from '../util/types'
-import {TopControls, VideoContainer} from './Player.styled'
+import {TopControls} from './Player.styled'
 import {UploadProgress} from './UploadProgress'
 import VideoPlayer from './VideoPlayer'
 
@@ -48,8 +48,6 @@ const Player = ({asset, buttons, readOnly, onChange, dialogState, setDialogState
   const muteRef = useRef<HTMLDivElement>(null)
   const handleCancelUpload = useCancelUpload(asset, onChange)
 
-  const aspectRatio = asset?.data?.aspect_ratio ?? 16 / 9
-
   useEffect(() => {
     const style = document.createElement('style')
     style.innerHTML = 'button svg { vertical-align: middle; }'
@@ -87,33 +85,25 @@ const Player = ({asset, buttons, readOnly, onChange, dialogState, setDialogState
   }
 
   return (
-    <>
-      <VideoContainer
-        shadow={1}
-        tone="transparent"
-        scheme="dark"
-        style={{'--video-aspect-ratio': aspectRatio} as any}
-      >
-        <VideoPlayer asset={asset} />
-        {buttons && <TopControls slot="top-chrome">{buttons}</TopControls>}
-        {isPreparingStaticRenditions && (
-          <Card
-            padding={2}
-            radius={1}
-            style={{
-              background: 'var(--card-fg-color)',
-              position: 'absolute',
-              top: '0.5em',
-              left: '0.5em',
-            }}
-          >
-            <Text size={1} style={{color: 'var(--card-bg-color)'}}>
-              MUX is preparing static renditions, please stand by
-            </Text>
-          </Card>
-        )}
-      </VideoContainer>
-    </>
+    <VideoPlayer asset={asset}>
+      {buttons && <TopControls slot="top-chrome">{buttons}</TopControls>}
+      {isPreparingStaticRenditions && (
+        <Card
+          padding={2}
+          radius={1}
+          style={{
+            background: 'var(--card-fg-color)',
+            position: 'absolute',
+            top: '0.5em',
+            left: '0.5em',
+          }}
+        >
+          <Text size={1} style={{color: 'var(--card-bg-color)'}}>
+            MUX is preparing static renditions, please stand by
+          </Text>
+        </Card>
+      )}
+    </VideoPlayer>
   )
 }
 
