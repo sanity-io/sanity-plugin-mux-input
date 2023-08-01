@@ -10,7 +10,7 @@ const IconInfo: React.FC<{
   const Icon = props.icon
   return (
     <Flex gap={2} align="center" padding={1}>
-      <Text size={props.size || 1} muted={props.muted}>
+      <Text size={(props.size || 1) + 1} muted>
         <Icon />
       </Text>
       <Text size={props.size || 1} muted={props.muted}>

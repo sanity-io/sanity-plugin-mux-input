@@ -18,17 +18,15 @@ function FormField(props: Props) {
       <Flex align="flex-end">
         <Box flex={1} paddingY={2}>
           <Stack space={2}>
-            <Flex>
-              <Text as="label" htmlFor={inputId} weight="semibold" size={1}>
-                {title || <em>Untitled</em>}
-              </Text>
+            <Text as="label" htmlFor={inputId} weight="semibold" size={1}>
+              {title || <em>Untitled</em>}
+            </Text>
 
-              {description && (
-                <Text muted size={1}>
-                  {description}
-                </Text>
-              )}
-            </Flex>
+            {description && (
+              <Text muted size={1}>
+                {description}
+              </Text>
+            )}
           </Stack>
         </Box>
       </Flex>

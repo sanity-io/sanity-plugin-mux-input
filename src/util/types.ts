@@ -195,3 +195,6 @@ export interface MuxInputPreviewProps extends Omit<PreviewProps<PreviewLayoutKey
     asset?: Reference
   } | null
 }
+
+/** Whether the VideosBrowser was opened from a field in a document, or from the standalone studio tool */
+export type PluginPlacement = 'input' | 'tool'

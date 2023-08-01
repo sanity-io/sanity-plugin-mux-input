@@ -41,7 +41,11 @@ export default function useAssets() {
     () =>
       // Avoid displaying both drafts & published assets by collating them together and giving preference to drafts
       collate<VideoAssetDocument>(assetDocuments).map(
-        (collated) => (collated.draft || collated.published) as VideoAssetDocument
+        (collated) =>
+          ({
+            ...(collated.draft || collated.published || {}),
+            _id: collated.id,
+          } as VideoAssetDocument)
       ),
     [assetDocuments]
   )

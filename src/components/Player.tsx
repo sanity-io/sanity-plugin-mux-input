@@ -1,15 +1,12 @@
-import MuxPlayer from '@mux/mux-player-react'
 import {Card, Text} from '@sanity/ui'
 import React, {useEffect, useMemo, useRef} from 'react'
 
 import {useCancelUpload} from '../hooks/useCancelUpload'
-import {useClient} from '../hooks/useClient'
 import type {DialogState, SetDialogState} from '../hooks/useDialogState'
-import {getVideoSrc} from '../util/getVideoSrc'
 import type {MuxInputProps, VideoAssetDocument} from '../util/types'
-import pluginPkg from './../../package.json'
 import {TopControls, VideoContainer} from './Player.styled'
 import {UploadProgress} from './UploadProgress'
+import VideoPlayer from './VideoPlayer'
 
 interface Props extends Pick<MuxInputProps, 'onChange' | 'readOnly'> {
   buttons?: React.ReactNode
@@ -19,7 +16,6 @@ interface Props extends Pick<MuxInputProps, 'onChange' | 'readOnly'> {
 }
 
 const Player = ({asset, buttons, readOnly, onChange, dialogState, setDialogState}: Props) => {
-  const client = useClient()
   const isLoading = useMemo<boolean | string>(() => {
     if (asset?.status === 'preparing') {
       return 'Preparing the video'
@@ -48,7 +44,6 @@ const Player = ({asset, buttons, readOnly, onChange, dialogState, setDialogState
     }
     return false
   }, [asset?.data?.static_renditions?.status])
-  const videoSrc = useMemo(() => asset.playbackId && getVideoSrc({client, asset}), [asset, client])
   const playRef = useRef<HTMLDivElement>(null)
   const muteRef = useRef<HTMLDivElement>(null)
   const handleCancelUpload = useCancelUpload(asset, onChange)
@@ -76,15 +71,6 @@ const Player = ({asset, buttons, readOnly, onChange, dialogState, setDialogState
     }
   }, [asset.data?.errors?.messages, asset?.status, handleCancelUpload])
 
-  const signedToken = useMemo(() => {
-    try {
-      const url = new URL(videoSrc!)
-      return url.searchParams.get('token')
-    } catch {
-      return false
-    }
-  }, [videoSrc])
-
   if (!asset || !asset.status) {
     return null
   }
@@ -108,18 +94,7 @@ const Player = ({asset, buttons, readOnly, onChange, dialogState, setDialogState
         scheme="dark"
         style={{'--video-aspect-ratio': aspectRatio} as any}
       >
-        <MuxPlayer
-          playsInline
-          playbackId={`${asset.playbackId}${signedToken ? `?token=${signedToken}` : ''}`}
-          streamType="on-demand"
-          preload="metadata"
-          crossOrigin="anonymous"
-          metadata={{
-            player_name: 'Sanity Admin Dashboard',
-            player_version: pluginPkg.version,
-            page_type: 'Preview Player',
-          }}
-        />
+        <VideoPlayer asset={asset} />
         {buttons && <TopControls slot="top-chrome">{buttons}</TopControls>}
         {isPreparingStaticRenditions && (
           <Card

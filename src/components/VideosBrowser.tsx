@@ -6,6 +6,7 @@ import useAssets from '../hooks/useAssets'
 import type {VideoAssetDocument} from '../util/types'
 import {SelectSortOptions} from './SelectSortOptions'
 import SpinnerBox from './SpinnerBox'
+import VideoDetails from './VideoDetails/VideoDetails'
 import VideoInBrowser from './VideoInBrowser'
 
 export interface VideosBrowserProps {
@@ -14,6 +15,7 @@ export interface VideosBrowserProps {
 
 export default function VideosBrowser({onSelect}: VideosBrowserProps) {
   const {assets, isLoading, searchQuery, setSearchQuery, setSort, sort} = useAssets()
+  const [editedAsset, setEditedAsset] = React.useState<VideoAssetDocument | null>(null)
 
   return (
     <>
@@ -30,7 +32,7 @@ export default function VideosBrowser({onSelect}: VideosBrowserProps) {
             />
             <SelectSortOptions setSort={setSort} sort={sort} />
           </Flex>
-          {/* @TODO upload assets */}
+          {/* @TODO (stretch) upload assets */}
         </Flex>
         <Stack space={2}>
           {assets?.length > 0 && (
@@ -48,7 +50,7 @@ export default function VideosBrowser({onSelect}: VideosBrowserProps) {
               <VideoInBrowser
                 key={asset._id}
                 asset={asset}
-                onEdit={console.info}
+                onEdit={setEditedAsset}
                 onSelect={onSelect}
               />
             ))}
@@ -64,6 +66,13 @@ export default function VideosBrowser({onSelect}: VideosBrowserProps) {
           </Card>
         )}
       </Stack>
+      {editedAsset && (
+        <VideoDetails
+          closeDialog={() => setEditedAsset(null)}
+          asset={editedAsset}
+          placement={onSelect ? 'input' : 'tool'}
+        />
+      )}
     </>
   )
 }
