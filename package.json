@@ -67,13 +67,11 @@
     "@sanity/incompatible-plugin": "^1",
     "@sanity/ui": "^1",
     "@sanity/uuid": "^3",
-    "classnames": "^2.3.2",
     "jsonwebtoken-esm": "^1.0.5",
     "rxjs": "^7",
     "scroll-into-view-if-needed": "^3",
     "suspend-react": "^0.0.10",
     "swr": "^2.1.0",
-    "use-device-pixel-ratio": "^1.1.2",
     "use-error-boundary": "^2.0.6"
   },
   "devDependencies": {
