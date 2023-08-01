@@ -1,8 +1,10 @@
-import {CheckmarkIcon, EditIcon} from '@sanity/icons'
-import {Button, Card, Stack} from '@sanity/ui'
+import {CheckmarkIcon, EditIcon, LockIcon} from '@sanity/icons'
+import {Button, Card, Stack, Text, Tooltip} from '@sanity/ui'
 import React from 'react'
 
+import {getPlaybackPolicy} from '../util/getPlaybackPolicy'
 import {VideoAssetDocument} from '../util/types'
+import IconInfo from './IconInfo'
 import VideoMetadata from './VideoMetadata'
 import VideoThumbnail from './VideoThumbnail'
 
@@ -22,8 +24,47 @@ export default function VideoInBrowser({
     return null
   }
 
+  const playbackPolicy = getPlaybackPolicy(asset)
+
   return (
-    <Card border padding={2} sizing="border" radius={2}>
+    <Card
+      border
+      padding={2}
+      sizing="border"
+      radius={2}
+      style={{
+        position: 'relative',
+      }}
+    >
+      {playbackPolicy === 'signed' && (
+        <Tooltip
+          content={
+            <Card padding={2} radius={2}>
+              <IconInfo icon={LockIcon} text="Signed playback policy" size={2} />
+            </Card>
+          }
+          placement="right"
+          fallbackPlacements={['top', 'bottom']}
+          portal
+        >
+          <Card
+            tone="caution"
+            style={{
+              borderRadius: '100%',
+              position: 'absolute',
+              left: '1em',
+              top: '1em',
+              zIndex: 10,
+            }}
+            padding={2}
+            border
+          >
+            <Text muted size={1}>
+              <LockIcon />
+            </Text>
+          </Card>
+        </Tooltip>
+      )}
       <Stack
         space={3}
         height="fill"
