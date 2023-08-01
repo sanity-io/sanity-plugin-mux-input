@@ -1,5 +1,4 @@
-import {EllipsisVerticalIcon, TrashIcon} from '@sanity/icons'
-import {DownloadIcon} from '@sanity/icons'
+import {EllipsisVerticalIcon, SearchIcon, TrashIcon} from '@sanity/icons'
 import {
   Box,
   Button,
@@ -11,9 +10,9 @@ import {
   Menu,
   MenuButton,
   MenuItem,
-  Spinner,
   Stack,
   Text,
+  TextInput,
   useClickOutside,
   useToast,
 } from '@sanity/ui'
@@ -23,9 +22,12 @@ import styled from 'styled-components'
 import {getDevicePixelRatio} from 'use-device-pixel-ratio'
 
 import {deleteAsset} from '../actions/assets'
+import useAssets from '../hooks/useAssets'
 import {useClient} from '../hooks/useClient'
 import type {VideoAssetDocument} from '../util/types'
-import {AnimatedVideoThumbnail, CardLoadMore, ThumbGrid, VideoThumbnail} from './VideoSource.styled'
+import {SelectSortOptions} from './SelectSortOptions'
+import SpinnerBox from './SpinnerBox'
+import {AnimatedVideoThumbnail, ThumbGrid, VideoThumbnail} from './VideoSource.styled'
 
 export interface AssetActionsMenuProps {
   asset: VideoAssetDocument
@@ -174,31 +176,50 @@ function DeleteDialog(props: DeleteDialogProps) {
 }
 
 export interface Props {
-  assets: VideoAssetDocument[]
-  isLoading: boolean
-  isLastPage: boolean
-  onSelect: (assetId: string) => void
-  onLoadMore: () => void
+  onSelect?: (asset: VideoAssetDocument) => void
 }
 
-export default function VideoSource({assets, isLoading, isLastPage, onSelect, onLoadMore}: Props) {
+export default function VideoSource({onSelect}: Props) {
+  const {assets, isLoading, searchQuery, setSearchQuery, setSort, sort} = useAssets()
+
+  const selectAssetById = useCallback(
+    (id: string) => {
+      const asset = assets.find((a) => a._id === id)
+      if (!asset) return
+
+      onSelect?.(asset)
+    },
+    [onSelect, assets]
+  )
+
   const handleClick = useCallback<React.MouseEventHandler<HTMLDivElement>>(
-    (event) => onSelect(event.currentTarget.dataset.id!),
-    [onSelect]
+    (event) => selectAssetById(event.currentTarget.dataset.id!),
+    [selectAssetById]
   )
   const handleKeyPress = useCallback<React.KeyboardEventHandler<HTMLDivElement>>(
     (event) => {
       if (event.key === 'Enter') {
-        onSelect(event.currentTarget.dataset.id!)
+        selectAssetById(event.currentTarget.dataset.id!)
       }
     },
-    [onSelect]
+    [selectAssetById]
   )
   const width = 200 * getDevicePixelRatio({maxDpr: 2})
 
   return (
     <>
       <Box padding={4}>
+        <Flex justify="space-between" align="center">
+          <TextInput
+            value={searchQuery}
+            icon={SearchIcon}
+            onInput={(e: React.FormEvent<HTMLInputElement>) =>
+              setSearchQuery(e.currentTarget.value)
+            }
+            placeholder="Search files"
+          />
+          <SelectSortOptions setSort={setSort} sort={sort} />
+        </Flex>
         <ThumbGrid gap={2}>
           {assets.map((asset) => (
             <VideoSourceItem
@@ -210,11 +231,7 @@ export default function VideoSource({assets, isLoading, isLastPage, onSelect, on
             />
           ))}
         </ThumbGrid>
-        {isLoading && assets.length === 0 && (
-          <Flex justify="center">
-            <Spinner muted />
-          </Flex>
-        )}
+        {isLoading && <SpinnerBox />}
 
         {!isLoading && assets.length === 0 && (
           <Text align="center" muted>
@@ -222,20 +239,6 @@ export default function VideoSource({assets, isLoading, isLastPage, onSelect, on
           </Text>
         )}
       </Box>
-      {assets.length > 0 && !isLastPage && (
-        <CardLoadMore tone="default" padding={4}>
-          <Flex direction="column">
-            <Button
-              type="button"
-              icon={DownloadIcon}
-              loading={isLoading}
-              onClick={onLoadMore}
-              text="Load more"
-              tone="primary"
-            />
-          </Flex>
-        </CardLoadMore>
-      )}
     </>
   )
 }
