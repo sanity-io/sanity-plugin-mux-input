@@ -26,13 +26,19 @@ const STATUS_TO_TONE: Record<ImageStatus, CardTone> = {
   loaded: 'default',
 }
 
-export default function VideoThumbnail({asset}: {asset: VideoAssetDocument}) {
+export default function VideoThumbnail({
+  asset,
+  width = 250,
+}: {
+  asset: Partial<VideoAssetDocument>
+  width?: number
+}) {
   const {inView, ref} = useInView()
 
   const [status, setStatus] = useState<ImageStatus>('loading')
   const client = useClient()
 
-  const animatedSrc = getAnimatedPosterSrc({asset, client, width: 250})
+  const animatedSrc = getAnimatedPosterSrc({asset, client, width})
 
   function handleLoad() {
     setStatus('loaded')

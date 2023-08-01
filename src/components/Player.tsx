@@ -1,6 +1,6 @@
 import MuxPlayer from '@mux/mux-player-react'
 import {Card, Text} from '@sanity/ui'
-import React, {useCallback, useEffect, useMemo, useRef} from 'react'
+import React, {useEffect, useMemo, useRef} from 'react'
 
 import {useCancelUpload} from '../hooks/useCancelUpload'
 import {useClient} from '../hooks/useClient'
@@ -8,7 +8,6 @@ import type {DialogState, SetDialogState} from '../hooks/useDialogState'
 import {getVideoSrc} from '../util/getVideoSrc'
 import type {MuxInputProps, VideoAssetDocument} from '../util/types'
 import pluginPkg from './../../package.json'
-import EditThumbnailDialog from './EditThumbnailDialog'
 import {TopControls, VideoContainer} from './Player.styled'
 import {UploadProgress} from './UploadProgress'
 
@@ -52,8 +51,6 @@ const Player = ({asset, buttons, readOnly, onChange, dialogState, setDialogState
   const videoSrc = useMemo(() => asset.playbackId && getVideoSrc({client, asset}), [asset, client])
   const playRef = useRef<HTMLDivElement>(null)
   const muteRef = useRef<HTMLDivElement>(null)
-  const video = useRef<HTMLVideoElement>(null)
-  const getCurrentTime = useCallback(() => video.current?.currentTime ?? 0, [video])
   const handleCancelUpload = useCancelUpload(asset, onChange)
 
   const aspectRatio = asset?.data?.aspect_ratio ?? 16 / 9
@@ -141,13 +138,6 @@ const Player = ({asset, buttons, readOnly, onChange, dialogState, setDialogState
           </Card>
         )}
       </VideoContainer>
-      {dialogState === 'edit-thumbnail' && (
-        <EditThumbnailDialog
-          asset={asset}
-          getCurrentTime={getCurrentTime}
-          setDialogState={setDialogState}
-        />
-      )}
     </>
   )
 }
