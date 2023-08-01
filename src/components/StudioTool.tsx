@@ -4,12 +4,12 @@ import {Tool} from 'sanity'
 
 import {Config} from '../util/types'
 import MuxLogo from './MuxLogo'
-import VideoSource from './VideoSource'
+import VideosBrowser from './VideosBrowser'
 
 const StudioTool: React.FC<Config> = () => {
   return (
     <ThemeProvider theme={studioTheme}>
-      <VideoSource />
+      <VideosBrowser />
     </ThemeProvider>
   )
 }

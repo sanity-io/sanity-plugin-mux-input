@@ -3,7 +3,7 @@ import {PatchEvent, set, setIfMissing, unset} from 'sanity'
 
 import type {SetDialogState} from '../hooks/useDialogState'
 import type {MuxInputProps, VideoAssetDocument} from '../util/types'
-import VideoSource, {type Props as VideoSourceProps} from './VideoSource'
+import VideosBrowser, {type VideosBrowserProps} from './VideosBrowser'
 
 export interface Props extends Pick<MuxInputProps, 'onChange'> {
   asset?: VideoAssetDocument | null | undefined
@@ -11,7 +11,7 @@ export interface Props extends Pick<MuxInputProps, 'onChange'> {
 }
 
 export default function SelectAssets({asset: selectedAsset, onChange, setDialogState}: Props) {
-  const handleSelect = useCallback<Required<VideoSourceProps>['onSelect']>(
+  const handleSelect = useCallback<Required<VideosBrowserProps>['onSelect']>(
     (chosenAsset) => {
       if (!chosenAsset?._id) {
         onChange(PatchEvent.from([unset(['asset'])]))
@@ -29,5 +29,5 @@ export default function SelectAssets({asset: selectedAsset, onChange, setDialogS
     [onChange, setDialogState, selectedAsset]
   )
 
-  return <VideoSource onSelect={handleSelect} />
+  return <VideosBrowser onSelect={handleSelect} />
 }
