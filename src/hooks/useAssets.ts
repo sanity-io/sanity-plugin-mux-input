@@ -1,5 +1,5 @@
-import {useState} from 'react'
-import {createHookFromObservableFactory, DocumentStore, useDocumentStore} from 'sanity'
+import {useMemo, useState} from 'react'
+import {collate, createHookFromObservableFactory, DocumentStore, useDocumentStore} from 'sanity'
 
 import {SANITY_API_VERSION} from '../hooks/useClient'
 import {createSearchFilter} from '../util/createSearchFilter'
@@ -36,7 +36,15 @@ export default function useAssets() {
   const [sort, setSort] = useState<SortOption>('createdDesc')
   const [searchQuery, setSearchQuery] = useState('')
 
-  const [assets = [], isLoading] = useAssetDocuments({documentStore, sort, searchQuery})
+  const [assetDocuments = [], isLoading] = useAssetDocuments({documentStore, sort, searchQuery})
+  const assets = useMemo(
+    () =>
+      // Avoid displaying both drafts & published assets by collating them together and giving preference to drafts
+      collate<VideoAssetDocument>(assetDocuments).map(
+        (collated) => (collated.draft || collated.published) as VideoAssetDocument
+      ),
+    [assetDocuments]
+  )
 
   return {
     assets,

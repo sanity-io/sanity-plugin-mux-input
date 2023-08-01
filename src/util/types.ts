@@ -171,7 +171,7 @@ export interface MuxAsset {
   }
 }
 
-export interface VideoAssetDocument extends Partial<SanityDocument> {
+export interface VideoAssetDocument extends SanityDocument {
   type?: 'mux.videoAsset'
   status?: string
   assetId?: string

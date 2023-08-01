@@ -69,7 +69,6 @@
     "@sanity/uuid": "^3",
     "classnames": "^2.3.2",
     "jsonwebtoken-esm": "^1.0.5",
-    "motion": "^10",
     "rxjs": "^7",
     "scroll-into-view-if-needed": "^3",
     "suspend-react": "^0.0.10",
