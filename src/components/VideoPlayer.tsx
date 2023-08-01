@@ -1,4 +1,4 @@
-import MuxPlayer from '@mux/mux-player-react'
+import MuxPlayer, {MuxPlayerProps} from '@mux/mux-player-react'
 import {Card} from '@sanity/ui'
 import React, {PropsWithChildren, useMemo} from 'react'
 
@@ -7,10 +7,10 @@ import {getVideoSrc} from '../util/getVideoSrc'
 import type {VideoAssetDocument} from '../util/types'
 import pluginPkg from './../../package.json'
 
-export default function VideoPlayer({
-  asset,
-  children,
-}: PropsWithChildren<{asset: VideoAssetDocument}>) {
+export default function VideoPlayer(
+  props: PropsWithChildren<{asset: VideoAssetDocument} & Partial<MuxPlayerProps>>
+) {
+  const {asset} = props
   const client = useClient()
 
   const videoSrc = useMemo(() => asset.playbackId && getVideoSrc({client, asset}), [asset, client])
@@ -30,6 +30,7 @@ export default function VideoPlayer({
   return (
     <Card tone="transparent" style={{aspectRatio: aspectRatio, position: 'relative'}}>
       <MuxPlayer
+        {...props}
         playsInline
         playbackId={`${asset.playbackId}${signedToken ? `?token=${signedToken}` : ''}`}
         streamType="on-demand"
@@ -44,7 +45,7 @@ export default function VideoPlayer({
           height: '100%',
         }}
       />
-      {children}
+      {props.children}
     </Card>
   )
 }

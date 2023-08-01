@@ -8,7 +8,7 @@ import {PluginPlacement, VideoAssetDocument} from '../../util/types'
 export interface FileDetailsProps {
   placement: PluginPlacement
   closeDialog: () => void
-  asset: VideoAssetDocument
+  asset: VideoAssetDocument & {autoPlay?: boolean}
 }
 
 export default function useFileDetails(props: FileDetailsProps) {

@@ -6,6 +6,7 @@ import useAssets from '../hooks/useAssets'
 import type {VideoAssetDocument} from '../util/types'
 import {SelectSortOptions} from './SelectSortOptions'
 import SpinnerBox from './SpinnerBox'
+import {FileDetailsProps} from './VideoDetails/useVideoDetails'
 import VideoDetails from './VideoDetails/VideoDetails'
 import VideoInBrowser from './VideoInBrowser'
 
@@ -15,7 +16,7 @@ export interface VideosBrowserProps {
 
 export default function VideosBrowser({onSelect}: VideosBrowserProps) {
   const {assets, isLoading, searchQuery, setSearchQuery, setSort, sort} = useAssets()
-  const [editedAsset, setEditedAsset] = React.useState<VideoAssetDocument | null>(null)
+  const [editedAsset, setEditedAsset] = React.useState<FileDetailsProps['asset'] | null>(null)
 
   return (
     <>

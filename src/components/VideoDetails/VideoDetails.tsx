@@ -234,10 +234,21 @@ const VideoDetails: React.FC<FileDetailsProps> = (props) => {
           </Card>
         </Dialog>
       )}
-      <Card padding={4} sizing="border">
-        <Flex sizing="border" wrap="wrap" gap={4} align="center">
+      <Card
+        padding={4}
+        sizing="border"
+        style={{
+          containerType: 'inline-size',
+        }}
+      >
+        <Flex
+          sizing="border"
+          gap={4}
+          align={['flex-start', 'flex-start', 'center']}
+          direction={['column', 'column', 'row']}
+        >
           <Stack space={4} flex={1} sizing="border">
-            <VideoPlayer asset={props.asset} />
+            <VideoPlayer asset={props.asset} autoPlay={props.asset.autoPlay || false} />
           </Stack>
           <Stack space={4} flex={1} sizing="border">
             <TabList space={2}>
