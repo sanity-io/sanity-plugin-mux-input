@@ -17,6 +17,10 @@ export interface VideosBrowserProps {
 export default function VideosBrowser({onSelect}: VideosBrowserProps) {
   const {assets, isLoading, searchQuery, setSearchQuery, setSort, sort} = useAssets()
   const [editedAsset, setEditedAsset] = React.useState<FileDetailsProps['asset'] | null>(null)
+  const freshEditedAsset = React.useMemo(
+    () => assets.find((a) => a._id === editedAsset?._id) || editedAsset,
+    [editedAsset, assets]
+  )
 
   return (
     <>
@@ -67,10 +71,10 @@ export default function VideosBrowser({onSelect}: VideosBrowserProps) {
           </Card>
         )}
       </Stack>
-      {editedAsset && (
+      {freshEditedAsset && (
         <VideoDetails
           closeDialog={() => setEditedAsset(null)}
-          asset={editedAsset}
+          asset={freshEditedAsset}
           placement={onSelect ? 'input' : 'tool'}
         />
       )}

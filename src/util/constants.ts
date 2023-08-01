@@ -4,3 +4,5 @@ export const name = 'mux-input' as const
 export const cacheNs = 'sanity-plugin-mux-input' as const
 
 export const muxSecretsDocumentId = 'secrets.mux' as const
+
+export const DIALOGS_Z_INDEX = 60_000

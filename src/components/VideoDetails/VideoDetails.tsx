@@ -25,12 +25,13 @@ import {
 } from '@sanity/ui'
 import React, {useState} from 'react'
 
+import {DIALOGS_Z_INDEX} from '../../util/constants'
 import FormField from '../FormField'
 import IconInfo from '../IconInfo'
 import {ResolutionIcon} from '../icons/Resolution'
 import {StopWatchIcon} from '../icons/StopWatch'
-import SpinnerBox from '../SpinnerBox'
 import VideoPlayer from '../VideoPlayer'
+import DeleteDialog from './DeleteDialog'
 import useFileDetails, {FileDetailsProps} from './useVideoDetails'
 import FileReferences from './VideoReferences'
 
@@ -40,6 +41,7 @@ const AssetInput: React.FC<{
   placeholder?: string
   value: string
   onInput: (e: React.FormEvent<HTMLInputElement>) => void
+  disabled?: boolean
 }> = (props) => (
   <FormField title={props.label} description={props.description} inputId={props.label}>
     <TextInput
@@ -47,11 +49,10 @@ const AssetInput: React.FC<{
       value={props.value}
       placeholder={props.placeholder}
       onInput={props.onInput}
+      disabled={props.disabled}
     />
   </FormField>
 )
-
-const Z_INDEX = 60_000
 
 const VideoDetails: React.FC<FileDetailsProps> = (props) => {
   const [tab, setTab] = useState<'details' | 'references'>('details')
@@ -61,20 +62,23 @@ const VideoDetails: React.FC<FileDetailsProps> = (props) => {
     modified,
     references,
     referencesLoading,
-    send,
     setFilename,
-    stateMatches,
+    state,
+    setState,
+    handleClose,
+    confirmClose,
+    saveChanges,
   } = useFileDetails(props)
 
-  const isSaving = false
+  const isSaving = state === 'saving'
 
   return (
     <Dialog
       header={displayInfo.title}
-      zOffset={Z_INDEX}
+      zOffset={DIALOGS_Z_INDEX}
       id="file-details-dialog"
-      onClose={() => send('CLOSE')}
-      onClickOutside={() => send('CLOSE')}
+      onClose={handleClose}
+      onClickOutside={handleClose}
       width={2}
       position="fixed"
       footer={
@@ -87,7 +91,7 @@ const VideoDetails: React.FC<FileDetailsProps> = (props) => {
               mode="bleed"
               text="Delete"
               tone="critical"
-              onClick={() => send('DELETE')}
+              onClick={() => setState('deleting')}
               disabled={isSaving}
             />
             {modified && (
@@ -98,7 +102,7 @@ const VideoDetails: React.FC<FileDetailsProps> = (props) => {
                 mode="ghost"
                 text="Save and close"
                 tone="positive"
-                onClick={() => send('SAVE')}
+                onClick={saveChanges}
                 iconRight={isSaving && Spinner}
                 disabled={isSaving}
               />
@@ -108,96 +112,27 @@ const VideoDetails: React.FC<FileDetailsProps> = (props) => {
       }
     >
       {/* DELETION DIALOG */}
-      {stateMatches('interactions.deleting') && (
-        <Dialog
-          header={'Delete file'}
-          zOffset={Z_INDEX}
-          id="deleting-file-details-dialog"
-          onClose={() => send('CANCEL')}
-          onClickOutside={() => send('CANCEL')}
-          width={0}
-          position="fixed"
-          footer={
-            <Card padding={3}>
-              <Flex justify="space-between" align="center">
-                <Button
-                  icon={TrashIcon}
-                  fontSize={2}
-                  padding={3}
-                  text="Delete file"
-                  tone="critical"
-                  onClick={() => send('CONFIRM')}
-                  disabled={[
-                    'interactions.deleting.processing_deletion',
-                    'interactions.deleting.checkingReferences',
-                    'interactions.deleting.cantDelete',
-                  ].some(stateMatches)}
-                />
-              </Flex>
-            </Card>
-          }
-        >
-          <Card
-            padding={5}
-            style={{
-              minHeight: '150px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Stack space={3}>
-              {stateMatches('interactions.deleting.checkingReferences') && (
-                <>
-                  <Heading size={2}>Checking if file can be deleted</Heading>
-                  <SpinnerBox />
-                </>
-              )}
-              {stateMatches('interactions.deleting.cantDelete') && (
-                <>
-                  <Heading size={2}>Video can't be deleted</Heading>
-                  <Text size={2} style={{marginBottom: '2rem'}}>
-                    There are {references?.length} documents pointing to this file. Remove their
-                    references to this file or delete them before proceeding.
-                  </Text>
-                  <FileReferences
-                    references={references}
-                    isLoaded={!referencesLoading}
-                    placement={props.placement}
-                  />
-                </>
-              )}
-              {stateMatches('interactions.deleting.confirm') && (
-                <>
-                  <Heading size={2}>Are you sure you want to delete this file?</Heading>
-                  <Text size={2}>This action is irreversible</Text>
-                </>
-              )}
-              {stateMatches('interactions.deleting.processing_deletion') && (
-                <>
-                  <Heading size={2}>Deleting file...</Heading>
-                  <SpinnerBox />
-                </>
-              )}
-              {stateMatches('interactions.deleting.error_deleting') && (
-                <>
-                  <Heading size={2}>Something went wrong!</Heading>
-                  <Text size={2}>Try deleting the file again by clicking the button below</Text>
-                </>
-              )}
-            </Stack>
-          </Card>
-        </Dialog>
+      {state === 'deleting' && (
+        <DeleteDialog
+          asset={props.asset}
+          cancelDelete={() => setState('idle')}
+          placement={props.placement}
+          referencesLoading={referencesLoading}
+          references={references}
+          succeededDeleting={() => {
+            props.closeDialog()
+          }}
+        />
       )}
 
       {/* CONFIRM CLOSING DIALOG */}
-      {stateMatches('interactions.closing.confirm') && (
+      {state === 'closing' && (
         <Dialog
           header={'You have unsaved changes'}
-          zOffset={Z_INDEX}
+          zOffset={DIALOGS_Z_INDEX}
           id="closing-file-details-dialog"
-          onClose={() => send('CANCEL')}
-          onClickOutside={() => send('CANCEL')}
+          onClose={() => confirmClose(false)}
+          onClickOutside={() => confirmClose(false)}
           width={1}
           position="fixed"
           footer={
@@ -209,7 +144,7 @@ const VideoDetails: React.FC<FileDetailsProps> = (props) => {
                   padding={3}
                   text="Discard changes"
                   tone="critical"
-                  onClick={() => send('CONFIRM')}
+                  onClick={() => confirmClose(true)}
                 />
                 {modified && (
                   <Button
@@ -219,7 +154,7 @@ const VideoDetails: React.FC<FileDetailsProps> = (props) => {
                     mode="ghost"
                     text="Keep editing"
                     tone="primary"
-                    onClick={() => send('CANCEL')}
+                    onClick={() => confirmClose(false)}
                   />
                 )}
               </Flex>
@@ -241,12 +176,7 @@ const VideoDetails: React.FC<FileDetailsProps> = (props) => {
           containerType: 'inline-size',
         }}
       >
-        <Flex
-          sizing="border"
-          gap={4}
-          align={['flex-start', 'flex-start', 'center']}
-          direction={['column', 'column', 'row']}
-        >
+        <Flex sizing="border" gap={4} direction={['column', 'column', 'row']}>
           <Stack space={4} flex={1} sizing="border">
             <VideoPlayer asset={props.asset} autoPlay={props.asset.autoPlay || false} />
           </Stack>
@@ -260,14 +190,16 @@ const VideoDetails: React.FC<FileDetailsProps> = (props) => {
                 onClick={() => setTab('details')}
                 selected={tab === 'details'}
               />
-              <Tab
-                aria-controls="references-panel"
-                icon={SearchIcon}
-                id="references-tab"
-                label="Used by"
-                onClick={() => setTab('references')}
-                selected={tab === 'references'}
-              />
+              {references && references.length > 0 && (
+                <Tab
+                  aria-controls="references-panel"
+                  icon={SearchIcon}
+                  id="references-tab"
+                  label={`Used by (${references.length})`}
+                  onClick={() => setTab('references')}
+                  selected={tab === 'references'}
+                />
+              )}
             </TabList>
             <TabPanel aria-labelledby="details-tab" id="details-panel" hidden={tab !== 'details'}>
               <Stack space={4}>
@@ -276,6 +208,7 @@ const VideoDetails: React.FC<FileDetailsProps> = (props) => {
                   description="Not visible to users. Useful for finding files later."
                   value={filename || ''}
                   onInput={(e) => setFilename(e.currentTarget.value)}
+                  disabled={state !== 'idle'}
                 />
                 <Stack space={3}>
                   {displayInfo?.duration && (

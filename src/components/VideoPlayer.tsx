@@ -7,10 +7,11 @@ import {getVideoSrc} from '../util/getVideoSrc'
 import type {VideoAssetDocument} from '../util/types'
 import pluginPkg from './../../package.json'
 
-export default function VideoPlayer(
-  props: PropsWithChildren<{asset: VideoAssetDocument} & Partial<MuxPlayerProps>>
-) {
-  const {asset} = props
+export default function VideoPlayer({
+  asset,
+  children,
+  ...props
+}: PropsWithChildren<{asset: VideoAssetDocument} & Partial<Pick<MuxPlayerProps, 'autoPlay'>>>) {
   const client = useClient()
 
   const videoSrc = useMemo(() => asset.playbackId && getVideoSrc({client, asset}), [asset, client])
@@ -45,7 +46,7 @@ export default function VideoPlayer(
           height: '100%',
         }}
       />
-      {props.children}
+      {children}
     </Card>
   )
 }

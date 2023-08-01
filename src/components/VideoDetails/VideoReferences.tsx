@@ -54,12 +54,11 @@ const FileReferences: React.FC<{
             style={{overflow: 'hidden'}}
           >
             <Box>
-              {/* @TODO re-enable previews once useRouter is figured out */}
-              {/* <DocumentPreview
+              <DocumentPreview
                 documentPair={documentPair}
                 schemaType={schemaType}
                 placement={props.placement}
-              /> */}
+              />
             </Box>
           </Card>
         )

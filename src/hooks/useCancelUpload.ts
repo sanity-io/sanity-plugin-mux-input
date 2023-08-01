@@ -1,7 +1,7 @@
 import {useCallback} from 'react'
 import {PatchEvent, unset} from 'sanity'
 
-import {deleteAsset} from '../actions/assets'
+import {deleteAssetOnMux} from '../actions/assets'
 import {useClient} from '../hooks/useClient'
 import type {MuxInputProps, VideoAssetDocument} from '../util/types'
 
@@ -13,7 +13,7 @@ export const useCancelUpload = (asset: VideoAssetDocument, onChange: MuxInputPro
     }
     onChange(PatchEvent.from(unset()))
     if (asset.assetId) {
-      deleteAsset(client, asset.assetId)
+      deleteAssetOnMux(client, asset.assetId)
     }
     if (asset._id) {
       client.delete(asset._id)
