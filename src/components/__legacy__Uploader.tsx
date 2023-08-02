@@ -244,8 +244,6 @@ class MuxVideoInputUploader extends Component<Props, State> {
               readOnly={this.props.readOnly}
               asset={this.props.asset}
               onChange={this.props.onChange}
-              dialogState={this.props.dialogState}
-              setDialogState={this.props.setDialogState}
               buttons={
                 <PlayerActionsMenu
                   asset={this.props.asset}

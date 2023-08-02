@@ -1,5 +1,4 @@
 import {
-  EditIcon,
   EllipsisVerticalIcon,
   LockIcon,
   PlugIcon,
@@ -87,9 +86,6 @@ function PlayerActionsMenu(props: Props) {
             <LockButton icon={LockIcon} mode="bleed" tone="positive" />
           </LockCard>
         </Tooltip>
-      )}
-      {!readOnly && (
-        <Button icon={EditIcon} mode="ghost" onClick={() => setDialogState('edit-thumbnail')} />
       )}
       <Popover
         content={
