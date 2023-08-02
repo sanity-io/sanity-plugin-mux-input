@@ -23,7 +23,7 @@ import {
   Text,
   TextInput,
 } from '@sanity/ui'
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 
 import {DIALOGS_Z_INDEX} from '../../util/constants'
 import FormField from '../FormField'
@@ -72,6 +72,15 @@ const VideoDetails: React.FC<FileDetailsProps> = (props) => {
 
   const isSaving = state === 'saving'
 
+  // Avoid layout shifts in large screens' 2-column dialog by setting their `minHeight` to the container's
+  const [containerHeight, setContainerHeight] = useState<number | null>(null)
+  const contentsRef = React.useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (!contentsRef.current || !('getBoundingClientRect' in contentsRef.current)) return
+
+    setContainerHeight(contentsRef.current.getBoundingClientRect().height)
+  }, [])
+
   return (
     <Dialog
       header={displayInfo.title}
@@ -80,6 +89,7 @@ const VideoDetails: React.FC<FileDetailsProps> = (props) => {
       onClose={handleClose}
       onClickOutside={handleClose}
       width={2}
+      style={{minHeight: '50vh'}}
       position="fixed"
       footer={
         <Card padding={3}>
@@ -176,7 +186,20 @@ const VideoDetails: React.FC<FileDetailsProps> = (props) => {
           containerType: 'inline-size',
         }}
       >
-        <Flex sizing="border" gap={4} direction={['column', 'column', 'row']}>
+        <Flex
+          sizing="border"
+          gap={4}
+          direction={['column', 'column', 'row']}
+          align="flex-start"
+          ref={contentsRef}
+          style={
+            typeof containerHeight === 'number'
+              ? {
+                  minHeight: containerHeight,
+                }
+              : undefined
+          }
+        >
           <Stack space={4} flex={1} sizing="border">
             <VideoPlayer asset={props.asset} autoPlay={props.asset.autoPlay || false} />
           </Stack>

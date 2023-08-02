@@ -5,6 +5,7 @@ import styled from 'styled-components'
 
 import {useClient} from '../hooks/useClient'
 import useInView from '../hooks/useInView'
+import {THUMBNAIL_ASPECT_RATIO} from '../util/constants'
 import {getAnimatedPosterSrc} from '../util/getAnimatedPosterSrc'
 import {VideoAssetDocument} from '../util/types'
 import SpinnerBox from './SpinnerBox'
@@ -51,7 +52,7 @@ export default function VideoThumbnail({
   return (
     <Card
       style={{
-        aspectRatio: '16 / 9',
+        aspectRatio: THUMBNAIL_ASPECT_RATIO,
         position: 'relative',
       }}
       border

@@ -1,12 +1,14 @@
 import {CheckmarkIcon, EditIcon, LockIcon, PlayIcon} from '@sanity/icons'
 import {Button, Card, Stack, Text, Tooltip} from '@sanity/ui'
-import React from 'react'
+import React, {useState} from 'react'
 import styled from 'styled-components'
 
+import {THUMBNAIL_ASPECT_RATIO} from '../util/constants'
 import {getPlaybackPolicy} from '../util/getPlaybackPolicy'
 import {VideoAssetDocument} from '../util/types'
 import IconInfo from './IconInfo'
 import VideoMetadata from './VideoMetadata'
+import VideoPlayer from './VideoPlayer'
 import VideoThumbnail from './VideoThumbnail'
 
 const PlayButton = styled.button`
@@ -77,6 +79,7 @@ export default function VideoInBrowser({
   onEdit?: (asset: VideoAssetDocument) => void
   asset: VideoAssetDocument
 }) {
+  const [renderVideo, setRenderVideo] = useState(false)
   const select = React.useCallback(() => onSelect?.(asset), [onSelect, asset])
   const edit = React.useCallback(() => onEdit?.(asset), [onEdit, asset])
 
@@ -132,12 +135,16 @@ export default function VideoInBrowser({
           gridTemplateRows: 'min-content min-content 1fr',
         }}
       >
-        <PlayButton onClick={() => onEdit?.({...asset, autoPlay: true})}>
-          <div data-play>
-            <PlayIcon />
-          </div>
-          <VideoThumbnail asset={asset} />
-        </PlayButton>
+        {renderVideo ? (
+          <VideoPlayer asset={asset} autoPlay forceAspectRatio={THUMBNAIL_ASPECT_RATIO} />
+        ) : (
+          <PlayButton onClick={() => setRenderVideo(true)}>
+            <div data-play>
+              <PlayIcon />
+            </div>
+            <VideoThumbnail asset={asset} />
+          </PlayButton>
+        )}
         <VideoMetadata asset={asset} />
         <div
           style={{

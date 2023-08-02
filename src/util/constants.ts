@@ -6,3 +6,8 @@ export const cacheNs = 'sanity-plugin-mux-input' as const
 export const muxSecretsDocumentId = 'secrets.mux' as const
 
 export const DIALOGS_Z_INDEX = 60_000
+
+export const THUMBNAIL_ASPECT_RATIO = 16 / 9
+
+/** Thumbnails and input shouldn't go beyond this aspect ratio */
+export const MIN_ASPECT_RATIO = 1

@@ -14,6 +14,18 @@ export interface Config {
    * @defaultValue 'none'
    */
   mp4_support: 'none' | 'standard'
+
+  /**
+   * How the videos browser should appear as a studio tool in Sanity's top navigation
+   *
+   * Pass `false` if you want to disable it.
+   **/
+  tool?:
+    | false
+    | {
+        title?: string
+        icon?: React.ComponentType
+      }
 }
 
 export interface Secrets {

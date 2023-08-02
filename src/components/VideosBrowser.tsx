@@ -1,5 +1,5 @@
 import {SearchIcon} from '@sanity/icons'
-import {Card, Flex, Grid, Stack, Text, TextInput} from '@sanity/ui'
+import {Card, Flex, Grid, Label, Stack, Text, TextInput} from '@sanity/ui'
 import React from 'react'
 
 import useAssets from '../hooks/useAssets'
@@ -37,13 +37,13 @@ export default function VideosBrowser({onSelect}: VideosBrowserProps) {
             />
             <SelectSortOptions setSort={setSort} sort={sort} />
           </Flex>
-          {/* @TODO (stretch) upload assets */}
         </Flex>
-        <Stack space={2}>
+        <Stack space={3}>
           {assets?.length > 0 && (
-            <Text muted>
-              {assets.length} videos {searchQuery ? `matching "${searchQuery}"` : 'found'}
-            </Text>
+            <Label muted>
+              {assets.length} video{assets.length > 1 ? 's' : null}{' '}
+              {searchQuery ? `matching "${searchQuery}"` : 'found'}
+            </Label>
           )}
           <Grid
             gap={2}

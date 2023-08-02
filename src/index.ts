@@ -24,6 +24,6 @@ export const muxInput = definePlugin<Partial<Config> | void>((userConfig) => {
         },
       ],
     },
-    tools: [createStudioTool(config)],
+    tools: config.tool === false ? undefined : [createStudioTool(config)],
   }
 })

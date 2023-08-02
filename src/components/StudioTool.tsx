@@ -3,7 +3,7 @@ import React from 'react'
 import {Tool} from 'sanity'
 
 import {Config} from '../util/types'
-import MuxMonogram from './icons/MuxMonogram'
+import ToolIcon from './icons/ToolIcon'
 import VideosBrowser from './VideosBrowser'
 
 const StudioTool: React.FC<Config> = () => {
@@ -15,10 +15,11 @@ const StudioTool: React.FC<Config> = () => {
 }
 
 export default function createStudioTool(config: Config): Tool {
+  const toolConfig = typeof config.tool === 'object' ? config.tool : {}
   return {
     name: 'mux',
-    title: 'Mux videos',
+    title: toolConfig.title || 'Videos',
     component: (props: any) => <StudioTool {...config} {...props} />,
-    icon: MuxMonogram,
+    icon: toolConfig.icon || ToolIcon,
   }
 }

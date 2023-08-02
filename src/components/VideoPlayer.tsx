@@ -3,6 +3,7 @@ import {Card} from '@sanity/ui'
 import React, {PropsWithChildren, useMemo} from 'react'
 
 import {useClient} from '../hooks/useClient'
+import {MIN_ASPECT_RATIO} from '../util/constants'
 import {getVideoSrc} from '../util/getVideoSrc'
 import type {VideoAssetDocument} from '../util/types'
 import pluginPkg from './../../package.json'
@@ -11,7 +12,9 @@ export default function VideoPlayer({
   asset,
   children,
   ...props
-}: PropsWithChildren<{asset: VideoAssetDocument} & Partial<Pick<MuxPlayerProps, 'autoPlay'>>>) {
+}: PropsWithChildren<
+  {asset: VideoAssetDocument; forceAspectRatio?: number} & Partial<Pick<MuxPlayerProps, 'autoPlay'>>
+>) {
   const client = useClient()
 
   const videoSrc = useMemo(() => asset.playbackId && getVideoSrc({client, asset}), [asset, client])
@@ -26,7 +29,10 @@ export default function VideoPlayer({
   }, [videoSrc])
 
   const [width, height] = (asset?.data?.aspect_ratio ?? '16:9').split(':').map(Number)
-  const aspectRatio = Number.isNaN(width) ? 16 / 9 : width / height
+  const targetAspectRatio =
+    props.forceAspectRatio || (Number.isNaN(width) ? 16 / 9 : width / height)
+  const aspectRatio = Math.max(MIN_ASPECT_RATIO, targetAspectRatio)
+  console.log({targetAspectRatio, MIN_ASPECT_RATIO, aspectRatio})
 
   return (
     <Card tone="transparent" style={{aspectRatio: aspectRatio, position: 'relative'}}>
@@ -44,6 +50,9 @@ export default function VideoPlayer({
         }}
         style={{
           height: '100%',
+          width: '100%',
+          display: 'block',
+          objectFit: 'contain',
         }}
       />
       {children}

@@ -20,7 +20,9 @@ export function SelectSortOptions(props: {sort: SortOption; setSort: (s: SortOpt
 
   return (
     <MenuButton
-      button={<Button text="Sort" icon={SortIcon} mode="bleed" padding={3} />}
+      button={
+        <Button text="Sort" icon={SortIcon} mode="bleed" padding={3} style={{cursor: 'pointer'}} />
+      }
       id={id}
       menu={
         <Menu>
