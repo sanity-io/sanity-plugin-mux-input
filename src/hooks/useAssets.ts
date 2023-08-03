@@ -45,7 +45,7 @@ export default function useAssets() {
           ({
             ...(collated.draft || collated.published || {}),
             _id: collated.id,
-          } as VideoAssetDocument)
+          }) as VideoAssetDocument
       ),
     [assetDocuments]
   )
