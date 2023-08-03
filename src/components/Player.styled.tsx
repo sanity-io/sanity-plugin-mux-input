@@ -1,4 +1,3 @@
-import {Card} from '@sanity/ui'
 import {useState} from 'react'
 import styled from 'styled-components'
 
