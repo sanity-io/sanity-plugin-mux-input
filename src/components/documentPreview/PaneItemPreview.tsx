@@ -1,11 +1,11 @@
 // Adapted from:
 // https://github.com/sanity-io/sanity/blob/next/packages/sanity/src/desk/components/paneItem/PaneItemPreview.tsx
-import {PreviewValue} from '@sanity/types'
 import {Inline} from '@sanity/ui'
 import {isNumber, isString} from 'lodash'
 import React, {isValidElement} from 'react'
 import {useMemoObservable} from 'react-rx'
 import type {SanityDocument, SchemaType} from 'sanity'
+import {PreviewValue} from 'sanity'
 import {
   DocumentPresence,
   DocumentPreviewPresence,

@@ -1,7 +1,7 @@
 // Adapted from https://github.com/sanity-io/sanity/blob/next/packages/sanity/src/desk/components/MissingSchemaType.tsx
 import {WarningOutlineIcon} from '@sanity/icons'
-import type {SanityDocument} from '@sanity/types'
 import React from 'react'
+import type {SanityDocument} from 'sanity'
 import type {GeneralPreviewLayoutKey} from 'sanity'
 import {SanityDefaultPreview} from 'sanity'
 

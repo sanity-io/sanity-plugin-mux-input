@@ -1,9 +1,9 @@
 // Adapted from https://github.com/sanity-io/sanity/blob/next/packages/sanity/src/desk/components/paneItem/PaneItem.tsx
 
 import {DocumentIcon} from '@sanity/icons'
-import type {SanityDocument} from '@sanity/types'
 import type {PropsWithChildren} from 'react'
 import React, {useMemo} from 'react'
+import type {SanityDocument} from 'sanity'
 import type {CollatedHit, FIXME, SchemaType} from 'sanity'
 import {PreviewCard, useDocumentPresence, useDocumentPreviewStore, useSchema} from 'sanity'
 import {usePaneRouter} from 'sanity/desk'

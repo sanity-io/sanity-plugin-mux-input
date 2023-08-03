@@ -1,9 +1,9 @@
 // Adapted from https://github.com/sanity-io/sanity/blob/next/packages/sanity/src/desk/components/PublishedStatus.tsx
 
 import {PublishIcon} from '@sanity/icons'
-import type {PreviewValue, SanityDocument} from '@sanity/types'
 import {Box, Text, Tooltip} from '@sanity/ui'
 import React from 'react'
+import type {PreviewValue, SanityDocument} from 'sanity'
 import {TextWithTone} from 'sanity'
 
 import {TimeAgo} from './TimeAgo'
