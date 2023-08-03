@@ -34,6 +34,7 @@ module.exports = {
     'react/display-name': 0,
     'react/jsx-no-bind': 0,
     'react/jsx-handler-names': 0,
+    'react/react-in-jsx-scope': 0,
     camelcase: 0,
     'symbol-description': 0,
     'no-void': 0,

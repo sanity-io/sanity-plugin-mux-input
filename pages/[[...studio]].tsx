@@ -1,5 +1,3 @@
-/* eslint-disable react/react-in-jsx-scope */
-
 import {visionTool} from '@sanity/vision'
 import Head from 'next/head'
 import {NextStudio} from 'next-sanity/studio'
