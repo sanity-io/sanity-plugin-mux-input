@@ -1,4 +1,3 @@
-import {studioTheme, ThemeProvider} from '@sanity/ui'
 import React from 'react'
 import {Tool} from 'sanity'
 
@@ -7,11 +6,7 @@ import ToolIcon from './icons/ToolIcon'
 import VideosBrowser from './VideosBrowser'
 
 const StudioTool: React.FC<Config> = () => {
-  return (
-    <ThemeProvider theme={studioTheme}>
-      <VideosBrowser />
-    </ThemeProvider>
-  )
+  return <VideosBrowser />
 }
 
 export default function createStudioTool(config: Config): Tool {

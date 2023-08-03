@@ -12,7 +12,7 @@ function tokenize(string: string): string[] {
 function toGroqParams(terms: string[]): Record<string, string> {
   const params: Record<string, string> = {}
   return terms.reduce((acc, term, i) => {
-    acc[`t${i}`] = `${term}*` // "t" is short for term
+    acc[`t${i}`] = `*${term}*` // "t" is short for term
     return acc
   }, params)
 }

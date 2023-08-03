@@ -17,7 +17,7 @@ export default function VideoPlayer({
 >) {
   const client = useClient()
 
-  const videoSrc = useMemo(() => asset.playbackId && getVideoSrc({client, asset}), [asset, client])
+  const videoSrc = useMemo(() => asset?.playbackId && getVideoSrc({client, asset}), [asset, client])
 
   const signedToken = useMemo(() => {
     try {
@@ -32,30 +32,38 @@ export default function VideoPlayer({
   const targetAspectRatio =
     props.forceAspectRatio || (Number.isNaN(width) ? 16 / 9 : width / height)
   const aspectRatio = Math.max(MIN_ASPECT_RATIO, targetAspectRatio)
-  console.log({targetAspectRatio, MIN_ASPECT_RATIO, aspectRatio})
 
   return (
     <Card tone="transparent" style={{aspectRatio: aspectRatio, position: 'relative'}}>
-      <MuxPlayer
-        {...props}
-        playsInline
-        playbackId={`${asset.playbackId}${signedToken ? `?token=${signedToken}` : ''}`}
-        streamType="on-demand"
-        preload="metadata"
-        crossOrigin="anonymous"
-        metadata={{
-          player_name: 'Sanity Admin Dashboard',
-          player_version: pluginPkg.version,
-          page_type: 'Preview Player',
-        }}
-        style={{
-          height: '100%',
-          width: '100%',
-          display: 'block',
-          objectFit: 'contain',
-        }}
-      />
-      {children}
+      {videoSrc && (
+        <>
+          <MuxPlayer
+            {...props}
+            playsInline
+            playbackId={asset.playbackId}
+            tokens={
+              signedToken
+                ? {playback: signedToken, thumbnail: signedToken, storyboard: signedToken}
+                : undefined
+            }
+            streamType="on-demand"
+            preload="metadata"
+            crossOrigin="anonymous"
+            metadata={{
+              player_name: 'Sanity Admin Dashboard',
+              player_version: pluginPkg.version,
+              page_type: 'Preview Player',
+            }}
+            style={{
+              height: '100%',
+              width: '100%',
+              display: 'block',
+              objectFit: 'contain',
+            }}
+          />
+          {children}
+        </>
+      )}
     </Card>
   )
 }

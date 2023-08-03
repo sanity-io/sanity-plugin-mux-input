@@ -1,6 +1,6 @@
 import {ErrorOutlineIcon} from '@sanity/icons'
 import {Card, CardTone, Stack, Text} from '@sanity/ui'
-import React, {useState} from 'react'
+import React, {useMemo, useState} from 'react'
 import styled from 'styled-components'
 
 import {useClient} from '../hooks/useClient'
@@ -39,7 +39,14 @@ export default function VideoThumbnail({
   const [status, setStatus] = useState<ImageStatus>('loading')
   const client = useClient()
 
-  const animatedSrc = getAnimatedPosterSrc({asset, client, width})
+  const animatedSrc = useMemo(() => {
+    try {
+      return getAnimatedPosterSrc({asset, client, width})
+    } catch {
+      if (status !== 'error') setStatus('error')
+      return undefined
+    }
+  }, [asset, client, width, status, setStatus])
 
   function handleLoad() {
     setStatus('loaded')
