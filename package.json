@@ -74,7 +74,7 @@
     "scroll-into-view-if-needed": "^3",
     "suspend-react": "^0.1.0",
     "swr": "^2.1.0",
-    "type-fest": "^3.6.1",
+    "type-fest": "^4.0.0",
     "use-error-boundary": "^2.0.6"
   },
   "devDependencies": {
