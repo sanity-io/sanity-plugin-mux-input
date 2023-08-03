@@ -14,6 +14,18 @@ export interface Config {
    * @defaultValue 'none'
    */
   mp4_support: 'none' | 'standard'
+
+  /**
+   * How the videos browser should appear as a studio tool in Sanity's top navigation
+   *
+   * Pass `false` if you want to disable it.
+   **/
+  tool?:
+    | false
+    | {
+        title?: string
+        icon?: React.ComponentType
+      }
 }
 
 export interface Secrets {
@@ -171,7 +183,7 @@ export interface MuxAsset {
   }
 }
 
-export interface VideoAssetDocument extends Partial<SanityDocument> {
+export interface VideoAssetDocument extends SanityDocument {
   type?: 'mux.videoAsset'
   status?: string
   assetId?: string
@@ -195,3 +207,6 @@ export interface MuxInputPreviewProps extends Omit<PreviewProps<PreviewLayoutKey
     asset?: Reference
   } | null
 }
+
+/** Whether the VideosBrowser was opened from a field in a document, or from the standalone studio tool */
+export type PluginPlacement = 'input' | 'tool'

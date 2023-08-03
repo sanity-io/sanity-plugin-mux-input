@@ -1,7 +1,7 @@
 import React from 'react'
 
 import Input from './components/Input'
-import {VideoThumbnail} from './components/VideoSource.styled'
+import VideoThumbnail from './components/VideoThumbnail'
 import type {Config, MuxInputProps, VideoAssetDocument} from './util/types'
 
 export function muxVideoCustomRendering(config: Config) {

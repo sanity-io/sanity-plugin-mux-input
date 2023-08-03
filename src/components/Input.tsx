@@ -1,3 +1,4 @@
+import {Card} from '@sanity/ui'
 import React, {memo, Suspense} from 'react'
 
 import {useAssetDocumentValues} from '../hooks/useAssetDocumentValues'
@@ -9,7 +10,7 @@ import type {Config, MuxInputProps} from '../util/types'
 import Uploader from './__legacy__Uploader'
 import ConfigureApi from './ConfigureApi'
 import ErrorBoundaryCard from './ErrorBoundaryCard'
-import {AspectRatioCard, InputFallback} from './Input.styled'
+import {InputFallback} from './Input.styled'
 import Onboard from './Onboard'
 
 export interface InputProps extends MuxInputProps {
@@ -35,7 +36,7 @@ const Input = (props: InputProps) => {
   const isLoading = secretDocumentValues.isLoading || assetDocumentValues.isLoading
 
   return (
-    <AspectRatioCard>
+    <Card>
       <ErrorBoundaryCard schemaType={props.schemaType}>
         <Suspense fallback={<InputFallback />}>
           {isLoading ? (
@@ -68,7 +69,7 @@ const Input = (props: InputProps) => {
           )}
         </Suspense>
       </ErrorBoundaryCard>
-    </AspectRatioCard>
+    </Card>
   )
 }
 

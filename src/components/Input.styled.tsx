@@ -1,13 +1,5 @@
 import {Box, Card, Flex, Spinner, Text} from '@sanity/ui'
 import React from 'react'
-import styled from 'styled-components'
-
-// This container base container ensures everything uses the same aspect ratio, avoids layout shifts and stuff jumping around
-export const AspectRatioCard = styled(Card)`
-  aspect-ratio: 16 / 9;
-  position: relative;
-  width: 100%;
-`
 
 export const InputFallback = () => {
   return (

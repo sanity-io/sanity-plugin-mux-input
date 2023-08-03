@@ -1,5 +1,6 @@
 import {definePlugin} from 'sanity'
 
+import createStudioTool from './components/StudioTool'
 import {muxVideoCustomRendering} from './plugin'
 import {muxVideo, muxVideoAsset} from './schema'
 import type {Config} from './util/types'
@@ -23,5 +24,6 @@ export const muxInput = definePlugin<Partial<Config> | void>((userConfig) => {
         },
       ],
     },
+    tools: config.tool === false ? undefined : [createStudioTool(config)],
   }
 })
