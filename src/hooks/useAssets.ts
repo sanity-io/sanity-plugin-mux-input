@@ -25,10 +25,14 @@ const useAssetDocuments = createHookFromObservableFactory<
   const search = createSearchFilter(searchQuery)
   const filter = [`_type == "mux.videoAsset"`, ...search.filter].filter(Boolean).join(' && ')
 
-  const query = ASSET_SORT_OPTIONS[sort].groq
-  return documentStore.listenQuery(/* groq */ `*[${filter}] | order(${query})`, search.params, {
-    apiVersion: SANITY_API_VERSION,
-  })
+  const sortFragment = ASSET_SORT_OPTIONS[sort].groq
+  return documentStore.listenQuery(
+    /* groq */ `*[${filter}] | order(${sortFragment})`,
+    search.params,
+    {
+      apiVersion: SANITY_API_VERSION,
+    }
+  )
 })
 
 export default function useAssets() {
