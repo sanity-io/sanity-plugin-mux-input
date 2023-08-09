@@ -56,7 +56,12 @@ export default function useVideoDetails(props: VideoDetailsProps) {
     try {
       await client.patch(props.asset._id).set({filename}).commit()
       setOriginalAsset((prev) => ({...prev, filename}))
-      toast.push({title: 'File name updated', status: 'success'})
+      toast.push({
+        title: 'Video title updated',
+        description: `New title: ${filename}`,
+        status: 'success',
+      })
+      props.closeDialog()
     } catch (error) {
       toast.push({
         title: 'Failed updating file name',
