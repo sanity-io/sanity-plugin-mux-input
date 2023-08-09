@@ -64,8 +64,8 @@ export default function VideosBrowser({onSelect}: VideosBrowserProps) {
         {isLoading && <SpinnerBox />}
 
         {!isLoading && assets.length === 0 && (
-          <Card padding={2} marginY={4} border radius={2}>
-            <Text align="center" muted>
+          <Card padding={4} marginY={4} border radius={2} tone="transparent">
+            <Text align="center" muted size={3}>
               {searchQuery ? `No videos found for "${searchQuery}"` : 'No videos in this dataset'}
             </Text>
           </Card>

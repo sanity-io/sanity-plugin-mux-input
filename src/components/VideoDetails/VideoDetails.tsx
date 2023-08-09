@@ -89,7 +89,6 @@ const VideoDetails: React.FC<VideoDetailsProps> = (props) => {
       onClose={handleClose}
       onClickOutside={handleClose}
       width={2}
-      style={{minHeight: '50vh'}}
       position="fixed"
       footer={
         <Card padding={3}>
