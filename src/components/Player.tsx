@@ -75,7 +75,7 @@ const Player = ({asset, buttons, readOnly, onChange}: Props) => {
       <UploadProgress
         progress={100}
         filename={asset?.filename}
-        text={(isLoading !== true && isLoading) || 'Waiting for Mux to complete the file'}
+        text={(isLoading !== true && isLoading) || 'Waiting for Mux to complete the upload'}
         onCancel={readOnly ? undefined : () => handleCancelUpload()}
       />
     )

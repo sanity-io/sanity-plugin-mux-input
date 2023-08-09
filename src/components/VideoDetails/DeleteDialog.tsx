@@ -8,7 +8,7 @@ import {useClient} from '../../hooks/useClient'
 import {DIALOGS_Z_INDEX} from '../../util/constants'
 import {PluginPlacement, VideoAssetDocument} from '../../util/types'
 import SpinnerBox from '../SpinnerBox'
-import FileReferences from './VideoReferences'
+import VideoReferences from './VideoReferences'
 
 export default function DeleteDialog({
   asset,
@@ -62,9 +62,9 @@ export default function DeleteDialog({
 
   return (
     <Dialog
-      header={'Delete file'}
+      header={'Delete video'}
       zOffset={DIALOGS_Z_INDEX}
-      id="deleting-file-details-dialog"
+      id="deleting-video-details-dialog"
       onClose={cancelDelete}
       onClickOutside={cancelDelete}
       width={1}
@@ -76,7 +76,7 @@ export default function DeleteDialog({
               icon={TrashIcon}
               fontSize={2}
               padding={3}
-              text="Delete file"
+              text="Delete video"
               tone="critical"
               onClick={confirmDelete}
               disabled={['processing_deletion', 'checkingReferences', 'cantDelete'].some(
@@ -99,7 +99,7 @@ export default function DeleteDialog({
         <Stack space={3}>
           {state === 'checkingReferences' && (
             <>
-              <Heading size={2}>Checking if file can be deleted</Heading>
+              <Heading size={2}>Checking if video can be deleted</Heading>
               <SpinnerBox />
             </>
           )}
@@ -108,10 +108,10 @@ export default function DeleteDialog({
               <Heading size={2}>Video can't be deleted</Heading>
               <Text size={2} style={{marginBottom: '2rem'}}>
                 There are {references?.length} document{references && references.length > 0 && 's'}{' '}
-                pointing to this file. Remove their references to this file or delete them before
+                pointing to this video. Remove their references to this file or delete them before
                 proceeding.
               </Text>
-              <FileReferences
+              <VideoReferences
                 references={references}
                 isLoaded={!referencesLoading}
                 placement={placement}
@@ -120,7 +120,7 @@ export default function DeleteDialog({
           )}
           {state === 'confirm' && (
             <>
-              <Heading size={2}>Are you sure you want to delete this file?</Heading>
+              <Heading size={2}>Are you sure you want to delete this video?</Heading>
               <Text size={2}>This action is irreversible</Text>
               <Stack space={4} marginTop={4}>
                 <Flex align="center" as="label">
@@ -139,14 +139,14 @@ export default function DeleteDialog({
           )}
           {state === 'processing_deletion' && (
             <>
-              <Heading size={2}>Deleting file...</Heading>
+              <Heading size={2}>Deleting video...</Heading>
               <SpinnerBox />
             </>
           )}
           {state === 'error_deleting' && (
             <>
               <Heading size={2}>Something went wrong!</Heading>
-              <Text size={2}>Try deleting the file again by clicking the button below</Text>
+              <Text size={2}>Try deleting the video again by clicking the button below</Text>
             </>
           )}
         </Stack>

@@ -7,13 +7,13 @@ import useDocReferences from '../../hooks/useDocReferences'
 import getVideoMetadata from '../../util/getVideoMetadata'
 import {PluginPlacement, VideoAssetDocument} from '../../util/types'
 
-export interface FileDetailsProps {
+export interface VideoDetailsProps {
   placement: PluginPlacement
   closeDialog: () => void
   asset: VideoAssetDocument & {autoPlay?: boolean}
 }
 
-export default function useFileDetails(props: FileDetailsProps) {
+export default function useVideoDetails(props: VideoDetailsProps) {
   const documentStore = useDocumentStore()
   const toast = useToast()
   const client = useClient()

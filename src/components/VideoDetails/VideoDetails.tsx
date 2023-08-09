@@ -32,8 +32,8 @@ import {ResolutionIcon} from '../icons/Resolution'
 import {StopWatchIcon} from '../icons/StopWatch'
 import VideoPlayer from '../VideoPlayer'
 import DeleteDialog from './DeleteDialog'
-import useFileDetails, {FileDetailsProps} from './useVideoDetails'
-import FileReferences from './VideoReferences'
+import useVideoDetails, {VideoDetailsProps} from './useVideoDetails'
+import VideoReferences from './VideoReferences'
 
 const AssetInput: React.FC<{
   label: string
@@ -54,7 +54,7 @@ const AssetInput: React.FC<{
   </FormField>
 )
 
-const VideoDetails: React.FC<FileDetailsProps> = (props) => {
+const VideoDetails: React.FC<VideoDetailsProps> = (props) => {
   const [tab, setTab] = useState<'details' | 'references'>('details')
   const {
     displayInfo,
@@ -68,7 +68,7 @@ const VideoDetails: React.FC<FileDetailsProps> = (props) => {
     handleClose,
     confirmClose,
     saveChanges,
-  } = useFileDetails(props)
+  } = useVideoDetails(props)
 
   const isSaving = state === 'saving'
 
@@ -85,7 +85,7 @@ const VideoDetails: React.FC<FileDetailsProps> = (props) => {
     <Dialog
       header={displayInfo.title}
       zOffset={DIALOGS_Z_INDEX}
-      id="file-details-dialog"
+      id="video-details-dialog"
       onClose={handleClose}
       onClickOutside={handleClose}
       width={2}
@@ -140,7 +140,7 @@ const VideoDetails: React.FC<FileDetailsProps> = (props) => {
         <Dialog
           header={'You have unsaved changes'}
           zOffset={DIALOGS_Z_INDEX}
-          id="closing-file-details-dialog"
+          id="closing-video-details-dialog"
           onClose={() => confirmClose(false)}
           onClickOutside={() => confirmClose(false)}
           width={1}
@@ -213,22 +213,20 @@ const VideoDetails: React.FC<FileDetailsProps> = (props) => {
                 onClick={() => setTab('details')}
                 selected={tab === 'details'}
               />
-              {references && references.length > 0 && (
-                <Tab
-                  aria-controls="references-panel"
-                  icon={SearchIcon}
-                  id="references-tab"
-                  label={`Used by (${references.length})`}
-                  onClick={() => setTab('references')}
-                  selected={tab === 'references'}
-                />
-              )}
+              <Tab
+                aria-controls="references-panel"
+                icon={SearchIcon}
+                id="references-tab"
+                label={`Used by ${references ? `(${references.length})` : ''}`}
+                onClick={() => setTab('references')}
+                selected={tab === 'references'}
+              />
             </TabList>
             <TabPanel aria-labelledby="details-tab" id="details-panel" hidden={tab !== 'details'}>
               <Stack space={4}>
                 <AssetInput
-                  label="File name"
-                  description="Not visible to users. Useful for finding files later."
+                  label="Video title or file name"
+                  description="Not visible to users. Useful for finding videos later."
                   value={filename || ''}
                   onInput={(e) => setFilename(e.currentTarget.value)}
                   disabled={state !== 'idle'}
@@ -282,7 +280,7 @@ const VideoDetails: React.FC<FileDetailsProps> = (props) => {
               id="references-panel"
               hidden={tab !== 'references'}
             >
-              <FileReferences
+              <VideoReferences
                 references={references}
                 isLoaded={!referencesLoading}
                 placement={props.placement}

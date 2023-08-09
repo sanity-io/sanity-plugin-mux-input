@@ -20,7 +20,7 @@ const Container = styled(Box)`
   }
 `
 
-const FileReferences: React.FC<{
+const VideoReferences: React.FC<{
   references?: SanityDocument[]
   isLoaded: boolean
   placement: PluginPlacement
@@ -32,9 +32,9 @@ const FileReferences: React.FC<{
 
   if (!props.references?.length) {
     return (
-      <Text size={2} weight="bold" muted style={{marginTop: '1.5rem', textAlign: 'center'}}>
-        No documents are using this file
-      </Text>
+      <Card border radius={3} padding={3}>
+        <Text size={2}>No documents are using this video</Text>
+      </Card>
     )
   }
 
@@ -67,4 +67,4 @@ const FileReferences: React.FC<{
   )
 }
 
-export default FileReferences
+export default VideoReferences
