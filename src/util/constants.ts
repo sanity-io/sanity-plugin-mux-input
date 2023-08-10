@@ -9,5 +9,5 @@ export const DIALOGS_Z_INDEX = 60_000
 
 export const THUMBNAIL_ASPECT_RATIO = 16 / 9
 
-/** Thumbnails and input shouldn't go beyond this aspect ratio */
-export const MIN_ASPECT_RATIO = 1
+/** To prevent excessive height, thumbnails and input should not go beyond to this aspect ratio. */
+export const MIN_ASPECT_RATIO = 5 / 4

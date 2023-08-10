@@ -6,7 +6,7 @@ import useAssets from '../hooks/useAssets'
 import type {VideoAssetDocument} from '../util/types'
 import {SelectSortOptions} from './SelectSortOptions'
 import SpinnerBox from './SpinnerBox'
-import {FileDetailsProps} from './VideoDetails/useVideoDetails'
+import {VideoDetailsProps} from './VideoDetails/useVideoDetails'
 import VideoDetails from './VideoDetails/VideoDetails'
 import VideoInBrowser from './VideoInBrowser'
 
@@ -16,7 +16,7 @@ export interface VideosBrowserProps {
 
 export default function VideosBrowser({onSelect}: VideosBrowserProps) {
   const {assets, isLoading, searchQuery, setSearchQuery, setSort, sort} = useAssets()
-  const [editedAsset, setEditedAsset] = React.useState<FileDetailsProps['asset'] | null>(null)
+  const [editedAsset, setEditedAsset] = React.useState<VideoDetailsProps['asset'] | null>(null)
   const freshEditedAsset = React.useMemo(
     () => assets.find((a) => a._id === editedAsset?._id) || editedAsset,
     [editedAsset, assets]
@@ -24,7 +24,7 @@ export default function VideosBrowser({onSelect}: VideosBrowserProps) {
 
   return (
     <>
-      <Stack padding={4} space={4}>
+      <Stack padding={4} space={4} style={{minHeight: '50vh'}}>
         <Flex justify="space-between" align="center">
           <Flex align="center" gap={3}>
             <TextInput
@@ -33,7 +33,7 @@ export default function VideosBrowser({onSelect}: VideosBrowserProps) {
               onInput={(e: React.FormEvent<HTMLInputElement>) =>
                 setSearchQuery(e.currentTarget.value)
               }
-              placeholder="Search files"
+              placeholder="Search videos"
             />
             <SelectSortOptions setSort={setSort} sort={sort} />
           </Flex>
@@ -64,8 +64,8 @@ export default function VideosBrowser({onSelect}: VideosBrowserProps) {
         {isLoading && <SpinnerBox />}
 
         {!isLoading && assets.length === 0 && (
-          <Card padding={2} marginY={4} border radius={2}>
-            <Text align="center" muted>
+          <Card padding={4} marginY={4} border radius={2} tone="transparent">
+            <Text align="center" muted size={3}>
               {searchQuery ? `No videos found for "${searchQuery}"` : 'No videos in this dataset'}
             </Text>
           </Card>

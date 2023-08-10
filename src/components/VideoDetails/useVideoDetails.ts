@@ -7,13 +7,13 @@ import useDocReferences from '../../hooks/useDocReferences'
 import getVideoMetadata from '../../util/getVideoMetadata'
 import {PluginPlacement, VideoAssetDocument} from '../../util/types'
 
-export interface FileDetailsProps {
+export interface VideoDetailsProps {
   placement: PluginPlacement
   closeDialog: () => void
   asset: VideoAssetDocument & {autoPlay?: boolean}
 }
 
-export default function useFileDetails(props: FileDetailsProps) {
+export default function useVideoDetails(props: VideoDetailsProps) {
   const documentStore = useDocumentStore()
   const toast = useToast()
   const client = useClient()
@@ -56,7 +56,12 @@ export default function useFileDetails(props: FileDetailsProps) {
     try {
       await client.patch(props.asset._id).set({filename}).commit()
       setOriginalAsset((prev) => ({...prev, filename}))
-      toast.push({title: 'File name updated', status: 'success'})
+      toast.push({
+        title: 'Video title updated',
+        description: `New title: ${filename}`,
+        status: 'success',
+      })
+      props.closeDialog()
     } catch (error) {
       toast.push({
         title: 'Failed updating file name',

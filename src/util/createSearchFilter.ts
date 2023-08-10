@@ -12,7 +12,7 @@ function tokenize(string: string): string[] {
 function toGroqParams(terms: string[]): Record<string, string> {
   const params: Record<string, string> = {}
   return terms.reduce((acc, term, i) => {
-    acc[`t${i}`] = `*${term}*` // "t" is short for term
+    acc[`t${i}`] = `${term}*` // "t" is short for term
     return acc
   }, params)
 }
@@ -52,7 +52,7 @@ function extractTermsFromQuery(query: string): string[] {
 }
 
 /** Which properties of the video asset document should we match users' queries against */
-const SEARCH_PATHS = ['filename', 'assetId', '_id']
+const SEARCH_PATHS = ['filename']
 
 /**
  * Create GROQ constraints, given search terms and the full spec of available document types and fields.
