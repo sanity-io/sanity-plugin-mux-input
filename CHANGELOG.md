@@ -5,6 +5,14 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.3](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.2.2...v2.2.3) (2023-08-21)
+
+### Bug Fixes
+
+- add `node.module` condition ([7c622d6](https://github.com/sanity-io/sanity-plugin-mux-input/commit/7c622d61f51233f4b03a6be5c297d76d69484ded))
+- **deps:** Update example dependencies ([#311](https://github.com/sanity-io/sanity-plugin-mux-input/issues/311)) ([c622d9f](https://github.com/sanity-io/sanity-plugin-mux-input/commit/c622d9f147e15df89c567f965050c3788d9dbecf))
+- remove `node.require` condition ([65e1f4f](https://github.com/sanity-io/sanity-plugin-mux-input/commit/65e1f4fb31515504d9225a949d3ea02e7180d206))
+
 ## [2.2.2](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.2.1...v2.2.2) (2023-08-10)
 
 ### Bug Fixes
