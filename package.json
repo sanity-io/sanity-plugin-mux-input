@@ -61,7 +61,7 @@
     "watch": "pkg-utils watch --strict"
   },
   "dependencies": {
-    "@mux/mux-player-react": "^1.11.4",
+    "@mux/mux-player-react": "1.11.4",
     "@mux/upchunk": "^3",
     "@sanity/icons": "^2",
     "@sanity/incompatible-plugin": "^1",
