@@ -62,7 +62,7 @@
   },
   "dependencies": {
     "@mux/mux-player-react": "1.11.4",
-    "@mux/upchunk": "^3",
+    "@mux/upchunk": "^3.2.0",
     "@sanity/icons": "^2",
     "@sanity/incompatible-plugin": "^1",
     "@sanity/ui": "^1",
