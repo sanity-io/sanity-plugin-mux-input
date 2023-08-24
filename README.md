@@ -3,11 +3,11 @@
 > This is a **Sanity Studio v3** plugin.
 > For the v2 version, please refer to the [v2-branch](https://github.com/sanity-io/sanity-plugin-mux-input/tree/studio-v2).
 
-This is a plugin that let you use [Mux](https://www.mux.com) video assets in your Sanity studio.
+This plugin lets you use [Mux](https://www.mux.com) video assets in your Sanity studio.
 
-The Mux plugin for Sanity gives you a way to upload and preview videos easily.
+The Mux plugin for Sanity allows you to easily upload and preview videos.
 
-[Read our blog post](https://www.sanity.io/blog/first-class-responsive-video-support-with-the-new-mux-plugin) about this plugin.
+[Read our blog post](https://www.sanity.io/blog/video-management-with-mux) about this plugin.
 
 Not familiar with Sanity? [Visit www.sanity.io](https://www.sanity.io/)
 
@@ -16,13 +16,13 @@ Not familiar with Sanity? [Visit www.sanity.io](https://www.sanity.io/)
 ## Installation
 
 ```
-npm install --save-exact sanity-plugin-mux-input
+npm install sanity-plugin-mux-input
 ```
 
 or
 
 ```
-yarn add --exact sanity-plugin-mux-input
+yarn add sanity-plugin-mux-input
 ```
 
 ## Quick start
@@ -77,7 +77,7 @@ The Mux plugin will find its access tokens by fetching this document.
 
 We recommend using [Mux Player](https://www.mux.com/player), try the [Codesandbox example](https://codesandbox.io/s/github/sanity-io/sanity-plugin-mux-input/tree/main/example).
 
-# Enabling Signed Urls
+# Enabling Signed URLs
 
 To enable [signed urls](https://docs.mux.com/docs/security-signed-urls) with content uploaded to Mux, you will need to check the "Enable Signed Urls" option in the Mux Plugin configuration. Assuming that the API Access Token and Secret Key are set (as per the [Quick start](#quick-start) section).
 
