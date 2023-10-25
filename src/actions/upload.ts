@@ -38,6 +38,7 @@ export function uploadUrl(
               input: validUrl,
               playback_policy: [enableSignedUrls ? 'signed' : 'public'],
               mp4_support: config.mp4_support,
+              max_resolution_tier: config.max_resolution_tier,
             }
             const query = {
               muxBody: JSON.stringify(muxBody),
@@ -95,6 +96,7 @@ export function uploadFile(
             const body = {
               mp4_support: config.mp4_support,
               playback_policy: [enableSignedUrls ? 'signed' : 'public'],
+              max_resolution_tier: config.max_resolution_tier,
             }
 
             return concat(
@@ -109,6 +111,7 @@ export function uploadFile(
                       mp4_support: 'standard' | 'none'
                       passthrough: string
                       playback_policies: ['public' | 'signed']
+                      max_resolution_tier?: '1080p' | '1440p' | '2160p'
                     }
                     status: 'waiting'
                     timeout: number
@@ -164,6 +167,7 @@ type UploadResponse = {
       mp4_support: 'standard' | 'none'
       passthrough: string
       playback_policies: ['public' | 'signed']
+      max_resolution_tier?: '1080p' | '1440p' | '2160p'
     }
     status: string
     timeout: number

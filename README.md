@@ -95,6 +95,18 @@ export default defineConfig({
 })
 ```
 
+# Add max_resolution_tier support
+
+To edit [max_resolution_tier](https://docs.mux.com/api-reference#video/operation/create-direct-upload) to support other resolutions other than 1080p, add `max_resolution_tier: '1080p' | '1440p' | '2160p'` to the `options` of your `mux.video` schema type. Defaults to `1080p`.
+
+```js
+import {muxInput} from 'sanity-plugin-mux-input'
+
+export default defineConfig({
+  plugins: [muxInput({mp4_support: 'standard'})],
+})
+```
+
 Currently, `mp4_support` is the only supported MUX option and this supports a value of either `standard` or `none` (the default).
 
 # Contributing

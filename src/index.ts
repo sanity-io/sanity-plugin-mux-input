@@ -9,6 +9,7 @@ export type {VideoAssetDocument} from './util/types'
 
 export const defaultConfig: Config = {
   mp4_support: 'none',
+  max_resolution_tier: '1080p',
 }
 
 export const muxInput = definePlugin<Partial<Config> | void>((userConfig) => {

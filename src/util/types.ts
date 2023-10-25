@@ -16,6 +16,13 @@ export interface Config {
   mp4_support: 'none' | 'standard'
 
   /**
+   * Enable 4K uploads by setting this to '2160p'
+   * @see {@link https://docs.mux.com/api-reference#video/operation/create-direct-upload}
+   * @defaultValue '1080p'
+   */
+  max_resolution_tier?: '1080p' | '1440p' | '2160p'
+
+  /**
    * How the videos browser should appear as a studio tool in Sanity's top navigation
    *
    * Pass `false` if you want to disable it.
