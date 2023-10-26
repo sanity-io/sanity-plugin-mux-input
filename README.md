@@ -103,11 +103,9 @@ To edit [max_resolution_tier](https://docs.mux.com/api-reference#video/operation
 import {muxInput} from 'sanity-plugin-mux-input'
 
 export default defineConfig({
-  plugins: [muxInput({mp4_support: 'standard'})],
+  plugins: [muxInput({max_resolution_tier: '2160p'})],
 })
 ```
-
-Currently, `mp4_support` is the only supported MUX option and this supports a value of either `standard` or `none` (the default).
 
 # Contributing
 
