@@ -8,7 +8,8 @@ export default function getVideoMetadata(doc: VideoAssetDocument) {
     : new Date(doc._createdAt || doc._updatedAt || Date.now())
 
   return {
-    title: doc.filename || id.slice(0, 10),
+    title: doc.filename || id.slice(0, 12),
+    id: id,
     createdAt: date,
     duration: doc.data?.duration ? formatSeconds(doc.data?.duration) : undefined,
     aspect_ratio: doc.data?.aspect_ratio,
