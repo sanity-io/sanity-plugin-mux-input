@@ -27,7 +27,7 @@ yarn add sanity-plugin-mux-input
 
 ## Quick start
 
-- While in your project folder, run `npm i sanity-plugin-mux-input@studio-v3`.
+- While in your project folder, run `npm i sanity-plugin-mux-input`.
   Read more about [using plugins in Sanity here](https://beta.sanity.io/docs/platform/studio/plugin).
 
 * Make a schema type that uses the plugin's type `mux.video`, for example:
