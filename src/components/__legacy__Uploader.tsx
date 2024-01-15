@@ -229,8 +229,8 @@ class MuxVideoInputUploader extends Component<Props, State> {
             this.state.isDraggingOver && (this.state.invalidPaste || this.state.invalidFile)
               ? 'critical'
               : this.state.isDraggingOver
-              ? 'positive'
-              : undefined
+                ? 'positive'
+                : undefined
           }
           onDrop={this.handleDrop}
           onDragOver={this.handleDragOver}
