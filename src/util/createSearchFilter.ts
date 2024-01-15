@@ -12,7 +12,7 @@ function tokenize(string: string): string[] {
 function toGroqParams(terms: string[]): Record<string, string> {
   const params: Record<string, string> = {}
   return terms.reduce((acc, term, i) => {
-    acc[`t${i}`] = `${term}*` // "t" is short for term
+    acc[`t${i}`] = `*${term}*` // "t" is short for term
     return acc
   }, params)
 }
@@ -51,16 +51,14 @@ function extractTermsFromQuery(query: string): string[] {
   return [...quotedTerms, ...remainingTerms]
 }
 
-/** Which properties of the video asset document should we match users' queries against */
-const SEARCH_PATHS = ['filename']
-
 /**
  * Create GROQ constraints, given search terms and the full spec of available document types and fields.
  * Essentially a large list of all possible fields (joined by logical OR) to match our search terms against.
  */
-function createConstraints(terms: string[]) {
+function createConstraints(terms: string[], includeAssetId: Boolean) {
+  const searchPaths = includeAssetId ? ['filename', 'assetId'] : ['filename']
   const constraints = terms
-    .map((_term, i) => SEARCH_PATHS.map((joinedPath) => `${joinedPath} match $t${i}`))
+    .map((_term, i) => searchPaths.map((joinedPath) => `${joinedPath} match $t${i}`))
     .filter((constraint) => constraint.length > 0)
 
   return constraints.map((constraint) => `(${constraint.join(' || ')})`)
@@ -70,7 +68,7 @@ export function createSearchFilter(query: string) {
   const terms = extractTermsFromQuery(query)
 
   return {
-    filter: createConstraints(terms),
+    filter: createConstraints(terms, query.length >= 8), // if the search is big enough, include the assetId (mux id) in the results
     params: {
       ...toGroqParams(terms),
     },

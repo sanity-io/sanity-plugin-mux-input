@@ -1,4 +1,4 @@
-import {CalendarIcon, ClockIcon} from '@sanity/icons'
+import {CalendarIcon, ClockIcon, TagIcon} from '@sanity/icons'
 import {Inline, Stack, Text} from '@sanity/ui'
 import React from 'react'
 
@@ -35,6 +35,9 @@ const VideoMetadata = (props: {asset: VideoAssetDocument}) => {
           size={1}
           muted
         />
+        {displayInfo.title != displayInfo.id.slice(0, 12) && (
+          <IconInfo text={displayInfo.id.slice(0, 12)} icon={TagIcon} size={1} muted />
+        )}
       </Inline>
     </Stack>
   )

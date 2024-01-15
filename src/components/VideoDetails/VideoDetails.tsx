@@ -8,6 +8,7 @@ import {
   RevertIcon,
   SearchIcon,
   TrashIcon,
+  TagIcon,
 } from '@sanity/icons'
 import {
   Button,
@@ -221,7 +222,12 @@ const VideoDetails: React.FC<VideoDetailsProps> = (props) => {
                 selected={tab === 'references'}
               />
             </TabList>
-            <TabPanel aria-labelledby="details-tab" id="details-panel" hidden={tab !== 'details'}>
+            <TabPanel
+              aria-labelledby="details-tab"
+              id="details-panel"
+              hidden={tab !== 'details'}
+              style={{wordBreak: 'break-word'}}
+            >
               <Stack space={4}>
                 <AssetInput
                   label="Video title or file name"
@@ -271,6 +277,7 @@ const VideoDetails: React.FC<VideoDetailsProps> = (props) => {
                     icon={CalendarIcon}
                     size={2}
                   />
+                  <IconInfo text={`Mux ID: \n${displayInfo.id}`} icon={TagIcon} size={2} />
                 </Stack>
               </Stack>
             </TabPanel>
