@@ -6,8 +6,8 @@ import useAssets from '../hooks/useAssets'
 import type {VideoAssetDocument} from '../util/types'
 import {SelectSortOptions} from './SelectSortOptions'
 import SpinnerBox from './SpinnerBox'
-import {VideoDetailsProps} from './VideoDetails/useVideoDetails'
 import VideoDetails from './VideoDetails/VideoDetails'
+import {VideoDetailsProps} from './VideoDetails/useVideoDetails'
 import VideoInBrowser from './VideoInBrowser'
 
 export interface VideosBrowserProps {

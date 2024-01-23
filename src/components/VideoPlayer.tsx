@@ -1,6 +1,6 @@
 import MuxPlayer, {MuxPlayerProps} from '@mux/mux-player-react'
 import {Card} from '@sanity/ui'
-import React, {PropsWithChildren, useMemo} from 'react'
+import {PropsWithChildren, useMemo} from 'react'
 
 import {useClient} from '../hooks/useClient'
 import {MIN_ASPECT_RATIO} from '../util/constants'
@@ -46,7 +46,6 @@ export default function VideoPlayer({
                 ? {playback: signedToken, thumbnail: signedToken, storyboard: signedToken}
                 : undefined
             }
-            streamType="on-demand"
             preload="metadata"
             crossOrigin="anonymous"
             metadata={{

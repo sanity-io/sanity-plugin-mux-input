@@ -2,24 +2,33 @@
 // This component needs to be refactored into a functional component
 
 import React, {Component} from 'react'
-import {type Observable, Subject} from 'rxjs'
+import {Subject, type Observable} from 'rxjs'
 import {takeUntil, tap} from 'rxjs/operators'
 import type {SanityClient} from 'sanity'
 import {PatchEvent, set, setIfMissing} from 'sanity'
 
+import {ErrorOutlineIcon} from '@sanity/icons'
+import {Dialog, Flex, Text} from '@sanity/ui'
 import {uploadFile, uploadUrl} from '../actions/upload'
 import {type DialogState, type SetDialogState} from '../hooks/useDialogState'
 import {extractDroppedFiles} from '../util/extractFiles'
-import type {Config, MuxInputProps, Secrets, VideoAssetDocument} from '../util/types'
+import type {
+  MuxInputProps,
+  PluginConfig,
+  Secrets,
+  UploadConfig,
+  VideoAssetDocument,
+} from '../util/types'
 import InputBrowser from './InputBrowser'
 import Player from './Player'
 import PlayerActionsMenu from './PlayerActionsMenu'
-import {UploadCard} from './Uploader.styled'
+import UploadConfiguration from './UploadConfiguration'
 import UploadPlaceholder from './UploadPlaceholder'
 import {UploadProgress} from './UploadProgress'
+import {UploadCard} from './Uploader.styled'
 
 interface Props extends Pick<MuxInputProps, 'onChange' | 'readOnly'> {
-  config: Config
+  config: PluginConfig
   client: SanityClient
   secrets: Secrets
   asset: VideoAssetDocument | null | undefined
@@ -37,6 +46,9 @@ interface State {
   uploadProgress: number | null
   error: Error | null
   url: string | null
+  state: 'idle' | 'configuring' | 'uploading' | 'error'
+  files?: FileList | File[]
+  uploadConfig: UploadConfig
 }
 
 class MuxVideoInputUploader extends Component<Props, State> {
@@ -49,6 +61,14 @@ class MuxVideoInputUploader extends Component<Props, State> {
     uuid: null,
     error: null,
     url: null,
+    state: 'idle',
+    uploadConfig: {
+      encoding_tier: this.props.config.encoding_tier || 'smart',
+      max_resolution_tier: this.props.config.max_resolution_tier || '1080p',
+      mp4_support: this.props.config.mp4_support || 'none',
+      signed: this.props.config.defaultSigned || false,
+      text_tracks: [],
+    },
   }
   dragEnteredEls: EventTarget[] = []
 
@@ -83,10 +103,14 @@ class MuxVideoInputUploader extends Component<Props, State> {
     this.setState({uploadProgress: evt.percent})
   }
 
-  onUpload = (files: FileList | File[]) => {
-    this.setState({uploadProgress: 0, fileInfo: null, uuid: null})
-    this.upload = uploadFile(this.props.config, this.props.client, files[0], {
-      enableSignedUrls: this.props.secrets.enableSignedUrls,
+  onUpload = () => {
+    if (!this.state.files) return
+
+    this.setState({uploadProgress: 0, fileInfo: null, uuid: null, state: 'uploading'})
+    this.upload = uploadFile({
+      client: this.props.client,
+      file: this.state.files[0],
+      uploadConfig: this.state.uploadConfig,
     })
       .pipe(
         takeUntil(
@@ -101,13 +125,13 @@ class MuxVideoInputUploader extends Component<Props, State> {
       )
       .subscribe({
         complete: () => {
-          this.setState({error: null, uploadProgress: null, uuid: null})
+          this.setState({error: null, state: 'idle', uploadProgress: null, uuid: null})
         },
         next: (event) => {
           this.handleUploadEvent(event)
         },
         error: (err) => {
-          this.setState({error: err, uploadProgress: null, uuid: null})
+          this.setState({error: err, state: 'error', uploadProgress: null, uuid: null})
         },
       })
   }
@@ -175,9 +199,10 @@ class MuxVideoInputUploader extends Component<Props, State> {
     event.stopPropagation()
     extractDroppedFiles(event.nativeEvent.dataTransfer!).then((files) => {
       if (files) {
-        // eslint-disable-next-line no-warning-comments
-        // @TODO fix the typing on files
-        this.onUpload(files as any)
+        this.setState({
+          state: 'configuring',
+          files,
+        })
       }
     })
   }
@@ -217,9 +242,47 @@ class MuxVideoInputUploader extends Component<Props, State> {
       )
     }
 
-    if (this.state.error) {
-      // @TODO better error handling
-      throw this.state.error
+    if (this.state.state === 'error') {
+      return (
+        <Flex gap={3} direction="column" justify="center" align="center">
+          <Text size={5} muted>
+            <ErrorOutlineIcon />
+          </Text>
+          <Text>Something went wrong</Text>
+          {this.state.error?.message && (
+            <Text size={1} muted>
+              {this.state.error.message}
+            </Text>
+          )}
+        </Flex>
+      )
+    }
+
+    if (this.state.state === 'configuring') {
+      return (
+        <Dialog
+          open
+          onClose={() => {
+            this.setState({files: undefined, state: 'idle'})
+          }}
+          id="upload-configuration"
+          zOffset={1000}
+          width={4}
+          header="Configure upload"
+        >
+          <UploadConfiguration
+            pluginConfig={this.props.config}
+            secrets={this.props.secrets}
+            startUpload={this.onUpload}
+            setUploadConfig={(uploadConfig) =>
+              this.setState({
+                uploadConfig,
+              })
+            }
+            uploadConfig={this.state.uploadConfig}
+          />
+        </Dialog>
+      )
     }
 
     return (

@@ -6,7 +6,7 @@ import {useClient} from '../hooks/useClient'
 import {useDialogState} from '../hooks/useDialogState'
 import {useMuxPolling} from '../hooks/useMuxPolling'
 import {useSecretsDocumentValues} from '../hooks/useSecretsDocumentValues'
-import type {Config, MuxInputProps} from '../util/types'
+import type {PluginConfig, MuxInputProps} from '../util/types'
 import Uploader from './__legacy__Uploader'
 import ConfigureApi from './ConfigureApi'
 import ErrorBoundaryCard from './ErrorBoundaryCard'
@@ -14,7 +14,7 @@ import {InputFallback} from './Input.styled'
 import Onboard from './Onboard'
 
 export interface InputProps extends MuxInputProps {
-  config: Config
+  config: PluginConfig
 }
 const Input = (props: InputProps) => {
   const client = useClient()

@@ -5,7 +5,7 @@ import {catchError, mergeMap, mergeMapTo, switchMap} from 'rxjs/operators'
 import type {SanityClient} from 'sanity'
 
 import {createUpChunkObservable} from '../clients/upChunkObservable'
-import type {Config, MuxAsset} from '../util/types'
+import type {PluginConfig, MuxAsset, UploadConfig} from '../util/types'
 import {getAsset} from './assets'
 import {testSecretsObservable} from './secrets'
 
@@ -18,7 +18,7 @@ export function cancelUpload(client: SanityClient, uuid: string) {
 }
 
 export function uploadUrl(
-  config: Config,
+  config: PluginConfig,
   client: SanityClient,
   url: string,
   options: {enableSignedUrls?: boolean} = {}
@@ -75,12 +75,15 @@ export function uploadUrl(
   )
 }
 
-export function uploadFile(
-  config: Config,
-  client: SanityClient,
-  file: File,
-  options: {enableSignedUrls?: boolean} = {}
-) {
+export function uploadFile({
+  uploadConfig,
+  client,
+  file,
+}: {
+  uploadConfig: UploadConfig
+  client: SanityClient
+  file: File
+}) {
   return testFile(file).pipe(
     switchMap((fileOptions) => {
       return concat(
@@ -91,10 +94,12 @@ export function uploadFile(
               return throwError(new Error('Invalid credentials'))
             }
             const uuid = generateUuid()
-            const {enableSignedUrls} = options
             const body = {
-              mp4_support: config.mp4_support,
-              playback_policy: [enableSignedUrls ? 'signed' : 'public'],
+              mp4_support: uploadConfig.mp4_support,
+              encoding_tier: uploadConfig.encoding_tier,
+              max_resolution_tier: uploadConfig.max_resolution_tier,
+              playback_policy: [uploadConfig.signed ? 'signed' : 'public'],
+              // @TODO: send tracks to backend
             }
 
             return concat(
@@ -105,8 +110,10 @@ export function uploadFile(
                   upload: {
                     cors_origin: string
                     id: string
-                    new_asset_settings: {
-                      mp4_support: 'standard' | 'none'
+                    new_asset_settings: Pick<
+                      Required<PluginConfig>,
+                      'mp4_support' | 'encoding_tier' | 'max_resolution_tier'
+                    > & {
                       passthrough: string
                       playback_policies: ['public' | 'signed']
                     }
