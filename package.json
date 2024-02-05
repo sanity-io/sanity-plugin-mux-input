@@ -86,8 +86,8 @@
     "@sanity/vision": "^3.19.2",
     "@types/react": "^18.2.37",
     "@types/styled-components": "^5.1.30",
-    "@typescript-eslint/eslint-plugin": "^5.62.0",
-    "@typescript-eslint/parser": "^5.62.0",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.53.0",
     "eslint-config-prettier": "^9.0.0",
@@ -101,7 +101,7 @@
     "husky": "^8.0.3",
     "lint-staged": "^13.3.0",
     "next": "^13.5.6",
-    "next-sanity": "^5.5.10",
+    "next-sanity": "^6.1.4",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.1.0",
     "prettier-plugin-packagejson": "^2.4.6",
@@ -110,14 +110,14 @@
     "react-is": "^18.2.0",
     "rimraf": "^5.0.0",
     "sanity": "^3.19.2",
-    "styled-components": "^5.3.11",
+    "styled-components": "^6.1.8",
     "typescript": "^5.2.2"
   },
   "peerDependencies": {
     "react": "^18",
     "react-is": "^18",
     "sanity": "^3",
-    "styled-components": "^5.2"
+    "styled-components": "^5.2 || ^6.0.0"
   },
   "engines": {
     "node": ">=14"
