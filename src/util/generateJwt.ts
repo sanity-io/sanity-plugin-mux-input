@@ -9,12 +9,12 @@ export type Audience = 'g' | 's' | 't' | 'v'
 export type Payload<T extends Audience> = T extends 'g'
   ? AnimatedThumbnailOptions
   : T extends 's'
-  ? never
-  : T extends 't'
-  ? ThumbnailOptions
-  : T extends 'v'
-  ? never
-  : never
+    ? never
+    : T extends 't'
+      ? ThumbnailOptions
+      : T extends 'v'
+        ? never
+        : never
 
 export function generateJwt<T extends Audience>(
   client: SanityClient,
