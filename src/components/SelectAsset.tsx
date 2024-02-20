@@ -19,7 +19,7 @@ export default function SelectAssets({asset: selectedAsset, onChange, setDialogS
       if (chosenAsset._id !== selectedAsset?._id) {
         onChange(
           PatchEvent.from([
-            setIfMissing({asset: {}}),
+            setIfMissing({asset: {}, _type: 'mux.video'}),
             set({_type: 'reference', _weak: true, _ref: chosenAsset._id}, ['asset']),
           ])
         )

@@ -8,7 +8,7 @@ import type {SanityClient} from 'sanity'
 import {PatchEvent, set, setIfMissing} from 'sanity'
 
 import {ErrorOutlineIcon} from '@sanity/icons'
-import {Dialog, Flex, Text} from '@sanity/ui'
+import {Flex, Text} from '@sanity/ui'
 import {uploadFile, uploadUrl} from '../actions/upload'
 import {type DialogState, type SetDialogState} from '../hooks/useDialogState'
 import {extractDroppedFiles} from '../util/extractFiles'
@@ -136,6 +136,20 @@ class MuxVideoInputUploader extends Component<Props, State> {
       })
   }
 
+  onSelect = (filesR: File[] | FileList) => {
+    const files = filesR ? Array.from(filesR) : []
+    if (files?.[0]?.name) {
+      this.setState({
+        state: 'configuring',
+        files,
+        uploadConfig: {
+          ...this.state.uploadConfig,
+          title: files[0].name || '',
+        },
+      })
+    }
+  }
+
   // eslint-disable-next-line no-warning-comments
   // @TODO add proper typings for the Observable events
   handleUploadEvent = (event: any) => {
@@ -160,7 +174,7 @@ class MuxVideoInputUploader extends Component<Props, State> {
     this.setState({uploadProgress: 100})
     this.props.onChange(
       PatchEvent.from([
-        setIfMissing({asset: {}}),
+        setIfMissing({asset: {}, _type: 'mux.video'}),
         set({_type: 'reference', _weak: true, _ref: asset._id}, ['asset']),
       ])
     )
@@ -198,12 +212,7 @@ class MuxVideoInputUploader extends Component<Props, State> {
     event.preventDefault()
     event.stopPropagation()
     extractDroppedFiles(event.nativeEvent.dataTransfer!).then((files) => {
-      if (files) {
-        this.setState({
-          state: 'configuring',
-          files,
-        })
-      }
+      this.onSelect(files)
     })
   }
 
@@ -260,28 +269,21 @@ class MuxVideoInputUploader extends Component<Props, State> {
 
     if (this.state.state === 'configuring') {
       return (
-        <Dialog
-          open
-          onClose={() => {
+        <UploadConfiguration
+          pluginConfig={this.props.config}
+          secrets={this.props.secrets}
+          file={this.state.files?.[0]}
+          uploadConfig={this.state.uploadConfig}
+          startUpload={this.onUpload}
+          setUploadConfig={(uploadConfig) =>
+            this.setState({
+              uploadConfig,
+            })
+          }
+          cancelUpload={() => {
             this.setState({files: undefined, state: 'idle'})
           }}
-          id="upload-configuration"
-          zOffset={1000}
-          width={4}
-          header="Configure upload"
-        >
-          <UploadConfiguration
-            pluginConfig={this.props.config}
-            secrets={this.props.secrets}
-            startUpload={this.onUpload}
-            setUploadConfig={(uploadConfig) =>
-              this.setState({
-                uploadConfig,
-              })
-            }
-            uploadConfig={this.state.uploadConfig}
-          />
-        </Dialog>
+        />
       )
     }
 
@@ -313,7 +315,7 @@ class MuxVideoInputUploader extends Component<Props, State> {
                   dialogState={this.props.dialogState}
                   setDialogState={this.props.setDialogState}
                   onChange={this.props.onChange}
-                  onUpload={this.onUpload}
+                  onSelect={this.onSelect}
                   readOnly={this.props.readOnly}
                 />
               }
@@ -321,7 +323,7 @@ class MuxVideoInputUploader extends Component<Props, State> {
           ) : (
             <UploadPlaceholder
               hovering={this.state.isDraggingOver}
-              onSelect={this.onUpload}
+              onSelect={this.onSelect}
               readOnly={this.props.readOnly!}
               setDialogState={this.props.setDialogState}
               needsSetup={this.props.needsSetup}

@@ -76,6 +76,11 @@ export const SUPPORTED_MUX_LANGUAGES = [
   {label: 'Bulgarian', code: 'bg', state: 'Beta'},
 ] as const
 
+export const ENCODING_TIERS = [
+  {label: 'Baseline', value: 'baseline'},
+  {label: 'Smart', value: 'smart'},
+] as const
+
 export const SUPPORTED_MUX_LANGUAGES_VALUES = SUPPORTED_MUX_LANGUAGES.map((l) => l.code)
 
 export type SupportedMuxLanguage = (typeof SUPPORTED_MUX_LANGUAGES_VALUES)[number]
@@ -111,6 +116,7 @@ export interface UploadConfig
   extends Pick<PluginConfig, 'encoding_tier' | 'max_resolution_tier' | 'mp4_support'> {
   text_tracks?: UploadTextTrack[]
   signed?: boolean
+  title?: string
 }
 
 export interface Secrets {

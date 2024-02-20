@@ -1,10 +1,9 @@
 import {definePlugin} from 'sanity'
-
-import createStudioTool, {DEFAULT_TOOL_CONFIG} from './components/StudioTool'
-import {muxVideoCustomRendering} from './plugin'
-import {muxVideo, muxVideoAsset} from './schema'
-import type {PluginConfig} from './util/types'
-export type {VideoAssetDocument} from './util/types'
+import createStudioTool, {DEFAULT_TOOL_CONFIG} from '../components/StudioTool'
+import {muxVideoCustomRendering} from '../plugin'
+import {muxVideo, muxVideoAsset} from '../schema'
+import type {PluginConfig} from '../util/types'
+export type {VideoAssetDocument} from '../util/types'
 
 export const defaultConfig: PluginConfig = {
   mp4_support: 'none',

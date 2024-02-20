@@ -1,5 +1,5 @@
 import {TrashIcon} from '@sanity/icons'
-import {Button, Card, Checkbox, Dialog, Flex, Heading, Stack, Text, useToast} from '@sanity/ui'
+import {Box, Button, Card, Checkbox, Dialog, Flex, Heading, Stack, Text, useToast} from '@sanity/ui'
 import React, {useEffect, useState} from 'react'
 import {SanityDocument} from 'sanity'
 
@@ -69,26 +69,9 @@ export default function DeleteDialog({
       onClickOutside={cancelDelete}
       width={1}
       position="fixed"
-      footer={
-        <Card padding={3}>
-          <Flex justify="space-between" align="center">
-            <Button
-              icon={TrashIcon}
-              fontSize={2}
-              padding={3}
-              text="Delete video"
-              tone="critical"
-              onClick={confirmDelete}
-              disabled={['processing_deletion', 'checkingReferences', 'cantDelete'].some(
-                (s) => s === state
-              )}
-            />
-          </Flex>
-        </Card>
-      }
     >
       <Card
-        padding={5}
+        padding={3}
         style={{
           minHeight: '150px',
           display: 'flex',
@@ -122,7 +105,7 @@ export default function DeleteDialog({
             <>
               <Heading size={2}>Are you sure you want to delete this video?</Heading>
               <Text size={2}>This action is irreversible</Text>
-              <Stack space={4} marginTop={4}>
+              <Stack space={4} marginY={4}>
                 <Flex align="center" as="label">
                   <Checkbox
                     checked={deleteOnMux}
@@ -134,6 +117,19 @@ export default function DeleteDialog({
                   <Checkbox disabled checked />
                   <Text style={{margin: '0 10px'}}>Delete video from dataset</Text>
                 </Flex>
+                <Box>
+                  <Button
+                    icon={TrashIcon}
+                    fontSize={2}
+                    padding={3}
+                    text="Delete video"
+                    tone="critical"
+                    onClick={confirmDelete}
+                    disabled={['processing_deletion', 'checkingReferences', 'cantDelete'].some(
+                      (s) => s === state
+                    )}
+                  />
+                </Box>
               </Stack>
             </>
           )}

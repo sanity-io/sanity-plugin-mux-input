@@ -1,4 +1,5 @@
 import {
+  EllipsisHorizontalIcon,
   EllipsisVerticalIcon,
   LockIcon,
   PlugIcon,
@@ -43,14 +44,15 @@ const LockButton = styled(Button)`
   color: white;
 `
 
-export interface Props extends Pick<MuxInputProps, 'onChange' | 'readOnly'> {
-  asset: VideoAssetDocument
-  onUpload: (files: File[]) => void
-  dialogState: DialogState
-  setDialogState: SetDialogState
-}
-function PlayerActionsMenu(props: Props) {
-  const {asset, readOnly, dialogState, setDialogState, onChange, onUpload} = props
+function PlayerActionsMenu(
+  props: Pick<MuxInputProps, 'onChange' | 'readOnly'> & {
+    asset: VideoAssetDocument
+    onSelect: (files: File[]) => void
+    dialogState: DialogState
+    setDialogState: SetDialogState
+  }
+) {
+  const {asset, readOnly, dialogState, setDialogState, onChange, onSelect} = props
   const [open, setOpen] = useState(false)
   const [menuElement, setMenuRef] = useState<HTMLDivElement | null>(null)
   const isSigned = useMemo(() => getPlaybackPolicy(asset) === 'signed', [asset])
@@ -98,11 +100,10 @@ function PlayerActionsMenu(props: Props) {
             <FileInputMenuItem
               accept="video/*"
               icon={UploadIcon}
-              mode="bleed"
-              onSelect={onUpload}
+              onSelect={onSelect}
               text="Upload"
               disabled={readOnly}
-              fontSize={2}
+              fontSize={1}
             />
             <MenuItem
               icon={SearchIcon}
@@ -129,8 +130,9 @@ function PlayerActionsMenu(props: Props) {
         open={open}
       >
         <Button
-          icon={EllipsisVerticalIcon}
+          icon={EllipsisHorizontalIcon}
           mode="ghost"
+          fontSize={1}
           onClick={() => {
             setDialogState(false)
             setOpen(true)

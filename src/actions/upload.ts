@@ -91,7 +91,7 @@ export function uploadFile({
         testSecretsObservable(client).pipe(
           switchMap((json) => {
             if (!json || !json.status) {
-              return throwError(new Error('Invalid credentials'))
+              return throwError(() => new Error('Invalid credentials'))
             }
             const uuid = generateUuid()
             const body = {

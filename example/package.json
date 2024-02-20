@@ -1,5 +1,5 @@
 {
-  "name": "my-app",
+  "name": "sanity-plugin-mux-input-example",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -11,15 +11,15 @@
   "dependencies": {
     "@mux/mux-player-react": "^2.3.2",
     "@portabletext/react": "^3.0.11",
-    "@sanity/client": "^6.12.3",
+    "@sanity/client": "^6.14.0",
     "@sanity/image-url": "^1.0.2",
     "@sanity/vision": "3",
-    "next": "14.1.0",
-    "next-sanity": "^7.0.17",
-    "react": "^18",
+    "next": "^14.1.0",
+    "next-sanity": "^8.0.0",
+    "react": "^18.2.0",
     "react-dom": "^18",
-    "sanity": "^3.26.1",
-    "sanity-plugin-mux-input": "file:.yalc/sanity-plugin-mux-input",
+    "sanity": "^3.30.0",
+    "sanity-plugin-mux-input": "^2.3.0",
     "styled-components": "6"
   },
   "devDependencies": {

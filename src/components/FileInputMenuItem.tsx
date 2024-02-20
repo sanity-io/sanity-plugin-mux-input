@@ -25,7 +25,6 @@ export const FileInputMenuItem = React.forwardRef(function FileInputMenuItem(
     fontSize,
     multiple,
     onSelect,
-    padding = 3,
     space = 3,
     textAlign,
     text,
@@ -45,7 +44,7 @@ export const FileInputMenuItem = React.forwardRef(function FileInputMenuItem(
   )
 
   const content = (
-    <Flex align="center" justify="flex-start" padding={padding}>
+    <Flex align="center" justify="flex-start">
       {/* Icon */}
       {icon && (
         <Box marginRight={text ? space : undefined}>
@@ -66,14 +65,7 @@ export const FileInputMenuItem = React.forwardRef(function FileInputMenuItem(
   )
 
   return (
-    <FileButton
-      {...rest}
-      htmlFor={id}
-      padding={0}
-      fontSize={2}
-      disabled={disabled}
-      ref={forwardedRef}
-    >
+    <FileButton {...rest} htmlFor={id} disabled={disabled} ref={forwardedRef}>
       {content}
 
       {/* Visibly hidden input */}

@@ -109,7 +109,7 @@ function TrackEditor({
   }
 
   return (
-    <Card border padding={3} radius={2} as="form" style={{position: 'relative'}}>
+    <Card border padding={3} radius={2} style={{position: 'relative'}}>
       <Stack space={3}>
         <fieldset style={{all: 'unset'}}>
           <Stack space={2}>

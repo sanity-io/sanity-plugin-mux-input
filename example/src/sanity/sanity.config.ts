@@ -22,6 +22,10 @@ export default defineConfig({
     // Vision is a tool that lets you query your content with GROQ in the studio
     // https://www.sanity.io/docs/the-vision-plugin
     visionTool({defaultApiVersion: apiVersion}),
-    muxInput(),
+    muxInput({
+      encoding_tier: 'smart',
+      max_resolution_tier: '2160p',
+      mp4_support: 'standard',
+    }),
   ],
 })
