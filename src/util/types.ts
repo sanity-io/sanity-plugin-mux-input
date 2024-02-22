@@ -116,8 +116,18 @@ export interface UploadConfig
   extends Pick<PluginConfig, 'encoding_tier' | 'max_resolution_tier' | 'mp4_support'> {
   text_tracks?: UploadTextTrack[]
   signed?: boolean
-  title?: string
+  filename: string
 }
+
+export type StagedUpload =
+  | {
+      type: 'file'
+      file: File
+    }
+  | {
+      type: 'url'
+      url: string
+    }
 
 export interface Secrets {
   token: string | null

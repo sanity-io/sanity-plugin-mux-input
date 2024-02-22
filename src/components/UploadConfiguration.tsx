@@ -1,7 +1,20 @@
-import {CloseIcon, UploadIcon} from '@sanity/icons'
-import {Button, Card, Checkbox, Dialog, Flex, Grid, Radio, Stack, Text, TextInput} from '@sanity/ui'
-import {useId, useState} from 'react'
-import {ENCODING_TIERS, PluginConfig, Secrets, UploadConfig} from '../util/types'
+import {CloseIcon, DocumentVideoIcon, UploadIcon} from '@sanity/icons'
+import {
+  Button,
+  Card,
+  Checkbox,
+  Dialog,
+  Flex,
+  Grid,
+  Label,
+  Radio,
+  Stack,
+  Text,
+  TextInput,
+} from '@sanity/ui'
+import {useId} from 'react'
+import formatBytes from '../util/formatBytes'
+import {ENCODING_TIERS, PluginConfig, Secrets, UploadConfig, type StagedUpload} from '../util/types'
 import FormField from './FormField'
 import TextTracksEditor from './TextTracksEditor'
 
@@ -11,21 +24,18 @@ export default function UploadConfiguration({
   uploadConfig: config,
   setUploadConfig,
   startUpload,
-  file,
   cancelUpload,
+  stagedUpload,
 }: {
   secrets: Secrets
   uploadConfig: UploadConfig
   setUploadConfig: (newConfig: UploadConfig) => void
   pluginConfig: PluginConfig
   startUpload: () => void
-  file?: File
   cancelUpload: () => void
+  stagedUpload: StagedUpload
 }) {
   const id = useId()
-  const [videoUrl] = useState(() => {
-    return file && URL.createObjectURL(file)
-  })
 
   function modifyProperty(newValues: Partial<UploadConfig>) {
     setUploadConfig({
@@ -34,7 +44,7 @@ export default function UploadConfiguration({
     })
   }
 
-  const titleId = `${id}--title`
+  const filenameId = `${id}--filename`
   return (
     <Dialog
       open
@@ -43,7 +53,6 @@ export default function UploadConfiguration({
       zOffset={1000}
       width={4}
       header="Configure upload"
-      __unstable_autoFocus
       footer={
         <Card padding={3}>
           <Flex justify="flex-end" align="center" gap={3}>
@@ -52,7 +61,7 @@ export default function UploadConfiguration({
               icon={UploadIcon}
               text="Upload"
               tone="positive"
-              disabled={!config.title}
+              disabled={!config.filename}
               onClick={startUpload}
             />
           </Flex>
@@ -60,29 +69,34 @@ export default function UploadConfiguration({
       }
     >
       <Stack space={4} paddingY={2} paddingX={4} as="form">
-        {videoUrl && (
-          <Flex gap={2} align="center">
-            <Card
-              sizing="border"
-              radius={2}
-              overflow="hidden"
-              style={{width: '100px', height: '100px'}}
-            >
-              <video
-                src={videoUrl}
-                style={{width: '100%', height: '100%', objectFit: 'contain'}}
-                tabIndex={10}
-              ></video>
-            </Card>
-            {file?.name && <Text muted>{file?.name}</Text>}
+        <Label size={3}>FILE TO UPLOAD</Label>
+        <Card
+          tone="transparent"
+          border
+          padding={3}
+          paddingY={4}
+          style={{borderRadius: '0.1865rem'}}
+        >
+          <Flex gap={2}>
+            <DocumentVideoIcon fontSize="2em" />
+            <Stack space={2}>
+              <Text textOverflow="ellipsis" as="h2" size={3}>
+                {stagedUpload.type === 'file' ? stagedUpload.file.name : stagedUpload.url}
+              </Text>
+              <Text as="p" size={1} muted>
+                {stagedUpload.type === 'file'
+                  ? `Direct File Upload (${formatBytes(stagedUpload.file.size)})`
+                  : 'File From URL (Unknown size)'}
+              </Text>
+            </Stack>
           </Flex>
-        )}
-        <FormField title="Video title" inputId={titleId}>
+        </Card>
+        <FormField title="Video title" inputId={filenameId}>
           <TextInput
-            id={titleId}
-            onChange={(e) => modifyProperty({title: e.currentTarget.value})}
+            id={filenameId}
+            onChange={(e) => modifyProperty({filename: e.currentTarget.value})}
             type="text"
-            value={config.title || ''}
+            value={config.filename || ''}
             tabIndex={0}
           />
         </FormField>

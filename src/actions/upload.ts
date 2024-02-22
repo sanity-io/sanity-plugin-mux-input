@@ -1,11 +1,10 @@
-/* eslint-disable camelcase */
 import {uuid as generateUuid} from '@sanity/uuid'
-import {concat, defer, from, type Observable, of, throwError} from 'rxjs'
+import {concat, defer, from, of, throwError, type Observable} from 'rxjs'
 import {catchError, mergeMap, mergeMapTo, switchMap} from 'rxjs/operators'
 import type {SanityClient} from 'sanity'
 
 import {createUpChunkObservable} from '../clients/upChunkObservable'
-import type {PluginConfig, MuxAsset, UploadConfig} from '../util/types'
+import type {MuxAsset, PluginConfig, UploadConfig} from '../util/types'
 import {getAsset} from './assets'
 import {testSecretsObservable} from './secrets'
 
@@ -17,12 +16,25 @@ export function cancelUpload(client: SanityClient, uuid: string) {
   })
 }
 
-export function uploadUrl(
-  config: PluginConfig,
-  client: SanityClient,
-  url: string,
-  options: {enableSignedUrls?: boolean} = {}
-) {
+function generateMuxBody(uploadConfig: UploadConfig) {
+  return {
+    mp4_support: uploadConfig.mp4_support,
+    encoding_tier: uploadConfig.encoding_tier,
+    max_resolution_tier: uploadConfig.max_resolution_tier,
+    playback_policy: [uploadConfig.signed ? 'signed' : 'public'],
+    // @TODO: send tracks to backend
+  }
+}
+
+export function uploadUrl({
+  client,
+  url,
+  uploadConfig,
+}: {
+  uploadConfig: UploadConfig
+  client: SanityClient
+  url: string
+}) {
   return testUrl(url).pipe(
     switchMap((validUrl) => {
       return concat(
@@ -33,15 +45,13 @@ export function uploadUrl(
               return throwError(new Error('Invalid credentials'))
             }
             const uuid = generateUuid()
-            const {enableSignedUrls} = options
             const muxBody = {
+              ...generateMuxBody(uploadConfig),
               input: validUrl,
-              playback_policy: [enableSignedUrls ? 'signed' : 'public'],
-              mp4_support: config.mp4_support,
             }
             const query = {
               muxBody: JSON.stringify(muxBody),
-              filename: validUrl.split('/').slice(-1)[0],
+              filename: uploadConfig.filename,
             }
 
             const dataset = client.config().dataset
@@ -95,11 +105,9 @@ export function uploadFile({
             }
             const uuid = generateUuid()
             const body = {
-              mp4_support: uploadConfig.mp4_support,
-              encoding_tier: uploadConfig.encoding_tier,
-              max_resolution_tier: uploadConfig.max_resolution_tier,
-              playback_policy: [uploadConfig.signed ? 'signed' : 'public'],
-              // @TODO: send tracks to backend
+              ...generateMuxBody(uploadConfig),
+
+              filename: uploadConfig.filename,
             }
 
             return concat(
@@ -241,7 +249,7 @@ async function updateAssetDocumentFromUpload(client: SanityClient, uuid: string)
   })
 }
 
-function testFile(file: File) {
+export function testFile(file: File) {
   if (typeof window !== 'undefined' && file instanceof window.File) {
     const fileOptions = optionsFromFile({}, file)
     return of(fileOptions)
@@ -249,7 +257,7 @@ function testFile(file: File) {
   return throwError(new Error('Invalid file'))
 }
 
-function testUrl(url: string): Observable<string> {
+export function testUrl(url: string): Observable<string> {
   const error = new Error('Invalid URL')
   if (typeof url !== 'string') {
     return throwError(error)

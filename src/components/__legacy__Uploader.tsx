@@ -1,21 +1,21 @@
 /* eslint-disable no-nested-ternary */
 // This component needs to be refactored into a functional component
 
+import {ErrorOutlineIcon} from '@sanity/icons'
+import {Flex, Text} from '@sanity/ui'
 import React, {Component} from 'react'
 import {Subject, type Observable} from 'rxjs'
 import {takeUntil, tap} from 'rxjs/operators'
 import type {SanityClient} from 'sanity'
 import {PatchEvent, set, setIfMissing} from 'sanity'
-
-import {ErrorOutlineIcon} from '@sanity/icons'
-import {Flex, Text} from '@sanity/ui'
-import {uploadFile, uploadUrl} from '../actions/upload'
+import {testFile, testUrl, uploadFile, uploadUrl} from '../actions/upload'
 import {type DialogState, type SetDialogState} from '../hooks/useDialogState'
 import {extractDroppedFiles} from '../util/extractFiles'
 import type {
   MuxInputProps,
   PluginConfig,
   Secrets,
+  StagedUpload,
   UploadConfig,
   VideoAssetDocument,
 } from '../util/types'
@@ -37,7 +37,7 @@ interface Props extends Pick<MuxInputProps, 'onChange' | 'readOnly'> {
   needsSetup: boolean
 }
 
-interface State {
+type State = {
   isDraggingOver: boolean
   invalidPaste: boolean
   invalidFile: boolean
@@ -45,11 +45,17 @@ interface State {
   uuid: null
   uploadProgress: number | null
   error: Error | null
-  url: string | null
-  state: 'idle' | 'configuring' | 'uploading' | 'error'
-  files?: FileList | File[]
   uploadConfig: UploadConfig
-}
+} & (
+  | {
+      state: 'idle'
+      stagedUpload: null
+    }
+  | {
+      state: 'configuring' | 'uploading' | 'error'
+      stagedUpload: StagedUpload
+    }
+)
 
 class MuxVideoInputUploader extends Component<Props, State> {
   state: State = {
@@ -60,9 +66,10 @@ class MuxVideoInputUploader extends Component<Props, State> {
     fileInfo: null,
     uuid: null,
     error: null,
-    url: null,
     state: 'idle',
+    stagedUpload: null,
     uploadConfig: {
+      filename: '',
       encoding_tier: this.props.config.encoding_tier || 'smart',
       max_resolution_tier: this.props.config.max_resolution_tier || '1080p',
       mp4_support: this.props.config.mp4_support || 'none',
@@ -104,50 +111,94 @@ class MuxVideoInputUploader extends Component<Props, State> {
   }
 
   onUpload = () => {
-    if (!this.state.files) return
+    const {stagedUpload} = this.state
 
-    this.setState({uploadProgress: 0, fileInfo: null, uuid: null, state: 'uploading'})
-    this.upload = uploadFile({
-      client: this.props.client,
-      file: this.state.files[0],
-      uploadConfig: this.state.uploadConfig,
-    })
-      .pipe(
-        takeUntil(
-          this.onCancelUploadButtonClick$!.pipe(
-            tap(() => {
-              if (this.state.uuid) {
-                this.props.client.delete(this.state.uuid)
-              }
-            })
+    if (stagedUpload?.type === 'file') {
+      this.setState({uploadProgress: 0, fileInfo: null, uuid: null, state: 'uploading'})
+
+      this.upload = uploadFile({
+        client: this.props.client,
+        file: stagedUpload.file,
+        uploadConfig: this.state.uploadConfig,
+      })
+        .pipe(
+          takeUntil(
+            this.onCancelUploadButtonClick$!.pipe(
+              tap(() => {
+                if (this.state.uuid) {
+                  this.props.client.delete(this.state.uuid)
+                }
+              })
+            )
           )
         )
-      )
-      .subscribe({
+        .subscribe({
+          complete: () => {
+            this.setState({error: null, state: 'idle', uploadProgress: null, uuid: null})
+          },
+          next: (event) => {
+            this.handleUploadEvent(event)
+          },
+          error: (err) => {
+            this.setState({error: err, state: 'error', uploadProgress: null, uuid: null})
+          },
+        })
+    }
+
+    if (stagedUpload?.type === 'url') {
+      this.upload = uploadUrl({
+        client: this.props.client,
+        url: stagedUpload.url,
+        uploadConfig: this.state.uploadConfig,
+      }).subscribe({
         complete: () => {
-          this.setState({error: null, state: 'idle', uploadProgress: null, uuid: null})
+          this.setState((prev) => ({...prev, error: null, uploadProgress: null, url: undefined}))
         },
-        next: (event) => {
-          this.handleUploadEvent(event)
+        next: (sEvent) => {
+          this.handleUploadEvent(sEvent)
         },
         error: (err) => {
-          this.setState({error: err, state: 'error', uploadProgress: null, uuid: null})
+          let error
+          // Don't output error dialog when just invalid url
+          if (!err.message.toLowerCase().match('invalid url')) {
+            error = err
+          }
+          this.setState({invalidPaste: true, error}, () => {
+            setTimeout(() => {
+              this.setState({invalidPaste: false, uploadProgress: null})
+            }, 2000)
+          })
         },
       })
+    }
   }
 
   onSelect = (filesR: File[] | FileList) => {
     const files = filesR ? Array.from(filesR) : []
-    if (files?.[0]?.name) {
-      this.setState({
-        state: 'configuring',
-        files,
-        uploadConfig: {
-          ...this.state.uploadConfig,
-          title: files[0].name || '',
-        },
-      })
-    }
+    const file = files[0]
+
+    testFile(file).subscribe({
+      complete: () => {
+        this.setState((prev) => ({
+          ...prev,
+          state: 'configuring',
+          stagedUpload: {
+            type: 'file',
+            file,
+          },
+          uploadConfig: {
+            ...prev.uploadConfig,
+            filename: file.name,
+          },
+        }))
+      },
+      error: () =>
+        this.setState({invalidFile: true}, () => {
+          setTimeout(() => {
+            this.setState({invalidFile: false})
+          }, 2000)
+        }),
+    })
   }
 
   // eslint-disable-next-line no-warning-comments
@@ -164,7 +215,7 @@ class MuxVideoInputUploader extends Component<Props, State> {
         // Means we created a mux.videoAsset document with an uuid
         return this.setState({uuid: event.uuid})
       case 'url':
-        return this.setState({url: event.url, uploadProgress: 100})
+        return this.setState((prev) => ({...prev, url: event.url, uploadProgress: 100}))
       default:
         return null
     }
@@ -183,27 +234,35 @@ class MuxVideoInputUploader extends Component<Props, State> {
   handlePaste: React.ClipboardEventHandler<HTMLInputElement> = (event) => {
     const clipboardData = event.clipboardData || (window as any).clipboardData
     const url = clipboardData.getData('text')
-    const options = {enableSignedUrls: this.props.secrets.enableSignedUrls}
 
-    this.upload = uploadUrl(this.props.config, this.props.client, url, options).subscribe({
+    testUrl(url).subscribe({
       complete: () => {
-        this.setState({error: null, uploadProgress: null, url: null})
-      },
-      next: (sEvent) => {
-        this.handleUploadEvent(sEvent)
-      },
-      error: (err) => {
-        let error
-        // Don't output error dialog when just invalid url
-        if (!err.message.toLowerCase().match('invalid url')) {
-          error = err
-        }
-        this.setState({invalidPaste: true, error}, () => {
-          setTimeout(() => {
-            this.setState({invalidPaste: false, uploadProgress: null})
-          }, 2000)
+        this.setState({
+          state: 'configuring',
+          stagedUpload: {
+            type: 'url',
+            url,
+          },
         })
+        this.setState((prev) => ({
+          ...prev,
+          state: 'configuring',
+          stagedUpload: {
+            type: 'url',
+            url,
+          },
+          uploadConfig: {
+            ...prev.uploadConfig,
+            filename: url.split('/').slice(-1)[0],
+          },
+        }))
       },
+      error: () =>
+        this.setState({invalidPaste: true}, () => {
+          setTimeout(() => {
+            this.setState({invalidPaste: false})
+          }, 2000)
+        }),
     })
   }
 
@@ -241,12 +300,17 @@ class MuxVideoInputUploader extends Component<Props, State> {
   }
 
   render() {
-    if (this.state.uploadProgress !== null) {
+    const {stagedUpload} = this.state
+    if (this.state.uploadProgress !== null && stagedUpload) {
+      let filename = this.state.fileInfo?.name
+      if (stagedUpload.type === 'url') filename = stagedUpload.url || filename
+      if (stagedUpload.type === 'file') filename = stagedUpload.file?.name || filename
+
       return (
         <UploadProgress
           onCancel={this.handleCancelUploadButtonClick!}
           progress={this.state.uploadProgress}
-          filename={this.state.fileInfo?.name || this.state.url}
+          filename={filename}
         />
       )
     }
@@ -272,7 +336,7 @@ class MuxVideoInputUploader extends Component<Props, State> {
         <UploadConfiguration
           pluginConfig={this.props.config}
           secrets={this.props.secrets}
-          file={this.state.files?.[0]}
+          stagedUpload={this.state.stagedUpload}
           uploadConfig={this.state.uploadConfig}
           startUpload={this.onUpload}
           setUploadConfig={(uploadConfig) =>
@@ -281,7 +345,7 @@ class MuxVideoInputUploader extends Component<Props, State> {
             })
           }
           cancelUpload={() => {
-            this.setState({files: undefined, state: 'idle'})
+            this.setState((prev) => ({...prev, files: undefined, url: undefined, state: 'idle'}))
           }}
         />
       )
