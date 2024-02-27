@@ -4,7 +4,7 @@ import {catchError, mergeMap, mergeMapTo, switchMap} from 'rxjs/operators'
 import type {SanityClient} from 'sanity'
 
 import {createUpChunkObservable} from '../clients/upChunkObservable'
-import type {MuxAsset, PluginConfig, UploadConfig} from '../util/types'
+import type {MuxAsset, MuxNewAssetSettings, PluginConfig, UploadConfig} from '../util/types'
 import {getAsset} from './assets'
 import {testSecretsObservable} from './secrets'
 
@@ -16,42 +16,32 @@ export function cancelUpload(client: SanityClient, uuid: string) {
   })
 }
 
-function generateMuxBody(uploadConfig: UploadConfig) {
-  return {
-    mp4_support: uploadConfig.mp4_support,
-    encoding_tier: uploadConfig.encoding_tier,
-    max_resolution_tier: uploadConfig.max_resolution_tier,
-    playback_policy: [uploadConfig.signed ? 'signed' : 'public'],
-    // @TODO: send tracks to backend
-  }
-}
-
 export function uploadUrl({
-  client,
   url,
-  uploadConfig,
+  settings,
+  client,
 }: {
-  uploadConfig: UploadConfig
-  client: SanityClient
   url: string
+  settings: MuxNewAssetSettings
+  client: SanityClient
 }) {
   return testUrl(url).pipe(
     switchMap((validUrl) => {
       return concat(
-        of({type: 'url', url: validUrl}),
+        of({type: 'url' as const, url: validUrl}),
         testSecretsObservable(client).pipe(
           switchMap((json) => {
             if (!json || !json.status) {
               return throwError(new Error('Invalid credentials'))
             }
             const uuid = generateUuid()
-            const muxBody = {
-              ...generateMuxBody(uploadConfig),
-              input: validUrl,
-            }
+            const muxBody = settings
+            if (!muxBody.input) muxBody.input = [{type: 'video'}]
+            muxBody.input[0].url = validUrl
+
             const query = {
               muxBody: JSON.stringify(muxBody),
-              filename: uploadConfig.filename,
+              filename: validUrl.split('/').slice(-1)[0],
             }
 
             const dataset = client.config().dataset
@@ -75,7 +65,7 @@ export function uploadUrl({
                 if (!asset) {
                   return throwError(new Error('No asset document returned'))
                 }
-                return of({type: 'success', id: uuid, asset})
+                return of({type: 'success' as const, id: uuid, asset})
               })
             )
           })
@@ -86,45 +76,35 @@ export function uploadUrl({
 }
 
 export function uploadFile({
-  uploadConfig,
+  settings,
   client,
   file,
 }: {
-  uploadConfig: UploadConfig
+  settings: MuxNewAssetSettings
   client: SanityClient
   file: File
 }) {
   return testFile(file).pipe(
     switchMap((fileOptions) => {
       return concat(
-        of({type: 'file', file: fileOptions}),
+        of({type: 'file' as const, file: fileOptions}),
         testSecretsObservable(client).pipe(
           switchMap((json) => {
             if (!json || !json.status) {
               return throwError(() => new Error('Invalid credentials'))
             }
             const uuid = generateUuid()
-            const body = {
-              ...generateMuxBody(uploadConfig),
-
-              filename: uploadConfig.filename,
-            }
+            const body = settings
 
             return concat(
-              of({type: 'uuid', uuid}),
+              of({type: 'uuid' as const, uuid}),
               defer(() =>
                 client.observable.request<{
                   sanityAssetId: string
                   upload: {
                     cors_origin: string
                     id: string
-                    new_asset_settings: Pick<
-                      Required<PluginConfig>,
-                      'mp4_support' | 'encoding_tier' | 'max_resolution_tier'
-                    > & {
-                      passthrough: string
-                      playback_policies: ['public' | 'signed']
-                    }
+                    new_asset_settings: MuxNewAssetSettings
                     status: 'waiting'
                     timeout: number
                     url: string
@@ -145,7 +125,7 @@ export function uploadFile({
                     // eslint-disable-next-line no-warning-comments
                     // @TODO type the observable events
                     // eslint-disable-next-line max-nested-callbacks
-                    mergeMap((event: any) => {
+                    mergeMap((event) => {
                       if (event.type !== 'success') {
                         return of(event)
                       }
@@ -276,7 +256,7 @@ export function testUrl(url: string): Observable<string> {
 
 function optionsFromFile(opts: {preserveFilename?: boolean}, file: File) {
   if (typeof window === 'undefined' || !(file instanceof window.File)) {
-    return opts
+    return undefined
   }
   return {
     name: opts.preserveFilename === false ? undefined : file.name,
