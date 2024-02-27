@@ -11,3 +11,12 @@ export function isMuxInputPreviewProps(
 ): props is MuxInputPreviewProps {
   return props.schemaType?.type?.name === 'mux.video'
 }
+
+export function isValidUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url)
+    return parsed && !!parsed.protocol.match(/http:|https:/)
+  } catch {
+    return false
+  }
+}

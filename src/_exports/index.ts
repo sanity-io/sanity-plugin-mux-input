@@ -9,6 +9,7 @@ export const defaultConfig: PluginConfig = {
   mp4_support: 'none',
   encoding_tier: 'smart',
   max_resolution_tier: '1080p',
+  normalize_audio: false,
   defaultSigned: false,
   tool: DEFAULT_TOOL_CONFIG,
 }

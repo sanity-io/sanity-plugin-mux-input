@@ -22,7 +22,6 @@ export default function UploadPlaceholder(props: UploadPlaceholderProps) {
   return (
     <Card
       sizing="border"
-      height="fill"
       tone={readOnly ? 'transparent' : 'inherit'}
       border
       radius={2}
@@ -35,9 +34,8 @@ export default function UploadPlaceholder(props: UploadPlaceholderProps) {
         justify="space-between"
         gap={4}
         direction={['column', 'column', 'row']}
-        paddingY={[2, 2, 0]}
+        paddingY={2}
         sizing="border"
-        height="fill"
       >
         <Flex align="center" justify="flex-start" gap={2} flex={1}>
           <Flex justify="center">
