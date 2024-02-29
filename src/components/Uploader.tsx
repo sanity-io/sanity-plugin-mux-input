@@ -1,7 +1,7 @@
 import {ErrorOutlineIcon} from '@sanity/icons'
 import {CardTone, Flex, Text, useToast} from '@sanity/ui'
 import React, {useEffect, useReducer, useRef, useState} from 'react'
-import {type Observable, Subject, Subscription} from 'rxjs'
+import {Subject, Subscription, type Observable} from 'rxjs'
 import {takeUntil, tap} from 'rxjs/operators'
 import type {SanityClient} from 'sanity'
 import {PatchEvent, set, setIfMissing} from 'sanity'
@@ -15,7 +15,6 @@ import type {
   MuxNewAssetSettings,
   PluginConfig,
   Secrets,
-  UploadConfig,
   VideoAssetDocument,
 } from '../util/types'
 import InputBrowser from './InputBrowser'
@@ -73,9 +72,6 @@ type UploaderStateAction =
  * The main interface for inputting a Mux Video. It handles staging an upload
  * file, setting its configuration, displaying upload progress, and showing
  * the preview player.
- *
- * @param props
- * @returns
  */
 export default function Uploader(props: Props) {
   const toast = useToast()
@@ -337,6 +333,7 @@ export default function Uploader(props: Props) {
   // Default: No staged upload
   let tone: CardTone | undefined
   if (dragState) tone = dragState === 'valid' ? 'positive' : 'critical'
+
   return (
     <>
       <UploadCard

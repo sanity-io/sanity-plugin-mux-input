@@ -1,5 +1,4 @@
 import type {
-  ObjectDefinition,
   ObjectInputProps,
   PreviewLayoutKey,
   PreviewProps,
@@ -15,7 +14,7 @@ export interface MuxInputConfig {
    * @see {@link https://docs.mux.com/guides/video/enable-static-mp4-renditions#why-enable-mp4-support}
    * @defaultValue 'none'
    */
-  mp4_support: MuxNewAssetSettings['mp4_support']
+  mp4_support: 'none' | 'standard'
 
   /**
    * Max resolution tier can be used to control the maximum resolution_tier your asset is encoded, stored, and streamed at.
@@ -23,21 +22,21 @@ export interface MuxInputConfig {
    * @see {@link https://docs.mux.com/guides/stream-videos-in-4k}
    * @defaultValue '1080p'
    */
-  max_resolution_tier: MuxNewAssetSettings['max_resolution_tier']
+  max_resolution_tier: '2160p' | '1440p' | '1080p'
 
   /**
    * The encoding tier informs the cost, quality, and available platform features for the asset.
    * @see {@link https://docs.mux.com/guides/use-encoding-tiers}
    * @defaultValue 'smart'
    */
-  encoding_tier: MuxNewAssetSettings['encoding_tier']
+  encoding_tier: 'baseline' | 'smart'
 
   /**
    * Normalize the audio track loudness level.
    * @see {@link https://docs.mux.com/guides/adjust-audio-levels#how-to-turn-on-audio-normalization}
    * @defaultValue false
    */
-  normalize_audio: MuxNewAssetSettings['normalize_audio']
+  normalize_audio: boolean
 
   /**
    * Enables signed URLs by default, if you configured them with your API token.
@@ -165,8 +164,15 @@ export interface UploadConfig
   signed: boolean
 }
 
-// Typings lifted from https://docs.mux.com/api-reference#video/operation/create-direct-upload
-export interface MuxNewAssetSettings {
+/**
+ * Data sent to Mux to create a new asset.
+ * @docs {@link https://docs.mux.com/api-reference#video/operation/create-direct-upload}
+ */
+export interface MuxNewAssetSettings
+  extends Pick<
+    MuxInputConfig,
+    'encoding_tier' | 'max_resolution_tier' | 'mp4_support' | 'normalize_audio'
+  > {
   /** An array of objects that each describe an input file to be used to create the asset.*/
   input?: {
     /** The URL of the file that Mux should download and use. */
@@ -198,18 +204,12 @@ export interface MuxNewAssetSettings {
     /** This optional parameter should be used tracks with type of text and text_type set to subtitles. */
     passthrough?: string
   }[]
+
   /** An array of playback policy names that you want applied to this asset and available through playback_ids. */
   playback_policy: ('public' | 'signed')[]
+
   /** Arbitrary user-supplied metadata that will be included in the asset details and related webhooks.  */
   passthrough?: string
-  /** Specify what level (if any) of support for mp4 playback. */
-  mp4_support: 'none' | 'standard'
-  /** Normalize the audio track loudness level. */
-  normalize_audio: boolean
-  /** Max resolution tier can be used to control the maximum resolution_tier your asset is encoded, stored, and streamed at. If not set, this defaults to 1080p. */
-  max_resolution_tier: '1080p' | '1440p' | '2160p'
-  /** The encoding tier informs the cost, quality, and available platform features for the asset. By default the smart encoding tier is used. */
-  encoding_tier: 'smart' | 'baseline'
 }
 
 export interface Secrets {
