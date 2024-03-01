@@ -4,6 +4,7 @@ import React from 'react'
 
 import useAssets from '../hooks/useAssets'
 import type {VideoAssetDocument} from '../util/types'
+import ImportVideosFromMux from './ImportVideosFromMux'
 import {SelectSortOptions} from './SelectSortOptions'
 import SpinnerBox from './SpinnerBox'
 import VideoDetails from './VideoDetails/VideoDetails'
@@ -22,6 +23,7 @@ export default function VideosBrowser({onSelect}: VideosBrowserProps) {
     [editedAsset, assets]
   )
 
+  const placement = onSelect ? 'input' : 'tool'
   return (
     <>
       <Stack padding={4} space={4} style={{minHeight: '50vh'}}>
@@ -37,6 +39,7 @@ export default function VideosBrowser({onSelect}: VideosBrowserProps) {
             />
             <SelectSortOptions setSort={setSort} sort={sort} />
           </Flex>
+          {placement === 'tool' && <ImportVideosFromMux />}
         </Flex>
         <Stack space={3}>
           {assets?.length > 0 && (
@@ -75,7 +78,7 @@ export default function VideosBrowser({onSelect}: VideosBrowserProps) {
         <VideoDetails
           closeDialog={() => setEditedAsset(null)}
           asset={freshEditedAsset}
-          placement={onSelect ? 'input' : 'tool'}
+          placement={placement}
         />
       )}
     </>

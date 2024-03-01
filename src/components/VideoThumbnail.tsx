@@ -1,14 +1,13 @@
 import {ErrorOutlineIcon} from '@sanity/icons'
-import {Card, CardTone, Stack, Text} from '@sanity/ui'
+import {Box, Card, CardTone, Spinner, Stack, Text} from '@sanity/ui'
 import React, {useMemo, useState} from 'react'
 import styled from 'styled-components'
 
 import {useClient} from '../hooks/useClient'
 import useInView from '../hooks/useInView'
 import {THUMBNAIL_ASPECT_RATIO} from '../util/constants'
-import {getAnimatedPosterSrc} from '../util/getAnimatedPosterSrc'
+import {getAnimatedPosterSrc, type AnimatedPosterSrcOptions} from '../util/getAnimatedPosterSrc'
 import {VideoAssetDocument} from '../util/types'
-import SpinnerBox from './SpinnerBox'
 
 const Image = styled.img`
   transition: opacity 0.175s ease-out 0s;
@@ -29,19 +28,20 @@ const STATUS_TO_TONE: Record<ImageStatus, CardTone> = {
 
 export default function VideoThumbnail({
   asset,
-  width = 250,
+  width,
 }: {
-  asset: Partial<VideoAssetDocument>
+  asset: AnimatedPosterSrcOptions['asset'] & Pick<VideoAssetDocument, 'filename' | 'assetId'>
   width?: number
 }) {
   const {inView, ref} = useInView()
+  const posterWidth = width || 250
 
   const [status, setStatus] = useState<ImageStatus>('loading')
   const client = useClient()
 
   const animatedSrc = useMemo(() => {
     try {
-      return getAnimatedPosterSrc({asset, client, width})
+      return getAnimatedPosterSrc({asset, client, width: posterWidth})
     } catch {
       if (status !== 'error') setStatus('error')
       return undefined
@@ -61,6 +61,9 @@ export default function VideoThumbnail({
       style={{
         aspectRatio: THUMBNAIL_ASPECT_RATIO,
         position: 'relative',
+        maxWidth: width ? `${width}px` : undefined,
+        width: '100%',
+        flex: 1,
       }}
       border
       radius={2}
@@ -69,7 +72,18 @@ export default function VideoThumbnail({
     >
       {inView ? (
         <>
-          {status === 'loading' && <SpinnerBox />}
+          {status === 'loading' && (
+            <Box
+              style={{
+                position: 'absolute',
+                left: '50%',
+                top: '50%',
+                transform: 'translate(-50%, -50%)',
+              }}
+            >
+              <Spinner />
+            </Box>
+          )}
           {status === 'error' && (
             <Stack
               space={4}

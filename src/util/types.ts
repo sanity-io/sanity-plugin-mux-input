@@ -308,6 +308,7 @@ export type MuxTrack = MuxVideoTrack | MuxAudioTrack
 // Typings lifted from https://docs.mux.com/api-reference/video#tag/assets
 export interface MuxAsset {
   id: string
+  /** In seconds (instead of JS's default milliseconds) */
   created_at: string
   status: 'preparing' | 'ready' | 'errored'
   duration: number
@@ -368,8 +369,11 @@ export interface MuxAsset {
   }
 }
 
-export interface VideoAssetDocument extends SanityDocument {
-  type?: 'mux.videoAsset'
+export interface VideoAssetDocument {
+  _id: string
+  _type: 'mux.videoAsset'
+  _createdAt: string
+  _updatedAt?: string
   status?: string
   assetId?: string
   playbackId?: string
