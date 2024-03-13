@@ -235,13 +235,13 @@ function ImportVideosDialog(props: ReturnType<typeof useImportMuxAssets>) {
             </Box>
             <Heading size={2}>
               {importState === 'done'
-                ? `${props.selectedAssets.length} video${props.selectedAssets.length > 1 ? 's' : ''} imported successfully`
+                ? `Videos imported successfully`
                 : 'There are no Mux videos to import'}
             </Heading>
             <Text size={2}>
               {importState === 'done'
                 ? 'You can now use them in your Sanity content.'
-                : "They're all in Sanity"}
+                : "They're all in Sanity and ready to be used in your content."}
             </Text>
           </Stack>
         )}

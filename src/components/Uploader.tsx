@@ -1,5 +1,5 @@
 import {ErrorOutlineIcon} from '@sanity/icons'
-import {CardTone, Flex, Text, useToast} from '@sanity/ui'
+import {Button, CardTone, Flex, Text, useToast} from '@sanity/ui'
 import React, {useEffect, useReducer, useRef, useState} from 'react'
 import {Subject, Subscription, type Observable} from 'rxjs'
 import {takeUntil, tap} from 'rxjs/operators'
@@ -301,6 +301,7 @@ export default function Uploader(props: Props) {
             {error.message}
           </Text>
         )}
+        <Button text="Upload another file" onClick={() => dispatch({action: 'reset'})} />
       </Flex>
     )
   }

@@ -153,7 +153,9 @@ export default function UploadConfiguration({
   }, [])
   if (skipConfig) return null
 
-  const filenameId = `${id}--filename`
+  const maxSupportedResolution = RESOLUTION_TIERS.findIndex(
+    (rt) => rt.value === pluginConfig.max_resolution_tier
+  )
   return (
     <Dialog
       open
@@ -230,7 +232,7 @@ export default function UploadConfiguration({
               </Flex>
             </FormField>
 
-            {config.encoding_tier === 'smart' && (
+            {config.encoding_tier === 'smart' && maxSupportedResolution > 0 && (
               <FormField
                 title="Resolution Tier"
                 description={
@@ -248,8 +250,11 @@ export default function UploadConfiguration({
                 }
               >
                 <Flex gap={3} wrap={'wrap'}>
-                  {RESOLUTION_TIERS.map(({value, label}) => {
+                  {RESOLUTION_TIERS.map(({value, label}, index) => {
                     const inputId = `${id}--type-${value}`
+
+                    if (index > maxSupportedResolution) return null
+
                     return (
                       <Flex key={value} align="center" gap={2}>
                         <Radio
