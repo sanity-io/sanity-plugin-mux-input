@@ -132,58 +132,6 @@ function TrackEditor({
           )}
         />
 
-        {isCustomTextTrack(track) &&
-          (track.file ? (
-            <div style={{position: 'relative'}}>
-              <Card
-                tone="transparent"
-                paddingX={3}
-                paddingY={4}
-                border
-                radius={1}
-                style={{
-                  maxHeight: '250px',
-                  overflowY: 'auto',
-                }}
-              >
-                <Code>{track.file?.contents}</Code>
-              </Card>
-              <Button
-                icon={ResetIcon}
-                mode="bleed"
-                style={{position: 'absolute', top: '1em', right: '1em'}}
-                text="Replace"
-                tone="critical"
-                onClick={() => {
-                  dispatchTrackAction({
-                    subAction: 'update',
-                    value: {file: undefined},
-                  })
-                }}
-              />
-            </div>
-          ) : (
-            <FileInputArea
-              accept=".vtt, .srt"
-              acceptMIMETypes={['text/vtt', 'text/srt']}
-              label={
-                <>
-                  <Flex justify="center">
-                    <Text muted>
-                      <DocumentTextIcon />
-                    </Text>
-                  </Flex>
-                  <Flex justify="center">
-                    <Text size={1} muted>
-                      Drag or select subtitles file (.vtt, .srt)
-                    </Text>
-                  </Flex>
-                </>
-              }
-              onSelect={() => {}}
-            />
-          ))}
-
         <Flex>
           <Button
             icon={TrashIcon}
