@@ -2,12 +2,14 @@ import React from 'react'
 
 import Input from './components/Input'
 import VideoThumbnail from './components/VideoThumbnail'
-import type {Config, MuxInputProps, VideoAssetDocument} from './util/types'
+import type {PluginConfig, MuxInputProps, VideoAssetDocument} from './util/types'
 
-export function muxVideoCustomRendering(config: Config) {
+export function muxVideoCustomRendering(config: PluginConfig) {
   return {
     components: {
-      input: (props: MuxInputProps) => <Input config={config} {...props} />,
+      input: (props: MuxInputProps) => (
+        <Input config={{...config, ...props.schemaType.options}} {...props} />
+      ),
     },
     preview: {
       select: {

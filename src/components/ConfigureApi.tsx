@@ -178,7 +178,6 @@ function ConfigureApi({secrets, setDialogState}: Props) {
                   </Text>
                 </Box>
               </Flex>
-              {/* TODO: use a popover instead to avoid jumping around */}
               {secrets.signingKeyId && state.enableSignedUrls ? (
                 <Card padding={[3, 3, 3]} radius={2} shadow={1} tone="caution">
                   <Stack space={3}>

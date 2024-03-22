@@ -17,8 +17,9 @@ const Label = styled.label`
 
 export interface FileInputButtonProps extends ButtonProps {
   onSelect: (files: FileList) => void
+  accept?: string
 }
-export const FileInputButton = ({onSelect, ...props}: FileInputButtonProps) => {
+export const FileInputButton = ({onSelect, accept, ...props}: FileInputButtonProps) => {
   const inputId = `FileSelect${useId()}`
   const inputRef = useRef<HTMLInputElement>(null)
   const handleSelect = useCallback<React.ChangeEventHandler<HTMLInputElement>>(
@@ -33,7 +34,7 @@ export const FileInputButton = ({onSelect, ...props}: FileInputButtonProps) => {
   return (
     <Label htmlFor={inputId}>
       <HiddenInput
-        accept="video/*"
+        accept={accept || 'video/*'}
         ref={inputRef}
         tabIndex={0}
         type="file"

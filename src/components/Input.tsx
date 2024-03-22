@@ -6,15 +6,15 @@ import {useClient} from '../hooks/useClient'
 import {useDialogState} from '../hooks/useDialogState'
 import {useMuxPolling} from '../hooks/useMuxPolling'
 import {useSecretsDocumentValues} from '../hooks/useSecretsDocumentValues'
-import type {Config, MuxInputProps} from '../util/types'
-import Uploader from './__legacy__Uploader'
+import type {MuxInputProps, PluginConfig} from '../util/types'
 import ConfigureApi from './ConfigureApi'
 import ErrorBoundaryCard from './ErrorBoundaryCard'
 import {InputFallback} from './Input.styled'
 import Onboard from './Onboard'
+import Uploader from './Uploader'
 
 export interface InputProps extends MuxInputProps {
-  config: Config
+  config: PluginConfig
 }
 const Input = (props: InputProps) => {
   const client = useClient()

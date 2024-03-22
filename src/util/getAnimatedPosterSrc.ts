@@ -6,7 +6,7 @@ import {getPlaybackPolicy} from './getPlaybackPolicy'
 import type {AnimatedThumbnailOptions, MuxAnimatedThumbnailUrl, VideoAssetDocument} from './types'
 
 export interface AnimatedPosterSrcOptions extends AnimatedThumbnailOptions {
-  asset: Partial<VideoAssetDocument>
+  asset: Pick<VideoAssetDocument, 'playbackId' | 'data' | 'thumbTime'>
   client: SanityClient
 }
 
