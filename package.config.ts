@@ -4,6 +4,8 @@ export default defineConfig({
   dist: 'lib',
   tsconfig: 'tsconfig.lib.json',
 
+  legacyExports: true,
+
   // Remove this block to enable strict export validation
   extract: {
     rules: {
@@ -13,11 +15,4 @@ export default defineConfig({
       'ae-missing-release-tag': 'off',
     },
   },
-  bundles: [
-    {
-      source: './src/_exports/index.ts',
-      require: './lib/index.js',
-      import: './lib/index.esm.js',
-    },
-  ],
 })

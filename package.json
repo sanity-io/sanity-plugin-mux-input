@@ -25,20 +25,15 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./lib/index.d.ts",
       "source": "./src/_exports/index.ts",
-      "require": "./lib/index.cjs",
-      "node": {
-        "module": "./lib/index.js",
-        "import": "./lib/index.cjs.js"
-      },
       "import": "./lib/index.js",
+      "require": "./lib/index.cjs",
       "default": "./lib/index.js"
     },
     "./package.json": "./package.json"
   },
   "main": "./lib/index.cjs",
-  "module": "./lib/index.js",
+  "module": "./lib/index.esm.js",
   "source": "./src/_exports/index.ts",
   "types": "./lib/index.d.ts",
   "files": [
