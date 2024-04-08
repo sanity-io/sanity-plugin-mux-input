@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.3.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.2.4...v2.3.0) (2024-04-08)
+
+### Features
+
+- configurable uploads and import from Mux ([#350](https://github.com/sanity-io/sanity-plugin-mux-input/issues/350)) ([0492fab](https://github.com/sanity-io/sanity-plugin-mux-input/commit/0492fab132bc717ab06c9ce3203b999af9c7f827))
+
 ## [2.2.4](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.2.3...v2.2.4) (2024-01-15)
 
 ### Bug Fixes
