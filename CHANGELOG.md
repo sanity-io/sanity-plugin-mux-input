@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.3.1](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.3.0...v2.3.1) (2024-04-08)
+
+### Bug Fixes
+
+- **deps:** bump `@sanity/pkg-utils` to optimize lodash ([887760e](https://github.com/sanity-io/sanity-plugin-mux-input/commit/887760e8c113500049af41b8c762317a4d570999))
+
 ## [2.3.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.2.4...v2.3.0) (2024-04-08)
 
 ### Features
