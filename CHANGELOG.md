@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.3.4](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.3.3...v2.3.4) (2024-04-08)
+
+### Bug Fixes
+
+- bundle `use-error-boundary` for strict ESM compat ([672b7ed](https://github.com/sanity-io/sanity-plugin-mux-input/commit/672b7ed533fc08330da947214cd26c90538e7ee3))
+
 ## [2.3.3](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.3.2...v2.3.3) (2024-04-08)
 
 ### Bug Fixes
