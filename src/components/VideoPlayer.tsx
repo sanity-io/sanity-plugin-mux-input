@@ -7,7 +7,6 @@ import {useClient} from '../hooks/useClient'
 import {MIN_ASPECT_RATIO} from '../util/constants'
 import {getVideoSrc} from '../util/getVideoSrc'
 import type {VideoAssetDocument} from '../util/types'
-import pluginPkg from './../../package.json'
 
 export default function VideoPlayer({
   asset,
@@ -61,7 +60,7 @@ export default function VideoPlayer({
             crossOrigin="anonymous"
             metadata={{
               player_name: 'Sanity Admin Dashboard',
-              player_version: pluginPkg.version,
+              player_version: process.env.PKG_VERSION,
               page_type: 'Preview Player',
             }}
             style={{
