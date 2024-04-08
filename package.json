@@ -110,7 +110,7 @@
     "react-dom": "^18.2.0",
     "react-is": "^18.2.0",
     "rimraf": "^5.0.5",
-    "sanity": "^3.30.0",
+    "sanity": "^3.31.0",
     "styled-components": "^6.1.8",
     "typescript": "^5.3.3",
     "yalc": "1.0.0-pre.53"
