@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.3.3](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.3.2...v2.3.3) (2024-04-08)
+
+### Bug Fixes
+
+- use `PKG_VERSION` env var instead of importing `package.json` ([3807429](https://github.com/sanity-io/sanity-plugin-mux-input/commit/380742918a6afebab3ded682b426a75fc276dbcc))
+
 ## [2.3.2](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.3.1...v2.3.2) (2024-04-08)
 
 ### Bug Fixes
