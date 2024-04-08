@@ -2,7 +2,11 @@ import {UpChunk} from '@mux/upchunk'
 import {Observable} from 'rxjs'
 
 export function createUpChunkObservable(uuid: string, uploadUrl: string, source: File) {
-  return new Observable((subscriber) => {
+  return new Observable<
+    | {type: 'pause' | 'resume'; id: string}
+    | {type: 'success'; id: string}
+    | {type: 'progress'; percent: number}
+  >((subscriber) => {
     const upchunk = UpChunk.createUpload({
       endpoint: uploadUrl,
       file: source,

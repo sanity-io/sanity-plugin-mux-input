@@ -1,12 +1,13 @@
 import MuxPlayer, {MuxPlayerProps} from '@mux/mux-player-react'
-import {Card} from '@sanity/ui'
-import React, {PropsWithChildren, useMemo} from 'react'
+import {Card, Text} from '@sanity/ui'
+import {PropsWithChildren, useMemo} from 'react'
 
 import {useClient} from '../hooks/useClient'
 import {MIN_ASPECT_RATIO} from '../util/constants'
 import {getVideoSrc} from '../util/getVideoSrc'
 import type {VideoAssetDocument} from '../util/types'
 import pluginPkg from './../../package.json'
+import {ErrorOutlineIcon} from '@sanity/icons'
 
 export default function VideoPlayer({
   asset,
@@ -17,7 +18,16 @@ export default function VideoPlayer({
 >) {
   const client = useClient()
 
-  const videoSrc = useMemo(() => asset?.playbackId && getVideoSrc({client, asset}), [asset, client])
+  const {src: videoSrc, error} = useMemo(() => {
+    try {
+      const src = asset?.playbackId && getVideoSrc({client, asset})
+      if (src) return {src: src}
+
+      return {error: new TypeError('Asset has no playback ID')}
+    } catch (error) {
+      return {error}
+    }
+  }, [asset, client])
 
   const signedToken = useMemo(() => {
     try {
@@ -46,7 +56,6 @@ export default function VideoPlayer({
                 ? {playback: signedToken, thumbnail: signedToken, storyboard: signedToken}
                 : undefined
             }
-            streamType="on-demand"
             preload="metadata"
             crossOrigin="anonymous"
             metadata={{
@@ -64,6 +73,24 @@ export default function VideoPlayer({
           {children}
         </>
       )}
+      {error ? (
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+          }}
+        >
+          <Text muted>
+            <ErrorOutlineIcon style={{marginRight: '0.15em'}} />
+            {typeof error === 'object' && 'message' in error && typeof error.message === 'string'
+              ? error.message
+              : 'Error loading video'}
+          </Text>
+        </div>
+      ) : null}
+      {children}
     </Card>
   )
 }

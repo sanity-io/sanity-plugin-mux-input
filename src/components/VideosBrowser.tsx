@@ -4,10 +4,11 @@ import React from 'react'
 
 import useAssets from '../hooks/useAssets'
 import type {VideoAssetDocument} from '../util/types'
+import ImportVideosFromMux from './ImportVideosFromMux'
 import {SelectSortOptions} from './SelectSortOptions'
 import SpinnerBox from './SpinnerBox'
-import {VideoDetailsProps} from './VideoDetails/useVideoDetails'
 import VideoDetails from './VideoDetails/VideoDetails'
+import {VideoDetailsProps} from './VideoDetails/useVideoDetails'
 import VideoInBrowser from './VideoInBrowser'
 
 export interface VideosBrowserProps {
@@ -22,6 +23,7 @@ export default function VideosBrowser({onSelect}: VideosBrowserProps) {
     [editedAsset, assets]
   )
 
+  const placement = onSelect ? 'input' : 'tool'
   return (
     <>
       <Stack padding={4} space={4} style={{minHeight: '50vh'}}>
@@ -37,6 +39,7 @@ export default function VideosBrowser({onSelect}: VideosBrowserProps) {
             />
             <SelectSortOptions setSort={setSort} sort={sort} />
           </Flex>
+          {placement === 'tool' && <ImportVideosFromMux />}
         </Flex>
         <Stack space={3}>
           {assets?.length > 0 && (
@@ -64,7 +67,7 @@ export default function VideosBrowser({onSelect}: VideosBrowserProps) {
         {isLoading && <SpinnerBox />}
 
         {!isLoading && assets.length === 0 && (
-          <Card padding={4} marginY={4} border radius={2} tone="transparent">
+          <Card marginY={4} paddingX={4} paddingY={6} border radius={2} tone="transparent">
             <Text align="center" muted size={3}>
               {searchQuery ? `No videos found for "${searchQuery}"` : 'No videos in this dataset'}
             </Text>
@@ -75,7 +78,7 @@ export default function VideosBrowser({onSelect}: VideosBrowserProps) {
         <VideoDetails
           closeDialog={() => setEditedAsset(null)}
           asset={freshEditedAsset}
-          placement={onSelect ? 'input' : 'tool'}
+          placement={placement}
         />
       )}
     </>

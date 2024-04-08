@@ -41,7 +41,6 @@ export const UploadCard = forwardRef<HTMLDivElement, UploadCardProps>(
     return (
       <UploadCardWithFocusRing
         tone={tone}
-        height="fill"
         ref={forwardedRef}
         padding={0}
         radius={2}
