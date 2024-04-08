@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.3.2](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.3.1...v2.3.2) (2024-04-08)
+
+### Bug Fixes
+
+- improve strict ESM compat, and use animated `@sanity/ui` components ([04de2cc](https://github.com/sanity-io/sanity-plugin-mux-input/commit/04de2cc5c2be5c039fc30830f0d977740e0dd1e2))
+
 ## [2.3.1](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.3.0...v2.3.1) (2024-04-08)
 
 ### Bug Fixes
