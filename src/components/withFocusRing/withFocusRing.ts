@@ -1,6 +1,6 @@
 import {rem} from '@sanity/ui'
-import {type ComponentType} from 'react'
-import styled, {css} from 'styled-components'
+import type {ComponentType} from 'react'
+import {css, styled} from 'styled-components'
 
 import {focusRingBorderStyle, focusRingStyle} from './helpers'
 

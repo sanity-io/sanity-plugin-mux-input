@@ -1,5 +1,4 @@
 import {Box, Spinner} from '@sanity/ui'
-import React from 'react'
 
 const SpinnerBox: React.FC = () => (
   <Box

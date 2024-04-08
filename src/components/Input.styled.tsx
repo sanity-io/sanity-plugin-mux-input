@@ -1,5 +1,4 @@
 import {Box, Card, Flex, Spinner, Text} from '@sanity/ui'
-import React from 'react'
 
 export const InputFallback = () => {
   return (

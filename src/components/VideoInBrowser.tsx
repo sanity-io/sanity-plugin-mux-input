@@ -1,7 +1,7 @@
 import {CheckmarkIcon, EditIcon, LockIcon, PlayIcon} from '@sanity/icons'
 import {Button, Card, Stack, Text, Tooltip} from '@sanity/ui'
 import React, {useState} from 'react'
-import styled from 'styled-components'
+import {styled} from 'styled-components'
 
 import {THUMBNAIL_ASPECT_RATIO} from '../util/constants'
 import {getPlaybackPolicy} from '../util/getPlaybackPolicy'
@@ -101,6 +101,7 @@ export default function VideoInBrowser({
     >
       {playbackPolicy === 'signed' && (
         <Tooltip
+          animate
           content={
             <Card padding={2} radius={2}>
               <IconInfo icon={LockIcon} text="Signed playback policy" size={2} />

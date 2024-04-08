@@ -1,7 +1,6 @@
 // Adapted from https://github.com/sanity-io/sanity/blob/next/packages/sanity/src/desk/components/DraftStatus.tsx
 import {EditIcon} from '@sanity/icons'
 import {Box, Text, Tooltip} from '@sanity/ui'
-import React from 'react'
 import type {PreviewValue, SanityDocument} from 'sanity'
 import {TextWithTone} from 'sanity'
 
@@ -13,6 +12,7 @@ export function DraftStatus(props: {document?: PreviewValue | Partial<SanityDocu
 
   return (
     <Tooltip
+      animate
       portal
       content={
         <Box padding={2}>

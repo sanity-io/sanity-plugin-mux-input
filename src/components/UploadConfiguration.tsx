@@ -159,6 +159,7 @@ export default function UploadConfiguration({
   )
   return (
     <Dialog
+      animate
       open
       id="upload-configuration"
       zOffset={1000}

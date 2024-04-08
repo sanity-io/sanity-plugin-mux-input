@@ -1,9 +1,8 @@
 import {CalendarIcon, ClockIcon, TagIcon} from '@sanity/icons'
 import {Inline, Stack, Text} from '@sanity/ui'
-import React from 'react'
 
 import getVideoMetadata from '../util/getVideoMetadata'
-import {VideoAssetDocument} from '../util/types'
+import type {VideoAssetDocument} from '../util/types'
 import IconInfo from './IconInfo'
 
 const VideoMetadata = (props: {asset: VideoAssetDocument}) => {

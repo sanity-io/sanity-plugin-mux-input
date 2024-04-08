@@ -1,10 +1,9 @@
 import type {SanityDocument} from '@sanity/client'
 import {Box, Card, Text} from '@sanity/ui'
-import React from 'react'
 import {collate, useSchema} from 'sanity'
-import styled from 'styled-components'
+import {styled} from 'styled-components'
 
-import {PluginPlacement} from '../../util/types'
+import type {PluginPlacement} from '../../util/types'
 import {DocumentPreview} from '../documentPreview/DocumentPreview'
 import SpinnerBox from '../SpinnerBox'
 

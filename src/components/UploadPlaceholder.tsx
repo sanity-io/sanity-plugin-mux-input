@@ -2,7 +2,7 @@ import {PlugIcon, SearchIcon, UploadIcon} from '@sanity/icons'
 import {DocumentVideoIcon} from '@sanity/icons'
 import {Box, Button, Card, Flex, Inline, Text} from '@sanity/ui'
 import React, {useCallback} from 'react'
-import styled from 'styled-components'
+import {styled} from 'styled-components'
 
 import type {SetDialogState} from '../hooks/useDialogState'
 import {FileInputButton, type FileInputButtonProps} from './FileInputButton'

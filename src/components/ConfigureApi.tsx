@@ -109,6 +109,7 @@ function ConfigureApi({secrets, setDialogState}: Props) {
 
   return (
     <Dialog
+      animate
       id={id}
       onClose={handleClose}
       header={<Header />}

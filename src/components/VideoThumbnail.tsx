@@ -1,7 +1,7 @@
 import {ErrorOutlineIcon} from '@sanity/icons'
 import {Box, Card, CardTone, Spinner, Stack, Text} from '@sanity/ui'
 import React, {useMemo, useState} from 'react'
-import styled from 'styled-components'
+import {styled} from 'styled-components'
 
 import {useClient} from '../hooks/useClient'
 import useInView from '../hooks/useInView'

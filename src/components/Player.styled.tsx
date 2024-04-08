@@ -1,5 +1,5 @@
 import {useState} from 'react'
-import styled from 'styled-components'
+import {styled} from 'styled-components'
 
 import {useClient} from '../hooks/useClient'
 import {getStoryboardSrc} from '../util/getStoryboardSrc'

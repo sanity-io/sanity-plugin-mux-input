@@ -13,7 +13,7 @@ import {
   Text,
 } from '@sanity/ui'
 import {truncateString, useFormattedDuration} from 'sanity'
-import styled from 'styled-components'
+import {styled} from 'styled-components'
 
 import useImportMuxAssets from '../hooks/useImportMuxAssets'
 import {DIALOGS_Z_INDEX} from '../util/constants'
@@ -104,6 +104,7 @@ function ImportVideosDialog(props: ReturnType<typeof useImportMuxAssets>) {
 
   return (
     <Dialog
+      animate
       header={'Import videos from Mux'}
       zOffset={DIALOGS_Z_INDEX}
       id="video-details-dialog"

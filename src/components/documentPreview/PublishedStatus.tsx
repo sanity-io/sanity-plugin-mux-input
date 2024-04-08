@@ -2,7 +2,6 @@
 
 import {PublishIcon} from '@sanity/icons'
 import {Box, Text, Tooltip} from '@sanity/ui'
-import React from 'react'
 import type {PreviewValue, SanityDocument} from 'sanity'
 import {TextWithTone} from 'sanity'
 
@@ -14,6 +13,7 @@ export function PublishedStatus(props: {document?: PreviewValue | Partial<Sanity
 
   return (
     <Tooltip
+      animate
       portal
       content={
         <Box padding={2}>

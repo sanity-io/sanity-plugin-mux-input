@@ -1,7 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import {Card, type CardTone} from '@sanity/ui'
 import React, {forwardRef, useCallback, useRef} from 'react'
-import styled from 'styled-components'
+import {styled} from 'styled-components'
 
 import {withFocusRing} from './withFocusRing'
 

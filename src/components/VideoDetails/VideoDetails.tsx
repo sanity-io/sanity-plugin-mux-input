@@ -84,6 +84,7 @@ const VideoDetails: React.FC<VideoDetailsProps> = (props) => {
 
   return (
     <Dialog
+      animate
       header={displayInfo.title}
       zOffset={DIALOGS_Z_INDEX}
       id="video-details-dialog"
@@ -138,6 +139,7 @@ const VideoDetails: React.FC<VideoDetailsProps> = (props) => {
       {/* CONFIRM CLOSING DIALOG */}
       {state === 'closing' && (
         <Dialog
+          animate
           header={'You have unsaved changes'}
           zOffset={DIALOGS_Z_INDEX}
           id="closing-video-details-dialog"

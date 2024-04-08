@@ -62,6 +62,7 @@ export default function DeleteDialog({
 
   return (
     <Dialog
+      animate
       header={'Delete video'}
       zOffset={DIALOGS_Z_INDEX}
       id="deleting-video-details-dialog"

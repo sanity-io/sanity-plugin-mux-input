@@ -23,7 +23,7 @@ import {
 } from '@sanity/ui'
 import React, {memo, useCallback, useEffect, useMemo, useState} from 'react'
 import {PatchEvent, unset} from 'sanity'
-import styled from 'styled-components'
+import {styled} from 'styled-components'
 
 import {type DialogState, type SetDialogState} from '../hooks/useDialogState'
 import {getPlaybackPolicy} from '../util/getPlaybackPolicy'
@@ -74,6 +74,7 @@ function PlayerActionsMenu(
     <Inline space={1} padding={2}>
       {isSigned && (
         <Tooltip
+          animate
           content={
             <Box padding={2}>
               <Text muted size={1}>
@@ -90,6 +91,7 @@ function PlayerActionsMenu(
         </Tooltip>
       )}
       <Popover
+        animate
         content={
           <Menu ref={setMenuRef}>
             <Box padding={2}>

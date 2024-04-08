@@ -1,6 +1,6 @@
 import {Button, type ButtonProps} from '@sanity/ui'
 import React, {useCallback, useId, useRef} from 'react'
-import styled from 'styled-components'
+import {styled} from 'styled-components'
 
 const HiddenInput = styled.input`
   overflow: hidden;

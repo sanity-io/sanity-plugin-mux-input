@@ -1,5 +1,5 @@
 import {MenuItem} from '@sanity/ui'
-import styled, {css} from 'styled-components'
+import {css, styled} from 'styled-components'
 
 import {focusRingStyle} from './withFocusRing/helpers'
 

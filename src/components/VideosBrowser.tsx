@@ -1,14 +1,14 @@
 import {SearchIcon} from '@sanity/icons'
 import {Card, Flex, Grid, Label, Stack, Text, TextInput} from '@sanity/ui'
-import React from 'react'
+import {useMemo, useState} from 'react'
 
 import useAssets from '../hooks/useAssets'
 import type {VideoAssetDocument} from '../util/types'
 import ImportVideosFromMux from './ImportVideosFromMux'
 import {SelectSortOptions} from './SelectSortOptions'
 import SpinnerBox from './SpinnerBox'
+import type {VideoDetailsProps} from './VideoDetails/useVideoDetails'
 import VideoDetails from './VideoDetails/VideoDetails'
-import {VideoDetailsProps} from './VideoDetails/useVideoDetails'
 import VideoInBrowser from './VideoInBrowser'
 
 export interface VideosBrowserProps {
@@ -17,8 +17,8 @@ export interface VideosBrowserProps {
 
 export default function VideosBrowser({onSelect}: VideosBrowserProps) {
   const {assets, isLoading, searchQuery, setSearchQuery, setSort, sort} = useAssets()
-  const [editedAsset, setEditedAsset] = React.useState<VideoDetailsProps['asset'] | null>(null)
-  const freshEditedAsset = React.useMemo(
+  const [editedAsset, setEditedAsset] = useState<VideoDetailsProps['asset'] | null>(null)
+  const freshEditedAsset = useMemo(
     () => assets.find((a) => a._id === editedAsset?._id) || editedAsset,
     [editedAsset, assets]
   )

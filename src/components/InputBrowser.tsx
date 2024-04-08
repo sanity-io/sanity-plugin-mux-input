@@ -1,6 +1,6 @@
 import {Dialog} from '@sanity/ui'
 import React, {useCallback, useId} from 'react'
-import styled from 'styled-components'
+import {styled} from 'styled-components'
 
 import type {SetDialogState} from '../hooks/useDialogState'
 import SelectAsset, {type Props as SelectAssetProps} from './SelectAsset'

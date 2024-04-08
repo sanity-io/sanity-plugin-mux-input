@@ -1,9 +1,8 @@
 // Lifted from sanity/form/inputs/files/common/UploadProgress
 
 import {Button, Card, Code, Flex, Inline, Stack, Text} from '@sanity/ui'
-import React from 'react'
 import {LinearProgress} from 'sanity'
-import styled from 'styled-components'
+import {styled} from 'styled-components'
 
 export const CardWrapper = styled(Card)`
   min-height: 82px;
