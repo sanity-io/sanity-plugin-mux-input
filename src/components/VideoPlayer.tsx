@@ -1,13 +1,13 @@
-import MuxPlayer, {MuxPlayerProps} from '@mux/mux-player-react'
+import MuxPlayer, {type MuxPlayerProps} from '@mux/mux-player-react'
+import {ErrorOutlineIcon} from '@sanity/icons'
 import {Card, Text} from '@sanity/ui'
-import {PropsWithChildren, useMemo} from 'react'
+import {type PropsWithChildren, useMemo} from 'react'
 
 import {useClient} from '../hooks/useClient'
 import {MIN_ASPECT_RATIO} from '../util/constants'
 import {getVideoSrc} from '../util/getVideoSrc'
 import type {VideoAssetDocument} from '../util/types'
 import pluginPkg from './../../package.json'
-import {ErrorOutlineIcon} from '@sanity/icons'
 
 export default function VideoPlayer({
   asset,
@@ -24,6 +24,7 @@ export default function VideoPlayer({
       if (src) return {src: src}
 
       return {error: new TypeError('Asset has no playback ID')}
+      // eslint-disable-next-line @typescript-eslint/no-shadow
     } catch (error) {
       return {error}
     }

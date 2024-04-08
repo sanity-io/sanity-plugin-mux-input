@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react'
 import {defer, of, timer} from 'rxjs'
 import {concatMap, expand, tap} from 'rxjs/operators'
+
 import type {MuxAsset, Secrets} from '../util/types'
 
 const FIRST_PAGE = 1
@@ -133,6 +134,7 @@ export default function useMuxAssets({secrets, enabled}: {enabled: boolean; secr
           // after 2s to avoid rate limiting
           if (hasMorePages(pageResult)) {
             return timer(2000).pipe(
+              // eslint-disable-next-line max-nested-callbacks
               concatMap(() => defer(() => fetchMuxAssetsPage(secrets, pageResult.pageNum + 1)))
             )
           }
@@ -157,7 +159,9 @@ export default function useMuxAssets({secrets, enabled}: {enabled: boolean; secr
       })
 
     // Unsubscribe on component unmount to prevent memory leaks or fetching unnecessarily
+    // eslint-disable-next-line consistent-return
     return () => subscription.unsubscribe()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled])
 
   return state

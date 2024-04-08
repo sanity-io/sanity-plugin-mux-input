@@ -14,6 +14,7 @@ import {
 } from '@sanity/ui'
 import {truncateString, useFormattedDuration} from 'sanity'
 import styled from 'styled-components'
+
 import useImportMuxAssets from '../hooks/useImportMuxAssets'
 import {DIALOGS_Z_INDEX} from '../util/constants'
 import type {MuxAsset} from '../util/types'
@@ -91,6 +92,7 @@ function MissingAsset({
   )
 }
 
+// eslint-disable-next-line complexity
 function ImportVideosDialog(props: ReturnType<typeof useImportMuxAssets>) {
   const {importState} = props
 
@@ -264,6 +266,7 @@ function ImportVideosDialog(props: ReturnType<typeof useImportMuxAssets>) {
                     onClick={(e) => {
                       const selectAll = e.currentTarget.checked
                       if (selectAll) {
+                        // eslint-disable-next-line no-unused-expressions
                         props.missingAssets && props.setSelectedAssets(props.missingAssets)
                       } else {
                         props.setSelectedAssets([])
@@ -305,8 +308,10 @@ export default function ImportVideosFromMux() {
   }
 
   if (importAssets.dialogOpen) {
+    // eslint-disable-next-line consistent-return
     return <ImportVideosDialog {...importAssets} />
   }
 
+  // eslint-disable-next-line consistent-return
   return <Button mode="bleed" text="Import from Mux" onClick={importAssets.openDialog} />
 }

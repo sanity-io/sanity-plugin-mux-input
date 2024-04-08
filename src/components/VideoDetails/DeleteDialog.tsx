@@ -1,12 +1,12 @@
 import {TrashIcon} from '@sanity/icons'
 import {Box, Button, Card, Checkbox, Dialog, Flex, Heading, Stack, Text, useToast} from '@sanity/ui'
-import React, {useEffect, useState} from 'react'
-import {SanityDocument} from 'sanity'
+import {useEffect, useState} from 'react'
+import type {SanityDocument} from 'sanity'
 
 import {deleteAsset} from '../../actions/assets'
 import {useClient} from '../../hooks/useClient'
 import {DIALOGS_Z_INDEX} from '../../util/constants'
-import {PluginPlacement, VideoAssetDocument} from '../../util/types'
+import type {PluginPlacement, VideoAssetDocument} from '../../util/types'
 import SpinnerBox from '../SpinnerBox'
 import VideoReferences from './VideoReferences'
 
@@ -88,7 +88,7 @@ export default function DeleteDialog({
           )}
           {state === 'cantDelete' && (
             <>
-              <Heading size={2}>Video can't be deleted</Heading>
+              <Heading size={2}>Video can&apos;t be deleted</Heading>
               <Text size={2} style={{marginBottom: '2rem'}}>
                 There are {references?.length} document{references && references.length > 0 && 's'}{' '}
                 pointing to this video. Remove their references to this file or delete them before

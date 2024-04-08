@@ -1,10 +1,4 @@
-import type {
-  ObjectInputProps,
-  PreviewLayoutKey,
-  PreviewProps,
-  SanityDocument,
-  SchemaType,
-} from 'sanity'
+import type {ObjectInputProps, PreviewLayoutKey, PreviewProps, SchemaType} from 'sanity'
 import type {PartialDeep} from 'type-fest'
 
 export interface MuxInputConfig {

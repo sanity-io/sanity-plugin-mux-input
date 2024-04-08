@@ -7,7 +7,6 @@ module.exports = {
     },
   },
   extends: [
-    'react-app',
     'sanity/react', // must come before sanity/typescript
     'sanity/typescript',
     'plugin:react-hooks/recommended',
@@ -38,6 +37,7 @@ module.exports = {
     camelcase: 0,
     'symbol-description': 0,
     'no-void': 0,
+    '@typescript-eslint/no-explicit-any': 'warn',
   },
   settings: {
     'import/ignore': ['\\.css$', '.*node_modules.*'],

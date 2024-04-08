@@ -55,7 +55,7 @@ function extractTermsFromQuery(query: string): string[] {
  * Create GROQ constraints, given search terms and the full spec of available document types and fields.
  * Essentially a large list of all possible fields (joined by logical OR) to match our search terms against.
  */
-function createConstraints(terms: string[], includeAssetId: Boolean) {
+function createConstraints(terms: string[], includeAssetId: boolean) {
   const searchPaths = includeAssetId ? ['filename', 'assetId'] : ['filename']
   const constraints = terms
     .map((_term, i) => searchPaths.map((joinedPath) => `${joinedPath} match $t${i}`))
