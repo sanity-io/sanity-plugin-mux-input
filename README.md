@@ -181,17 +181,15 @@ export default function MuxVideo({playbackId, title}: {playbackId?: string; titl
 
 💡 You can try these recommendations through the [Codesandbox example](https://codesandbox.io/s/github/sanity-io/sanity-plugin-mux-input/tree/main/example).
 
-## Configuring Mux video uploads
+## Configuring Mux Video uploads
 
 ### Signed URLs (private playbacks)
 
 To enable [signed urls](https://docs.mux.com/docs/security-signed-urls) with content uploaded to Mux, you will need to check the "Enable Signed Urls" option in the Mux Plugin configuration. Assuming that the API Access Token and Secret Key are set (as per the [Quick start](#quick-start) section).
 
-More information for this feature of the plugin can be found on Mux's [documentation](https://docs.mux.com/docs/headless-cms-sanity#advanced-signed-urls)
+More information on this feature is available on Mux's [docs](https://docs.mux.com/docs/headless-cms-sanity#advanced-signed-urls)
 
-### Encoding tier
-
-### MP4 support (downloadable videos)
+### MP4 support (downloadable videos or offline viewing)
 
 To enable [static MP4 renditions](https://docs.mux.com/guides/video/enable-static-mp4-renditions), add `mp4_support: 'standard'` to the `options` of your `mux.video` schema type.
 
@@ -205,6 +203,8 @@ export default defineConfig({
 
 If MP4 support is enabled in the plugin's configuration, editors can still choose to enable MP4 renditions on a per-video basis when uploading new assets.
 
+MP4 allows users to download videos for later or offline viewing. More information can be found on Mux's [documentation](https://docs.mux.com/guides/enable-static-mp4-renditions).
+
 ### Video resolution (max_resolution_tier)
 
 To edit [max_resolution_tier](https://docs.mux.com/api-reference#video/operation/create-direct-upload) to support other resolutions other than 1080p, add `max_resolution_tier: '1080p' | '1440p' | '2160p'` to the `options` of your `mux.video` schema type. Defaults to `1080p`.
@@ -217,7 +217,7 @@ export default defineConfig({
 })
 ```
 
-When uploading new assets, editors can still choose a lower resolution for each video than configured globally.
+When uploading new assets, editors can still choose a lower resolution for each video than configured globally. This option controls the maximum resolution encoded or processed for the uploaded video. The option is particularly important to manage costs when uploaded videos are higher than `1080p` resolution. More information on the feature is available on Mux's [docs](https://docs.mux.com/guides/stream-videos-in-4k). Also, read more on this feature announcement on Mux's [blog](https://www.mux.com/blog/more-pixels-fewer-problems-introducing-4k-support-for-mux-video).
 
 ### Encoding tier (smart or baseline)
 
@@ -232,6 +232,8 @@ export default defineConfig({
 ```
 
 If `encoding_tier: 'smart'`, editors can still choose to use the `baseline` encoding tier on a per-video basis when uploading new assets.
+
+More information on the feature is available on Mux's [documentation](https://docs.mux.com/guides/use-encoding-tiers). Also, read more on the feature announcement on Mux's [blog](https://www.mux.com/blog/our-next-pricing-lever-baseline-on-demand-assets-with-free-video-encoding)
 
 ## Contributing
 
