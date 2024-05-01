@@ -189,9 +189,7 @@ To enable [signed urls](https://docs.mux.com/docs/security-signed-urls) with con
 
 More information for this feature of the plugin can be found on Mux's [documentation](https://docs.mux.com/docs/headless-cms-sanity#advanced-signed-urls)
 
-### Encoding tier
-
-### MP4 support (downloadable videos)
+### MP4 support (downloadable videos or offline viewing)
 
 To enable [static MP4 renditions](https://docs.mux.com/guides/video/enable-static-mp4-renditions), add `mp4_support: 'standard'` to the `options` of your `mux.video` schema type.
 
