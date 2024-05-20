@@ -1,7 +1,8 @@
 import {definePlugin} from 'sanity'
+
 import createStudioTool, {DEFAULT_TOOL_CONFIG} from '../components/StudioTool'
 import {muxVideoCustomRendering} from '../plugin'
-import {muxVideo, muxVideoAsset} from '../schema'
+import {muxVideoSchema, schemaTypes} from '../schema'
 import type {PluginConfig} from '../util/types'
 export type {VideoAssetDocument} from '../util/types'
 
@@ -20,9 +21,9 @@ export const muxInput = definePlugin<Partial<PluginConfig> | void>((userConfig) 
     name: 'mux-input',
     schema: {
       types: [
-        muxVideoAsset,
+        ...schemaTypes,
         {
-          ...muxVideo,
+          ...muxVideoSchema,
           ...muxVideoCustomRendering(config),
         },
       ],

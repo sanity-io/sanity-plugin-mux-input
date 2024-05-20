@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "sanity:graphql": "sanity graphql deploy"
   },
   "dependencies": {
     "@mux/mux-player-react": "^2.6.0",
