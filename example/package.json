@@ -9,23 +9,23 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@mux/mux-player-react": "^2.3.3",
-    "@portabletext/react": "^3.0.11",
-    "@sanity/client": "^6.14.0",
+    "@mux/mux-player-react": "^2.6.0",
+    "@portabletext/react": "^3.0.18",
+    "@sanity/client": "^6.18.2",
     "@sanity/image-url": "^1.0.2",
-    "@sanity/vision": "^3.30.0",
-    "next": "^14.1.0",
-    "next-sanity": "^8.0.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "sanity": "^3.30.0",
+    "@sanity/vision": "^3.42.1",
+    "next": "^14.2.3",
+    "next-sanity": "^9.0.20",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "sanity": "^3.42.1",
     "sanity-plugin-mux-input": "file:.yalc/sanity-plugin-mux-input",
-    "styled-components": "^6.1.8"
+    "styled-components": "^6.1.11"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^18.2.74",
-    "@types/react-dom": "^18.2.24",
-    "typescript": "^5.4.2"
+    "@types/node": "^20.12.12",
+    "@types/react": "^18.3.2",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.4.5"
   }
 }
