@@ -58,7 +58,7 @@ export default function useImportMuxAssets() {
 
   async function importAssets() {
     setImportState('importing')
-    const documents = selectedAssets.map(muxAssetToSanityDocument)
+    const documents = selectedAssets.flatMap((asset) => muxAssetToSanityDocument(asset) || [])
 
     const tx = client.transaction()
     documents.forEach((doc) => tx.create(doc))
@@ -89,14 +89,18 @@ export default function useImportMuxAssets() {
   }
 }
 
-function muxAssetToSanityDocument(asset: MuxAsset): VideoAssetDocument {
+function muxAssetToSanityDocument(asset: MuxAsset): VideoAssetDocument | undefined {
+  const playbackId = (asset.playback_ids || []).find((p) => p.id)?.id
+
+  if (!playbackId) return undefined
+
   return {
     _id: uuid(),
     _type: 'mux.videoAsset',
     _updatedAt: new Date().toISOString(),
     _createdAt: parseMuxDate(asset.created_at).toISOString(),
     assetId: asset.id,
-    playbackId: asset.playback_ids.find((p) => p.id)?.id,
+    playbackId,
     filename: `Asset #${truncateString(asset.id, 15)}`,
     status: asset.status,
     data: asset,
