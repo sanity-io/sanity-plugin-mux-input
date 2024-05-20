@@ -24,10 +24,10 @@ export function generateJwt<T extends Audience>(
 ): string {
   const {signingKeyId, signingKeyPrivate} = readSecrets(client)
   if (!signingKeyId) {
-    throw new TypeError('Missing signingKeyId')
+    throw new TypeError("Missing `signingKeyId`.\n Check your plugin's configuration")
   }
   if (!signingKeyPrivate) {
-    throw new TypeError('Missing signingKeyPrivate')
+    throw new TypeError("Missing `signingKeyPrivate`.\n Check your plugin's configuration")
   }
 
   // @ts-expect-error - handle missing typings for this package

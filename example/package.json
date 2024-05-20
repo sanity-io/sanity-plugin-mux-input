@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "sanity:graphql": "sanity graphql deploy"
+    "sanity:graphql": "sanity graphql deploy",
+    "reset-mux-credentials": "sanity documents delete secrets.mux"
   },
   "dependencies": {
     "@mux/mux-player-react": "^2.6.0",
