@@ -58,6 +58,7 @@ yalc.lock
 
 # Compiled plugin
 lib
+dist
 
 .env
 .env.local
