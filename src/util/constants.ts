@@ -11,3 +11,5 @@ export const THUMBNAIL_ASPECT_RATIO = 16 / 9
 
 /** To prevent excessive height, thumbnails and input should not go beyond to this aspect ratio. */
 export const MIN_ASPECT_RATIO = 5 / 4
+
+export const AUDIO_ASPECT_RATIO = 5 / 1

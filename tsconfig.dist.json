@@ -5,11 +5,7 @@
     "./src/**/__fixtures__",
     "./src/**/__mocks__",
     "./src/**/*.test.ts",
-    "./src/**/*.test.tsx"
-  ],
-  "compilerOptions": {
-    "rootDir": ".",
-    "outDir": "./lib",
-    "emitDeclarationOnly": true
-  }
+    "./src/**/*.test.tsx",
+    "example"
+  ]
 }

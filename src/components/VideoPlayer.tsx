@@ -4,7 +4,7 @@ import {Card, Text} from '@sanity/ui'
 import {type PropsWithChildren, useMemo} from 'react'
 
 import {useClient} from '../hooks/useClient'
-import {MIN_ASPECT_RATIO} from '../util/constants'
+import {AUDIO_ASPECT_RATIO, MIN_ASPECT_RATIO} from '../util/constants'
 import {getVideoSrc} from '../util/getVideoSrc'
 import type {VideoAssetDocument} from '../util/types'
 
@@ -16,6 +16,8 @@ export default function VideoPlayer({
   {asset: VideoAssetDocument; forceAspectRatio?: number} & Partial<Pick<MuxPlayerProps, 'autoPlay'>>
 >) {
   const client = useClient()
+
+  const isAudio = assetIsAudio(asset)
 
   const {src: videoSrc, error} = useMemo(() => {
     try {
@@ -41,7 +43,13 @@ export default function VideoPlayer({
   const [width, height] = (asset?.data?.aspect_ratio ?? '16:9').split(':').map(Number)
   const targetAspectRatio =
     props.forceAspectRatio || (Number.isNaN(width) ? 16 / 9 : width / height)
-  const aspectRatio = Math.max(MIN_ASPECT_RATIO, targetAspectRatio)
+  let aspectRatio = Math.max(MIN_ASPECT_RATIO, targetAspectRatio)
+  if (isAudio) {
+    aspectRatio = props.forceAspectRatio
+      ? // Make it wider when forcing aspect ratio to balance with videos' rendering height (audio players overflow a bit)
+        props.forceAspectRatio * 1.2
+      : AUDIO_ASPECT_RATIO
+  }
 
   return (
     <Card tone="transparent" style={{aspectRatio: aspectRatio, position: 'relative'}}>
@@ -63,6 +71,7 @@ export default function VideoPlayer({
               player_version: process.env.PKG_VERSION,
               page_type: 'Preview Player',
             }}
+            audio={isAudio}
             style={{
               height: '100%',
               width: '100%',
@@ -93,4 +102,8 @@ export default function VideoPlayer({
       {children}
     </Card>
   )
+}
+
+export function assetIsAudio(asset: VideoAssetDocument) {
+  return asset.data?.max_stored_resolution === 'Audio only'
 }
