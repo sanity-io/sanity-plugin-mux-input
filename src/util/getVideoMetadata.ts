@@ -10,6 +10,7 @@ export default function getVideoMetadata(doc: VideoAssetDocument) {
   return {
     title: doc.filename || id.slice(0, 12),
     id: id,
+    playbackId: doc.playbackId,
     createdAt: date,
     duration: doc.data?.duration ? formatSeconds(doc.data?.duration) : undefined,
     aspect_ratio: doc.data?.aspect_ratio,
