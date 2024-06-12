@@ -71,12 +71,10 @@
     "use-error-boundary": "^2.0.6"
   },
   "devDependencies": {
-    "@commitlint/cli": "^19.3.0",
-    "@commitlint/config-conventional": "^19.2.2",
     "@sanity/client": "^6.18.2",
     "@sanity/pkg-utils": "^6.8.16",
     "@sanity/plugin-kit": "4.0.12",
-    "@sanity/semantic-release-preset": "^4.1.7",
+    "@sanity/semantic-release-preset": "^4.1.8",
     "@sanity/vision": "^3.42.1",
     "@types/lodash": "^4.17.4",
     "@types/react": "^18.3.2",
@@ -103,6 +101,7 @@
     "react-is": "^18.3.1",
     "rimraf": "^5.0.7",
     "sanity": "^3.42.1",
+    "semantic-release": "^24.0.0",
     "styled-components": "^6.1.11",
     "typescript": "^5.4.5",
     "yalc": "1.0.0-pre.53"
