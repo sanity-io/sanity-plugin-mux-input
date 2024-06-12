@@ -1,7 +1,7 @@
 // ./src/app/page.tsx
-import {client} from '@/sanity/client'
-
 import '@/sakura.css'
+
+import {client} from '@/sanity/client'
 
 type Post = {
   _id: string

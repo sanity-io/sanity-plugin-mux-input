@@ -1,7 +1,10 @@
 // ./src/app/page.tsx
 import '@/sakura.css'
-import {client} from '@/sanity/client'
+
 import {notFound} from 'next/navigation'
+
+import {client} from '@/sanity/client'
+
 import MuxVideo from './MuxVideo'
 
 type Post = {
