@@ -1,8 +1,9 @@
-import {PropsWithChildren, useRef, useState} from 'react'
-import {Box, Button, Card, CardTone, Flex, Inline, Text} from '@sanity/ui'
-import {FileInputButton} from './FileInputButton'
 import {UploadIcon} from '@sanity/icons'
+import {Box, Button, Card, CardTone, Flex, Inline, Text} from '@sanity/ui'
+import {PropsWithChildren, useRef, useState} from 'react'
+
 import {extractDroppedFiles} from '../util/extractFiles'
+import {FileInputButton} from './FileInputButton'
 
 interface FileInputAreaProps extends PropsWithChildren {
   accept?: string

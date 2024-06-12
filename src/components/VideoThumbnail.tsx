@@ -6,7 +6,7 @@ import {styled} from 'styled-components'
 import {useClient} from '../hooks/useClient'
 import useInView from '../hooks/useInView'
 import {THUMBNAIL_ASPECT_RATIO} from '../util/constants'
-import {getAnimatedPosterSrc, type AnimatedPosterSrcOptions} from '../util/getAnimatedPosterSrc'
+import {type AnimatedPosterSrcOptions, getAnimatedPosterSrc} from '../util/getAnimatedPosterSrc'
 import {VideoAssetDocument} from '../util/types'
 
 const Image = styled.img`

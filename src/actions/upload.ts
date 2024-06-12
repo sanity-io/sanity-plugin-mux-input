@@ -1,5 +1,5 @@
 import {uuid as generateUuid} from '@sanity/uuid'
-import {concat, defer, from, of, throwError, type Observable} from 'rxjs'
+import {concat, defer, from, type Observable, of, throwError} from 'rxjs'
 import {catchError, mergeMap, mergeMapTo, switchMap} from 'rxjs/operators'
 import type {SanityClient} from 'sanity'
 

@@ -7,8 +7,8 @@ import {
   ErrorOutlineIcon,
   RevertIcon,
   SearchIcon,
-  TrashIcon,
   TagIcon,
+  TrashIcon,
 } from '@sanity/icons'
 import {
   Button,

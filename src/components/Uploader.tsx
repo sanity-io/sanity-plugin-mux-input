@@ -1,7 +1,7 @@
 import {ErrorOutlineIcon} from '@sanity/icons'
 import {Button, CardTone, Flex, Text, useToast} from '@sanity/ui'
 import React, {useEffect, useReducer, useRef, useState} from 'react'
-import {Subject, Subscription, type Observable} from 'rxjs'
+import {type Observable, Subject, Subscription} from 'rxjs'
 import {takeUntil, tap} from 'rxjs/operators'
 import type {SanityClient} from 'sanity'
 import {PatchEvent, set, setIfMissing} from 'sanity'
