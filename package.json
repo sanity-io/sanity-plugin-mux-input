@@ -74,7 +74,7 @@
     "@sanity/client": "^6.18.2",
     "@sanity/pkg-utils": "^6.8.16",
     "@sanity/plugin-kit": "4.0.12",
-    "@sanity/semantic-release-preset": "^4.1.8",
+    "@sanity/semantic-release-preset": "^5.0.0",
     "@sanity/vision": "^3.42.1",
     "@types/lodash": "^4.17.4",
     "@types/react": "^18.3.2",
