@@ -4,6 +4,8 @@ export default defineConfig({
   dist: 'dist',
   tsconfig: 'tsconfig.dist.json',
 
+  external: (prev) => prev.filter((dep) => dep !== 'use-error-boundary'),
+
   // Remove this block to enable strict export validation
   extract: {
     rules: {
