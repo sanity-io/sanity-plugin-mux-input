@@ -12,8 +12,8 @@
       "ignorePresets": ["github>sanity-io/renovate-config:group-recommended"],
       "groupName": "example dependencies",
       "groupSlug": "example",
-      "matchPackagePatterns": ["*"],
-      "matchUpdateTypes": ["major", "minor", "patch"]
+      "matchUpdateTypes": ["major", "minor", "patch"],
+      "matchPackageNames": ["*"]
     }
   ]
 }
