@@ -2,7 +2,7 @@
 
 import {useState} from 'react'
 
-export type DialogState = 'secrets' | 'select-video' | 'edit-thumbnail' | false
+export type DialogState = 'secrets' | 'select-video' | 'edit-thumbnail' | 'details' | false
 
 export function useDialogState() {
   return useState<DialogState>(false)

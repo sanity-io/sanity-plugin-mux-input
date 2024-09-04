@@ -1,6 +1,6 @@
 import {
+  EditIcon,
   EllipsisHorizontalIcon,
-  EllipsisVerticalIcon,
   LockIcon,
   PlugIcon,
   ResetIcon,
@@ -107,6 +107,7 @@ function PlayerActionsMenu(
               disabled={readOnly}
               fontSize={1}
             />
+            <MenuItem icon={EditIcon} text="Details" onClick={() => setDialogState('details')} />
             <MenuItem
               icon={SearchIcon}
               text="Browse"

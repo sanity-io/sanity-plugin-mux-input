@@ -24,6 +24,7 @@ import UploadConfiguration from './UploadConfiguration'
 import {UploadCard} from './Uploader.styled'
 import UploadPlaceholder from './UploadPlaceholder'
 import {UploadProgress} from './UploadProgress'
+import VideoDetails from './VideoDetails/VideoDetails'
 
 interface Props extends Pick<MuxInputProps, 'onChange' | 'readOnly'> {
   config: PluginConfig
@@ -377,6 +378,13 @@ export default function Uploader(props: Props) {
           asset={props.asset}
           onChange={props.onChange}
           setDialogState={props.setDialogState}
+        />
+      )}
+      {props.dialogState === 'details' && props.asset && (
+        <VideoDetails
+          closeDialog={() => props.setDialogState(false)}
+          asset={props.asset}
+          placement="input"
         />
       )}
     </>
