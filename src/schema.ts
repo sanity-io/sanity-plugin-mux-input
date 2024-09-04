@@ -1,4 +1,7 @@
-export const muxVideoSchema = {
+import {defineType} from 'sanity'
+
+// Configuration for this field type may be overridden by the plugin options
+export const muxVideoSchema = defineType({
   name: 'mux.video',
   type: 'object',
   title: 'Video asset reference',
@@ -11,9 +14,9 @@ export const muxVideoSchema = {
       to: [{type: 'mux.videoAsset'}],
     },
   ],
-}
+})
 
-const muxTrack = {
+const muxTrack = defineType({
   name: 'mux.track',
   type: 'object',
   fields: [
@@ -24,18 +27,18 @@ const muxTrack = {
     {type: 'number', name: 'duration'},
     {type: 'number', name: 'max_height'},
   ],
-}
+})
 
-const muxPlaybackId = {
+const muxPlaybackId = defineType({
   name: 'mux.playbackId',
   type: 'object',
   fields: [
     {type: 'string', name: 'id'},
     {type: 'string', name: 'policy'},
   ],
-}
+})
 
-const muxStaticRenditionFile = {
+const muxStaticRenditionFile = defineType({
   name: 'mux.staticRenditionFile',
   type: 'object',
   fields: [
@@ -46,9 +49,9 @@ const muxStaticRenditionFile = {
     {type: 'number', name: 'filesize'},
     {type: 'number', name: 'height'},
   ],
-}
+})
 
-const muxStaticRenditions = {
+const muxStaticRenditions = defineType({
   name: 'mux.staticRenditions',
   type: 'object',
   fields: [
@@ -59,9 +62,9 @@ const muxStaticRenditions = {
       of: [{type: 'mux.staticRenditionFile'}],
     },
   ],
-}
+})
 
-const muxAssetData = {
+const muxAssetData = defineType({
   name: 'mux.assetData',
   title: 'Mux asset data',
   type: 'object',
@@ -137,9 +140,9 @@ const muxAssetData = {
       type: 'mux.staticRenditions',
     },
   ],
-}
+})
 
-const muxVideoAsset = {
+const muxVideoAsset = defineType({
   name: 'mux.videoAsset',
   type: 'object',
   title: 'Video asset',
@@ -169,7 +172,7 @@ const muxVideoAsset = {
       name: 'data',
     },
   ],
-}
+})
 
 export const schemaTypes = [
   muxTrack,
