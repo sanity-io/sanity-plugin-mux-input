@@ -108,22 +108,13 @@ function ConfigureApi({secrets, setDialogState}: Props) {
   }, [firstField])
 
   return (
-    <Dialog
-      animate
-      id={id}
-      onClose={handleClose}
-      header={<Header />}
-      width={1}
-      // style={{
-      //   maxWidth: '550px',
-      // }}
-    >
-      <Box padding={4} style={{position: 'relative'}}>
+    <Dialog animate id={id} onClose={handleClose} header={<Header />} width={1}>
+      <Box padding={4} paddingTop={1}>
         <form onSubmit={handleSubmit} noValidate>
           <Stack space={4}>
             {!hasSecretsInitially && (
               <Card padding={[3, 3, 3]} radius={2} shadow={1} tone="primary">
-                <Stack space={3}>
+                <Stack space={4}>
                   <Text size={1}>
                     To set up a new access token, go to your{' '}
                     <a
@@ -138,7 +129,8 @@ function ConfigureApi({secrets, setDialogState}: Props) {
                   <Text size={1}>
                     The access token needs permissions: <strong>Mux Video </strong>
                     (Full Access) and <strong>Mux Data</strong> (Read)
-                    <br />
+                  </Text>
+                  <Text size={1}>
                     The credentials will be stored safely in a hidden document only available to
                     editors.
                   </Text>
