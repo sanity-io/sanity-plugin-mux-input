@@ -1,10 +1,12 @@
 import Input from './components/Input'
+import {MuxVideoField} from './components/MuxVideoField'
 import VideoThumbnail from './components/VideoThumbnail'
 import type {MuxInputProps, PluginConfig, VideoAssetDocument} from './util/types'
 
 export function muxVideoCustomRendering(config: PluginConfig) {
   return {
     components: {
+      field: MuxVideoField,
       input: (props: MuxInputProps) => (
         <Input config={{...config, ...props.schemaType.options}} {...props} />
       ),
