@@ -1,16 +1,11 @@
-import {Box, Spinner} from '@sanity/ui'
+import {Flex, Spinner} from '@sanity/ui'
+
+const style = {minHeight: '150px'}
 
 const SpinnerBox: React.FC = () => (
-  <Box
-    style={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      minHeight: '150px',
-    }}
-  >
+  <Flex align="center" justify="center" style={style}>
     <Spinner />
-  </Box>
+  </Flex>
 )
 
 export default SpinnerBox
