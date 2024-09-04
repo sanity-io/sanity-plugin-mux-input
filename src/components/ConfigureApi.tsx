@@ -114,9 +114,9 @@ function ConfigureApi({secrets, setDialogState}: Props) {
       onClose={handleClose}
       header={<Header />}
       width={1}
-      style={{
-        maxWidth: '550px',
-      }}
+      // style={{
+      //   maxWidth: '550px',
+      // }}
     >
       <Box padding={4} style={{position: 'relative'}}>
         <form onSubmit={handleSubmit} noValidate>
