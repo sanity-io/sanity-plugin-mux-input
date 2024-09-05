@@ -306,7 +306,7 @@ export interface MuxTextTrack {
   passthrough?: string
   status: 'preparing' | 'ready' | 'errored'
 }
-export type MuxTrack = MuxVideoTrack | MuxAudioTrack
+export type MuxTrack = MuxVideoTrack | MuxAudioTrack | MuxTextTrack
 // Typings lifted from https://docs.mux.com/api-reference/video#tag/assets
 export interface MuxAsset {
   id: string

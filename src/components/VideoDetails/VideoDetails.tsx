@@ -5,6 +5,7 @@ import {
   CropIcon,
   EditIcon,
   ErrorOutlineIcon,
+  OlistIcon,
   RevertIcon,
   SearchIcon,
   TagIcon,
@@ -31,6 +32,7 @@ import FormField from '../FormField'
 import IconInfo from '../IconInfo'
 import {ResolutionIcon} from '../icons/Resolution'
 import {StopWatchIcon} from '../icons/StopWatch'
+import {Tracks} from '../Tracks'
 import VideoPlayer from '../VideoPlayer'
 import DeleteDialog from './DeleteDialog'
 import useVideoDetails, {VideoDetailsProps} from './useVideoDetails'
@@ -56,7 +58,7 @@ const AssetInput: React.FC<{
 )
 
 const VideoDetails: React.FC<VideoDetailsProps> = (props) => {
-  const [tab, setTab] = useState<'details' | 'references'>('details')
+  const [tab, setTab] = useState<'details' | 'references' | 'tracks'>('details')
   const {
     displayInfo,
     filename,
@@ -91,7 +93,6 @@ const VideoDetails: React.FC<VideoDetailsProps> = (props) => {
       onClose={handleClose}
       onClickOutside={handleClose}
       width={2}
-      position="fixed"
       footer={
         <Card padding={3}>
           <Flex justify="space-between" align="center">
@@ -216,6 +217,14 @@ const VideoDetails: React.FC<VideoDetailsProps> = (props) => {
                 selected={tab === 'details'}
               />
               <Tab
+                aria-controls="tracks-panel"
+                icon={OlistIcon}
+                id="tracks-tab"
+                label="Tracks"
+                onClick={() => setTab('tracks')}
+                selected={tab === 'tracks'}
+              />
+              <Tab
                 aria-controls="references-panel"
                 icon={SearchIcon}
                 id="references-tab"
@@ -282,6 +291,11 @@ const VideoDetails: React.FC<VideoDetailsProps> = (props) => {
                   <IconInfo text={`Mux ID: \n${displayInfo.id}`} icon={TagIcon} size={2} />
                 </Stack>
               </Stack>
+            </TabPanel>
+            <TabPanel aria-labelledby="tracks-tab" id="tracks-panel" hidden={tab !== 'tracks'}>
+              {props.asset.assetId && props?.asset?.data?.tracks ? (
+                <Tracks assetId={props.asset.assetId} tracks={props.asset.data.tracks} />
+              ) : null}
             </TabPanel>
             <TabPanel
               aria-labelledby="references-tab"
