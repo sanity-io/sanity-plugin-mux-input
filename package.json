@@ -1,5 +1,5 @@
 {
-  "name": "sanity-plugin-mux-input",
+  "name": "@hups-co/sanity-plugin-mux-input",
   "version": "2.3.6",
   "description": "An input component that integrates Sanity Studio with Mux video encoding/hosting service.",
   "keywords": [
@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:sanity-io/sanity-plugin-mux-input.git"
+    "url": "git@github.com:hups-co/sanity-plugin-mux-input.git"
   },
   "license": "MIT",
   "author": "Sanity.io <hello@sanity.io>",
@@ -115,8 +115,7 @@
     "node": ">=18"
   },
   "publishConfig": {
-    "access": "public",
-    "provenance": true
+    "@hups-co:registry": "https://npm.pkg.github.com"
   },
   "sanityExchangeUrl": "https://www.sanity.io/plugins/sanity-plugin-mux-input",
   "browserslist": "extends @sanity/browserslist-config",
