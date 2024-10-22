@@ -99,7 +99,7 @@
     "react-dom": "^18.3.1",
     "react-is": "^18.3.1",
     "rimraf": "^5.0.7",
-    "sanity": "^3.42.1",
+    "sanity": "^3.62.0",
     "semantic-release": "^24.0.0",
     "styled-components": "^6.1.11",
     "typescript": "^5.4.5",
