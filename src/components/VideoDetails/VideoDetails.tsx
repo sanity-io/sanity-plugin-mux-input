@@ -280,6 +280,13 @@ const VideoDetails: React.FC<VideoDetailsProps> = (props) => {
                     size={2}
                   />
                   <IconInfo text={`Mux ID: \n${displayInfo.id}`} icon={TagIcon} size={2} />
+                  {displayInfo?.playbackId && (
+                    <IconInfo
+                      text={`Playback ID: ${displayInfo.playbackId}`}
+                      icon={TagIcon}
+                      size={2}
+                    />
+                  )}
                 </Stack>
               </Stack>
             </TabPanel>
