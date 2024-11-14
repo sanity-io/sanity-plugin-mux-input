@@ -1,5 +1,5 @@
 import {Card} from '@sanity/ui'
-import React, {memo, Suspense} from 'react'
+import {memo, Suspense} from 'react'
 
 import {useAssetDocumentValues} from '../hooks/useAssetDocumentValues'
 import {useClient} from '../hooks/useClient'
