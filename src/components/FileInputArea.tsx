@@ -1,5 +1,5 @@
 import {UploadIcon} from '@sanity/icons'
-import {Box, Button, Card, CardTone, Flex, Inline, Text} from '@sanity/ui'
+import {Card, CardTone, Flex, Inline} from '@sanity/ui'
 import {PropsWithChildren, useRef, useState} from 'react'
 
 import {extractDroppedFiles} from '../util/extractFiles'
@@ -78,7 +78,7 @@ export default function FileInputArea({
           {label}
         </Flex>
         <Inline space={2}>
-          <FileInputButton
+          <FileInput
             mode="ghost"
             tone="default"
             icon={UploadIcon}
