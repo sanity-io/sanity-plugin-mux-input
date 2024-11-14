@@ -1,5 +1,5 @@
 import {Dialog} from '@sanity/ui'
-import React, {useCallback, useId} from 'react'
+import {useCallback, useId} from 'react'
 import {styled} from 'styled-components'
 
 import type {SetDialogState} from '../hooks/useDialogState'
