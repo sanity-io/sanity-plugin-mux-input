@@ -1,4 +1,4 @@
-import React, {useId, useMemo} from 'react'
+import {useId, useMemo} from 'react'
 
 // Mapping ids to ensure filter refs are unique, otherwise all Logo instances are hidden if the first SVG is hidden, due to how SVGs deal with relative links and ids
 const ids = [

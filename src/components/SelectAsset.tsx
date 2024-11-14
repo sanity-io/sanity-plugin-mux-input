@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react'
+import {useCallback} from 'react'
 import {PatchEvent, set, setIfMissing, unset} from 'sanity'
 
 import type {SetDialogState} from '../hooks/useDialogState'

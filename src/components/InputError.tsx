@@ -1,5 +1,5 @@
 import {Box, Dialog, Text} from '@sanity/ui'
-import React, {useId} from 'react'
+import {useId} from 'react'
 
 interface Props {
   error: Error

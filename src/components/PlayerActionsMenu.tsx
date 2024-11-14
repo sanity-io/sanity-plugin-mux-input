@@ -1,6 +1,5 @@
 import {
   EllipsisHorizontalIcon,
-  EllipsisVerticalIcon,
   LockIcon,
   PlugIcon,
   ResetIcon,
@@ -19,9 +18,9 @@ import {
   Popover,
   Text,
   Tooltip,
-  useClickOutside,
+  useClickOutsideEvent,
 } from '@sanity/ui'
-import React, {memo, useCallback, useEffect, useMemo, useState} from 'react'
+import {memo, useCallback, useEffect, useMemo, useState} from 'react'
 import {PatchEvent, unset} from 'sanity'
 import {styled} from 'styled-components'
 
@@ -65,9 +64,9 @@ function PlayerActionsMenu(
     }
   }, [dialogState, open])
 
-  useClickOutside(
-    useCallback(() => setOpen(false), []),
-    [menuElement]
+  useClickOutsideEvent(
+    () => setOpen(false),
+    () => [menuElement]
   )
 
   return (

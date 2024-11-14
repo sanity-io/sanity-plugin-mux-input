@@ -1,6 +1,6 @@
 import {PlugIcon} from '@sanity/icons'
 import {Button, Card, Flex, Grid, Heading, Inline} from '@sanity/ui'
-import React, {useCallback} from 'react'
+import {useCallback} from 'react'
 
 import type {SetDialogState} from '../hooks/useDialogState'
 import MuxLogo from './MuxLogo'
