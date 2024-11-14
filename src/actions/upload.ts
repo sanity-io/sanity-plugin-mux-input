@@ -4,7 +4,7 @@ import {catchError, mergeMap, mergeMapTo, switchMap} from 'rxjs/operators'
 import type {SanityClient} from 'sanity'
 
 import {createUpChunkObservable} from '../clients/upChunkObservable'
-import type {MuxAsset, MuxNewAssetSettings, PluginConfig, UploadConfig} from '../util/types'
+import type {MuxAsset, MuxNewAssetSettings} from '../util/types'
 import {getAsset} from './assets'
 import {testSecretsObservable} from './secrets'
 
