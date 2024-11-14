@@ -78,7 +78,7 @@ export default function FileInputArea({
           {label}
         </Flex>
         <Inline space={2}>
-          <FileInput
+          <FileInputButton
             mode="ghost"
             tone="default"
             icon={UploadIcon}
