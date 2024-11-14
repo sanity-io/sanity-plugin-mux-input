@@ -5,6 +5,16 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.4.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.3.6...v2.4.0) (2024-11-14)
+
+### Features
+
+- Add playback ID to details ([#352](https://github.com/sanity-io/sanity-plugin-mux-input/issues/352)) ([7e8b31e](https://github.com/sanity-io/sanity-plugin-mux-input/commit/7e8b31ec68309420d56a39372a7066580d4fdd2a))
+
+### Bug Fixes
+
+- getplaybackpolicy to support multiple policies ([#383](https://github.com/sanity-io/sanity-plugin-mux-input/issues/383)) ([5264aa5](https://github.com/sanity-io/sanity-plugin-mux-input/commit/5264aa5e27ecc6159a2edb6f1f10563b71fd0a01))
+
 ## [2.3.6](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.3.5...v2.3.6) (2024-06-12)
 
 ### Bug Fixes
