@@ -18,16 +18,16 @@
     "@sanity/vision": "^3.42.1",
     "next": "^14.2.3",
     "next-sanity": "^9.0.20",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "sanity": "^3.42.1",
     "sanity-plugin-mux-input": "^2.3.0",
     "styled-components": "^6.1.11"
   },
   "devDependencies": {
     "@types/node": "^20.12.12",
-    "@types/react": "^18.3.17",
-    "@types/react-dom": "^18.3.5",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
     "typescript": "^5.7.2"
   }
 }
