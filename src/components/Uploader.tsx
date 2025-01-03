@@ -1,6 +1,6 @@
 import {ErrorOutlineIcon} from '@sanity/icons'
 import {Button, CardTone, Flex, Text, useToast} from '@sanity/ui'
-import React, {useEffect, useReducer, useRef, useState} from 'react'
+import React, {useCallback, useEffect, useReducer, useRef, useState} from 'react'
 import {type Observable, Subject, Subscription} from 'rxjs'
 import {takeUntil, tap} from 'rxjs/operators'
 import type {SanityClient} from 'sanity'
@@ -222,12 +222,40 @@ export default function Uploader(props: Props) {
     })
   }
 
+  const invalidFileToast = useCallback(() => {
+    toast.push({
+      status: 'error',
+      title: `Invalid file type. Accepted types: ${props.config.acceptedMimeTypes?.join(', ')}`,
+    })
+  }, [props.config.acceptedMimeTypes, toast])
+
+  /**
+   * Validates if any file in the provided FileList or File array has an unsupported MIME type
+   * @param files - FileList or File array to validate
+   * @returns true if any file has an invalid MIME type, false if all files are valid
+   */
+
+  const isInvalidFile = (files: FileList | File[]) => {
+    const isInvalid = Array.from(files).some((file) => {
+      return !props.config.acceptedMimeTypes?.some((acceptedType) =>
+        file.type.match(new RegExp(acceptedType))
+      )
+    })
+
+    if (isInvalid) {
+      invalidFileToast()
+      return true
+    }
+    return false
+  }
+
   /* -------------------------- Upload Initialization ------------------------- */
   // The below populate the uploadInput state field, which then triggers the
   // upload configuration, or the startUpload function if no config is required.
 
   // Stages an upload from the file selector
   const handleUpload = (files: FileList | File[]) => {
+    if (isInvalidFile(files)) return
     dispatch({
       action: 'stageUpload',
       input: {type: 'file', files},
@@ -249,9 +277,14 @@ export default function Uploader(props: Props) {
 
   // Stages and validates an upload from dragging+dropping files or folders
   const handleDrop: React.DragEventHandler<HTMLDivElement> = (event) => {
-    setDragState(null)
     event.preventDefault()
     event.stopPropagation()
+    if (dragState === 'invalid') {
+      invalidFileToast()
+      setDragState(null)
+      return
+    }
+    setDragState(null)
     extractDroppedFiles(event.nativeEvent.dataTransfer!).then((files) => {
       dispatch({
         action: 'stageUpload',
@@ -271,7 +304,16 @@ export default function Uploader(props: Props) {
     event.stopPropagation()
     dragEnteredEls.current.push(event.target)
     const type = event.dataTransfer.items?.[0]?.type
-    setDragState(type?.startsWith('video/') ? 'valid' : 'invalid')
+    const mimeTypes = props.config.acceptedMimeTypes
+
+    // Check if the dragged file type matches any of the accepted mime types
+    const isValidType = mimeTypes?.some((acceptedType) => {
+      // Convert mime type pattern to regex (e.g., 'video/*' -> /^video\/.*$/)
+      const pattern = `^${acceptedType.replace('*', '.*')}$`
+      return new RegExp(pattern).test(type)
+    })
+
+    setDragState(isValidType ? 'valid' : 'invalid')
   }
 
   const handleDragLeave: React.DragEventHandler<HTMLDivElement> = (event) => {
@@ -335,6 +377,10 @@ export default function Uploader(props: Props) {
   let tone: CardTone | undefined
   if (dragState) tone = dragState === 'valid' ? 'positive' : 'critical'
 
+  const acceptMimeString = props.config?.acceptedMimeTypes?.length
+    ? props.config.acceptedMimeTypes.join(',')
+    : 'video/*, audio/*'
+
   return (
     <>
       <UploadCard
@@ -353,6 +399,7 @@ export default function Uploader(props: Props) {
             onChange={props.onChange}
             buttons={
               <PlayerActionsMenu
+                accept={acceptMimeString}
                 asset={props.asset}
                 dialogState={props.dialogState}
                 setDialogState={props.setDialogState}
@@ -364,6 +411,8 @@ export default function Uploader(props: Props) {
           />
         ) : (
           <UploadPlaceholder
+            accept={acceptMimeString}
+            config={props.config}
             hovering={dragState !== null}
             onSelect={handleUpload}
             readOnly={!!props.readOnly}

@@ -49,9 +49,10 @@ function PlayerActionsMenu(
     onSelect: (files: File[]) => void
     dialogState: DialogState
     setDialogState: SetDialogState
+    accept: string
   }
 ) {
-  const {asset, readOnly, dialogState, setDialogState, onChange, onSelect} = props
+  const {asset, readOnly, dialogState, setDialogState, onChange, onSelect, accept} = props
   const [open, setOpen] = useState(false)
   const [menuElement, setMenuRef] = useState<HTMLDivElement | null>(null)
   const isSigned = useMemo(() => getPlaybackPolicy(asset) === 'signed', [asset])
@@ -99,7 +100,7 @@ function PlayerActionsMenu(
               </Label>
             </Box>
             <FileInputMenuItem
-              accept="video/*"
+              accept={accept}
               icon={UploadIcon}
               onSelect={onSelect}
               text="Upload"

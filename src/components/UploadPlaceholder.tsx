@@ -12,9 +12,10 @@ interface UploadPlaceholderProps {
   hovering: boolean
   needsSetup: boolean
   onSelect: FileInputButtonProps['onSelect']
+  accept: string
 }
 export default function UploadPlaceholder(props: UploadPlaceholderProps) {
-  const {setDialogState, readOnly, onSelect, hovering, needsSetup} = props
+  const {setDialogState, readOnly, onSelect, hovering, needsSetup, accept} = props
   const handleBrowse = useCallback(() => setDialogState('select-video'), [setDialogState])
   const handleConfigureApi = useCallback(() => setDialogState('secrets'), [setDialogState])
 
@@ -50,6 +51,7 @@ export default function UploadPlaceholder(props: UploadPlaceholderProps) {
         </Flex>
         <Inline space={2}>
           <FileInputButton
+            accept={accept}
             mode="bleed"
             tone="default"
             icon={UploadIcon}

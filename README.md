@@ -198,7 +198,7 @@ More information on signed URLs is available on Mux's [docs](https://docs.mux.co
 
 ### MP4 support (downloadable videos or offline viewing)
 
-To enable [static MP4 renditions](https://docs.mux.com/guides/video/enable-static-mp4-renditions), add `mp4_support: 'standard'` to the `options` of your `mux.video` schema type.
+To enable [static MP4 renditions](https://docs.mux.com/guides/video/enable-static-mp4-renditions), add `mp4_support: 'standard'` to the `options` of your `mux.video` schema type. Set default with `mp4_support: 'standard'` in the plugin configuration.
 
 ```js
 import {muxInput} from 'sanity-plugin-mux-input'
@@ -214,7 +214,7 @@ MP4 allows users to download videos for later or offline viewing. More informati
 
 ### Video resolution (max_resolution_tier)
 
-To edit [max_resolution_tier](https://docs.mux.com/api-reference#video/operation/create-direct-upload) to support other resolutions other than 1080p, add `max_resolution_tier: '1080p' | '1440p' | '2160p'` to the `options` of your `mux.video` schema type. Defaults to `1080p`.
+To edit [max_resolution_tier](https://docs.mux.com/api-reference#video/operation/create-direct-upload) to support other resolutions other than 1080p, add `max_resolution_tier: '1080p' | '1440p' | '2160p'` to the `options` of your `mux.video` schema type. Defaults to `1080p`. Set default with `max_resolution_tier: '1080p' | '1440p' | '2160p'` in the plugin configuration.
 
 ```js
 import {muxInput} from 'sanity-plugin-mux-input'
@@ -224,7 +224,41 @@ export default defineConfig({
 })
 ```
 
+```js
+export default {
+  title: 'Main Video',
+  name: 'mainVideo',
+  type: 'mux.video',
+  options: {
+    max_resolution_tier: '2160p',
+  },
+}
+```
+
 When uploading new assets, editors can still choose a lower resolution for each video than configured globally. This option controls the maximum resolution encoded or processed for the uploaded video. The option is particularly important to manage costs when uploaded videos are higher than `1080p` resolution. More information on the feature is available on Mux's [docs](https://docs.mux.com/guides/stream-videos-in-4k). Also, read more on this feature announcement on Mux's [blog](https://www.mux.com/blog/more-pixels-fewer-problems-introducing-4k-support-for-mux-video).
+
+### Control Accepted File Types
+
+To control the file types accepted by the input, set the `acceptedMimeTypes` in the `options` of your `mux.video` schema type. Set default with `acceptedMimeTypes: ['video/*', 'audio/*']` in the plugin configuration. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept) for more information on the `accept` attribute.
+
+```js
+import {muxInput} from 'sanity-plugin-mux-input'
+
+export default defineConfig({
+  plugins: [muxInput({acceptedMimeTypes: ['audio']})],
+})
+```
+
+```js
+export default {
+  title: 'Main Video',
+  name: 'mainVideo',
+  type: 'mux.video',
+  options: {
+    acceptedMimeTypes: ['video'],
+  },
+}
+```
 
 ### Encoding tier (smart or baseline)
 
@@ -236,6 +270,17 @@ import {muxInput} from 'sanity-plugin-mux-input'
 export default defineConfig({
   plugins: [muxInput({encoding_tier: 'baseline'})],
 })
+```
+
+```js
+export default {
+  title: 'Main Video',
+  name: 'mainVideo',
+  type: 'mux.video',
+  options: {
+    encoding_tier: 'baseline',
+  },
+}
 ```
 
 If `encoding_tier: 'smart'`, editors can still choose to use the `baseline` encoding tier on a per-video basis when uploading new assets.
