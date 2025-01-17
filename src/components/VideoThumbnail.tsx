@@ -7,7 +7,8 @@ import {useClient} from '../hooks/useClient'
 import useInView from '../hooks/useInView'
 import {THUMBNAIL_ASPECT_RATIO} from '../util/constants'
 import {type AnimatedPosterSrcOptions, getAnimatedPosterSrc} from '../util/getAnimatedPosterSrc'
-import {VideoAssetDocument} from '../util/types'
+import { getPosterSrc } from '../util/getPosterSrc'
+import {VideoAssetDocument, MuxAnimatedThumbnailUrl, MuxThumbnailUrl} from '../util/types'
 
 const Image = styled.img`
   transition: opacity 0.175s ease-out 0s;
@@ -26,12 +27,15 @@ const STATUS_TO_TONE: Record<ImageStatus, CardTone> = {
   loaded: 'default',
 }
 
+//todo: look for improvement in the AnumatedPoster type to allow static.
 export default function VideoThumbnail({
   asset,
   width,
+  staticImage=false,
 }: {
   asset: AnimatedPosterSrcOptions['asset'] & Pick<VideoAssetDocument, 'filename' | 'assetId'>
   width?: number
+  staticImage?: boolean
 }) {
   const {inView, ref} = useInView()
   const posterWidth = width || 250
@@ -39,9 +43,15 @@ export default function VideoThumbnail({
   const [status, setStatus] = useState<ImageStatus>('loading')
   const client = useClient()
 
-  const animatedSrc = useMemo(() => {
+  const src = useMemo(() => {
     try {
-      return getAnimatedPosterSrc({asset, client, width: posterWidth})
+      let thumbnail: MuxAnimatedThumbnailUrl | MuxThumbnailUrl
+      if (staticImage)
+        thumbnail = getPosterSrc({asset, client, width: posterWidth})
+      else
+        thumbnail = getAnimatedPosterSrc({asset, client, width: posterWidth})
+
+      return thumbnail
     } catch {
       if (status !== 'error') setStatus('error')
       return undefined
@@ -105,8 +115,8 @@ export default function VideoThumbnail({
             </Stack>
           )}
           <Image
-            src={animatedSrc}
-            alt={`Preview for video ${asset.filename || asset.assetId}`}
+            src={src}
+            alt={`Preview for ${staticImage ? 'image' : 'video'} ${asset.filename || asset.assetId}`}
             onLoad={handleLoad}
             onError={handleError}
             style={{

@@ -351,6 +351,8 @@ export default function Uploader(props: Props) {
             readOnly={props.readOnly}
             asset={props.asset}
             onChange={props.onChange}
+            dialogState={props.dialogState}
+            setDialogState={props.setDialogState}
             buttons={
               <PlayerActionsMenu
                 asset={props.asset}

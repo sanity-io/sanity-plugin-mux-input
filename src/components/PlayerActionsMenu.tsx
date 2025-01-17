@@ -5,6 +5,7 @@ import {
   ResetIcon,
   SearchIcon,
   UploadIcon,
+  ImageIcon
 } from '@sanity/icons'
 import {
   Box,
@@ -110,6 +111,11 @@ function PlayerActionsMenu(
               icon={SearchIcon}
               text="Browse"
               onClick={() => setDialogState('select-video')}
+            />
+            <MenuItem
+              icon={ImageIcon}
+              text="Thumbnail"
+              onClick={() => setDialogState('edit-thumbnail')}
             />
             <MenuDivider />
             <MenuItem

@@ -6,16 +6,17 @@ import {getPlaybackPolicy} from './getPlaybackPolicy'
 import type {MuxThumbnailUrl, ThumbnailOptions, VideoAssetDocument} from './types'
 
 export interface PosterSrcOptions extends ThumbnailOptions {
-  asset: VideoAssetDocument
+  asset: Pick<VideoAssetDocument, 'playbackId' | 'data' | 'thumbTime'>
   client: SanityClient
 }
 
+//todo: look for reuse the logic in both static and animated.
 export function getPosterSrc({
   asset,
   client,
   fit_mode,
   height,
-  time = asset.thumbTime,
+  time = asset.thumbTime ?? 0,
   width,
 }: PosterSrcOptions): MuxThumbnailUrl {
   const params = {fit_mode, height, time, width}

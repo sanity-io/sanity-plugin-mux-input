@@ -1,23 +1,36 @@
-import MuxPlayer, {type MuxPlayerProps} from '@mux/mux-player-react'
+import MuxPlayer, {type MuxPlayerProps, type MuxPlayerRefAttributes} from '@mux/mux-player-react'
 import {ErrorOutlineIcon} from '@sanity/icons'
 import {Card, Text} from '@sanity/ui'
-import {type PropsWithChildren, useMemo} from 'react'
+import {type PropsWithChildren, useMemo, useRef, useCallback} from 'react'
 
 import {useClient} from '../hooks/useClient'
+import {type DialogState, type SetDialogState} from '../hooks/useDialogState'
+
 import {AUDIO_ASPECT_RATIO, MIN_ASPECT_RATIO} from '../util/constants'
 import {getVideoSrc} from '../util/getVideoSrc'
 import type {VideoAssetDocument} from '../util/types'
+import EditThumbnailDialog from './EditThumbnailDialog'
+
+import { getPosterSrc } from '../util/getPosterSrc'
 
 export default function VideoPlayer({
   asset,
+  dialogState,
+  setDialogState,
   children,
   ...props
 }: PropsWithChildren<
-  {asset: VideoAssetDocument; forceAspectRatio?: number} & Partial<Pick<MuxPlayerProps, 'autoPlay'>>
+  {asset: VideoAssetDocument; dialogState?: DialogState; setDialogState?: SetDialogState; forceAspectRatio?: number} & Partial<Pick<MuxPlayerProps, 'autoPlay'>>
 >) {
   const client = useClient()
 
   const isAudio = assetIsAudio(asset)
+  const muxPlayer = useRef<MuxPlayerRefAttributes>(null)
+  const getCurrentTime = useCallback(() => muxPlayer.current?.currentTime ?? 0, [muxPlayer])
+  
+  //todo: magic number
+  const posterWidth = 250
+  const thumbnail = getPosterSrc({asset, client, width: posterWidth})
 
   const {src: videoSrc, error} = useMemo(() => {
     try {
@@ -52,55 +65,67 @@ export default function VideoPlayer({
   }
 
   return (
-    <Card tone="transparent" style={{aspectRatio: aspectRatio, position: 'relative'}}>
-      {videoSrc && (
-        <>
-          <MuxPlayer
-            {...props}
-            playsInline
-            playbackId={asset.playbackId}
-            tokens={
-              signedToken
-                ? {playback: signedToken, thumbnail: signedToken, storyboard: signedToken}
-                : undefined
-            }
-            preload="metadata"
-            crossOrigin="anonymous"
-            metadata={{
-              player_name: 'Sanity Admin Dashboard',
-              player_version: process.env.PKG_VERSION,
-              page_type: 'Preview Player',
-            }}
-            audio={isAudio}
+    <>
+      <Card tone="transparent" style={{aspectRatio: aspectRatio, position: 'relative'}}>
+        {videoSrc && (
+          <>
+            <MuxPlayer
+              poster={thumbnail}
+              ref={muxPlayer}
+              {...props}
+              playsInline
+              playbackId={asset.playbackId}
+              tokens={
+                signedToken
+                  ? {playback: signedToken, thumbnail: signedToken, storyboard: signedToken}
+                  : undefined
+              }
+              preload="metadata"
+              crossOrigin="anonymous"
+              metadata={{
+                player_name: 'Sanity Admin Dashboard',
+                player_version: process.env.PKG_VERSION,
+                page_type: 'Preview Player',
+              }}
+              audio={isAudio}
+              style={{
+                height: '100%',
+                width: '100%',
+                display: 'block',
+                objectFit: 'contain',
+              }}
+            />
+            {children}
+          </>
+        )}
+        {error ? (
+          <div
             style={{
-              height: '100%',
-              width: '100%',
-              display: 'block',
-              objectFit: 'contain',
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
             }}
-          />
-          {children}
-        </>
+          >
+            <Text muted>
+              <ErrorOutlineIcon style={{marginRight: '0.15em'}} />
+              {typeof error === 'object' && 'message' in error && typeof error.message === 'string'
+                ? error.message
+                : 'Error loading video'}
+            </Text>
+          </div>
+        ) : null}
+        {children}
+      </Card>
+
+      {setDialogState && dialogState === 'edit-thumbnail' && (
+        <EditThumbnailDialog
+          asset={asset}
+          getCurrentTime={getCurrentTime}
+          setDialogState={setDialogState}
+        />
       )}
-      {error ? (
-        <div
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-          }}
-        >
-          <Text muted>
-            <ErrorOutlineIcon style={{marginRight: '0.15em'}} />
-            {typeof error === 'object' && 'message' in error && typeof error.message === 'string'
-              ? error.message
-              : 'Error loading video'}
-          </Text>
-        </div>
-      ) : null}
-      {children}
-    </Card>
+    </>
   )
 }
 
