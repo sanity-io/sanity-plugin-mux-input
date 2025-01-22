@@ -13,6 +13,7 @@ interface UploadPlaceholderProps {
   needsSetup: boolean
   onSelect: FileInputButtonProps['onSelect']
   accept: string
+  config: PluginConfig
 }
 export default function UploadPlaceholder(props: UploadPlaceholderProps) {
   const {setDialogState, readOnly, onSelect, hovering, needsSetup, accept} = props
