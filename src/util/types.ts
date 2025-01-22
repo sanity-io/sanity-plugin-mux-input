@@ -81,7 +81,7 @@ export interface MuxInputConfig {
    * @defaultValue ['video/*','audio/*']
   
    */
-  acceptedMimeTypes?: ('audio' | 'video')[]
+  acceptedMimeTypes?: ('audio/*' | 'video/*')[]
 }
 
 export interface PluginConfig extends MuxInputConfig {
