@@ -1,4 +1,4 @@
-import formatSeconds from './formatSeconds'
+import {formatSeconds} from './formatSeconds'
 import {VideoAssetDocument} from './types'
 
 export default function getVideoMetadata(doc: VideoAssetDocument) {

@@ -6,9 +6,9 @@ import {styled} from 'styled-components'
 import {useClient} from '../hooks/useClient'
 import useInView from '../hooks/useInView'
 import {THUMBNAIL_ASPECT_RATIO} from '../util/constants'
-import {type AnimatedPosterSrcOptions, getAnimatedPosterSrc} from '../util/getAnimatedPosterSrc'
-import { getPosterSrc } from '../util/getPosterSrc'
-import {VideoAssetDocument, MuxAnimatedThumbnailUrl, MuxThumbnailUrl} from '../util/types'
+import {getAnimatedPosterSrc} from '../util/getAnimatedPosterSrc'
+import {getPosterSrc} from '../util/getPosterSrc'
+import {MuxAnimatedThumbnailUrl, MuxThumbnailUrl, AssetThumbnailOptions} from '../util/types'
 
 const Image = styled.img`
   transition: opacity 0.175s ease-out 0s;
@@ -27,13 +27,12 @@ const STATUS_TO_TONE: Record<ImageStatus, CardTone> = {
   loaded: 'default',
 }
 
-//todo: look for improvement in the AnumatedPoster type to allow static.
 export default function VideoThumbnail({
   asset,
   width,
   staticImage=false,
 }: {
-  asset: AnimatedPosterSrcOptions['asset'] & Pick<VideoAssetDocument, 'filename' | 'assetId'>
+  asset: AssetThumbnailOptions['asset']
   width?: number
   staticImage?: boolean
 }) {

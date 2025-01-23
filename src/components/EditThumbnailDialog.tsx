@@ -1,25 +1,32 @@
-import {Button, Dialog, Stack, Text} from '@sanity/ui'
-import React, {useCallback, useId, useMemo, useState} from 'react'
+import {Button, Dialog, Stack, Text, TextInput, Flex} from '@sanity/ui'
+import React, {useId, useMemo, useState} from 'react'
 import {getDevicePixelRatio} from 'use-device-pixel-ratio'
 
 import {useClient} from '../hooks/useClient'
-import type {SetDialogState} from '../hooks/useDialogState'
+import { useDialogStateContext } from '../context/DialogStateContext'
 import type {VideoAssetDocument} from '../util/types'
 import VideoThumbnail from './VideoThumbnail'
+import { formatSecondsToHHMMSS, isValidTimeFormat, getSecondsFromTimeFormat } from '../util/formatSeconds'
 
 export interface Props {
   asset: VideoAssetDocument
   getCurrentTime: () => number
-  setDialogState: SetDialogState
 }
-export default function EditThumbnailDialog({asset, getCurrentTime, setDialogState}: Props) {
+
+export default function EditThumbnailDialog({asset, getCurrentTime}: Props) {
   const client = useClient()
+
+  const {setDialogState} = useDialogStateContext()
   const dialogId = `EditThumbnailDialog${useId()}`
-  const nextTime = useMemo(() => getCurrentTime(), [getCurrentTime])
+
+  const [timeFormatted, setTimeFormatted] = useState<string>(() => formatSecondsToHHMMSS(getCurrentTime()))
+  const [nextTime, setNextTime] = useState<number>(getCurrentTime)
+  const [inputError, setInputError] = useState<string>("")
+
   const assetWithNewThumbnail = useMemo(() => ({...asset, thumbTime: nextTime}), [asset, nextTime])
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<Error | null>(null)
-  const handleSave = useCallback(() => {
+  const handleSave = () => {
     setSaving(true)
     client
       .patch(asset._id!)
@@ -28,13 +35,26 @@ export default function EditThumbnailDialog({asset, getCurrentTime, setDialogSta
       .then(() => void setDialogState(false))
       .catch(setError)
       .finally(() => void setSaving(false))
-  }, [client, asset?._id, nextTime, setDialogState])
+  }
   const width = 300 * getDevicePixelRatio({maxDpr: 2})
 
   if (error) {
     // eslint-disable-next-line no-warning-comments
     // @TODO handle errors more gracefully
     throw error
+  }
+
+  const handleInputChange = (event: React.FormEvent<HTMLInputElement>) => {
+    const value = event.currentTarget.value
+    setTimeFormatted(value)
+
+    if (isValidTimeFormat(value)) {
+      setInputError("")
+      const totalSeconds = getSecondsFromTimeFormat(value)
+      setNextTime(totalSeconds)
+    } else {
+      setInputError("Invalid time format")
+    }
   }
 
   return (
@@ -46,6 +66,7 @@ export default function EditThumbnailDialog({asset, getCurrentTime, setDialogSta
         <Stack padding={3}>
           <Button
             key="thumbnail"
+            disabled={inputError !== ""}
             mode="ghost"
             tone="primary"
             loading={saving}
@@ -67,6 +88,27 @@ export default function EditThumbnailDialog({asset, getCurrentTime, setDialogSta
             New:
           </Text>
           <VideoThumbnail asset={assetWithNewThumbnail} width={width} staticImage />
+        </Stack>
+
+        <Stack space={2}>
+          <Flex align={'center'} justify={'center'}>
+            <Text size={5} weight="semibold">
+              Or
+            </Text>
+          </Flex>
+        </Stack>
+
+        <Stack space={2}>
+          <Text size={1} weight="semibold">
+            Selected time for thumbnail (hh:mm:ss):
+          </Text>
+          <TextInput
+            size={1}
+            value={timeFormatted}
+            placeholder='hh:mm:ss'
+            onChange={handleInputChange}
+            customValidity={inputError}
+          />
         </Stack>
       </Stack>
     </Dialog>

@@ -4,7 +4,6 @@ import {Card, Text} from '@sanity/ui'
 import {type PropsWithChildren, useMemo, useRef, useCallback} from 'react'
 
 import {useClient} from '../hooks/useClient'
-import {type DialogState, type SetDialogState} from '../hooks/useDialogState'
 
 import {AUDIO_ASPECT_RATIO, MIN_ASPECT_RATIO} from '../util/constants'
 import {getVideoSrc} from '../util/getVideoSrc'
@@ -13,24 +12,23 @@ import EditThumbnailDialog from './EditThumbnailDialog'
 
 import { getPosterSrc } from '../util/getPosterSrc'
 
+import { useDialogStateContext } from '../context/DialogStateContext'
+
 export default function VideoPlayer({
   asset,
-  dialogState,
-  setDialogState,
+  thumbnailWidth = 250,
   children,
   ...props
 }: PropsWithChildren<
-  {asset: VideoAssetDocument; dialogState?: DialogState; setDialogState?: SetDialogState; forceAspectRatio?: number} & Partial<Pick<MuxPlayerProps, 'autoPlay'>>
+  {asset: VideoAssetDocument; thumbnailWidth?: number; forceAspectRatio?: number} & Partial<Pick<MuxPlayerProps, 'autoPlay'>>
 >) {
   const client = useClient()
+  const { dialogState } = useDialogStateContext()
 
   const isAudio = assetIsAudio(asset)
   const muxPlayer = useRef<MuxPlayerRefAttributes>(null)
   const getCurrentTime = useCallback(() => muxPlayer.current?.currentTime ?? 0, [muxPlayer])
-  
-  //todo: magic number
-  const posterWidth = 250
-  const thumbnail = getPosterSrc({asset, client, width: posterWidth})
+  const thumbnail = getPosterSrc({asset, client, width: thumbnailWidth})
 
   const {src: videoSrc, error} = useMemo(() => {
     try {
@@ -118,11 +116,10 @@ export default function VideoPlayer({
         {children}
       </Card>
 
-      {setDialogState && dialogState === 'edit-thumbnail' && (
+      {dialogState === 'edit-thumbnail' && (
         <EditThumbnailDialog
           asset={asset}
           getCurrentTime={getCurrentTime}
-          setDialogState={setDialogState}
         />
       )}
     </>

@@ -1,12 +1,11 @@
 import type {SanityClient} from 'sanity'
 
-import {generateJwt} from './generateJwt'
-import {getPlaybackId} from './getPlaybackId'
-import {getPlaybackPolicy} from './getPlaybackPolicy'
-import type {AnimatedThumbnailOptions, MuxAnimatedThumbnailUrl, VideoAssetDocument} from './types'
+import type {AnimatedThumbnailOptions, MuxAnimatedThumbnailUrl} from './types'
+import { createUrlParamsObject } from './createUrlParamsObject'
+import {AssetThumbnailOptions} from './types'
 
 export interface AnimatedPosterSrcOptions extends AnimatedThumbnailOptions {
-  asset: Pick<VideoAssetDocument, 'playbackId' | 'data' | 'thumbTime'>
+  asset: AssetThumbnailOptions['asset']
   client: SanityClient
 }
 
@@ -20,15 +19,8 @@ export function getAnimatedPosterSrc({
   fps = 15,
 }: AnimatedPosterSrcOptions): MuxAnimatedThumbnailUrl {
   const params = {height, width, start, end, fps}
-  const playbackId = getPlaybackId(asset)
 
-  let searchParams = new URLSearchParams(
-    JSON.parse(JSON.stringify(params, (_, v) => v ?? undefined))
-  )
-  if (getPlaybackPolicy(asset) === 'signed') {
-    const token = generateJwt(client, playbackId, 'g', params)
-    searchParams = new URLSearchParams({token})
-  }
+  const {playbackId, searchParams} = createUrlParamsObject(client, asset, params, 'g')
 
   return `https://image.mux.com/${playbackId}/animated.gif?${searchParams}`
 }

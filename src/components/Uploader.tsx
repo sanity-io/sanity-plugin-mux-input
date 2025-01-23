@@ -24,6 +24,7 @@ import UploadConfiguration from './UploadConfiguration'
 import {UploadCard} from './Uploader.styled'
 import UploadPlaceholder from './UploadPlaceholder'
 import {UploadProgress} from './UploadProgress'
+import { DialogStateProvider } from '../context/DialogStateContext'
 
 interface Props extends Pick<MuxInputProps, 'onChange' | 'readOnly'> {
   config: PluginConfig
@@ -347,23 +348,23 @@ export default function Uploader(props: Props) {
         ref={containerRef}
       >
         {props.asset ? (
-          <Player
-            readOnly={props.readOnly}
-            asset={props.asset}
-            onChange={props.onChange}
-            dialogState={props.dialogState}
-            setDialogState={props.setDialogState}
-            buttons={
-              <PlayerActionsMenu
-                asset={props.asset}
-                dialogState={props.dialogState}
-                setDialogState={props.setDialogState}
-                onChange={props.onChange}
-                onSelect={handleUpload}
-                readOnly={props.readOnly}
-              />
-            }
-          />
+          <DialogStateProvider dialogState={props.dialogState} setDialogState={props.setDialogState}>
+            <Player
+              readOnly={props.readOnly}
+              asset={props.asset}
+              onChange={props.onChange}
+              buttons={
+                <PlayerActionsMenu
+                  asset={props.asset}
+                  dialogState={props.dialogState}
+                  setDialogState={props.setDialogState}
+                  onChange={props.onChange}
+                  onSelect={handleUpload}
+                  readOnly={props.readOnly}
+                />
+              }
+            />
+          </DialogStateProvider>
         ) : (
           <UploadPlaceholder
             hovering={dragState !== null}

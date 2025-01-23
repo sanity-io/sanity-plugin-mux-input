@@ -262,6 +262,10 @@ export interface AnimatedThumbnailOptions {
   fps?: number
 }
 
+export interface AssetThumbnailOptions {
+  asset: Pick<VideoAssetDocument, 'playbackId' | 'data' | 'thumbTime' | 'filename' | 'assetId'>
+}
+
 export type PlaybackPolicy = 'signed' | 'public'
 
 export interface MuxErrors {

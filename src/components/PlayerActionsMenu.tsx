@@ -112,11 +112,14 @@ function PlayerActionsMenu(
               text="Browse"
               onClick={() => setDialogState('select-video')}
             />
-            <MenuItem
-              icon={ImageIcon}
-              text="Thumbnail"
-              onClick={() => setDialogState('edit-thumbnail')}
-            />
+            {/* @TODO: add support for audio type (asset._type) when uploading an audio file so we can hide the thumbnail option. */}
+            { asset._type === 'mux.videoAsset' && 
+              <MenuItem
+                icon={ImageIcon}
+                text="Thumbnail"
+                onClick={() => setDialogState('edit-thumbnail')}
+              />
+            }
             <MenuDivider />
             <MenuItem
               icon={PlugIcon}

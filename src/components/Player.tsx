@@ -2,7 +2,6 @@ import {Card, Text} from '@sanity/ui'
 import React, {useEffect, useMemo, useRef} from 'react'
 
 import {useCancelUpload} from '../hooks/useCancelUpload'
-import {type DialogState, type SetDialogState} from '../hooks/useDialogState'
 
 import type {MuxInputProps, VideoAssetDocument} from '../util/types'
 import {TopControls} from './Player.styled'
@@ -12,11 +11,9 @@ import VideoPlayer from './VideoPlayer'
 interface Props extends Pick<MuxInputProps, 'onChange' | 'readOnly'> {
   buttons?: React.ReactNode
   asset: VideoAssetDocument
-  dialogState: DialogState
-  setDialogState: SetDialogState
 }
 
-const Player = ({asset, dialogState, setDialogState, buttons, readOnly, onChange}: Props) => {
+const Player = ({asset, buttons, readOnly, onChange}: Props) => {
   const isLoading = useMemo<boolean | string>(() => {
     if (asset?.status === 'preparing') {
       return 'Preparing the video'
@@ -88,8 +85,6 @@ const Player = ({asset, dialogState, setDialogState, buttons, readOnly, onChange
   return (
     <VideoPlayer 
       asset={asset}
-      dialogState={dialogState}
-      setDialogState={setDialogState}
     >
       {buttons && <TopControls slot="top-chrome">{buttons}</TopControls>}
       {isPreparingStaticRenditions && (
