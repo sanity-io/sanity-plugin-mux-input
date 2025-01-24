@@ -14,24 +14,24 @@ import VideoThumbnail from './VideoThumbnail'
 
 export interface Props {
   asset: VideoAssetDocument
-  getCurrentTime: () => number
+  currentTime?: number
 }
 
-export default function EditThumbnailDialog({asset, getCurrentTime}: Props) {
+export default function EditThumbnailDialog({asset, currentTime = 0}: Props) {
   const client = useClient()
 
   const {setDialogState} = useDialogStateContext()
   const dialogId = `EditThumbnailDialog${useId()}`
 
   const [timeFormatted, setTimeFormatted] = useState<string>(() =>
-    formatSecondsToHHMMSS(getCurrentTime())
+    formatSecondsToHHMMSS(currentTime)
   )
-  const [nextTime, setNextTime] = useState<number>(getCurrentTime)
+  const [nextTime, setNextTime] = useState<number>(currentTime)
   const [inputError, setInputError] = useState<string>('')
 
   const assetWithNewThumbnail = useMemo(() => ({...asset, thumbTime: nextTime}), [asset, nextTime])
   const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<Error | null>(null)
+  const [saveThumbnailError, setSaveThumbnailError] = useState<Error | null>(null)
   const handleSave = () => {
     setSaving(true)
     client
@@ -39,15 +39,15 @@ export default function EditThumbnailDialog({asset, getCurrentTime}: Props) {
       .set({thumbTime: nextTime})
       .commit({returnDocuments: false})
       .then(() => void setDialogState(false))
-      .catch(setError)
+      .catch(setSaveThumbnailError)
       .finally(() => void setSaving(false))
   }
   const width = 300 * getDevicePixelRatio({maxDpr: 2})
 
-  if (error) {
+  if (saveThumbnailError) {
     // eslint-disable-next-line no-warning-comments
     // @TODO handle errors more gracefully
-    throw error
+    throw saveThumbnailError
   }
 
   const handleInputChange = (event: React.FormEvent<HTMLInputElement>) => {

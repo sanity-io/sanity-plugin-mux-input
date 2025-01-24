@@ -1,7 +1,7 @@
 import MuxPlayer, {type MuxPlayerProps, type MuxPlayerRefAttributes} from '@mux/mux-player-react'
 import {ErrorOutlineIcon} from '@sanity/icons'
 import {Card, Text} from '@sanity/ui'
-import {type PropsWithChildren, useCallback, useMemo, useRef} from 'react'
+import {type PropsWithChildren, useMemo, useRef} from 'react'
 
 import {useDialogStateContext} from '../context/DialogStateContext'
 import {useClient} from '../hooks/useClient'
@@ -26,7 +26,6 @@ export default function VideoPlayer({
 
   const isAudio = assetIsAudio(asset)
   const muxPlayer = useRef<MuxPlayerRefAttributes>(null)
-  const getCurrentTime = useCallback(() => muxPlayer.current?.currentTime ?? 0, [muxPlayer])
   const thumbnail = getPosterSrc({asset, client, width: thumbnailWidth})
 
   const {src: videoSrc, error} = useMemo(() => {
@@ -116,7 +115,7 @@ export default function VideoPlayer({
       </Card>
 
       {dialogState === 'edit-thumbnail' && (
-        <EditThumbnailDialog asset={asset} getCurrentTime={getCurrentTime} />
+        <EditThumbnailDialog asset={asset} currentTime={muxPlayer?.current?.currentTime} />
       )}
     </>
   )
