@@ -2,7 +2,6 @@ import {Card, Text} from '@sanity/ui'
 import React, {useEffect, useMemo, useRef} from 'react'
 
 import {useCancelUpload} from '../hooks/useCancelUpload'
-
 import type {MuxInputProps, VideoAssetDocument} from '../util/types'
 import {TopControls} from './Player.styled'
 import {UploadProgress} from './UploadProgress'
@@ -83,9 +82,7 @@ const Player = ({asset, buttons, readOnly, onChange}: Props) => {
   }
 
   return (
-    <VideoPlayer 
-      asset={asset}
-    >
+    <VideoPlayer asset={asset}>
       {buttons && <TopControls slot="top-chrome">{buttons}</TopControls>}
       {isPreparingStaticRenditions && (
         <Card

@@ -1,18 +1,15 @@
 import MuxPlayer, {type MuxPlayerProps, type MuxPlayerRefAttributes} from '@mux/mux-player-react'
 import {ErrorOutlineIcon} from '@sanity/icons'
 import {Card, Text} from '@sanity/ui'
-import {type PropsWithChildren, useMemo, useRef, useCallback} from 'react'
+import {type PropsWithChildren, useCallback, useMemo, useRef} from 'react'
 
+import {useDialogStateContext} from '../context/DialogStateContext'
 import {useClient} from '../hooks/useClient'
-
 import {AUDIO_ASPECT_RATIO, MIN_ASPECT_RATIO} from '../util/constants'
+import {getPosterSrc} from '../util/getPosterSrc'
 import {getVideoSrc} from '../util/getVideoSrc'
 import type {VideoAssetDocument} from '../util/types'
 import EditThumbnailDialog from './EditThumbnailDialog'
-
-import { getPosterSrc } from '../util/getPosterSrc'
-
-import { useDialogStateContext } from '../context/DialogStateContext'
 
 export default function VideoPlayer({
   asset,
@@ -20,10 +17,12 @@ export default function VideoPlayer({
   children,
   ...props
 }: PropsWithChildren<
-  {asset: VideoAssetDocument; thumbnailWidth?: number; forceAspectRatio?: number} & Partial<Pick<MuxPlayerProps, 'autoPlay'>>
+  {asset: VideoAssetDocument; thumbnailWidth?: number; forceAspectRatio?: number} & Partial<
+    Pick<MuxPlayerProps, 'autoPlay'>
+  >
 >) {
   const client = useClient()
-  const { dialogState } = useDialogStateContext()
+  const {dialogState} = useDialogStateContext()
 
   const isAudio = assetIsAudio(asset)
   const muxPlayer = useRef<MuxPlayerRefAttributes>(null)
@@ -117,10 +116,7 @@ export default function VideoPlayer({
       </Card>
 
       {dialogState === 'edit-thumbnail' && (
-        <EditThumbnailDialog
-          asset={asset}
-          getCurrentTime={getCurrentTime}
-        />
+        <EditThumbnailDialog asset={asset} getCurrentTime={getCurrentTime} />
       )}
     </>
   )

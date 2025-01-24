@@ -7,6 +7,7 @@ import type {SanityClient} from 'sanity'
 import {PatchEvent, set, setIfMissing} from 'sanity'
 
 import {uploadFile, uploadUrl} from '../actions/upload'
+import {DialogStateProvider} from '../context/DialogStateContext'
 import {type DialogState, type SetDialogState} from '../hooks/useDialogState'
 import {isValidUrl} from '../util/asserters'
 import {extractDroppedFiles} from '../util/extractFiles'
@@ -24,7 +25,6 @@ import UploadConfiguration from './UploadConfiguration'
 import {UploadCard} from './Uploader.styled'
 import UploadPlaceholder from './UploadPlaceholder'
 import {UploadProgress} from './UploadProgress'
-import { DialogStateProvider } from '../context/DialogStateContext'
 
 interface Props extends Pick<MuxInputProps, 'onChange' | 'readOnly'> {
   config: PluginConfig
@@ -348,7 +348,10 @@ export default function Uploader(props: Props) {
         ref={containerRef}
       >
         {props.asset ? (
-          <DialogStateProvider dialogState={props.dialogState} setDialogState={props.setDialogState}>
+          <DialogStateProvider
+            dialogState={props.dialogState}
+            setDialogState={props.setDialogState}
+          >
             <Player
               readOnly={props.readOnly}
               asset={props.asset}

@@ -8,7 +8,7 @@ import useInView from '../hooks/useInView'
 import {THUMBNAIL_ASPECT_RATIO} from '../util/constants'
 import {getAnimatedPosterSrc} from '../util/getAnimatedPosterSrc'
 import {getPosterSrc} from '../util/getPosterSrc'
-import {MuxAnimatedThumbnailUrl, MuxThumbnailUrl, AssetThumbnailOptions} from '../util/types'
+import {AssetThumbnailOptions, MuxAnimatedThumbnailUrl, MuxThumbnailUrl} from '../util/types'
 
 const Image = styled.img`
   transition: opacity 0.175s ease-out 0s;
@@ -30,7 +30,7 @@ const STATUS_TO_TONE: Record<ImageStatus, CardTone> = {
 export default function VideoThumbnail({
   asset,
   width,
-  staticImage=false,
+  staticImage = false,
 }: {
   asset: AssetThumbnailOptions['asset']
   width?: number
@@ -45,17 +45,15 @@ export default function VideoThumbnail({
   const src = useMemo(() => {
     try {
       let thumbnail: MuxAnimatedThumbnailUrl | MuxThumbnailUrl
-      if (staticImage)
-        thumbnail = getPosterSrc({asset, client, width: posterWidth})
-      else
-        thumbnail = getAnimatedPosterSrc({asset, client, width: posterWidth})
+      if (staticImage) thumbnail = getPosterSrc({asset, client, width: posterWidth})
+      else thumbnail = getAnimatedPosterSrc({asset, client, width: posterWidth})
 
       return thumbnail
     } catch {
       if (status !== 'error') setStatus('error')
       return undefined
     }
-  }, [asset, client, posterWidth, status])
+  }, [asset, client, posterWidth, status, staticImage])
 
   function handleLoad() {
     setStatus('loaded')

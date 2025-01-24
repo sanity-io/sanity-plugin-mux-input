@@ -1,7 +1,7 @@
 import type {SanityClient} from 'sanity'
 
+import {createUrlParamsObject} from './createUrlParamsObject'
 import type {MuxThumbnailUrl, ThumbnailOptions} from './types'
-import { createUrlParamsObject } from './createUrlParamsObject'
 import {AssetThumbnailOptions} from './types'
 
 export interface PosterSrcOptions extends ThumbnailOptions {
@@ -19,7 +19,7 @@ export function getPosterSrc({
 }: PosterSrcOptions): MuxThumbnailUrl {
   const params = {fit_mode, height, width}
   if (time) {
-    (params as any).time = time
+    ;(params as any).time = time
   }
 
   const {playbackId, searchParams} = createUrlParamsObject(client, asset, params, 't')
