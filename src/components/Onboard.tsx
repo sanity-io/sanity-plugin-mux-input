@@ -1,17 +1,21 @@
 import {PlugIcon} from '@sanity/icons'
-import {Button, Card, Flex, Grid, Heading, Inline} from '@sanity/ui'
+import {Button, Card, Flex, Grid, Heading, Inline, Text} from '@sanity/ui'
 import {useCallback} from 'react'
 
 import type {SetDialogState} from '../hooks/useDialogState'
 import MuxLogo from './MuxLogo'
+import {PluginConfig} from '../util/types'
+import {useAccessControl} from '../hooks/useAccessControl'
 
 interface OnboardProps {
   setDialogState: SetDialogState
+  config: PluginConfig
 }
 
 export default function Onboard(props: OnboardProps) {
   const {setDialogState} = props
   const handleOpen = useCallback(() => setDialogState('secrets'), [setDialogState])
+  const {hasConfigAccess} = useAccessControl(props.config)
 
   return (
     <>
@@ -41,7 +45,16 @@ export default function Onboard(props: OnboardProps) {
                 </Heading>
               </Inline>
               <Inline paddingY={1}>
-                <Button mode="ghost" icon={PlugIcon} text="Configure API" onClick={handleOpen} />
+                {hasConfigAccess ? (
+                  <Button mode="ghost" icon={PlugIcon} text="Configure API" onClick={handleOpen} />
+                ) : (
+                  <Card padding={[3, 3, 3]} radius={2} shadow={1} tone="critical">
+                    <Text>
+                      You do not have access to configure the Mux API. Please contact your
+                      administrator.
+                    </Text>
+                  </Card>
+                )}
               </Inline>
             </Grid>
           </Flex>

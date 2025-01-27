@@ -27,8 +27,9 @@ import {styled} from 'styled-components'
 
 import {type DialogState, type SetDialogState} from '../hooks/useDialogState'
 import {getPlaybackPolicy} from '../util/getPlaybackPolicy'
-import type {MuxInputProps, VideoAssetDocument} from '../util/types'
+import type {MuxInputProps, PluginConfig, VideoAssetDocument} from '../util/types'
 import {FileInputMenuItem} from './FileInputMenuItem'
+import {useAccessControl} from '../hooks/useAccessControl'
 
 const LockCard = styled(Card)`
   position: absolute;
@@ -55,12 +56,14 @@ function PlayerActionsMenu(
     onSelect: (files: File[]) => void
     dialogState: DialogState
     setDialogState: SetDialogState
+    config: PluginConfig
   }
 ) {
   const {asset, readOnly, dialogState, setDialogState, onChange, onSelect} = props
   const [open, setOpen] = useState(false)
   const [menuElement, setMenuRef] = useState<HTMLDivElement | null>(null)
   const isSigned = useMemo(() => getPlaybackPolicy(asset) === 'signed', [asset])
+  const {hasConfigAccess} = useAccessControl(props.config)
 
   const onReset = useCallback(() => onChange(PatchEvent.from(unset([]))), [onChange])
 
@@ -125,12 +128,16 @@ function PlayerActionsMenu(
               />
             )}
             <MenuDivider />
-            <MenuItem
-              icon={PlugIcon}
-              text="Configure API"
-              onClick={() => setDialogState('secrets')}
-            />
-            <MenuDivider />
+            {hasConfigAccess && (
+              <>
+                <MenuItem
+                  icon={PlugIcon}
+                  text="Configure API"
+                  onClick={() => setDialogState('secrets')}
+                />
+                <MenuDivider />
+              </>
+            )}
             <MenuItem
               tone="critical"
               icon={ResetIcon}

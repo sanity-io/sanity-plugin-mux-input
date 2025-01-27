@@ -364,6 +364,7 @@ export default function Uploader(props: Props) {
                   onChange={props.onChange}
                   onSelect={handleUpload}
                   readOnly={props.readOnly}
+                  config={props.config}
                 />
               }
             />
@@ -375,6 +376,7 @@ export default function Uploader(props: Props) {
             readOnly={!!props.readOnly}
             setDialogState={props.setDialogState}
             needsSetup={props.needsSetup}
+            config={props.config}
           />
         )}
       </UploadCard>
