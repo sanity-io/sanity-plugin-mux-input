@@ -120,6 +120,7 @@ For reference, here's an example `mux.videoAsset` document:
   "filename": "mux-example-video.mp4",
   "status": "ready",
   "playbackId": "YA02HBpY02fKWHDRMNilo301pdH02LY3k9HTcK43ItGJLWA",
+  "thumbTime": 65.82,
   // Full Mux asset data:
   "data": {
     "encoding_tier": "smart",
