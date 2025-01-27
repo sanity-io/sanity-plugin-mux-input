@@ -13,6 +13,7 @@ export const defaultConfig: PluginConfig = {
   normalize_audio: false,
   defaultSigned: false,
   tool: DEFAULT_TOOL_CONFIG,
+  allowedRolesForConfiguration: [],
 }
 
 export const muxInput = definePlugin<Partial<PluginConfig> | void>((userConfig) => {

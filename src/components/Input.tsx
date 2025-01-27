@@ -12,6 +12,7 @@ import ErrorBoundaryCard from './ErrorBoundaryCard'
 import {InputFallback} from './Input.styled'
 import Onboard from './Onboard'
 import Uploader from './Uploader'
+import {useAccessControl} from '../hooks/useAccessControl'
 
 export interface InputProps extends MuxInputProps {
   config: PluginConfig
@@ -22,6 +23,7 @@ const Input = (props: InputProps) => {
   const assetDocumentValues = useAssetDocumentValues(props.value?.asset)
   const poll = useMuxPolling(props.readOnly ? undefined : assetDocumentValues?.value || undefined)
   const [dialogState, setDialogState] = useDialogState()
+  const {hasConfigAccess} = useAccessControl(props.config)
 
   const error = secretDocumentValues.error || assetDocumentValues.error || poll.error /*||
     // @TODO move errored logic to Uploader, where handleRemoveVideo can be called
@@ -44,7 +46,7 @@ const Input = (props: InputProps) => {
           ) : (
             <>
               {secretDocumentValues.value.needsSetup && !assetDocumentValues.value ? (
-                <Onboard setDialogState={setDialogState} />
+                <Onboard setDialogState={setDialogState} config={props.config} />
               ) : (
                 <Uploader
                   {...props}
@@ -59,7 +61,7 @@ const Input = (props: InputProps) => {
                 />
               )}
 
-              {dialogState === 'secrets' && (
+              {dialogState === 'secrets' && hasConfigAccess && (
                 <ConfigureApi
                   setDialogState={setDialogState}
                   secrets={secretDocumentValues.value.secrets}
