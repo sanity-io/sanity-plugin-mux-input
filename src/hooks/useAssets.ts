@@ -47,18 +47,17 @@ export default function useAssets() {
 
   const assetDocumentsObservable = useAssetDocuments({documentStore, sort, searchQuery})
   const isLoading = assetDocumentsObservable === undefined
-  const assetDocuments = isLoading ? [] : assetDocumentsObservable
   const assets = useMemo(
     () =>
       // Avoid displaying both drafts & published assets by collating them together and giving preference to drafts
-      collate<VideoAssetDocument>(assetDocuments).map(
+      collate<VideoAssetDocument>(assetDocumentsObservable ?? []).map(
         (collated) =>
           ({
             ...(collated.draft || collated.published || {}),
             _id: collated.id,
           }) as VideoAssetDocument
       ),
-    [assetDocuments]
+    [assetDocumentsObservable]
   )
 
   return {
