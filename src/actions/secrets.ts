@@ -32,15 +32,25 @@ export function saveSecrets(
   return client.createOrReplace(doc)
 }
 
-export function createSigningKeys(client: SanityClient) {
-  const {dataset} = client.config()
-  return client.request<{
-    data: {private_key: string; id: string; created_at: string}
-  }>({
-    url: `/addons/mux/signing-keys/${dataset}`,
-    withCredentials: true,
-    method: 'POST',
-  })
+export async function createSigningKeys(client: SanityClient) {
+  try {
+    const {dataset} = client.config()
+    const res = await client.request<{
+      data: {private_key: string; id: string; created_at: string}
+    }>({
+      url: `/addons/mux/signing-keys/${dataset}`,
+      withCredentials: true,
+      method: 'POST',
+    })
+    return res
+  } catch (error: any) {
+    console.error('Error creating signing keys', error)
+    const message =
+      error.response?.statusCode === 401
+        ? 'Unauthorized - Failed to create the Signing Key. Please ensure that the token has "System" permissions'
+        : error.message
+    throw new Error(message)
+  }
 }
 
 export function testSecrets(client: SanityClient) {
