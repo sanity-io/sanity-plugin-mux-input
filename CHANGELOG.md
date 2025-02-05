@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.4.1](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.4.0...v2.4.1) (2025-02-05)
+
+### Bug Fixes
+
+- prevent infinite loading issue on video browser ([#399](https://github.com/sanity-io/sanity-plugin-mux-input/issues/399)) ([75ed1f5](https://github.com/sanity-io/sanity-plugin-mux-input/commit/75ed1f53646eeb50cc1209d77748721feb0918e1))
+
 ## [2.4.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.3.6...v2.4.0) (2024-11-14)
 
 ### Features
