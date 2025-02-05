@@ -88,6 +88,14 @@ export interface PluginConfig extends MuxInputConfig {
         title?: string
         icon?: React.ComponentType
       }
+
+  /**
+   * The roles that are allowed to configure the plugin.
+   *
+   * If not set, all roles will be allowed to configure the plugin.
+   * @defaultValue []
+   */
+  allowedRolesForConfiguration: string[]
 }
 
 export const SUPPORTED_MUX_LANGUAGES = [
