@@ -279,7 +279,9 @@ Issues are actively monitored and PRs are welcome. When developing this plugin t
 
 ### Publishing
 
-Run the ["CI" workflow](https://github.com/sanity-io/sanity-plugin-mux-input/actions/workflows/ci.yml).
+By default, once your code is pushed to `main` the CI will handle the workflow automatically and push a new version.
+
+If you want to do it manually, you can run the ["CI and Release" workflow]([https://github.com/sanity-io/sanity-plugin-mux-input/actions/workflows/ci.yml](https://github.com/sanity-io/sanity-plugin-mux-input/actions/workflows/main.yml)).
 Make sure to select the main branch and check "Release new version".
 
 Semantic release will only release on configured branches, so it is safe to run release on any branch.
@@ -301,11 +303,11 @@ After Studio v3 turns stable this behavior will change. The v2 version will then
 
 ### Develop & test
 
-This plugin uses [@sanity/plugin-kit](https://github.com/sanity-io/plugin-kit)
-with default configuration for build & watch scripts.
-
-See [Testing a plugin in Sanity Studio](https://github.com/sanity-io/plugin-kit#testing-a-plugin-in-sanity-studio)
-on how to run this plugin with hotreload in the studio.
+You can run the example locally by doing the following:
+1. run `npm install` and `npm dev` on the root of the repo
+2. In the terminal, a command with `yalc` will be shown, that command will allow you to run the version that you have locally directly on the example or on your own app.
+3. run `npm install` and `npm dev` on the `/example` directory where the app with the example exists or in your own app
+4. the studio and app should auto reload with your changes in the plugin package you have locally
 
 ### Release new version
 
