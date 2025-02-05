@@ -77,7 +77,7 @@ The Mux plugin will find its access tokens by fetching this document.
 
 When a Mux video is uploaded/chosen in a document via this plugin, it gets stored as a reference to the video document:
 
-```json
+```json5
 // example document
 {
   "_type": "exampleSchemaWithVideo",
@@ -112,7 +112,7 @@ Before you can display videos in your frontend, you need to follow these referen
 
 For reference, here's an example `mux.videoAsset` document:
 
-```json
+```json5
 {
   "_id": "4e37284e-cec2-406d-973c-fdf9ab1e5598",
   "_type": "mux.videoAsset",
