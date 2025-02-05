@@ -80,16 +80,16 @@ When a Mux video is uploaded/chosen in a document via this plugin, it gets store
 ```json5
 // example document
 {
-  "_type": "exampleSchemaWithVideo",
+  _type: 'exampleSchemaWithVideo',
   // Example video field
-  "myVideoField": {
-    "_type": "mux.video",
-    "asset": {
-      "_type": "reference",
-      "_weak": true,
-      "_ref": "4e37284e-cec2-406d-973c-fdf9ab1e5598" // 👈 ID of the document holding the video's Mux data
-    }
-  }
+  myVideoField: {
+    _type: 'mux.video',
+    asset: {
+      _type: 'reference',
+      _weak: true,
+      _ref: '4e37284e-cec2-406d-973c-fdf9ab1e5598', // 👈 ID of the document holding the video's Mux data
+    },
+  },
 }
 ```
 
@@ -114,52 +114,52 @@ For reference, here's an example `mux.videoAsset` document:
 
 ```json5
 {
-  "_id": "4e37284e-cec2-406d-973c-fdf9ab1e5598",
-  "_type": "mux.videoAsset",
-  "assetId": "7ovyI76F92n02H00mWP7lOCZMIU00N4iysDiQDNppX026HY",
-  "filename": "mux-example-video.mp4",
-  "status": "ready",
-  "playbackId": "YA02HBpY02fKWHDRMNilo301pdH02LY3k9HTcK43ItGJLWA",
+  _id: '4e37284e-cec2-406d-973c-fdf9ab1e5598',
+  _type: 'mux.videoAsset',
+  assetId: '7ovyI76F92n02H00mWP7lOCZMIU00N4iysDiQDNppX026HY',
+  filename: 'mux-example-video.mp4',
+  status: 'ready',
+  playbackId: 'YA02HBpY02fKWHDRMNilo301pdH02LY3k9HTcK43ItGJLWA',
   // Full Mux asset data:
-  "data": {
-    "encoding_tier": "smart",
-    "max_resolution_tier": "1080p",
-    "aspect_ratio": "16:9",
-    "created_at": "1706645034",
-    "duration": 25.492133,
-    "status": "ready",
-    "master_access": "none",
-    "max_stored_frame_rate": 29.97,
-    "playback_ids": [
+  data: {
+    encoding_tier: 'smart',
+    max_resolution_tier: '1080p',
+    aspect_ratio: '16:9',
+    created_at: '1706645034',
+    duration: 25.492133,
+    status: 'ready',
+    master_access: 'none',
+    max_stored_frame_rate: 29.97,
+    playback_ids: [
       {
-        "id": "YA02HBpY02fKWHDRMNilo301pdH02LY3k9HTcK43ItGJLWA",
-        "policy": "signed"
-      }
+        id: 'YA02HBpY02fKWHDRMNilo301pdH02LY3k9HTcK43ItGJLWA',
+        policy: 'signed',
+      },
     ],
-    "resolution_tier": "1080p",
-    "ingest_type": "on_demand_url",
-    "max_stored_resolution": "HD",
-    "tracks": [
+    resolution_tier: '1080p',
+    ingest_type: 'on_demand_url',
+    max_stored_resolution: 'HD',
+    tracks: [
       {
-        "max_channel_layout": "stereo",
-        "max_channels": 2,
-        "id": "00MKMC73SYimw1YTh0102lPJJp9w2R5rHddpNX1N9opAMk",
-        "type": "audio",
-        "primary": true,
-        "duration": 25.45
+        max_channel_layout: 'stereo',
+        max_channels: 2,
+        id: '00MKMC73SYimw1YTh0102lPJJp9w2R5rHddpNX1N9opAMk',
+        type: 'audio',
+        primary: true,
+        duration: 25.45,
       },
       {
-        "max_frame_rate": 29.97,
-        "max_height": 1080,
-        "id": "g1wEph3CVvbJL01YNKzAWMyH8N1SxW00WeECGjqwEHW9g",
-        "type": "video",
-        "duration": 25.4254,
-        "max_width": 1920
-      }
+        max_frame_rate: 29.97,
+        max_height: 1080,
+        id: 'g1wEph3CVvbJL01YNKzAWMyH8N1SxW00WeECGjqwEHW9g',
+        type: 'video',
+        duration: 25.4254,
+        max_width: 1920,
+      },
     ],
-    "id": "7ovyI76F92n02H00mWP7lOCZMIU00N4iysDiQDNppX026HY",
-    "mp4_support": "none"
-  }
+    id: '7ovyI76F92n02H00mWP7lOCZMIU00N4iysDiQDNppX026HY',
+    mp4_support: 'none',
+  },
 }
 ```
 
