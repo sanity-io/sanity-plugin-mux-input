@@ -69,3 +69,4 @@ dist
 .husky
 tsconfig.tsbuildinfo
 .next
+.sanity
