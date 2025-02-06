@@ -1,5 +1,6 @@
 import {
   EllipsisHorizontalIcon,
+  ImageIcon,
   LockIcon,
   PlugIcon,
   ResetIcon,
@@ -42,6 +43,11 @@ const LockButton = styled(Button)`
   background: transparent;
   color: white;
 `
+
+// @TODO: add support for audio type (asset._type) when uploading an audio file so we can hide the thumbnail option.
+const isVideoAsset = (asset: VideoAssetDocument) => {
+  return asset._type === 'mux.videoAsset'
+}
 
 function PlayerActionsMenu(
   props: Pick<MuxInputProps, 'onChange' | 'readOnly'> & {
@@ -111,6 +117,13 @@ function PlayerActionsMenu(
               text="Browse"
               onClick={() => setDialogState('select-video')}
             />
+            {isVideoAsset(asset) && (
+              <MenuItem
+                icon={ImageIcon}
+                text="Thumbnail"
+                onClick={() => setDialogState('edit-thumbnail')}
+              />
+            )}
             <MenuDivider />
             <MenuItem
               icon={PlugIcon}

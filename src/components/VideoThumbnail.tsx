@@ -6,8 +6,9 @@ import {styled} from 'styled-components'
 import {useClient} from '../hooks/useClient'
 import useInView from '../hooks/useInView'
 import {THUMBNAIL_ASPECT_RATIO} from '../util/constants'
-import {type AnimatedPosterSrcOptions, getAnimatedPosterSrc} from '../util/getAnimatedPosterSrc'
-import {VideoAssetDocument} from '../util/types'
+import {getAnimatedPosterSrc} from '../util/getAnimatedPosterSrc'
+import {getPosterSrc} from '../util/getPosterSrc'
+import {AssetThumbnailOptions, MuxAnimatedThumbnailUrl, MuxThumbnailUrl} from '../util/types'
 
 const Image = styled.img`
   transition: opacity 0.175s ease-out 0s;
@@ -29,9 +30,11 @@ const STATUS_TO_TONE: Record<ImageStatus, CardTone> = {
 export default function VideoThumbnail({
   asset,
   width,
+  staticImage = false,
 }: {
-  asset: AnimatedPosterSrcOptions['asset'] & Pick<VideoAssetDocument, 'filename' | 'assetId'>
+  asset: AssetThumbnailOptions['asset']
   width?: number
+  staticImage?: boolean
 }) {
   const {inView, ref} = useInView()
   const posterWidth = width || 250
@@ -39,14 +42,18 @@ export default function VideoThumbnail({
   const [status, setStatus] = useState<ImageStatus>('loading')
   const client = useClient()
 
-  const animatedSrc = useMemo(() => {
+  const src = useMemo(() => {
     try {
-      return getAnimatedPosterSrc({asset, client, width: posterWidth})
+      let thumbnail: MuxAnimatedThumbnailUrl | MuxThumbnailUrl
+      if (staticImage) thumbnail = getPosterSrc({asset, client, width: posterWidth})
+      else thumbnail = getAnimatedPosterSrc({asset, client, width: posterWidth})
+
+      return thumbnail
     } catch {
       if (status !== 'error') setStatus('error')
       return undefined
     }
-  }, [asset, client, posterWidth, status])
+  }, [asset, client, posterWidth, status, staticImage])
 
   function handleLoad() {
     setStatus('loaded')
@@ -105,8 +112,8 @@ export default function VideoThumbnail({
             </Stack>
           )}
           <Image
-            src={animatedSrc}
-            alt={`Preview for video ${asset.filename || asset.assetId}`}
+            src={src}
+            alt={`Preview for ${staticImage ? 'image' : 'video'} ${asset.filename || asset.assetId}`}
             onLoad={handleLoad}
             onError={handleError}
             style={{
