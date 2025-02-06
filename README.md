@@ -188,6 +188,8 @@ export default function MuxVideo({playbackId, title}: {playbackId?: string; titl
 
 To enable [signed URLs](https://docs.mux.com/docs/security-signed-urls) with content uploaded to Mux, you will need to check the "Enable Signed Urls" option in the Mux Plugin configuration. This feature requires you to set the API Access Token and Secret Key (as per the [Quick start](#quick-start) section).
 
+⚠️ **Important:** To use Signed URLs, the API Access Token must have **System permissions**. Without these permissions, the signing key cannot be created, and authentication will fail.
+
 📌 **Note**: When the signed URL option is triggered, the plugin will cache a `signingKeyPrivate` in a private document in the dataset. This key is used by Mux to sign the uploads, and if it's incorrect your uploads will fail. If that's the case, you can delete the secrets document and try again:
 
 ```bash
