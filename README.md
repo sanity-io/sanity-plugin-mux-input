@@ -114,13 +114,13 @@ For reference, here's an example `mux.videoAsset` document:
 
 ```json5
 {
-  "_id": "4e37284e-cec2-406d-973c-fdf9ab1e5598",
-  "_type": "mux.videoAsset",
-  "assetId": "7ovyI76F92n02H00mWP7lOCZMIU00N4iysDiQDNppX026HY",
-  "filename": "mux-example-video.mp4",
-  "status": "ready",
-  "playbackId": "YA02HBpY02fKWHDRMNilo301pdH02LY3k9HTcK43ItGJLWA",
-  "thumbTime": 65.82,
+  _id: '4e37284e-cec2-406d-973c-fdf9ab1e5598',
+  _type: 'mux.videoAsset',
+  assetId: '7ovyI76F92n02H00mWP7lOCZMIU00N4iysDiQDNppX026HY',
+  filename: 'mux-example-video.mp4',
+  status: 'ready',
+  playbackId: 'YA02HBpY02fKWHDRMNilo301pdH02LY3k9HTcK43ItGJLWA',
+  thumbTime: 65.82,
   // Full Mux asset data:
   data: {
     encoding_tier: 'smart',
