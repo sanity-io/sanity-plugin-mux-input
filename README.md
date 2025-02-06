@@ -280,9 +280,7 @@ Issues are actively monitored and PRs are welcome. When developing this plugin t
 
 ### Publishing
 
-By default, once your code is pushed to `main` the CI will handle the workflow automatically and push a new version.
-
-If you want to do it manually, you can run the ["CI and Release" workflow](<[https://github.com/sanity-io/sanity-plugin-mux-input/actions/workflows/ci.yml](https://github.com/sanity-io/sanity-plugin-mux-input/actions/workflows/main.yml)>).
+You can run the ["CI and Release" workflow](<[https://github.com/sanity-io/sanity-plugin-mux-input/actions/workflows/ci.yml](https://github.com/sanity-io/sanity-plugin-mux-input/actions/workflows/main.yml)>).
 Make sure to select the main branch and check "Release new version".
 
 Semantic release will only release on configured branches, so it is safe to run release on any branch.
