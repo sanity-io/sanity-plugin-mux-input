@@ -1,6 +1,6 @@
 {
   "name": "sanity-plugin-mux-input",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "description": "An input component that integrates Sanity Studio with Mux video encoding/hosting service.",
   "keywords": [
     "sanity",
@@ -41,8 +41,7 @@
   ],
   "scripts": {
     "build": "plugin-kit verify-package --silent && pkg-utils build --strict --check --clean",
-    "clean": "rimraf lib",
-    "dev": "plugin-kit link-watch --strict",
+    "dev": "sanity dev",
     "format": "prettier --write --cache --ignore-unknown .",
     "link-watch": "plugin-kit link-watch",
     "lint": "eslint .",
@@ -75,11 +74,10 @@
     "@sanity/pkg-utils": "^6.12.1",
     "@sanity/plugin-kit": "4.0.19",
     "@sanity/semantic-release-preset": "^5.0.0",
-    "@sanity/vision": "^3.68.1",
+    "@sanity/vision": "^3.74.0",
     "@types/lodash": "^4.17.13",
     "@types/react": "^18.3.17",
     "@types/react-is": "^18.3.1",
-    "@types/styled-components": "^5.1.34",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
     "eslint": "^8.57.1",
@@ -98,12 +96,10 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-is": "^18.3.1",
-    "rimraf": "^5.0.7",
-    "sanity": "^3.68.1",
+    "sanity": "^3.74.0",
     "semantic-release": "^24.2.0",
     "styled-components": "^6.1.13",
-    "typescript": "^5.7.2",
-    "yalc": "1.0.0-pre.53"
+    "typescript": "5.7.3"
   },
   "peerDependencies": {
     "react": "^18",
