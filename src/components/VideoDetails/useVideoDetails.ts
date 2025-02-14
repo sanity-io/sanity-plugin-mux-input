@@ -1,5 +1,5 @@
 import {useToast} from '@sanity/ui'
-import {useState} from 'react'
+import {useMemo, useState} from 'react'
 import {useDocumentStore} from 'sanity'
 
 import {useClient} from '../../hooks/useClient'
@@ -17,10 +17,10 @@ export default function useVideoDetails(props: VideoDetailsProps) {
   const documentStore = useDocumentStore()
   const toast = useToast()
   const client = useClient()
-  const [references, referencesLoading] = useDocReferences({
-    documentStore,
-    id: props.asset._id as string,
-  })
+
+  const [references, referencesLoading] = useDocReferences(
+    useMemo(() => ({documentStore, id: props.asset._id}), [documentStore, props.asset._id])
+  )
 
   const [originalAsset, setOriginalAsset] = useState(() => props.asset)
   const [filename, setFilename] = useState(props.asset.filename)
