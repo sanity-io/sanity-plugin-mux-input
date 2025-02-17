@@ -289,7 +289,7 @@ export default function UploadConfiguration({
             {config.encoding_tier === 'smart' && (
               <FormField title="Additional Configuration">
                 <Stack space={2}>
-                  <Text>Advanced Playback Policies</Text>
+                  <Text weight="bold">Advanced Playback Policies</Text>
                   <PlaybackPolicy
                     id={`${id}--public`}
                     checked={config.public_policy}

@@ -24,14 +24,16 @@ export default function UploadConfiguration({
     })
   }
   return (
-    <Box padding={[3, 3, 4, 5]} style={{outline: '1px solid grey'}} onClick={handleBoxClick}>
-      <Stack space={[3, 3, 4, 5]}>
+    <Box padding={3} style={{outline: '0.01rem solid grey'}} onClick={handleBoxClick}>
+      <Stack space={2}>
         <Flex align="center" gap={2}>
           <Checkbox id={id} required checked={checked} onChange={() => {}} />
-          <Text size={[2, 2, 3, 4]}>{optionName}</Text>
+          <Text weight="bold" size={2}>
+            {optionName}
+          </Text>
         </Flex>
 
-        <Text muted size={[1, 1, 2]}>
+        <Text muted size={1}>
           {description}
         </Text>
       </Stack>
