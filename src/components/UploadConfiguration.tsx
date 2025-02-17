@@ -21,6 +21,7 @@ import {
 import TextTracksEditor, {type TrackAction} from './TextTracksEditor'
 import PlaybackPolicy from './uploadConfiguration/PlaybackPolicy'
 import type {StagedUpload} from './Uploader'
+import PlaybackPolicyWarning from './uploadConfiguration/PlaybackPolicyWarning'
 
 export type UploadConfigurationStateAction =
   | {action: 'encoding_tier'; value: UploadConfig['encoding_tier']}
@@ -309,6 +310,8 @@ export default function UploadConfiguration({
                       action="signed_policy"
                     />
                   )}
+                  <PlaybackPolicyWarning />
+
                   {config.encoding_tier === 'smart' && (
                     <Flex align="center" gap={2}>
                       <Checkbox
