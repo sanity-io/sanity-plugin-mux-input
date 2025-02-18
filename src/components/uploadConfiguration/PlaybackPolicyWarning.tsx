@@ -11,6 +11,7 @@ export default function UploadConfiguration() {
     outline: '0.01rem solid grey',
     backgroundColor: '#979cb0',
     borderRadius: '0.5rem',
+    width: 'max-content',
   }
 
   return (

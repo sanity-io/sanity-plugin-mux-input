@@ -21,7 +21,6 @@ import {
 import TextTracksEditor, {type TrackAction} from './TextTracksEditor'
 import PlaybackPolicy from './uploadConfiguration/PlaybackPolicy'
 import type {StagedUpload} from './Uploader'
-import PlaybackPolicyWarning from './uploadConfiguration/PlaybackPolicyWarning'
 
 export type UploadConfigurationStateAction =
   | {action: 'encoding_tier'; value: UploadConfig['encoding_tier']}
@@ -290,27 +289,7 @@ export default function UploadConfiguration({
             {config.encoding_tier === 'smart' && (
               <FormField title="Additional Configuration">
                 <Stack space={2}>
-                  <Text weight="bold">Advanced Playback Policies</Text>
-                  <PlaybackPolicy
-                    id={`${id}--public`}
-                    checked={config.public_policy}
-                    optionName="Public"
-                    description="Playback IDs are accessible by constructing an HLS URL like https://stream.mux.com/{PLAYBACK_ID}"
-                    dispatch={dispatch}
-                    action="public_policy"
-                  />
-                  {secrets.enableSignedUrls && (
-                    <PlaybackPolicy
-                      id={`${id}--signed`}
-                      checked={config.signed_policy}
-                      optionName="Signed"
-                      description="Playback IDs should be used with tokens https://stream.mux.com/{PLAYBACK_ID}?token={TOKEN}. 
-                      // See Secure video playback for details about creating tokens."
-                      dispatch={dispatch}
-                      action="signed_policy"
-                    />
-                  )}
-                  <PlaybackPolicyWarning />
+                  <PlaybackPolicy id={id} config={config} secrets={secrets} dispatch={dispatch} />
 
                   {config.encoding_tier === 'smart' && (
                     <Flex align="center" gap={2}>

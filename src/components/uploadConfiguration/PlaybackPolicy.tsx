@@ -1,62 +1,43 @@
-import {Box, Checkbox, Flex, Stack, Text, useTheme_v2} from '@sanity/ui'
-import {CSSProperties, useState} from 'react'
+import {Text} from '@sanity/ui'
 
-import {UploadConfigurationStateAction} from '../UploadConfiguration'
+import {Secrets, UploadConfig} from '../../util/types'
+import PlaybackPolicyOption from './PlaybackPolicyOption'
+import PlaybackPolicyWarning from './PlaybackPolicyWarning'
 
-export default function UploadConfiguration({
+export default function PlaybackPolicy({
   id,
-  checked,
-  optionName,
-  description,
+  config,
+  secrets,
   dispatch,
-  action,
 }: {
   id: string
-  checked: boolean
-  optionName: string
-  description: string
+  config: UploadConfig
+  secrets: Secrets
   dispatch: any
-  action: UploadConfigurationStateAction['action']
 }) {
-  const theme = useTheme_v2()
-  const [scale, setScale] = useState(1)
-
-  const isDarkMode = theme.color._dark
-  const boxStyle: CSSProperties = {
-    outline: '0.01rem solid grey',
-    transform: `scale(${scale})`,
-    transition: 'transform 0.1s ease-in-out',
-    cursor: 'pointer',
-  }
-
-  const triggerAnimation = () => {
-    setScale(0.98)
-    setTimeout(() => {
-      setScale(1)
-    }, 100)
-  }
-
-  const handleBoxClick = () => {
-    triggerAnimation()
-    dispatch({
-      action,
-      value: !checked,
-    })
-  }
   return (
-    <Box padding={3} style={boxStyle} onClick={handleBoxClick}>
-      <Stack space={2}>
-        <Flex align="center" gap={2}>
-          <Checkbox id={id} required checked={checked} onChange={() => {}} />
-          <Text weight="bold" size={2}>
-            {optionName}
-          </Text>
-        </Flex>
-
-        <Text muted size={1}>
-          {description}
-        </Text>
-      </Stack>
-    </Box>
+    <>
+      <Text weight="bold">Advanced Playback Policies</Text>
+      <PlaybackPolicyOption
+        id={`${id}--public`}
+        checked={config.public_policy}
+        optionName="Public"
+        description="Playback IDs are accessible by constructing an HLS URL like https://stream.mux.com/{PLAYBACK_ID}"
+        dispatch={dispatch}
+        action="public_policy"
+      />
+      {secrets.enableSignedUrls && (
+        <PlaybackPolicyOption
+          id={`${id}--signed`}
+          checked={config.signed_policy}
+          optionName="Signed"
+          description="Playback IDs should be used with tokens https://stream.mux.com/{PLAYBACK_ID}?token={TOKEN}. 
+                // See Secure video playback for details about creating tokens."
+          dispatch={dispatch}
+          action="signed_policy"
+        />
+      )}
+      <PlaybackPolicyWarning />
+    </>
   )
 }
