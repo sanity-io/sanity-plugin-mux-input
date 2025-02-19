@@ -37,7 +37,7 @@ export default function PlaybackPolicy({
           action="signed_policy"
         />
       )}
-      <PlaybackPolicyWarning />
+      {!(config.public_policy || config.signed_policy) && <PlaybackPolicyWarning />}
     </>
   )
 }

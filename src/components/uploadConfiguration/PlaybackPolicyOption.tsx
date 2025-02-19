@@ -42,19 +42,21 @@ export default function PlaybackPolicyOption({
     })
   }
   return (
-    <Box padding={3} style={boxStyle} onClick={handleBoxClick}>
-      <Stack space={2}>
-        <Flex align="center" gap={2}>
-          <Checkbox id={id} required checked={checked} onChange={() => {}} />
-          <Text weight="bold" size={2}>
-            {optionName}
-          </Text>
-        </Flex>
+    <label>
+      <Box padding={3} style={boxStyle}>
+        <Stack space={2}>
+          <Flex align="center" gap={2}>
+            <Checkbox id={id} required checked={checked} onChange={handleBoxClick} />
+            <Text weight="bold" size={2}>
+              {optionName}
+            </Text>
+          </Flex>
 
-        <Text muted size={1}>
-          {description}
-        </Text>
-      </Stack>
-    </Box>
+          <Text muted size={1}>
+            {description}
+          </Text>
+        </Stack>
+      </Box>
+    </label>
   )
 }
