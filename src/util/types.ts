@@ -163,7 +163,8 @@ export interface UploadConfig
     'encoding_tier' | 'max_resolution_tier' | 'mp4_support' | 'normalize_audio'
   > {
   text_tracks: UploadTextTrack[]
-  signed: boolean
+  signed_policy: boolean
+  public_policy: boolean
 }
 
 /**
@@ -208,7 +209,7 @@ export interface MuxNewAssetSettings
   }[]
 
   /** An array of playback policy names that you want applied to this asset and available through playback_ids. */
-  playback_policy: ('public' | 'signed')[]
+  playback_policy: ('public' | 'signed' | 'drm')[]
 
   /** Arbitrary user-supplied metadata that will be included in the asset details and related webhooks.  */
   passthrough?: string
