@@ -4,7 +4,8 @@ import {CSSProperties} from 'react'
 
 export default function PlaybackPolicyWarning() {
   const textStyle: CSSProperties = {
-    color: 'black',
+    color: '#13141A',
+    fontWeight: 500,
   }
 
   const boxStyle: CSSProperties = {
@@ -12,13 +13,14 @@ export default function PlaybackPolicyWarning() {
     backgroundColor: '#979cb0',
     borderRadius: '0.5rem',
     width: 'max-content',
+    color: '#13141A',
   }
 
   return (
-    <Box padding={1} style={boxStyle}>
+    <Box padding={2} style={boxStyle}>
       <Flex align="center" gap={2}>
         <WarningFilledIcon />
-        <Text size={0} style={textStyle}>
+        <Text size={1} style={textStyle}>
           Please select at least one Playback Policy
         </Text>
       </Flex>

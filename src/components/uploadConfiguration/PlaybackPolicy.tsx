@@ -1,4 +1,4 @@
-import {Text} from '@sanity/ui'
+import {Grid, Text} from '@sanity/ui'
 
 import {Secrets, UploadConfig} from '../../util/types'
 import PlaybackPolicyOption from './PlaybackPolicyOption'
@@ -15,8 +15,9 @@ export default function PlaybackPolicy({
   secrets: Secrets
   dispatch: any
 }) {
+  const noPolicySelected = !(config.public_policy || config.signed_policy)
   return (
-    <>
+    <Grid gap={3}>
       <Text weight="bold">Advanced Playback Policies</Text>
       <PlaybackPolicyOption
         id={`${id}--public`}
@@ -37,7 +38,7 @@ export default function PlaybackPolicy({
           action="signed_policy"
         />
       )}
-      {!(config.public_policy || config.signed_policy) && <PlaybackPolicyWarning />}
-    </>
+      {noPolicySelected && <PlaybackPolicyWarning />}
+    </Grid>
   )
 }

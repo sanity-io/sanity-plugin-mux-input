@@ -1,4 +1,4 @@
-import {Box, Checkbox, Flex, Stack, Text} from '@sanity/ui'
+import {Box, Checkbox, Flex, Grid, Stack, Text} from '@sanity/ui'
 import {CSSProperties, useState} from 'react'
 
 import {UploadConfigurationStateAction} from '../UploadConfiguration'
@@ -25,6 +25,7 @@ export default function PlaybackPolicyOption({
     transform: `scale(${scale})`,
     transition: 'transform 0.1s ease-in-out',
     cursor: 'pointer',
+    borderRadius: '0.25rem',
   }
 
   const triggerAnimation = () => {
@@ -43,20 +44,17 @@ export default function PlaybackPolicyOption({
   }
   return (
     <label>
-      <Box padding={3} style={boxStyle}>
-        <Stack space={2}>
-          <Flex align="center" gap={2}>
-            <Checkbox id={id} required checked={checked} onChange={handleBoxClick} />
-            <Text weight="bold" size={2}>
-              {optionName}
-            </Text>
-          </Flex>
-
-          <Text muted size={1}>
+      <Flex gap={3} padding={3} style={boxStyle}>
+        <Checkbox id={id} required checked={checked} onChange={handleBoxClick} />
+        <Grid gap={3}>
+          <Text size={3} weight="bold">
+            {optionName}
+          </Text>
+          <Text size={2} muted>
             {description}
           </Text>
-        </Stack>
-      </Box>
+        </Grid>
+      </Flex>
     </label>
   )
 }

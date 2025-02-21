@@ -292,7 +292,7 @@ export default function UploadConfiguration({
                   <PlaybackPolicy id={id} config={config} secrets={secrets} dispatch={dispatch} />
 
                   {config.encoding_tier === 'smart' && (
-                    <Flex align="center" gap={2}>
+                    <Flex align="center" gap={2} padding={[0, 2]}>
                       <Checkbox
                         id={`${id}--mp4_support`}
                         style={{display: 'block'}}
