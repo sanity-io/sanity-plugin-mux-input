@@ -5,6 +5,18 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.6.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.5.0...v2.6.0) (2025-02-28)
+
+### Features
+
+- Improve Error Messaging for Signed URLs Configuration ([#402](https://github.com/sanity-io/sanity-plugin-mux-input/issues/402)) ([221e0c0](https://github.com/sanity-io/sanity-plugin-mux-input/commit/221e0c0a1ebb3a2fa6600bd302e6d537dbceee5e))
+- Select Playback Policy ([#410](https://github.com/sanity-io/sanity-plugin-mux-input/issues/410)) ([75bfad6](https://github.com/sanity-io/sanity-plugin-mux-input/commit/75bfad6ecd14bb8559d4b1d7ee4494faebed4e30))
+- Update MUX logo to the new one ([#411](https://github.com/sanity-io/sanity-plugin-mux-input/issues/411)) ([20917f1](https://github.com/sanity-io/sanity-plugin-mux-input/commit/20917f1e0a1fa67df7efa6250ffbb9f140721395))
+
+### Bug Fixes
+
+- infinite loading issue in used by section of video details ([#409](https://github.com/sanity-io/sanity-plugin-mux-input/issues/409)) ([06aaba2](https://github.com/sanity-io/sanity-plugin-mux-input/commit/06aaba20808de26a4149f6519cbaa6527a150eb7))
+
 ## [2.5.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.4.1...v2.5.0) (2025-02-06)
 
 ### Features
