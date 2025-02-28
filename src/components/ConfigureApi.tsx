@@ -139,6 +139,8 @@ function ConfigureApi({secrets, setDialogState}: Props) {
                     The access token needs permissions: <strong>Mux Video </strong>
                     (Full Access) and <strong>Mux Data</strong> (Read)
                     <br />
+                    To use Signed URLs, the token must also have System permissions.
+                    <br />
                     The credentials will be stored safely in a hidden document only available to
                     editors.
                   </Text>
