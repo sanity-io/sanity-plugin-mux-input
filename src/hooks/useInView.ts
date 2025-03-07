@@ -1,5 +1,4 @@
-import type {RefObject} from 'react'
-import {useEffect, useRef, useState} from 'react'
+import {useEffect, useState} from 'react'
 
 type IntersectionOptions = {
   root?: Element | null
@@ -8,11 +7,11 @@ type IntersectionOptions = {
   onChange?: (inView: boolean) => void
 }
 
-function useInView<RefElement = HTMLElement>(
+export function useInView(
+  ref: React.RefObject<HTMLDivElement | null>,
   options: IntersectionOptions = {}
-): {inView: boolean; ref: RefObject<RefElement>} {
+) {
   const [inView, setInView] = useState(false)
-  const ref = useRef(null)
 
   useEffect(() => {
     if (!ref.current) return
@@ -37,9 +36,7 @@ function useInView<RefElement = HTMLElement>(
     return () => {
       if (toObserve) observer.unobserve(toObserve)
     }
-  }, [options])
+  }, [options, ref])
 
-  return {inView, ref}
+  return inView
 }
-
-export default useInView

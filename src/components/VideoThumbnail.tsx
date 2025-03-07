@@ -1,10 +1,10 @@
 import {ErrorOutlineIcon} from '@sanity/icons'
 import {Box, Card, CardTone, Spinner, Stack, Text} from '@sanity/ui'
-import {useMemo, useState} from 'react'
+import {useMemo, useRef, useState} from 'react'
 import {styled} from 'styled-components'
 
 import {useClient} from '../hooks/useClient'
-import useInView from '../hooks/useInView'
+import {useInView} from '../hooks/useInView'
 import {THUMBNAIL_ASPECT_RATIO} from '../util/constants'
 import {getAnimatedPosterSrc} from '../util/getAnimatedPosterSrc'
 import {getPosterSrc} from '../util/getPosterSrc'
@@ -36,7 +36,8 @@ export default function VideoThumbnail({
   width?: number
   staticImage?: boolean
 }) {
-  const {inView, ref} = useInView()
+  const ref = useRef<HTMLDivElement | null>(null)
+  const inView = useInView(ref)
   const posterWidth = width || 250
 
   const [status, setStatus] = useState<ImageStatus>('loading')
@@ -74,7 +75,7 @@ export default function VideoThumbnail({
       }}
       border
       radius={2}
-      ref={ref as any}
+      ref={ref}
       tone={STATUS_TO_TONE[status]}
     >
       {inView ? (
@@ -116,9 +117,7 @@ export default function VideoThumbnail({
             alt={`Preview for ${staticImage ? 'image' : 'video'} ${asset.filename || asset.assetId}`}
             onLoad={handleLoad}
             onError={handleError}
-            style={{
-              opacity: status === 'loaded' ? 1 : 0,
-            }}
+            style={{opacity: status === 'loaded' ? 1 : 0}}
           />
         </>
       ) : null}
