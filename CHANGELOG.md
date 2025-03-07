@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.7.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.6.0...v2.7.0) (2025-03-07)
+
+### Features
+
+- add react 19 to peer deps ([6d83fcc](https://github.com/sanity-io/sanity-plugin-mux-input/commit/6d83fcc5a5ecb8449f555923dc51c8b5f4f8d759))
+
 ## [2.6.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.5.0...v2.6.0) (2025-02-28)
 
 ### Features
