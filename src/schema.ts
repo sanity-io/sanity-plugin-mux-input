@@ -141,7 +141,7 @@ const muxAssetData = {
 
 const muxVideoAsset = {
   name: 'mux.videoAsset',
-  type: 'object',
+  type: 'document',
   title: 'Video asset',
   fields: [
     {
