@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.8.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.7.0...v2.8.0) (2025-03-17)
+
+### Features
+
+- mark mux.videoAsset as document type ([#414](https://github.com/sanity-io/sanity-plugin-mux-input/issues/414)) ([40dac4d](https://github.com/sanity-io/sanity-plugin-mux-input/commit/40dac4df7a0bbf7cf2d6e792944d7166eaee7fe9))
+
 ## [2.7.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.6.0...v2.7.0) (2025-03-07)
 
 ### Features
