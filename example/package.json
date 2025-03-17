@@ -8,6 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "sanity:graphql": "sanity graphql deploy",
+    "sanity:schema": "sanity schema extract --enforce-required-fields",
+    "sanity:typegen": "sanity typegen generate",
     "reset-mux-credentials": "sanity documents delete secrets.mux"
   },
   "dependencies": {
