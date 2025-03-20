@@ -5,10 +5,9 @@ import {useDocumentStore} from 'sanity'
 import {useClient} from '../../hooks/useClient'
 import useDocReferences from '../../hooks/useDocReferences'
 import getVideoMetadata from '../../util/getVideoMetadata'
-import {PluginPlacement, VideoAssetDocument} from '../../util/types'
+import {VideoAssetDocument} from '../../util/types'
 
 export interface VideoDetailsProps {
-  placement: PluginPlacement
   closeDialog: () => void
   asset: VideoAssetDocument & {autoPlay?: boolean}
 }
