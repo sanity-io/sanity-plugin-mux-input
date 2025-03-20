@@ -127,7 +127,6 @@ const VideoDetails: React.FC<VideoDetailsProps> = (props) => {
         <DeleteDialog
           asset={props.asset}
           cancelDelete={() => setState('idle')}
-          placement={props.placement}
           referencesLoading={referencesLoading}
           references={references}
           succeededDeleting={() => {
@@ -295,11 +294,7 @@ const VideoDetails: React.FC<VideoDetailsProps> = (props) => {
               id="references-panel"
               hidden={tab !== 'references'}
             >
-              <VideoReferences
-                references={references}
-                isLoaded={!referencesLoading}
-                placement={props.placement}
-              />
+              <VideoReferences references={references} isLoaded={!referencesLoading} />
             </TabPanel>
           </Stack>
         </Flex>

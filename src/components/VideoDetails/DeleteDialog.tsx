@@ -6,7 +6,7 @@ import type {SanityDocument} from 'sanity'
 import {deleteAsset} from '../../actions/assets'
 import {useClient} from '../../hooks/useClient'
 import {DIALOGS_Z_INDEX} from '../../util/constants'
-import type {PluginPlacement, VideoAssetDocument} from '../../util/types'
+import type {VideoAssetDocument} from '../../util/types'
 import SpinnerBox from '../SpinnerBox'
 import VideoReferences from './VideoReferences'
 
@@ -15,11 +15,9 @@ export default function DeleteDialog({
   references,
   referencesLoading,
   cancelDelete,
-  placement,
   succeededDeleting,
 }: {
   asset: VideoAssetDocument
-  placement: PluginPlacement
   references?: SanityDocument[]
   referencesLoading: boolean
   cancelDelete: () => void
@@ -95,11 +93,7 @@ export default function DeleteDialog({
                 pointing to this video. Remove their references to this file or delete them before
                 proceeding.
               </Text>
-              <VideoReferences
-                references={references}
-                isLoaded={!referencesLoading}
-                placement={placement}
-              />
+              <VideoReferences references={references} isLoaded={!referencesLoading} />
             </>
           )}
           {state === 'confirm' && (

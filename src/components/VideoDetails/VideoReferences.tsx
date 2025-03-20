@@ -3,7 +3,6 @@ import {Box, Card, Text} from '@sanity/ui'
 import {collate, useSchema} from 'sanity'
 import {styled} from 'styled-components'
 
-import type {PluginPlacement} from '../../util/types'
 import {DocumentPreview} from '../documentPreview/DocumentPreview'
 import SpinnerBox from '../SpinnerBox'
 
@@ -22,7 +21,6 @@ const Container = styled(Box)`
 const VideoReferences: React.FC<{
   references?: SanityDocument[]
   isLoaded: boolean
-  placement: PluginPlacement
 }> = (props) => {
   const schema = useSchema()
   if (!props.isLoaded) {
@@ -53,11 +51,7 @@ const VideoReferences: React.FC<{
             style={{overflow: 'hidden'}}
           >
             <Box>
-              <DocumentPreview
-                documentPair={documentPair}
-                schemaType={schemaType}
-                placement={props.placement}
-              />
+              <DocumentPreview documentPair={documentPair} schemaType={schemaType} />
             </Box>
           </Card>
         )
