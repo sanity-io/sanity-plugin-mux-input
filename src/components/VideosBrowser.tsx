@@ -75,11 +75,7 @@ export default function VideosBrowser({onSelect}: VideosBrowserProps) {
         )}
       </Stack>
       {freshEditedAsset && (
-        <VideoDetails
-          closeDialog={() => setEditedAsset(null)}
-          asset={freshEditedAsset}
-          placement={placement}
-        />
+        <VideoDetails closeDialog={() => setEditedAsset(null)} asset={freshEditedAsset} />
       )}
     </>
   )
