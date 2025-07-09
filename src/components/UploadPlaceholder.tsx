@@ -5,6 +5,8 @@ import {useCallback} from 'react'
 
 import type {SetDialogState} from '../hooks/useDialogState'
 import {FileInputButton, type FileInputButtonProps} from './FileInputButton'
+import {useAccessControl} from '../hooks/useAccessControl'
+import {PluginConfig} from '../util/types'
 
 interface UploadPlaceholderProps {
   setDialogState: SetDialogState
@@ -12,11 +14,13 @@ interface UploadPlaceholderProps {
   hovering: boolean
   needsSetup: boolean
   onSelect: FileInputButtonProps['onSelect']
+  config: PluginConfig
 }
 export default function UploadPlaceholder(props: UploadPlaceholderProps) {
   const {setDialogState, readOnly, onSelect, hovering, needsSetup} = props
   const handleBrowse = useCallback(() => setDialogState('select-video'), [setDialogState])
   const handleConfigureApi = useCallback(() => setDialogState('secrets'), [setDialogState])
+  const {hasConfigAccess} = useAccessControl(props.config)
 
   return (
     <Card
@@ -58,15 +62,17 @@ export default function UploadPlaceholder(props: UploadPlaceholderProps) {
           />
           <Button mode="bleed" icon={SearchIcon} text="Select" onClick={handleBrowse} />
 
-          <Button
-            padding={3}
-            radius={3}
-            tone={needsSetup ? 'critical' : undefined}
-            onClick={handleConfigureApi}
-            icon={PlugIcon}
-            mode="bleed"
-            title="Configure plugin credentials"
-          />
+          {hasConfigAccess && (
+            <Button
+              padding={3}
+              radius={3}
+              tone={needsSetup ? 'critical' : undefined}
+              onClick={handleConfigureApi}
+              icon={PlugIcon}
+              mode="bleed"
+              title="Configure plugin credentials"
+            />
+          )}
         </Inline>
       </Flex>
     </Card>
