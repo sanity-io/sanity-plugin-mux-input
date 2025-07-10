@@ -5,6 +5,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.8.1](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.8.0...v2.8.1) (2025-07-10)
+
+### Bug Fixes
+
+- add sanity v4 in allowed peer dependency range ([08f2d5f](https://github.com/sanity-io/sanity-plugin-mux-input/commit/08f2d5fbe5df585805032e1bf51091749101530e))
+- broken sanity schema extract ([#416](https://github.com/sanity-io/sanity-plugin-mux-input/issues/416)) ([4d350c5](https://github.com/sanity-io/sanity-plugin-mux-input/commit/4d350c5f570dd0b52c53669d6e916e0cbe62ddba))
+
 ## [2.8.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.7.0...v2.8.0) (2025-03-17)
 
 ### Features
