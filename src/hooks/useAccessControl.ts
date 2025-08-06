@@ -5,7 +5,8 @@ export const useAccessControl = (config: PluginConfig) => {
   const user = useCurrentUser()
 
   const hasConfigAccess =
-    !config?.allowedRolesForConfiguration ||
+    config?.allowedRolesForConfiguration === undefined ||
+    config.allowedRolesForConfiguration.length === 0 ||
     user?.roles?.some((role) => config.allowedRolesForConfiguration.includes(role.name))
 
   return {hasConfigAccess}
