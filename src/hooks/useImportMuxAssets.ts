@@ -101,7 +101,7 @@ function muxAssetToSanityDocument(asset: MuxAsset): VideoAssetDocument | undefin
     _createdAt: parseMuxDate(asset.created_at).toISOString(),
     assetId: asset.id,
     playbackId,
-    filename: `Asset #${truncateString(asset.id, 15)}`,
+    filename: asset.meta?.title ?? `Asset #${truncateString(asset.id, 15)}`,
     status: asset.status,
     data: asset,
   }

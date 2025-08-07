@@ -382,6 +382,9 @@ export interface MuxAsset {
     unexpected_media_file_parameters?: 'non-standard'
     test?: boolean
   }
+  meta?: {
+    title?: string
+  }
 }
 
 export interface VideoAssetDocument {
