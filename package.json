@@ -1,6 +1,6 @@
 {
   "name": "sanity-plugin-mux-input",
-  "version": "2.8.1",
+  "version": "2.9.0",
   "description": "An input component that integrates Sanity Studio with Mux video encoding/hosting service.",
   "keywords": [
     "sanity",

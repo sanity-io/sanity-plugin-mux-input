@@ -5,6 +5,16 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.9.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.8.1...v2.9.0) (2025-08-07)
+
+### Features
+
+- Add asset title when importing videos from Mux ([#425](https://github.com/sanity-io/sanity-plugin-mux-input/issues/425)) ([73a523f](https://github.com/sanity-io/sanity-plugin-mux-input/commit/73a523f9715e229f88c6397c1f948663b871b12a))
+
+### Bug Fixes
+
+- Show configuration when allowedRolesForConfiguration is not set ([#424](https://github.com/sanity-io/sanity-plugin-mux-input/issues/424)) ([32e4538](https://github.com/sanity-io/sanity-plugin-mux-input/commit/32e45389d5fb10e7bbee609187490b0c591637fa))
+
 ## [2.8.1](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.8.0...v2.8.1) (2025-07-10)
 
 ### Bug Fixes
