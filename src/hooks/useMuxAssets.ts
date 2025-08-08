@@ -40,28 +40,19 @@ type PageResult = (
 async function fetchMuxAssetsPage(client: SanityClient, pageNum: number): Promise<PageResult> {
   try {
     const offset = (pageNum - 1) * ASSETS_PER_PAGE
-    const query = `*[_type == "mux.videoAsset"] | order(_createdAt desc) [${offset}...${offset + ASSETS_PER_PAGE}] {
-      "id": coalesce(assetId, data.id),
-      "created_at": data.created_at,
-      "status": coalesce(status, data.status),
-      "duration": data.duration,
-      "max_stored_resolution": data.max_stored_resolution,
-      "max_stored_frame_rate": data.max_stored_frame_rate,
-      "aspect_ratio": data.aspect_ratio,
-      "playback_ids": data.playback_ids,
-      "tracks": data.tracks,
-      "upload_id": data.upload_id,
-      "passthrough": data.passthrough,
-      "meta": {
-        "title": filename
-      }
-    }`
+    const query = `*[_type == "mux.videoAsset"] | order(_createdAt desc) [${offset}...${offset + ASSETS_PER_PAGE}] {...}`
 
-    const result = await client.fetch<MuxAsset[]>(query)
+    const sanityDocuments = await client.fetch<any[]>(query)
+
+    // Extract the actual Mux asset data from Sanity documents
+    const muxAssets: MuxAsset[] =
+      sanityDocuments
+        ?.filter((doc) => doc.data) // Only include documents with data
+        .map((doc) => doc.data) || [] // Extract the nested Mux asset data
 
     return {
       pageNum,
-      data: result || [],
+      data: muxAssets,
     }
   } catch (error) {
     console.error('Error fetching Mux assets:', error)
@@ -101,7 +92,7 @@ function hasMorePages(pageResult: PageResult) {
     typeof pageResult === 'object' &&
     'data' in pageResult &&
     Array.isArray(pageResult.data) &&
-    pageResult.data.length > 0
+    pageResult.data.length === ASSETS_PER_PAGE // Continue only if we got a full page
   )
 }
 
@@ -119,15 +110,16 @@ export default function useMuxAssets({enabled}: {enabled: boolean}) {
   })
 
   useEffect(() => {
-    if (!enabled) return
+    if (!enabled) {
+      // Reset state when dialog closes
+      setState({loading: true, pageNum: FIRST_PAGE})
+      return
+    }
 
     const subscription = defer(() =>
       fetchMuxAssetsPage(
         client,
-        // When we've already successfully loaded before (fully or partially), we start from the following page to avoid re-fetching
-        'data' in state && state.data && state.data.length > 0 && !state.error
-          ? state.pageNum + 1
-          : state.pageNum
+        FIRST_PAGE // Always start from page 1 when enabled
       )
     )
       .pipe(

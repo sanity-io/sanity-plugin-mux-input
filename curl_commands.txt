@@ -1,0 +1,13 @@
+# Curl commands to test Sanity Mux assets API
+
+# Get first 5 Mux assets
+curl -X GET "https://lb871prh.api.sanity.io/v2021-03-25/data/query/production?query=*%5B_type%20%3D%3D%20%22mux.videoAsset%22%5D%7B...%7D%5B0..5%5D" -H "Accept: application/json"
+
+# Get all 18 Mux assets
+curl -X GET "https://lb871prh.api.sanity.io/v2021-03-25/data/query/production?query=*%5B_type%20%3D%3D%20%22mux.videoAsset%22%5D%7B...%7D" -H "Accept: application/json"
+
+# Get count of Mux assets
+curl -X GET "https://lb871prh.api.sanity.io/v2021-03-25/data/query/production?query=count(*%5B_type%20%3D%3D%20%22mux.videoAsset%22%5D)" -H "Accept: application/json"
+
+# Pipe to jq for pretty formatting (if you have jq installed)
+curl -X GET "https://lb871prh.api.sanity.io/v2021-03-25/data/query/production?query=*%5B_type%20%3D%3D%20%22mux.videoAsset%22%5D%7B...%7D%5B0..5%5D" -H "Accept: application/json" | jq .
