@@ -37,8 +37,7 @@ export default function useImportMuxAssets() {
   const dialogOpen = importState !== 'closed'
 
   const muxAssets = useMuxAssets({
-    secrets: secretDocumentValues.value.secrets,
-    enabled: hasSecrets && dialogOpen,
+    enabled: dialogOpen,
   })
 
   const missingAssets = useMemo(() => {

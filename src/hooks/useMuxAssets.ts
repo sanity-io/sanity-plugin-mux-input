@@ -1,8 +1,10 @@
 import {useEffect, useState} from 'react'
 import {defer, of, timer} from 'rxjs'
 import {concatMap, expand, tap} from 'rxjs/operators'
+import {type SanityClient, useClient} from 'sanity'
 
-import type {MuxAsset, Secrets} from '../util/types'
+import type {MuxAsset} from '../util/types'
+import {SANITY_API_VERSION} from './useClient'
 
 const FIRST_PAGE = 1
 const ASSETS_PER_PAGE = 100
@@ -33,37 +35,36 @@ type PageResult = (
 
 /**
  * @docs {@link https://docs.mux.com/api-reference#video/operation/list-assets}
+ * Fetches Mux assets through Sanity's query API to avoid CORS issues
  */
-async function fetchMuxAssetsPage(
-  {secretKey, token}: Secrets,
-  pageNum: number
-): Promise<PageResult> {
+async function fetchMuxAssetsPage(client: SanityClient, pageNum: number): Promise<PageResult> {
   try {
-    const res = await fetch(
-      `https://api.mux.com/video/v1/assets?limit=${ASSETS_PER_PAGE}&page=${pageNum}`,
-      {
-        headers: {
-          Authorization: `Basic ${btoa(`${token}:${secretKey}`)}`,
-        },
+    const offset = (pageNum - 1) * ASSETS_PER_PAGE
+    const query = `*[_type == "mux.videoAsset"] | order(_createdAt desc) [${offset}...${offset + ASSETS_PER_PAGE}] {
+      "id": coalesce(assetId, data.id),
+      "created_at": data.created_at,
+      "status": coalesce(status, data.status),
+      "duration": data.duration,
+      "max_stored_resolution": data.max_stored_resolution,
+      "max_stored_frame_rate": data.max_stored_frame_rate,
+      "aspect_ratio": data.aspect_ratio,
+      "playback_ids": data.playback_ids,
+      "tracks": data.tracks,
+      "upload_id": data.upload_id,
+      "passthrough": data.passthrough,
+      "meta": {
+        "title": filename
       }
-    )
-    const json = await res.json()
+    }`
 
-    if (json.error) {
-      return {
-        pageNum,
-        error: {
-          _tag: 'MuxError',
-          error: json.error,
-        },
-      }
-    }
+    const result = await client.fetch<MuxAsset[]>(query)
 
     return {
       pageNum,
-      data: json.data as MuxAsset[],
+      data: result || [],
     }
   } catch (error) {
+    console.error('Error fetching Mux assets:', error)
     return {
       pageNum,
       error: {_tag: 'FetchError'},
@@ -105,22 +106,24 @@ function hasMorePages(pageResult: PageResult) {
 }
 
 /**
- * Fetches all assets from a Mux environment. Rules:
+ * Fetches all assets from a Mux environment through Sanity's proxy. Rules:
  * - One page at a time
- * - Mux has no information on pagination
- *   - We've finished fetching if a page returns `data.length === 0`
+ * - We've finished fetching if a page returns `data.length === 0`
  * - Rate limiting to one request per 2 seconds
  * - Update state while still fetching to give feedback to users
  */
-export default function useMuxAssets({secrets, enabled}: {enabled: boolean; secrets: Secrets}) {
+export default function useMuxAssets({enabled}: {enabled: boolean}) {
   const [state, setState] = useState<MuxAssetsState>({loading: true, pageNum: FIRST_PAGE})
+  const client = useClient({
+    apiVersion: SANITY_API_VERSION,
+  })
 
   useEffect(() => {
     if (!enabled) return
 
     const subscription = defer(() =>
       fetchMuxAssetsPage(
-        secrets,
+        client,
         // When we've already successfully loaded before (fully or partially), we start from the following page to avoid re-fetching
         'data' in state && state.data && state.data.length > 0 && !state.error
           ? state.pageNum + 1
@@ -135,7 +138,7 @@ export default function useMuxAssets({secrets, enabled}: {enabled: boolean; secr
           if (hasMorePages(pageResult)) {
             return timer(2000).pipe(
               // eslint-disable-next-line max-nested-callbacks
-              concatMap(() => defer(() => fetchMuxAssetsPage(secrets, pageResult.pageNum + 1)))
+              concatMap(() => defer(() => fetchMuxAssetsPage(client, pageResult.pageNum + 1)))
             )
           }
 
