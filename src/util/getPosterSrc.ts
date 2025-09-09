@@ -18,7 +18,7 @@ export function getPosterSrc({
   width,
 }: PosterSrcOptions): MuxThumbnailUrl {
   const params = {fit_mode, height, width}
-  if (time) {
+  if (time !== undefined) {
     ;(params as any).time = time
   }
 
