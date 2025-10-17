@@ -1,4 +1,10 @@
-import {CheckmarkCircleIcon, ErrorOutlineIcon, RetrieveIcon, RetryIcon} from '@sanity/icons'
+import {
+  CheckmarkCircleIcon,
+  ErrorOutlineIcon,
+  InfoOutlineIcon,
+  RetrieveIcon,
+  RetryIcon,
+} from '@sanity/icons'
 import {
   Box,
   Button,
@@ -149,6 +155,24 @@ function ImportVideosDialog(props: ReturnType<typeof useImportMuxAssets>) {
       }
     >
       <Box padding={3}>
+        {/* WARNING: SKIPPED ASSETS WITHOUT PLAYBACK */}
+        {props.muxAssets.hasSkippedAssetsWithoutPlayback && (
+          <Card tone="caution" marginBottom={5} padding={3} border>
+            <Flex align="center" gap={2}>
+              <InfoOutlineIcon fontSize={36} />
+              <Stack space={2}>
+                <Text size={2} weight="semibold">
+                  Some videos were skipped
+                </Text>
+                <Text size={1}>
+                  Videos without playback IDs cannot be imported and have been excluded from the
+                  list.
+                </Text>
+              </Stack>
+            </Flex>
+          </Card>
+        )}
+
         {/* LOADING ASSETS STATE */}
         {(props.muxAssets.loading || props.assetsInSanityLoading) && (
           <Card tone="primary" marginBottom={5} padding={3} border>
