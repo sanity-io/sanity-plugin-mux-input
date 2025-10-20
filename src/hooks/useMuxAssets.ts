@@ -82,17 +82,26 @@ function accumulateIntermediateState(
   const currentData = ('data' in currentState && currentState.data) || []
   const newAssets = ('data' in pageResult && pageResult.data) || []
 
-  // Filter assets that have playback_ids and are not duplicates
-  const validAssets = newAssets.filter(
-    (asset) =>
-      !currentData.some((a) => a.id === asset.id) && // De-duplicate
-      asset.playback_ids && // Has playback_ids property
-      asset.playback_ids.length > 0 // Has at least one playback_id
-  )
+  // Filter assets and check for skipped items
+  const {validAssets, skippedInThisPage} = newAssets.reduce<{
+    validAssets: MuxAsset[]
+    skippedInThisPage: boolean
+  }>(
+    (acc, asset) => {
+      const hasPlaybackIds = asset.playback_ids && asset.playback_ids.length > 0
+      const isDuplicate = currentData.some((a) => a.id === asset.id)
 
-  // Check if any assets were skipped due to missing playback_ids
-  const skippedInThisPage = newAssets.some(
-    (asset) => !asset.playback_ids || asset.playback_ids.length === 0
+      if (!hasPlaybackIds) {
+        acc.skippedInThisPage = true
+      }
+
+      if (hasPlaybackIds && !isDuplicate) {
+        acc.validAssets.push(asset)
+      }
+
+      return acc
+    },
+    {validAssets: [], skippedInThisPage: false}
   )
 
   return {
