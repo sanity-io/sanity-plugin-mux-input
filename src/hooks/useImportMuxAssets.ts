@@ -3,11 +3,11 @@ import {useMemo, useState} from 'react'
 import {
   createHookFromObservableFactory,
   type DocumentStore,
-  truncateString,
   useClient,
   useDocumentStore,
 } from 'sanity'
 
+import {generateAssetPlaceholder} from '../util/assetTitlePlaceholder'
 import {parseMuxDate} from '../util/parsers'
 import type {MuxAsset, VideoAssetDocument} from '../util/types'
 import {SANITY_API_VERSION} from './useClient'
@@ -101,7 +101,7 @@ function muxAssetToSanityDocument(asset: MuxAsset): VideoAssetDocument | undefin
     _createdAt: parseMuxDate(asset.created_at).toISOString(),
     assetId: asset.id,
     playbackId,
-    filename: asset.meta?.title ?? `Asset #${truncateString(asset.id, 15)}`,
+    filename: asset.meta?.title ?? generateAssetPlaceholder(asset.id),
     status: asset.status,
     data: asset,
   }

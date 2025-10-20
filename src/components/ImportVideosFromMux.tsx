@@ -126,7 +126,7 @@ function ImportVideosDialog(props: ReturnType<typeof useImportMuxAssets>) {
               <Button
                 fontSize={2}
                 padding={3}
-                mode="bleed"
+                mode="ghost"
                 text="Cancel"
                 tone="critical"
                 onClick={props.closeDialog}

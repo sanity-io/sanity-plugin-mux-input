@@ -6,6 +6,7 @@ import useAssets from '../hooks/useAssets'
 import type {VideoAssetDocument} from '../util/types'
 import ConfigureApi from './ConfigureApi'
 import ImportVideosFromMux from './ImportVideosFromMux'
+import ResyncMetadata from './ResyncMetadata'
 import {SelectSortOptions} from './SelectSortOptions'
 import SpinnerBox from './SpinnerBox'
 import type {VideoDetailsProps} from './VideoDetails/useVideoDetails'
@@ -43,6 +44,7 @@ export default function VideosBrowser({onSelect}: VideosBrowserProps) {
           {placement === 'tool' && (
             <Inline space={2}>
               <ImportVideosFromMux />
+              <ResyncMetadata />
               <ConfigureApi />
             </Inline>
           )}
