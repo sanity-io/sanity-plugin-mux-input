@@ -37,7 +37,7 @@ export default function useResyncMuxMetadata() {
   const dialogOpen = resyncState !== 'closed'
 
   const muxAssets = useMuxAssets({
-    secrets: secretDocumentValues.value.secrets,
+    client,
     enabled: hasSecrets && dialogOpen,
   })
 

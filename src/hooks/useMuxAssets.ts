@@ -1,8 +1,10 @@
 import {useEffect, useState} from 'react'
 import {defer, of, timer} from 'rxjs'
 import {concatMap, expand, tap} from 'rxjs/operators'
+import type {SanityClient} from 'sanity'
 
-import type {MuxAsset, Secrets} from '../util/types'
+import {listAssets} from '../actions/assets'
+import type {MuxAsset} from '../util/types'
 
 const ASSETS_PER_PAGE = 100
 
@@ -36,36 +38,19 @@ type PageResult = (
  * @docs {@link https://docs.mux.com/api-reference#video/operation/list-assets}
  */
 async function fetchMuxAssetsPage(
-  {secretKey, token}: Secrets,
+  client: SanityClient,
   cursor: string | null
 ): Promise<PageResult> {
   try {
-    const url =
-      cursor === null
-        ? `https://api.mux.com/video/v1/assets?limit=${ASSETS_PER_PAGE}`
-        : `https://api.mux.com/video/v1/assets?limit=${ASSETS_PER_PAGE}&cursor=${cursor}`
-
-    const res = await fetch(url, {
-      headers: {
-        Authorization: `Basic ${btoa(`${token}:${secretKey}`)}`,
-      },
+    const response = await listAssets(client, {
+      limit: ASSETS_PER_PAGE,
+      cursor,
     })
-    const json = await res.json()
-
-    if (json.error) {
-      return {
-        cursor,
-        error: {
-          _tag: 'MuxError',
-          error: json.error,
-        },
-      }
-    }
 
     return {
       cursor,
-      data: json.data as MuxAsset[],
-      next_cursor: json.next_cursor || null,
+      data: response.data as MuxAsset[],
+      next_cursor: response.next_cursor || null,
     }
   } catch (error) {
     return {
@@ -133,7 +118,7 @@ function hasMorePages(pageResult: PageResult) {
  * - Rate limiting to one request per 2 seconds
  * - Update state while still fetching to give feedback to users
  */
-export default function useMuxAssets({secrets, enabled}: {enabled: boolean; secrets: Secrets}) {
+export default function useMuxAssets({client, enabled}: {client: SanityClient; enabled: boolean}) {
   const [state, setState] = useState<MuxAssetsState>({loading: true, cursor: null})
 
   useEffect(() => {
@@ -141,7 +126,7 @@ export default function useMuxAssets({secrets, enabled}: {enabled: boolean; secr
 
     const subscription = defer(() =>
       fetchMuxAssetsPage(
-        secrets,
+        client,
         // When we've already successfully loaded before (fully or partially), we start from the next cursor to avoid re-fetching
         'data' in state && state.data && state.data.length > 0 && !state.error ? state.cursor : null
       )
@@ -157,7 +142,7 @@ export default function useMuxAssets({secrets, enabled}: {enabled: boolean; secr
                 // eslint-disable-next-line max-nested-callbacks
                 defer(() =>
                   fetchMuxAssetsPage(
-                    secrets,
+                    client,
                     'next_cursor' in pageResult ? pageResult.next_cursor : null
                   )
                 )
