@@ -32,8 +32,8 @@ export type UploadConfigurationStateAction =
   | TrackAction
 
 const ENCODING_OPTIONS = [
-  {value: 'smart', label: 'Smart'},
-  {value: 'baseline', label: 'Baseline'},
+  {value: 'smart', label: 'Plus'},
+  {value: 'baseline', label: 'Basic'},
 ] as const satisfies {value: UploadConfig['encoding_tier']; label: string}[]
 
 const RESOLUTION_TIERS = [
@@ -198,10 +198,10 @@ export default function UploadConfiguration({
         {!disableUploadConfig && (
           <Stack space={3} paddingBottom={2}>
             <FormField
-              title="Encoding Tier"
+              title="Video Quality Level"
               description={
                 <>
-                  The encoding tier informs the cost, quality, and available platform features for
+                  The video quality level informs the cost, quality, and available platform features for
                   the asset.{' '}
                   <a
                     href="https://docs.mux.com/guides/use-encoding-tiers"
