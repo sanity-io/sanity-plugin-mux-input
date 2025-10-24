@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.10.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.9.1...v2.10.0) (2025-10-24)
+
+### Features
+
+- Resync video metadata + fix CORS ([#436](https://github.com/sanity-io/sanity-plugin-mux-input/issues/436)) ([5f17fdf](https://github.com/sanity-io/sanity-plugin-mux-input/commit/5f17fdfeb054d76c11c8f781b007feada513560e))
+
 ## [2.9.1](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.9.0...v2.9.1) (2025-10-16)
 
 ### Bug Fixes
