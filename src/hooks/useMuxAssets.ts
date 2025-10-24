@@ -1,17 +1,19 @@
 import {useEffect, useState} from 'react'
 import {defer, of, timer} from 'rxjs'
 import {concatMap, expand, tap} from 'rxjs/operators'
+import type {SanityClient} from 'sanity'
 
-import type {MuxAsset, Secrets} from '../util/types'
+import {listAssets} from '../actions/assets'
+import type {MuxAsset} from '../util/types'
 
-const FIRST_PAGE = 1
 const ASSETS_PER_PAGE = 100
 
 type MuxAssetsState = {
-  pageNum: number
+  cursor: string | null
   loading: boolean
   data?: MuxAsset[]
   error?: FetchError
+  hasSkippedAssetsWithoutPlayback?: boolean
 }
 
 type FetchError =
@@ -23,49 +25,36 @@ type FetchError =
 type PageResult = (
   | {
       data: MuxAsset[]
+      next_cursor: string | null
     }
   | {
       error: FetchError
     }
 ) & {
-  pageNum: number
+  cursor: string | null
 }
 
 /**
  * @docs {@link https://docs.mux.com/api-reference#video/operation/list-assets}
  */
 async function fetchMuxAssetsPage(
-  {secretKey, token}: Secrets,
-  pageNum: number
+  client: SanityClient,
+  cursor: string | null
 ): Promise<PageResult> {
   try {
-    const res = await fetch(
-      `https://api.mux.com/video/v1/assets?limit=${ASSETS_PER_PAGE}&page=${pageNum}`,
-      {
-        headers: {
-          Authorization: `Basic ${btoa(`${token}:${secretKey}`)}`,
-        },
-      }
-    )
-    const json = await res.json()
-
-    if (json.error) {
-      return {
-        pageNum,
-        error: {
-          _tag: 'MuxError',
-          error: json.error,
-        },
-      }
-    }
+    const response = await listAssets(client, {
+      limit: ASSETS_PER_PAGE,
+      cursor,
+    })
 
     return {
-      pageNum,
-      data: json.data as MuxAsset[],
+      cursor,
+      data: response.data as MuxAsset[],
+      next_cursor: response.next_cursor || null,
     }
   } catch (error) {
     return {
-      pageNum,
+      cursor,
       error: {_tag: 'FetchError'},
     }
   }
@@ -76,66 +65,88 @@ function accumulateIntermediateState(
   pageResult: PageResult
 ): MuxAssetsState {
   const currentData = ('data' in currentState && currentState.data) || []
+  const newAssets = ('data' in pageResult && pageResult.data) || []
+
+  // Filter assets and check for skipped items
+  const {validAssets, skippedInThisPage} = newAssets.reduce<{
+    validAssets: MuxAsset[]
+    skippedInThisPage: boolean
+  }>(
+    (acc, asset) => {
+      const hasPlaybackIds = asset.playback_ids && asset.playback_ids.length > 0
+      const isDuplicate = currentData.some((a) => a.id === asset.id)
+
+      if (!hasPlaybackIds) {
+        acc.skippedInThisPage = true
+      }
+
+      if (hasPlaybackIds && !isDuplicate) {
+        acc.validAssets.push(asset)
+      }
+
+      return acc
+    },
+    {validAssets: [], skippedInThisPage: false}
+  )
+
   return {
     ...currentState,
-    data: [
-      ...currentData,
-      ...(('data' in pageResult && pageResult.data) || []).filter(
-        // De-duplicate assets for safety
-        (asset) => !currentData.some((a) => a.id === asset.id)
-      ),
-    ],
+    data: [...currentData, ...validAssets],
     error:
       'error' in pageResult
         ? pageResult.error
         : // Reset error if current page is successful
           undefined,
-    pageNum: pageResult.pageNum,
+    cursor: 'next_cursor' in pageResult ? pageResult.next_cursor : pageResult.cursor,
     loading: true,
+    hasSkippedAssetsWithoutPlayback:
+      currentState.hasSkippedAssetsWithoutPlayback || skippedInThisPage,
   }
 }
 
 function hasMorePages(pageResult: PageResult) {
   return (
-    typeof pageResult === 'object' &&
-    'data' in pageResult &&
-    Array.isArray(pageResult.data) &&
-    pageResult.data.length > 0
+    typeof pageResult === 'object' && 'next_cursor' in pageResult && pageResult.next_cursor !== null
   )
 }
 
 /**
  * Fetches all assets from a Mux environment. Rules:
  * - One page at a time
- * - Mux has no information on pagination
- *   - We've finished fetching if a page returns `data.length === 0`
+ * - Uses cursor-based pagination
+ *   - We've finished fetching when `next_cursor` is null
  * - Rate limiting to one request per 2 seconds
  * - Update state while still fetching to give feedback to users
  */
-export default function useMuxAssets({secrets, enabled}: {enabled: boolean; secrets: Secrets}) {
-  const [state, setState] = useState<MuxAssetsState>({loading: true, pageNum: FIRST_PAGE})
+export default function useMuxAssets({client, enabled}: {client: SanityClient; enabled: boolean}) {
+  const [state, setState] = useState<MuxAssetsState>({loading: true, cursor: null})
 
   useEffect(() => {
     if (!enabled) return
 
     const subscription = defer(() =>
       fetchMuxAssetsPage(
-        secrets,
-        // When we've already successfully loaded before (fully or partially), we start from the following page to avoid re-fetching
-        'data' in state && state.data && state.data.length > 0 && !state.error
-          ? state.pageNum + 1
-          : state.pageNum
+        client,
+        // When we've already successfully loaded before (fully or partially), we start from the next cursor to avoid re-fetching
+        'data' in state && state.data && state.data.length > 0 && !state.error ? state.cursor : null
       )
     )
       .pipe(
-        // Here we replace "concatMap" with "expand" to recursively fetch next pages
+        // Here we use "expand" to recursively fetch next pages
         expand((pageResult) => {
-          // if fetched page has data, we continue emitting, requesting the next page
+          // if fetched page has next_cursor, we continue emitting, requesting the next page
           // after 2s to avoid rate limiting
           if (hasMorePages(pageResult)) {
             return timer(2000).pipe(
-              // eslint-disable-next-line max-nested-callbacks
-              concatMap(() => defer(() => fetchMuxAssetsPage(secrets, pageResult.pageNum + 1)))
+              concatMap(() =>
+                // eslint-disable-next-line max-nested-callbacks
+                defer(() =>
+                  fetchMuxAssetsPage(
+                    client,
+                    'next_cursor' in pageResult ? pageResult.next_cursor : null
+                  )
+                )
+              )
             )
           }
 

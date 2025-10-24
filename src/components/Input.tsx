@@ -1,18 +1,18 @@
 import {Card} from '@sanity/ui'
 import {memo, Suspense} from 'react'
 
+import {useAccessControl} from '../hooks/useAccessControl'
 import {useAssetDocumentValues} from '../hooks/useAssetDocumentValues'
 import {useClient} from '../hooks/useClient'
 import {useDialogState} from '../hooks/useDialogState'
 import {useMuxPolling} from '../hooks/useMuxPolling'
 import {useSecretsDocumentValues} from '../hooks/useSecretsDocumentValues'
 import type {MuxInputProps, PluginConfig} from '../util/types'
-import ConfigureApi from './ConfigureApi'
+import {ConfigureApiDialog} from './ConfigureApi'
 import ErrorBoundaryCard from './ErrorBoundaryCard'
 import {InputFallback} from './Input.styled'
 import Onboard from './Onboard'
 import Uploader from './Uploader'
-import {useAccessControl} from '../hooks/useAccessControl'
 
 export interface InputProps extends MuxInputProps {
   config: PluginConfig
@@ -62,7 +62,7 @@ const Input = (props: InputProps) => {
               )}
 
               {dialogState === 'secrets' && hasConfigAccess && (
-                <ConfigureApi
+                <ConfigureApiDialog
                   setDialogState={setDialogState}
                   secrets={secretDocumentValues.value.secrets}
                 />

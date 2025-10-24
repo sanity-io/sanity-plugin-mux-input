@@ -11,25 +11,31 @@ import {
   Text,
   TextInput,
 } from '@sanity/ui'
-import React, {memo, useCallback, useEffect, useId, useMemo, useRef} from 'react'
+import {useCallback, useEffect, useId, useMemo, useRef} from 'react'
 import {clear, preload} from 'suspend-react'
 
 import {useClient} from '../hooks/useClient'
 import type {SetDialogState} from '../hooks/useDialogState'
+import {useDialogState} from '../hooks/useDialogState'
 import {useSaveSecrets} from '../hooks/useSaveSecrets'
+import {useSecretsDocumentValues} from '../hooks/useSecretsDocumentValues'
 import {useSecretsFormState} from '../hooks/useSecretsFormState'
-import {cacheNs} from '../util/constants'
+import {cacheNs, DIALOGS_Z_INDEX} from '../util/constants'
 import {_id as secretsId} from '../util/readSecrets'
 import type {Secrets} from '../util/types'
 import {Header} from './ConfigureApi.styled'
 import FormField from './FormField'
 
-export interface Props {
+// Props for the dialog component when used with external state management
+export interface ConfigureApiDialogProps {
   setDialogState: SetDialogState
   secrets: Secrets
 }
+
 const fieldNames = ['token', 'secretKey', 'enableSignedUrls'] as const
-function ConfigureApi({secrets, setDialogState}: Props) {
+
+// Internal dialog component that can be used with external state
+export function ConfigureApiDialog({secrets, setDialogState}: ConfigureApiDialogProps) {
   const client = useClient()
   const [state, dispatch] = useSecretsFormState(secrets)
   const hasSecretsInitially = useMemo(() => secrets.token && secrets.secretKey, [secrets])
@@ -112,13 +118,13 @@ function ConfigureApi({secrets, setDialogState}: Props) {
       animate
       id={id}
       onClose={handleClose}
+      onClickOutside={handleClose}
       header={<Header />}
+      zOffset={DIALOGS_Z_INDEX}
+      position="fixed"
       width={1}
-      style={{
-        maxWidth: '550px',
-      }}
     >
-      <Box padding={4} style={{position: 'relative'}}>
+      <Box padding={3}>
         <form onSubmit={handleSubmit} noValidate>
           <Stack space={4}>
             {!hasSecretsInitially && (
@@ -224,4 +230,21 @@ function ConfigureApi({secrets, setDialogState}: Props) {
   )
 }
 
-export default memo(ConfigureApi)
+// Wrapper component that manages its own dialog state (used in VideosBrowser)
+export default function ConfigureApi() {
+  const [dialogOpen, setDialogOpen] = useDialogState()
+  const secretDocumentValues = useSecretsDocumentValues()
+
+  const openDialog = useCallback(() => setDialogOpen('secrets'), [setDialogOpen])
+
+  if (dialogOpen === 'secrets') {
+    return (
+      <ConfigureApiDialog
+        secrets={secretDocumentValues.value.secrets}
+        setDialogState={setDialogOpen}
+      />
+    )
+  }
+
+  return <Button mode="bleed" text="Configure plugin" onClick={openDialog} />
+}

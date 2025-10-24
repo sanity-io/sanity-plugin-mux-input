@@ -47,3 +47,25 @@ export function getAsset(client: SanityClient, assetId: string) {
     method: 'GET',
   })
 }
+
+export function listAssets(
+  client: SanityClient,
+  options: {limit?: number; cursor?: string | null}
+) {
+  const {dataset} = client.config()
+  const query: {limit?: string; cursor?: string} = {}
+
+  if (options.limit) {
+    query.limit = options.limit.toString()
+  }
+  if (options.cursor) {
+    query.cursor = options.cursor
+  }
+
+  return client.request<{data: MuxAsset[]; next_cursor?: string | null}>({
+    url: `/addons/mux/assets/${dataset}/data/list`,
+    withCredentials: true,
+    method: 'GET',
+    query,
+  })
+}
