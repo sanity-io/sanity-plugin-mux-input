@@ -32,9 +32,9 @@ export type UploadConfigurationStateAction =
   | TrackAction
 
 const VIDEO_QUALITY_LEVELS = [
-  {value: 'plus', label: 'Plus'},
   {value: 'basic', label: 'Basic'},
-  /* {value: 'premium', label: 'Premium'}, */
+  {value: 'plus', label: 'Plus'},
+  {value: 'premium', label: 'Premium'},
 ] as const satisfies {value: UploadConfig['video_quality']; label: string}[]
 
 const RESOLUTION_TIERS = [
@@ -160,6 +160,7 @@ export default function UploadConfiguration({
   }, [])
   if (skipConfig) return null
 
+  const basicConfig = config.video_quality !== 'plus' && config.video_quality !== 'premium'
   const maxSupportedResolution = RESOLUTION_TIERS.findIndex(
     (rt) => rt.value === pluginConfig.max_resolution_tier
   )
@@ -240,7 +241,7 @@ export default function UploadConfiguration({
               </Flex>
             </FormField>
 
-            {config.video_quality === 'plus' && maxSupportedResolution > 0 && (
+            {!basicConfig && maxSupportedResolution > 0 && (
               <FormField
                 title="Resolution Tier"
                 description={
@@ -287,12 +288,12 @@ export default function UploadConfiguration({
               </FormField>
             )}
 
-            {config.video_quality === 'plus' && (
+            {!basicConfig && (
               <FormField title="Additional Configuration">
                 <Stack space={2}>
                   <PlaybackPolicy id={id} config={config} secrets={secrets} dispatch={dispatch} />
 
-                  {config.video_quality === 'plus' && (
+                  {!basicConfig && (
                     <Flex align="center" gap={2} padding={[0, 2]}>
                       <Checkbox
                         id={`${id}--mp4_support`}
@@ -320,7 +321,7 @@ export default function UploadConfiguration({
           </Stack>
         )}
 
-        {!disableTextTrackConfig && config.video_quality === 'plus' && (
+        {!disableTextTrackConfig && !basicConfig && (
           <TextTracksEditor
             tracks={config.text_tracks}
             dispatch={dispatch}
@@ -331,7 +332,7 @@ export default function UploadConfiguration({
         <Box marginTop={4}>
           <Button
             disabled={
-              config.video_quality === 'plus' && !config.public_policy && !config.signed_policy
+              !basicConfig && !config.public_policy && !config.signed_policy
             }
             icon={UploadIcon}
             text="Upload"

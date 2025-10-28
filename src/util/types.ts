@@ -32,7 +32,7 @@ export interface MuxInputConfig {
    * @see {@link https://www.mux.com/docs/guides/use-video-quality-levels}
    * @defaultValue 'plus'
    */
-  video_quality: 'basic' | 'plus' /* | 'premium' */
+  video_quality: 'basic' | 'plus' | 'premium'
 
   /**
    * Normalize the audio track loudness level.
@@ -135,7 +135,7 @@ export const SUPPORTED_MUX_LANGUAGES = [
 export const VIDEO_QUALITY_LEVELS = [
   {label: 'Basic', value: 'basic'},
   {label: 'Plus', value: 'plus'},
-  /* {label: 'Premium', value: 'premium'}, */
+  {label: 'Premium', value: 'premium'},
 ] as const
 
 export const SUPPORTED_MUX_LANGUAGES_VALUES = SUPPORTED_MUX_LANGUAGES.map((l) => l.code)
