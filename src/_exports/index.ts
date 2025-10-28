@@ -11,6 +11,7 @@ export const defaultConfig: PluginConfig = {
   encoding_tier: 'smart',
   max_resolution_tier: '1080p',
   normalize_audio: false,
+  defaultPublic: true,
   defaultSigned: false,
   tool: DEFAULT_TOOL_CONFIG,
   allowedRolesForConfiguration: [],
