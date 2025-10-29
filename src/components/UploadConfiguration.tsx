@@ -142,7 +142,7 @@ export default function UploadConfiguration({
       max_resolution_tier: pluginConfig.max_resolution_tier,
       mp4_support: pluginConfig.mp4_support,
       signed_policy: secrets.enableSignedUrls && pluginConfig.defaultSigned,
-      public_policy: true,
+      public_policy: pluginConfig.defaultPublic,
       normalize_audio: pluginConfig.normalize_audio,
       text_tracks: autoTextTracks,
     } as UploadConfig
