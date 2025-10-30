@@ -155,29 +155,9 @@ export default function Uploader(props: Props) {
         const docId = uploadingDocumentId.current
         uploadingDocumentId.current = null
 
-        const {dataset} = props.client.config()
-        const token = props.client.config().token
-
-        if (token) {
-          fetch(`${props.client.config().apiHost}/v2021-06-07/data/mutate/${dataset}`, {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              mutations: [{delete: {id: docId}}],
-            }),
-            keepalive: true,
-          }).catch((err) => {
-            console.warn('Failed to cleanup orphaned upload document:', err)
-          })
-        } else {
-          // Fallback to regular client delete
-          props.client.delete(docId).catch((err) => {
-            console.warn('Failed to cleanup orphaned upload document:', err)
-          })
-        }
+        props.client.delete(docId).catch((err) => {
+          console.warn('Failed to cleanup orphaned upload document:', err)
+        })
       }
     }
 
