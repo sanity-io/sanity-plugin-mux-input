@@ -26,19 +26,23 @@ export default function VideoPlayer({
 
   const isAudio = assetIsAudio(asset)
   const muxPlayer = useRef<MuxPlayerRefAttributes>(null)
-  const thumbnail = getPosterSrc({asset, client, width: thumbnailWidth})
 
-  const {src: videoSrc, error} = useMemo(() => {
+  const {
+    src: videoSrc,
+    thumbnail: thumbnailSrc,
+    error,
+  } = useMemo(() => {
     try {
+      const thumbnail = getPosterSrc({asset, client, width: thumbnailWidth})
       const src = asset?.playbackId && getVideoSrc({client, asset})
-      if (src) return {src: src}
+      if (src) return {src: src, thumbnail}
 
       return {error: new TypeError('Asset has no playback ID')}
       // eslint-disable-next-line @typescript-eslint/no-shadow
     } catch (error) {
       return {error}
     }
-  }, [asset, client])
+  }, [asset, client, thumbnailWidth])
 
   const signedToken = useMemo(() => {
     try {
@@ -66,7 +70,7 @@ export default function VideoPlayer({
         {videoSrc && (
           <>
             <MuxPlayer
-              poster={thumbnail}
+              poster={thumbnailSrc}
               ref={muxPlayer}
               {...props}
               playsInline

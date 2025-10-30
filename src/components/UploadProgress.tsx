@@ -42,6 +42,10 @@ export const UploadProgress = ({
   onCancel?: React.MouseEventHandler<HTMLButtonElement>
   text?: React.ReactNode
 }) => {
+  // Disable cancel button when upload is 90% or more complete
+  // to prevent inconsistency between Mux and Sanity
+  const isCancelDisabled = progress >= 90
+
   return (
     <CardWrapper tone="primary" padding={4} border height="fill">
       <FlexWrapper align="center" justify="space-between" height="fill" direction="row" gap={2}>
@@ -67,6 +71,7 @@ export const UploadProgress = ({
             mode="ghost"
             tone="critical"
             onClick={onCancel}
+            disabled={isCancelDisabled}
           />
         ) : null}
       </FlexWrapper>

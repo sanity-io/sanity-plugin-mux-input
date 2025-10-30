@@ -92,6 +92,7 @@ export default function Uploader(props: Props) {
   ).current
 
   const uploadRef = useRef<Subscription | null>(null)
+  const uploadingDocumentId = useRef<string | null>(null)
   const [state, dispatch] = useReducer(
     (prev: State, action: UploaderStateAction) => {
       switch (action.action) {
@@ -121,11 +122,13 @@ export default function Uploader(props: Props) {
           // Clear upload observable on completion
           uploadRef.current?.unsubscribe()
           uploadRef.current = null
+          uploadingDocumentId.current = null
           return INITIAL_STATE
         case 'error':
           // Clear upload observable on error
           uploadRef.current?.unsubscribe()
           uploadRef.current = null
+          uploadingDocumentId.current = null
           return Object.assign({}, INITIAL_STATE, {error: action.error})
         default:
           return prev
@@ -139,13 +142,38 @@ export default function Uploader(props: Props) {
   )
 
   // Make sure we close out the upload observer on dismount
+  // and cleanup orphaned documents if upload was in progress
   useEffect(() => {
-    return () => {
+    const cleanup = () => {
+      // Cancel subscription
       if (uploadRef.current && !uploadRef.current.closed) {
         uploadRef.current.unsubscribe()
       }
+
+      // Delete orphaned document if upload was in progress and document is different from the saved asset
+      if (uploadingDocumentId.current && props.asset?._id !== uploadingDocumentId.current) {
+        const docId = uploadingDocumentId.current
+        uploadingDocumentId.current = null
+
+        props.client.delete(docId).catch((err) => {
+          console.warn('Failed to cleanup orphaned upload document:', err)
+        })
+      }
     }
-  }, [])
+
+    const handleBeforeUnload = () => {
+      cleanup()
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    window.addEventListener('pagehide', handleBeforeUnload)
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+      window.removeEventListener('pagehide', handleBeforeUnload)
+      cleanup()
+    }
+  }, [props.client, props.asset?._id])
 
   /* -------------------------------------------------------------------------- */
   /*                                  Uploading                                 */
@@ -183,8 +211,9 @@ export default function Uploader(props: Props) {
           takeUntil(
             cancelUploadButton.observable.pipe(
               tap(() => {
-                if (state.uploadStatus?.uuid) {
-                  props.client.delete(state.uploadStatus.uuid)
+                if (uploadingDocumentId.current) {
+                  props.client.delete(uploadingDocumentId.current)
+                  uploadingDocumentId.current = null
                 }
               })
             )
@@ -196,6 +225,10 @@ export default function Uploader(props: Props) {
       next: (event) => {
         switch (event.type) {
           case 'uuid':
+            // Track the document ID for cleanup on unmount
+            uploadingDocumentId.current = event.uuid
+            dispatch({action: 'progressInfo', ...event})
+            break
           case 'file':
           case 'url':
             dispatch({action: 'progressInfo', ...event})
@@ -205,6 +238,7 @@ export default function Uploader(props: Props) {
             break
           case 'success':
             dispatch({action: 'progress', percent: 100})
+            uploadingDocumentId.current = null
             props.onChange(
               PatchEvent.from([
                 setIfMissing({asset: {}}),
