@@ -13,7 +13,7 @@
     "reset-mux-credentials": "sanity documents delete secrets.mux"
   },
   "dependencies": {
-    "@mux/mux-player-react": "^2.6.0",
+    "@mux/mux-player-react": "^3.8.0",
     "@portabletext/react": "^3.0.18",
     "@sanity/client": "^6.27.2",
     "@sanity/image-url": "^1.0.2",
