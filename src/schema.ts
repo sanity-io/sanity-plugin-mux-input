@@ -100,6 +100,10 @@ const muxAssetData = {
     },
     {
       type: 'string',
+      name: 'video_quality',
+    },
+    {
+      type: 'string',
       name: 'master_access',
     },
     {

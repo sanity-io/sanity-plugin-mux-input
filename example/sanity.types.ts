@@ -207,7 +207,7 @@ export type MuxAssetData = {
   status?: string
   max_stored_resolution?: string
   passthrough?: string
-  encoding_tier?: string
+  video_quality?: string
   master_access?: string
   aspect_ratio?: string
   duration?: number
