@@ -18,12 +18,15 @@ export const defaultConfig: PluginConfig = {
 
 export const muxInput = definePlugin<Partial<PluginConfig> | void>((userConfig) => {
   // TODO: Remove this on next major version when we end support for encoding_tier
-  if (typeof userConfig === "object" && 'encoding_tier' in userConfig) {
-    const deprecated_encoding_tier = userConfig.encoding_tier;
+  if (typeof userConfig === 'object' && 'encoding_tier' in userConfig) {
+    const deprecated_encoding_tier = userConfig.encoding_tier
     if (!userConfig.video_quality) {
-      userConfig.video_quality = deprecated_encoding_tier === "baseline" ?
-        "basic" : (deprecated_encoding_tier === "smart") ?
-          "plus" : undefined;
+      if (deprecated_encoding_tier === 'baseline') {
+        userConfig.video_quality = 'basic'
+      }
+      if (deprecated_encoding_tier === 'smart') {
+        userConfig.video_quality = 'plus'
+      }
     }
   }
   const config: PluginConfig = {...defaultConfig, ...(userConfig || {})}

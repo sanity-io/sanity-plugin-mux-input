@@ -26,7 +26,7 @@ export interface MuxInputConfig {
    * @defaultValue 'smart'
    */
   encoding_tier?: 'baseline' | 'smart'
-  
+
   /**
    * The video quality level informs the cost, quality, and available platform features for the asset.
    * @see {@link https://www.mux.com/docs/guides/use-video-quality-levels}

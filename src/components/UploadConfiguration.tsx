@@ -203,8 +203,8 @@ export default function UploadConfiguration({
               title="Video Quality Level"
               description={
                 <>
-                  The video quality level informs the cost, quality, and available platform features for
-                  the asset.{' '}
+                  The video quality level informs the cost, quality, and available platform features
+                  for the asset.{' '}
                   <a
                     href="https://docs.mux.com/guides/use-encoding-tiers"
                     target="_blank"
@@ -331,9 +331,7 @@ export default function UploadConfiguration({
 
         <Box marginTop={4}>
           <Button
-            disabled={
-              !basicConfig && !config.public_policy && !config.signed_policy
-            }
+            disabled={!basicConfig && !config.public_policy && !config.signed_policy}
             icon={UploadIcon}
             text="Upload"
             tone="positive"
