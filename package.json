@@ -52,7 +52,7 @@
     "watch": "pkg-utils watch --strict"
   },
   "dependencies": {
-    "@mux/mux-player-react": "^2.6.0",
+    "@mux/mux-player-react": "^3.8.0",
     "@mux/upchunk": "^3.4.0",
     "@sanity/icons": "^3.0.0",
     "@sanity/incompatible-plugin": "^1.0.4",
