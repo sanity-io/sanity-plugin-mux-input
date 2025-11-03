@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.10.1](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.10.0...v2.10.1) (2025-11-03)
+
+### Bug Fixes
+
+- Renamed `Encoding Tiers` to Video `Quality Levels` ([#437](https://github.com/sanity-io/sanity-plugin-mux-input/issues/437)) ([57d6c79](https://github.com/sanity-io/sanity-plugin-mux-input/commit/57d6c799fb5cb0be8e4516b3ef2d146ec817de8b))
+
 ## [2.10.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.9.1...v2.10.0) (2025-10-24)
 
 ### Features
