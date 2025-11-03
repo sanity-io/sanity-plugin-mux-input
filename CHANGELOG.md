@@ -5,6 +5,17 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.11.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.10.1...v2.11.0) (2025-11-03)
+
+### Features
+
+- Added `defaultPublic` configuration ([#438](https://github.com/sanity-io/sanity-plugin-mux-input/issues/438)) ([1a61f16](https://github.com/sanity-io/sanity-plugin-mux-input/commit/1a61f162df571ec6535a98e0c3c24e53231a4eb5))
+- Added clear mechanism to remove corrupted uploads ([#439](https://github.com/sanity-io/sanity-plugin-mux-input/issues/439)) ([8d9c7f9](https://github.com/sanity-io/sanity-plugin-mux-input/commit/8d9c7f926fdb1393598666c4e6113202aa41b5e5))
+
+### Bug Fixes
+
+- Upgraded Mux Player to 3.8.0 to fix issues with native chrome ([#441](https://github.com/sanity-io/sanity-plugin-mux-input/issues/441)) ([6ddc7b4](https://github.com/sanity-io/sanity-plugin-mux-input/commit/6ddc7b48588424451ad032e23fcdf7a367caf234))
+
 ## [2.10.1](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.10.0...v2.10.1) (2025-11-03)
 
 ### Bug Fixes
