@@ -49,6 +49,12 @@ export interface MuxInputConfig {
   defaultSigned?: boolean
 
   /**
+   * Enables public URLs by default.
+   * @defaultValue true
+   */
+  defaultPublic?: boolean
+
+  /**
    * Auto-generate captions for these languages by default.
    * Requires `"video_quality": "plus"`
    *
