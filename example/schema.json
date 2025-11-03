@@ -1181,7 +1181,7 @@
           },
           "optional": true
         },
-        "encoding_tier": {
+        "video_quality": {
           "type": "objectAttribute",
           "value": {
             "type": "string"
