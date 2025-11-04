@@ -2,10 +2,15 @@ import type {Tool} from 'sanity'
 
 import type {PluginConfig} from '../util/types'
 import ToolIcon from './icons/ToolIcon'
-import VideosBrowser from './VideosBrowser'
+import {lazy, Suspense} from 'react'
+const VideosBrowser = lazy(() => import('./VideosBrowser'))
 
 const StudioTool: React.FC<PluginConfig> = () => {
-  return <VideosBrowser />
+  return (
+    <Suspense>
+      <VideosBrowser />
+    </Suspense>
+  )
 }
 
 export const DEFAULT_TOOL_CONFIG = {

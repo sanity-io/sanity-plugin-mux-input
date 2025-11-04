@@ -1,4 +1,5 @@
-import Input from './components/Input'
+import React, {Suspense} from 'react'
+const Input = React.lazy(() => import('./components/Input'))
 import VideoThumbnail from './components/VideoThumbnail'
 import type {MuxInputProps, PluginConfig, VideoAssetDocument} from './util/types'
 
@@ -6,7 +7,9 @@ export function muxVideoCustomRendering(config: PluginConfig) {
   return {
     components: {
       input: (props: MuxInputProps) => (
-        <Input config={{...config, ...props.schemaType.options}} {...props} />
+        <Suspense>
+          <Input config={{...config, ...props.schemaType.options}} {...props} />
+        </Suspense>
       ),
     },
     preview: {
