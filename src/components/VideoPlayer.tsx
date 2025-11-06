@@ -1,4 +1,5 @@
-import MuxPlayer, {type MuxPlayerProps, type MuxPlayerRefAttributes} from '@mux/mux-player-react'
+import {type MuxPlayerProps, type MuxPlayerRefAttributes} from '@mux/mux-player-react'
+import MuxPlayer from '@mux/mux-player-react/lazy'
 import {ErrorOutlineIcon} from '@sanity/icons'
 import {Card, Text} from '@sanity/ui'
 import {type PropsWithChildren, useMemo, useRef} from 'react'
