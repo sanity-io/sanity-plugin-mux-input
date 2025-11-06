@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.11.1](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.11.0...v2.11.1) (2025-11-06)
+
+### Bug Fixes
+
+- import lazy MuxPlayer to avoid schema extraction errors ([#447](https://github.com/sanity-io/sanity-plugin-mux-input/issues/447)) ([ab6ffa6](https://github.com/sanity-io/sanity-plugin-mux-input/commit/ab6ffa69e3bb7a0d767509ee633dbe91182e33e5))
+
 ## [2.11.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.10.1...v2.11.0) (2025-11-03)
 
 ### Features
