@@ -70,11 +70,11 @@
     "use-error-boundary": "^2.0.6"
   },
   "devDependencies": {
-    "@sanity/client": "^6.28.1",
+    "@sanity/client": "^7.12.1",
     "@sanity/pkg-utils": "^8.1.29",
     "@sanity/plugin-kit": "^4.0.20",
     "@sanity/semantic-release-preset": "^5.0.0",
-    "@sanity/vision": "^3.77.2",
+    "@sanity/vision": "^3.99.0",
     "@types/lodash": "^4.17.15",
     "@types/react": "^19.0.10",
     "@types/react-is": "^19.0.0",
@@ -96,7 +96,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-is": "^19.0.0",
-    "sanity": "^3.77.2",
+    "sanity": "^3.99.0",
     "semantic-release": "^24.2.3",
     "styled-components": "^6.1.15",
     "typescript": "5.9.3"
