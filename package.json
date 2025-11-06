@@ -71,8 +71,8 @@
   },
   "devDependencies": {
     "@sanity/client": "^6.28.1",
-    "@sanity/pkg-utils": "^6.13.4",
-    "@sanity/plugin-kit": "4.0.19",
+    "@sanity/pkg-utils": "^8.1.29",
+    "@sanity/plugin-kit": "^4.0.20",
     "@sanity/semantic-release-preset": "^5.0.0",
     "@sanity/vision": "^3.77.2",
     "@types/lodash": "^4.17.15",
@@ -99,7 +99,7 @@
     "sanity": "^3.77.2",
     "semantic-release": "^24.2.3",
     "styled-components": "^6.1.15",
-    "typescript": "5.7.3"
+    "typescript": "5.9.3"
   },
   "peerDependencies": {
     "react": "^18.3 || ^19",
