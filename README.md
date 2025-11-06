@@ -198,21 +198,65 @@ sanity documents delete secrets.mux
 
 More information on signed URLs is available on Mux's [docs](https://docs.mux.com/docs/headless-cms-sanity#advanced-signed-urls)
 
-### MP4 support (downloadable videos or offline viewing)
+### Static Renditions (downloadable videos or offline viewing)
 
-To enable [static MP4 renditions](https://docs.mux.com/guides/video/enable-static-mp4-renditions), add `mp4_support: 'standard'` to the `options` of your `mux.video` schema type.
+To enable [static MP4 renditions](https://docs.mux.com/guides/video/enable-static-mp4-renditions), add `static_renditions` to your plugin configuration. This allows users to download videos for offline viewing.
+
+#### Standard Mode (Recommended)
 
 ```js
 import {muxInput} from 'sanity-plugin-mux-input'
 
 export default defineConfig({
-  plugins: [muxInput({mp4_support: 'standard'})],
+  plugins: [
+    muxInput({
+      static_renditions: ['highest'], // Enables MP4 downloads at the highest quality (up to 4K)
+      // or
+      static_renditions: ['highest', 'audio-only'], // Also includes audio-only (M4A) downloads
+    }),
+  ],
 })
 ```
 
-If MP4 support is enabled in the plugin's configuration, editors can still choose to enable MP4 renditions on a per-video basis when uploading new assets.
+**Standard mode options:**
+- `'highest'`: Produces an MP4 file with video resolution up to 4K (2160p)
+- `'audio-only'`: Produces an M4A (audio-only MP4) file
 
-MP4 allows users to download videos for later or offline viewing. More information can be found on Mux's [documentation](https://docs.mux.com/guides/enable-static-mp4-renditions).
+#### Advanced Mode (Specific Resolutions)
+
+For more control, you can specify exact resolutions:
+
+```js
+import {muxInput} from 'sanity-plugin-mux-input'
+
+export default defineConfig({
+  plugins: [
+    muxInput({
+      static_renditions: ['1080p', '720p', 'audio-only'],
+    }),
+  ],
+})
+```
+
+**Advanced mode options:**
+- Specific resolutions: `'270p'`, `'360p'`, `'480p'`, `'540p'`, `'720p'`, `'1080p'`, `'1440p'`, `'2160p'`
+- `'audio-only'`: M4A file
+
+**Important notes:**
+- You cannot mix `'highest'` with specific resolutions (e.g., `['highest', '1080p']` is invalid)
+- Mux will not upscale videos - renditions requiring upscaling are automatically skipped
+- When uploading new assets, editors can choose different rendition settings on a per-video basis
+
+#### Backward Compatibility
+
+The deprecated `mp4_support` field is still supported for backward compatibility:
+
+```js
+// ⚠️ Deprecated - use static_renditions instead
+muxInput({mp4_support: 'standard'}) // Equivalent to static_renditions: ['highest']
+```
+
+More information can be found on Mux's [documentation](https://docs.mux.com/guides/enable-static-mp4-renditions).
 
 ### Video resolution (max_resolution_tier)
 
