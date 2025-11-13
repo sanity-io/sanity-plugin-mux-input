@@ -407,7 +407,7 @@ export interface MuxAsset {
       height: number
       width: number
       bitrate: number
-      filesize: number | string
+      filesize: string
       type: 'standard' | 'advanced'
       status: 'ready' | 'preparing' | 'skipped' | 'errored'
       resolution_tier?: string
