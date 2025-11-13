@@ -242,16 +242,17 @@ export function testUrl(url: string): Observable<string> {
   if (typeof url !== 'string') {
     return throwError(error)
   }
+  const trimmedUrl = url.trim()
   let parsed
   try {
-    parsed = new URL(url)
+    parsed = new URL(trimmedUrl)
   } catch (err) {
     return throwError(error)
   }
   if (parsed && !parsed.protocol.match(/http:|https:/)) {
     return throwError(error)
   }
-  return of(url)
+  return of(trimmedUrl)
 }
 
 function optionsFromFile(opts: {preserveFilename?: boolean}, file: File) {
