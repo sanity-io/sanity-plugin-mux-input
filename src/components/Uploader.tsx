@@ -274,7 +274,7 @@ export default function Uploader(props: Props) {
     event.preventDefault()
     event.stopPropagation()
     const clipboardData = event.clipboardData || (window as any).clipboardData
-    const url = clipboardData.getData('text')
+    const url = clipboardData.getData('text')?.trim()
     if (!isValidUrl(url)) {
       toast.push({status: 'error', title: 'Invalid URL for Mux video input.'})
       return
