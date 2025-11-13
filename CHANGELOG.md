@@ -5,6 +5,14 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.11.2](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.11.1...v2.11.2) (2025-11-13)
+
+### Bug Fixes
+
+- **deps:** upgrade tooling ([08eafbd](https://github.com/sanity-io/sanity-plugin-mux-input/commit/08eafbdddaacb0786857b241fffa106b11944df6))
+- preview state missing on "Used by" list ([#448](https://github.com/sanity-io/sanity-plugin-mux-input/issues/448)) ([8af65f3](https://github.com/sanity-io/sanity-plugin-mux-input/commit/8af65f363449a67b9289a9002b284eb66d2a21f8))
+- trim whitespace from video URL before sending to Mux ([#451](https://github.com/sanity-io/sanity-plugin-mux-input/issues/451)) ([59f8407](https://github.com/sanity-io/sanity-plugin-mux-input/commit/59f8407426a6a4008d99b19d0031fa5d310eeb05))
+
 ## [2.11.1](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.11.0...v2.11.1) (2025-11-06)
 
 ### Bug Fixes
