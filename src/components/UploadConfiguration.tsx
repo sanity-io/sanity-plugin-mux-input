@@ -65,7 +65,6 @@ function sanitizeStaticRenditions(
   const hasHighest = renditions.includes('highest')
   const hasSpecificResolutions = renditions.some((r) => r !== 'highest' && r !== 'audio-only')
 
-  // If both highest and specific resolutions are present, keep only highest and audio-only
   if (hasHighest && hasSpecificResolutions) {
     return renditions.filter((r) => r === 'highest' || r === 'audio-only')
   }
