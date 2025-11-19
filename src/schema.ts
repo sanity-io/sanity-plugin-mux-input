@@ -39,12 +39,18 @@ const muxStaticRenditionFile = {
   name: 'mux.staticRenditionFile',
   type: 'object',
   fields: [
-    {type: 'string', name: 'ext'},
     {type: 'string', name: 'name'},
+    {type: 'string', name: 'ext'},
+    {type: 'number', name: 'height'},
     {type: 'number', name: 'width'},
     {type: 'number', name: 'bitrate'},
-    {type: 'number', name: 'filesize'},
-    {type: 'number', name: 'height'},
+    {type: 'string', name: 'filesize'},
+    {type: 'string', name: 'type'},
+    {type: 'string', name: 'status'},
+    {type: 'string', name: 'resolution_tier'},
+    {type: 'string', name: 'resolution'},
+    {type: 'string', name: 'id'},
+    {type: 'string', name: 'passthrough'},
   ],
 }
 

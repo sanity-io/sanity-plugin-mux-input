@@ -156,7 +156,7 @@ type UploadResponse = {
     cors_origin: string
     id: string
     new_asset_settings: {
-      mp4_support: 'standard' | 'none'
+      static_renditions?: {resolution: string}[]
       passthrough: string
       playback_policies: ['public' | 'signed']
     }
