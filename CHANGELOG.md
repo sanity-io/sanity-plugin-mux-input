@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.12.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.11.2...v2.12.0) (2025-11-19)
+
+### Features
+
+- add static renditions and remove deprecated mp4_support ([#446](https://github.com/sanity-io/sanity-plugin-mux-input/issues/446)) ([d577543](https://github.com/sanity-io/sanity-plugin-mux-input/commit/d577543916779eb65e0b31bbd8b3a100d1682653))
+
 ## [2.11.2](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.11.1...v2.11.2) (2025-11-13)
 
 ### Bug Fixes
