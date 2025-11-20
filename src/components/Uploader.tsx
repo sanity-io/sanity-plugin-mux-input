@@ -306,7 +306,7 @@ export default function Uploader(props: Props) {
     event.stopPropagation()
     dragEnteredEls.current.push(event.target)
     const type = event.dataTransfer.items?.[0]?.type
-    setDragState(type?.startsWith('video/') ? 'valid' : 'invalid')
+    setDragState(type?.startsWith('video/') || type?.startsWith('audio/') ? 'valid' : 'invalid')
   }
 
   const handleDragLeave: React.DragEventHandler<HTMLDivElement> = (event) => {
