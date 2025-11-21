@@ -25,11 +25,11 @@ import {memo, useCallback, useEffect, useMemo, useState} from 'react'
 import {PatchEvent, unset} from 'sanity'
 import {styled} from 'styled-components'
 
+import {useAccessControl} from '../hooks/useAccessControl'
 import {type DialogState, type SetDialogState} from '../hooks/useDialogState'
 import {getPlaybackPolicy} from '../util/getPlaybackPolicy'
 import type {MuxInputProps, PluginConfig, VideoAssetDocument} from '../util/types'
 import {FileInputMenuItem} from './FileInputMenuItem'
-import {useAccessControl} from '../hooks/useAccessControl'
 
 const LockCard = styled(Card)`
   position: absolute;

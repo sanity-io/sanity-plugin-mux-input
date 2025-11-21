@@ -1,12 +1,11 @@
-import {PlugIcon, SearchIcon, UploadIcon} from '@sanity/icons'
-import {DocumentVideoIcon} from '@sanity/icons'
+import {DocumentVideoIcon, PlugIcon, SearchIcon, UploadIcon} from '@sanity/icons'
 import {Button, Card, Flex, Inline, Text} from '@sanity/ui'
 import {useCallback} from 'react'
 
-import type {SetDialogState} from '../hooks/useDialogState'
-import {FileInputButton, type FileInputButtonProps} from './FileInputButton'
 import {useAccessControl} from '../hooks/useAccessControl'
+import type {SetDialogState} from '../hooks/useDialogState'
 import {PluginConfig} from '../util/types'
+import {FileInputButton, type FileInputButtonProps} from './FileInputButton'
 
 interface UploadPlaceholderProps {
   setDialogState: SetDialogState

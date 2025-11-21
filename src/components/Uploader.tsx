@@ -66,7 +66,7 @@ type UploaderStateAction =
       | Extract<UploadUrlEvent, {type: 'url'}>
     ))
   | {action: 'progress'; percent: number}
-  | {action: 'error'; error: any}
+  | {action: 'error'; error: Error}
   | {action: 'complete' | 'reset'}
 
 /**
@@ -101,6 +101,7 @@ export default function Uploader(props: Props) {
         case 'commitUpload':
           return Object.assign({}, prev, {uploadStatus: {progress: 0}})
         case 'progressInfo': {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const {type, action: _, ...payload} = action
           return Object.assign({}, prev, {
             uploadStatus: {
@@ -301,8 +302,9 @@ export default function Uploader(props: Props) {
   const handlePaste: React.ClipboardEventHandler<HTMLInputElement> = (event) => {
     event.preventDefault()
     event.stopPropagation()
-    const clipboardData = event.clipboardData || (window as any).clipboardData
-    const url = clipboardData.getData('text')?.trim()
+    const clipboardData =
+      event.clipboardData || (window as Window & {clipboardData?: DataTransfer}).clipboardData
+    const url = clipboardData?.getData('text')?.trim()
     if (!isValidUrl(url)) {
       toast.push({status: 'error', title: 'Invalid URL for Mux video input.'})
       return
