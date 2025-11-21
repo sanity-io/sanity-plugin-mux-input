@@ -67,11 +67,18 @@ export default function VideoPlayer({
 
   return (
     <>
-      <Card tone="transparent" style={{aspectRatio: aspectRatio, position: 'relative'}}>
+      <Card
+        tone="transparent"
+        style={{
+          aspectRatio: aspectRatio,
+          position: 'relative',
+          ...(isAudio && {display: 'flex'}),
+        }}
+      >
         {videoSrc && (
           <>
             <MuxPlayer
-              poster={thumbnailSrc}
+              poster={isAudio ? undefined : thumbnailSrc}
               ref={muxPlayer}
               {...props}
               playsInline
@@ -90,10 +97,11 @@ export default function VideoPlayer({
               }}
               audio={isAudio}
               style={{
-                height: '100%',
+                ...(!isAudio && {height: '100%'}),
                 width: '100%',
                 display: 'block',
                 objectFit: 'contain',
+                ...(isAudio && {alignSelf: 'end'}),
               }}
             />
             {children}
