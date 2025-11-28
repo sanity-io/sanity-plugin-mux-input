@@ -270,16 +270,20 @@ export default function Uploader(props: Props) {
    * @param files - FileList or File array to validate
    * @returns true if any file has an invalid MIME type, false if all files are valid
    */
-
   const isInvalidFile = (files: FileList | File[]) => {
     const isInvalid = Array.from(files).some((file) => {
-      return !props.config.acceptedMimeTypes?.some((acceptedType) =>
-        file.type.match(new RegExp(acceptedType))
-      )
+      return !props.config.acceptedMimeTypes?.some((acceptedType) => {
+        // Convert mime type pattern to regex (e.g., 'audio/*' -> /^audio\/.*$/)
+        const pattern = `^${acceptedType.replace('*', '.*')}$`
+        return new RegExp(pattern).test(file.type)
+      })
     })
 
     if (isInvalid) {
-      invalidFileToast()
+      // Use setTimeout to ensure toast is called after the current render cycle
+      setTimeout(() => {
+        invalidFileToast()
+      }, 0)
       return true
     }
     return false
@@ -306,7 +310,10 @@ export default function Uploader(props: Props) {
       event.clipboardData || (window as Window & {clipboardData?: DataTransfer}).clipboardData
     const url = clipboardData?.getData('text')?.trim()
     if (!isValidUrl(url)) {
-      toast.push({status: 'error', title: 'Invalid URL for Mux video input.'})
+      // Use setTimeout to ensure toast is called after the current render cycle
+      setTimeout(() => {
+        toast.push({status: 'error', title: 'Invalid URL for Mux video input.'})
+      }, 0)
       return
     }
     dispatch({action: 'stageUpload', input: {type: 'url', url: url}})
