@@ -42,17 +42,17 @@ export default function DeleteDialog({
     setState('processing_deletion')
     const worked = await deleteAsset({client, asset, deleteOnMux})
     if (worked === true) {
-      toast.push({title: 'Successfully deleted video', status: 'success'})
+      toast.push({title: 'Successfully deleted asset', status: 'success'})
       succeededDeleting()
     } else if (worked === 'failed-mux') {
       toast.push({
-        title: 'Deleted video in Sanity',
+        title: 'Deleted asset in Sanity',
         description: "But it wasn't deleted in Mux",
         status: 'warning',
       })
       succeededDeleting()
     } else {
-      toast.push({title: 'Failed deleting video', status: 'error'})
+      toast.push({title: 'Failed deleting asset', status: 'error'})
 
       setState('error_deleting')
     }
@@ -61,7 +61,7 @@ export default function DeleteDialog({
   return (
     <Dialog
       animate
-      header={'Delete video'}
+      header={'Delete asset'}
       zOffset={DIALOGS_Z_INDEX}
       id="deleting-video-details-dialog"
       onClose={cancelDelete}
@@ -81,16 +81,16 @@ export default function DeleteDialog({
         <Stack space={3}>
           {state === 'checkingReferences' && (
             <>
-              <Heading size={2}>Checking if video can be deleted</Heading>
+              <Heading size={2}>Checking if asset can be deleted</Heading>
               <SpinnerBox />
             </>
           )}
           {state === 'cantDelete' && (
             <>
-              <Heading size={2}>Video can&apos;t be deleted</Heading>
+              <Heading size={2}>Asset can&apos;t be deleted</Heading>
               <Text size={2} style={{marginBottom: '2rem'}}>
                 There are {references?.length} document{references && references.length > 0 && 's'}{' '}
-                pointing to this video. Remove their references to this file or delete them before
+                pointing to this asset. Remove their references to this file or delete them before
                 proceeding.
               </Text>
               <VideoReferences references={references} isLoaded={!referencesLoading} />
@@ -98,7 +98,7 @@ export default function DeleteDialog({
           )}
           {state === 'confirm' && (
             <>
-              <Heading size={2}>Are you sure you want to delete this video?</Heading>
+              <Heading size={2}>Are you sure you want to delete this asset?</Heading>
               <Text size={2}>This action is irreversible</Text>
               <Stack space={4} marginY={4}>
                 <Flex align="center" as="label">
@@ -110,14 +110,14 @@ export default function DeleteDialog({
                 </Flex>
                 <Flex align="center" as="label">
                   <Checkbox disabled checked />
-                  <Text style={{margin: '0 10px'}}>Delete video from dataset</Text>
+                  <Text style={{margin: '0 10px'}}>Delete asset from dataset</Text>
                 </Flex>
                 <Box>
                   <Button
                     icon={TrashIcon}
                     fontSize={2}
                     padding={3}
-                    text="Delete video"
+                    text="Delete asset"
                     tone="critical"
                     onClick={confirmDelete}
                     disabled={['processing_deletion', 'checkingReferences', 'cantDelete'].some(
@@ -130,14 +130,14 @@ export default function DeleteDialog({
           )}
           {state === 'processing_deletion' && (
             <>
-              <Heading size={2}>Deleting video...</Heading>
+              <Heading size={2}>Deleting asset...</Heading>
               <SpinnerBox />
             </>
           )}
           {state === 'error_deleting' && (
             <>
               <Heading size={2}>Something went wrong!</Heading>
-              <Text size={2}>Try deleting the video again by clicking the button below</Text>
+              <Text size={2}>Try deleting the asset again by clicking the button below</Text>
             </>
           )}
         </Stack>

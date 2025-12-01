@@ -41,7 +41,7 @@ export default function Onboard(props: OnboardProps) {
               </Inline>
               <Inline paddingY={1}>
                 <Heading size={[0, 1, 2, 2]}>
-                  Upload and preview videos directly from your studio.
+                  Upload and preview assets directly from your studio.
                 </Heading>
               </Inline>
               <Inline paddingY={1}>
