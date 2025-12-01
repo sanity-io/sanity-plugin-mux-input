@@ -7,6 +7,13 @@ import type {SetDialogState} from '../hooks/useDialogState'
 import {PluginConfig} from '../util/types'
 import {FileInputButton, type FileInputButtonProps} from './FileInputButton'
 
+function formatAcceptString(accept: string): string {
+  return accept
+    .split(',')
+    .map((type) => type.trim().replace('/*', ''))
+    .join(' or ')
+}
+
 interface UploadPlaceholderProps {
   setDialogState: SetDialogState
   readOnly: boolean
@@ -48,7 +55,7 @@ export default function UploadPlaceholder(props: UploadPlaceholderProps) {
           </Flex>
           <Flex justify="center">
             <Text size={1} muted>
-              Drag video or paste URL here
+              Drag {formatAcceptString(accept)} file or paste URL here
             </Text>
           </Flex>
         </Flex>

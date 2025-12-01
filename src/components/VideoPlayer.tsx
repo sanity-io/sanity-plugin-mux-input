@@ -72,11 +72,32 @@ export default function VideoPlayer({
         style={{
           aspectRatio: aspectRatio,
           position: 'relative',
-          ...(isAudio && {display: 'flex'}),
+          ...(isAudio && {display: 'flex', alignItems: 'flex-end'}),
         }}
       >
         {videoSrc && (
           <>
+            {isAudio && (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="3em"
+                viewBox="0 0 24 24"
+                style={{
+                  padding: '0.5em',
+                  width: '32px',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  zIndex: 1,
+                }}
+              >
+                <path
+                  fill="currentColor"
+                  style={{opacity: '0.65'}}
+                  d="M10.75 19q.95 0 1.6-.65t.65-1.6V13h3v-2h-4v3.875q-.275-.2-.587-.288t-.663-.087q-.95 0-1.6.65t-.65 1.6t.65 1.6t1.6.65M6 22q-.825 0-1.412-.587T4 20V4q0-.825.588-1.412T6 2h8l6 6v12q0 .825-.587 1.413T18 22zm7-13V4H6v16h12V9zM6 4v5zv16z"
+                />
+              </svg>
+            )}
             <MuxPlayer
               poster={isAudio ? undefined : thumbnailSrc}
               ref={muxPlayer}
