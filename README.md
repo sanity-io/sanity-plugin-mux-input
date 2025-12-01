@@ -311,7 +311,11 @@ If your videos are always spoken in a specific language and you want to include 
 
 ### Accepted File Types
 
-By default, the plugin accepts both video and audio files (`['video/*', 'audio/*']`). You can configure which file types are accepted by the input:
+By default, the plugin accepts both video and audio files (`['video/*', 'audio/*']`). You can configure which file types are accepted either globally at the plugin level or per-field at the schema level.
+
+#### Plugin-level configuration
+
+Configure accepted file types for all `mux.video` fields globally:
 
 ```js
 import {muxInput} from 'sanity-plugin-mux-input'
@@ -327,6 +331,43 @@ export default defineConfig({
     }),
   ],
 })
+```
+
+#### Schema-level configuration
+
+You can also configure `acceptedMimeTypes` for individual fields in your schema, which will override the plugin-level configuration:
+
+```js
+import { defineField, defineType } from "sanity";
+
+export default defineType({
+  name: "muxTest",
+  title: "Mux Files",
+  type: "document",
+  fields: [
+    defineField({
+      name: "audioFile",
+      title: "Audio File",
+      type: "mux.video",
+      options: {
+        acceptedMimeTypes: ["audio/*"],
+      },
+    }),
+    defineField({
+      name: "videoFile",
+      title: "Video File",
+      type: "mux.video",
+      options: {
+        acceptedMimeTypes: ["video/*"],
+      },
+    }),
+    defineField({
+      name: "either",
+      title: "Either File",
+      type: "mux.video",
+    }),
+  ],
+});
 ```
 
 The `acceptedMimeTypes` option controls the `accept` attribute on the file input, which filters which file types users can select when uploading. This affects both the file picker dialog and drag-and-drop file validation.
