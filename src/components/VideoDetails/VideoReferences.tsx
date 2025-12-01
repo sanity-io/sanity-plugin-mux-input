@@ -30,7 +30,7 @@ const VideoReferences: React.FC<{
   if (!props.references?.length) {
     return (
       <Card border radius={3} padding={3}>
-        <Text size={2}>No documents are using this asset</Text>
+        <Text size={2}>No documents are using this video</Text>
       </Card>
     )
   }

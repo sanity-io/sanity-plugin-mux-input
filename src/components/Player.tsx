@@ -15,7 +15,7 @@ interface Props extends Pick<MuxInputProps, 'onChange' | 'readOnly'> {
 const Player = ({asset, buttons, readOnly, onChange}: Props) => {
   const isLoading = useMemo<boolean | string>(() => {
     if (asset?.status === 'preparing') {
-      return 'Preparing the asset'
+      return 'Preparing the video'
     }
     if (asset?.status === 'waiting_for_upload') {
       return 'Waiting for upload to start'

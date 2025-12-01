@@ -24,7 +24,7 @@ export default function InputBrowser({
   return (
     <StyledDialog
       __unstable_autoFocus
-      header="Select asset"
+      header="Select video"
       id={id}
       onClose={handleClose}
       width={2}

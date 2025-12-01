@@ -109,7 +109,7 @@ function ResyncMetadataDialog(props: ReturnType<typeof useResyncMuxMetadata>) {
               <Spinner muted size={4} />
               <Stack space={2}>
                 <Text size={2} weight="semibold">
-                  Updating asset metadata
+                  Updating video metadata
                 </Text>
                 <Text size={1}>Syncing titles from Mux...</Text>
               </Stack>
@@ -143,7 +143,7 @@ function ResyncMetadataDialog(props: ReturnType<typeof useResyncMuxMetadata>) {
               <CheckmarkCircleIcon fontSize={48} />
             </Box>
             <Heading size={2}>Metadata synced successfully</Heading>
-            <Text size={2}>All asset titles have been updated from Mux.</Text>
+            <Text size={2}>All video titles have been updated from Mux.</Text>
           </Stack>
         )}
 
@@ -151,11 +151,11 @@ function ResyncMetadataDialog(props: ReturnType<typeof useResyncMuxMetadata>) {
         {resyncState === 'idle' && !props.muxAssets.loading && !props.sanityAssetsLoading && (
           <Stack space={4}>
             <Heading size={1}>
-              There {videosToUpdate === 1 ? 'is' : 'are'} {videosToUpdate} asset
+              There {videosToUpdate === 1 ? 'is' : 'are'} {videosToUpdate} video
               {videosToUpdate === 1 ? '' : 's'} with Mux metadata
             </Heading>
             <Text size={2}>
-              This will update asset titles in Sanity to match those in Mux. No new assets will be
+              This will update video titles in Sanity to match those in Mux. No new videos will be
               created.
             </Text>
             {videosWithEmptyOrPlaceholder > 0 && (
@@ -166,10 +166,10 @@ function ResyncMetadataDialog(props: ReturnType<typeof useResyncMuxMetadata>) {
                   </Box>
                   <Stack space={2}>
                     <Text size={2} weight="semibold">
-                      Assets with empty or placeholder titles
+                      Videos with empty or placeholder titles
                     </Text>
                     <Text size={1} muted>
-                      {videosWithEmptyOrPlaceholder} asset
+                      {videosWithEmptyOrPlaceholder} video
                       {videosWithEmptyOrPlaceholder === 1 ? '' : 's'} without titles or with
                       placeholder titles (e.g., &quot;Asset #123&quot;) can be updated selectively.
                     </Text>

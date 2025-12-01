@@ -66,7 +66,7 @@ function MissingAsset({
           onChange={(e) => {
             selectAsset(e.currentTarget.checked)
           }}
-          aria-label={selected ? `Import asset ${asset.id}` : `Skip import of asset ${asset.id}`}
+          aria-label={selected ? `Import video ${asset.id}` : `Skip import of video ${asset.id}`}
         />
         <VideoThumbnail
           asset={{
@@ -111,7 +111,7 @@ function ImportVideosDialog(props: ReturnType<typeof useImportMuxAssets>) {
   return (
     <Dialog
       animate
-      header={'Import assets from Mux'}
+      header={'Import videos from Mux'}
       zOffset={DIALOGS_Z_INDEX}
       id="video-details-dialog"
       onClose={props.closeDialog}
@@ -140,8 +140,8 @@ function ImportVideosDialog(props: ReturnType<typeof useImportMuxAssets>) {
                   mode="ghost"
                   text={
                     props.selectedAssets?.length > 0
-                      ? `Import ${props.selectedAssets.length} asset(s)`
-                      : 'No asset(s) selected'
+                      ? `Import ${props.selectedAssets.length} video(s)`
+                      : 'No video(s) selected'
                   }
                   tone="positive"
                   onClick={props.importAssets}
@@ -162,10 +162,10 @@ function ImportVideosDialog(props: ReturnType<typeof useImportMuxAssets>) {
               <InfoOutlineIcon fontSize={36} />
               <Stack space={2}>
                 <Text size={2} weight="semibold">
-                  Some assets were skipped
+                  Some videos were skipped
                 </Text>
                 <Text size={1}>
-                  Assets without playback IDs cannot be imported and have been excluded from the
+                  Videos without playback IDs cannot be imported and have been excluded from the
                   list.
                 </Text>
               </Stack>
@@ -186,7 +186,7 @@ function ImportVideosDialog(props: ReturnType<typeof useImportMuxAssets>) {
                   This may take a while.
                   {props.missingAssets &&
                     props.missingAssets.length > 0 &&
-                    ` There are at least ${props.missingAssets.length} asset${props.missingAssets.length > 1 ? 's' : ''} currently not in Sanity...`}
+                    ` There are at least ${props.missingAssets.length} video${props.missingAssets.length > 1 ? 's' : ''} currently not in Sanity...`}
                 </Text>
               </Stack>
             </Flex>
@@ -204,7 +204,7 @@ function ImportVideosDialog(props: ReturnType<typeof useImportMuxAssets>) {
                 </Text>
                 <Text size={1}>
                   {props.missingAssets
-                    ? `But we've found ${props.missingAssets.length} asset${props.missingAssets.length > 1 ? 's' : ''} not in Sanity, which you can start importing now.`
+                    ? `But we've found ${props.missingAssets.length} video${props.missingAssets.length > 1 ? 's' : ''} not in Sanity, which you can start importing now.`
                     : 'Please try again or contact a developer for help.'}
                 </Text>
               </Stack>
@@ -219,7 +219,7 @@ function ImportVideosDialog(props: ReturnType<typeof useImportMuxAssets>) {
               <Spinner muted size={4} />
               <Stack space={2}>
                 <Text size={2} weight="semibold">
-                  Importing {props.selectedAssets.length} asset
+                  Importing {props.selectedAssets.length} video
                   {props.selectedAssets.length > 1 && 's'} from Mux
                 </Text>
               </Stack>
@@ -234,7 +234,7 @@ function ImportVideosDialog(props: ReturnType<typeof useImportMuxAssets>) {
               <ErrorOutlineIcon fontSize={36} />
               <Stack space={2}>
                 <Text size={2} weight="semibold">
-                  There was an error importing assets
+                  There was an error importing videos
                 </Text>
                 <Text size={1}>
                   {props.importError
@@ -262,8 +262,8 @@ function ImportVideosDialog(props: ReturnType<typeof useImportMuxAssets>) {
             </Box>
             <Heading size={2}>
               {importState === 'done'
-                ? `Assets imported successfully`
-                : 'There are no Mux assets to import'}
+                ? `Videos imported successfully`
+                : 'There are no Mux videos to import'}
             </Heading>
             <Text size={2}>
               {importState === 'done'
@@ -280,7 +280,7 @@ function ImportVideosDialog(props: ReturnType<typeof useImportMuxAssets>) {
             <Stack space={4}>
               <Heading size={1}>
                 There are {props.missingAssets.length}
-                {props.muxAssets.loading && '+'} Mux asset{props.missingAssets.length > 1 && 's'}{' '}
+                {props.muxAssets.loading && '+'} Mux video{props.missingAssets.length > 1 && 's'}{' '}
                 not in Sanity
               </Heading>
               {!props.muxAssets.loading && (

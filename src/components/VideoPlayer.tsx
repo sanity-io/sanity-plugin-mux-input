@@ -141,7 +141,7 @@ export default function VideoPlayer({
               <ErrorOutlineIcon style={{marginRight: '0.15em'}} />
               {typeof error === 'object' && 'message' in error && typeof error.message === 'string'
                 ? error.message
-                : 'Error loading asset'}
+                : 'Error loading video'}
             </Text>
           </div>
         ) : null}

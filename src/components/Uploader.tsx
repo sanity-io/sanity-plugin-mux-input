@@ -312,7 +312,7 @@ export default function Uploader(props: Props) {
     if (!isValidUrl(url)) {
       // Use setTimeout to ensure toast is called after the current render cycle
       setTimeout(() => {
-        toast.push({status: 'error', title: 'Invalid URL for Mux asset input.'})
+        toast.push({status: 'error', title: 'Invalid URL for Mux video input.'})
       }, 0)
       return
     }

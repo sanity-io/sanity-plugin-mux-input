@@ -231,8 +231,8 @@ const VideoDetails: React.FC<VideoDetailsProps> = (props) => {
             >
               <Stack space={4}>
                 <AssetInput
-                  label="Asset title or file name"
-                  description="Not visible to users. Useful for finding assets later."
+                  label="Video title or file name"
+                  description="Not visible to users. Useful for finding videos later."
                   value={filename || ''}
                   onInput={(e) => setFilename(e.currentTarget.value)}
                   disabled={state !== 'idle'}

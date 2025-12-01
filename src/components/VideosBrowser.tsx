@@ -37,7 +37,7 @@ export default function VideosBrowser({onSelect}: VideosBrowserProps) {
               onInput={(e: React.FormEvent<HTMLInputElement>) =>
                 setSearchQuery(e.currentTarget.value)
               }
-              placeholder="Search assets"
+              placeholder="Search videos"
             />
             <SelectSortOptions setSort={setSort} sort={sort} />
           </Flex>
@@ -52,7 +52,7 @@ export default function VideosBrowser({onSelect}: VideosBrowserProps) {
         <Stack space={3}>
           {assets?.length > 0 && (
             <Label muted>
-              {assets.length} asset{assets.length > 1 ? 's' : null}{' '}
+              {assets.length} video{assets.length > 1 ? 's' : null}{' '}
               {searchQuery ? `matching "${searchQuery}"` : 'found'}
             </Label>
           )}
@@ -77,7 +77,7 @@ export default function VideosBrowser({onSelect}: VideosBrowserProps) {
         {!isLoading && assets.length === 0 && (
           <Card marginY={4} paddingX={4} paddingY={6} border radius={2} tone="transparent">
             <Text align="center" muted size={3}>
-              {searchQuery ? `No assets found for "${searchQuery}"` : 'No assets in this dataset'}
+              {searchQuery ? `No videos found for "${searchQuery}"` : 'No videos in this dataset'}
             </Text>
           </Card>
         )}
