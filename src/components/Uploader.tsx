@@ -279,14 +279,7 @@ export default function Uploader(props: Props) {
       })
     })
 
-    if (isInvalid) {
-      // Use setTimeout to ensure toast is called after the current render cycle
-      setTimeout(() => {
-        invalidFileToast()
-      }, 0)
-      return true
-    }
-    return false
+    return isInvalid
   }
 
   /* -------------------------- Upload Initialization ------------------------- */
@@ -310,10 +303,7 @@ export default function Uploader(props: Props) {
       event.clipboardData || (window as Window & {clipboardData?: DataTransfer}).clipboardData
     const url = clipboardData?.getData('text')?.trim()
     if (!isValidUrl(url)) {
-      // Use setTimeout to ensure toast is called after the current render cycle
-      setTimeout(() => {
-        toast.push({status: 'error', title: 'Invalid URL for Mux video input.'})
-      }, 0)
+      toast.push({status: 'error', title: 'Invalid URL for Mux video input.'})
       return
     }
     dispatch({action: 'stageUpload', input: {type: 'url', url: url}})
