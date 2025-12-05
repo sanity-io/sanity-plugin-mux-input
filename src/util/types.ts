@@ -122,6 +122,24 @@ export interface MuxInputConfig {
    * @defaultValue false
    */
   disableTextTrackConfig?: boolean
+
+  /**
+   * Maximum file size allowed for video uploads in bytes.
+   * If not specified, no file size validation will be performed.
+   *
+   * @example 1024 * 1024 * 1024 // 1 GB
+   * @defaultValue undefined
+   */
+  maxAssetFileSize?: number
+
+  /**
+   * Maximum video duration allowed in seconds.
+   * If not specified, no duration validation will be performed.
+   *
+   * @example 2 * 60 * 60 // 2 hours
+   * @defaultValue undefined
+   */
+  maxAssetDuration?: number
 }
 
 export interface PluginConfig extends MuxInputConfig {
