@@ -208,16 +208,33 @@ export default function UploadConfiguration({
     setIsLoadingFileSize(false)
     setValidationError(null)
 
+    let videoElement: HTMLVideoElement | null = null
+    let currentVideoSrc: string | null = null
+
+    const cleanupVideo = (shouldRevokeUrl: boolean) => {
+      if (videoElement) {
+        videoElement.onloadedmetadata = null
+        videoElement.onerror = null
+        videoElement.src = ''
+        videoElement.load()
+        videoElement = null
+      }
+      if (shouldRevokeUrl && currentVideoSrc?.startsWith('blob:')) {
+        URL.revokeObjectURL(currentVideoSrc)
+      }
+      currentVideoSrc = null
+    }
+
     const validateDuration = (videoSrc: string, shouldRevokeUrl = false) => {
       if (!MAX_DURATION_SECONDS || MAX_DURATION_SECONDS <= 0) return
 
       setIsLoadingDuration(true)
-      const video = document.createElement('video')
-      video.preload = 'metadata'
+      videoElement = document.createElement('video')
+      videoElement.preload = 'metadata'
+      currentVideoSrc = videoSrc
 
-      video.onloadedmetadata = () => {
-        if (shouldRevokeUrl) URL.revokeObjectURL(video.src)
-        const duration = video.duration
+      videoElement.onloadedmetadata = () => {
+        const duration = videoElement!.duration
         setVideoDuration(duration)
         setIsLoadingDuration(false)
 
@@ -226,15 +243,17 @@ export default function UploadConfiguration({
             `Video duration (${formatSeconds(duration)}) exceeds maximum allowed duration of ${formatSeconds(MAX_DURATION_SECONDS)}`
           )
         }
+
+        cleanupVideo(shouldRevokeUrl)
       }
 
-      video.onerror = () => {
-        if (shouldRevokeUrl) URL.revokeObjectURL(video.src)
+      videoElement.onerror = () => {
         setIsLoadingDuration(false)
         console.warn('Could not read video metadata for validation')
+        cleanupVideo(shouldRevokeUrl)
       }
 
-      video.src = videoSrc
+      videoElement.src = videoSrc
     }
 
     const validateFileSize = (size: number): boolean => {
@@ -254,7 +273,6 @@ export default function UploadConfiguration({
       if (validateFileSize(file.size)) {
         validateDuration(URL.createObjectURL(file), true)
       }
-      return
     }
 
     // Validate URL uploads
@@ -262,9 +280,10 @@ export default function UploadConfiguration({
       const url = stagedUpload.url
 
       // Get file size from URL
-      setIsLoadingFileSize(true)
-      fetch(url, {method: 'HEAD'})
-        .then((response) => {
+      const fetchFileSize = async () => {
+        setIsLoadingFileSize(true)
+        try {
+          const response = await fetch(url, {method: 'HEAD'})
           const contentLength = response.headers.get('content-length')
           const fileSize = contentLength ? parseInt(contentLength, 10) : null
 
@@ -281,13 +300,17 @@ export default function UploadConfiguration({
           } else {
             validateDuration(url)
           }
-        })
-        .catch(() => {
+        } catch {
           setIsLoadingFileSize(false)
           console.warn('Could not validate file size from URL')
           validateDuration(url)
-        })
+        }
+      }
+
+      fetchFileSize()
     }
+
+    return cleanupVideo(true)
   }, [stagedUpload, MAX_FILE_SIZE, MAX_DURATION_SECONDS])
 
   // Helper to toggle a rendition
