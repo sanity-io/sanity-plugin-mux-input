@@ -295,16 +295,15 @@ export default function UploadConfiguration({
           }
 
           // Validate file size if limit is configured and size is available
-          if (MAX_FILE_SIZE !== undefined && fileSize !== null) {
-            if (validateFileSize(fileSize)) {
-              validateDuration(url)
-            }
-          } else if (fileSize === null && MAX_FILE_SIZE !== undefined) {
+          const shouldValidateDuration =
+            MAX_FILE_SIZE === undefined || fileSize === null || validateFileSize(fileSize)
+
+          if (fileSize === null && MAX_FILE_SIZE !== undefined) {
             // Size unknown but size limit is configured - skip file size validation
             setCanSkipFileSizeValidation(true)
-            // Still validate duration normally
-            validateDuration(url)
-          } else {
+          }
+
+          if (shouldValidateDuration) {
             validateDuration(url)
           }
         } catch {
