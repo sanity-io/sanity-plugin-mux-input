@@ -197,6 +197,7 @@ export default function UploadConfiguration({
   const [isLoadingDuration, setIsLoadingDuration] = useState(false)
   const [isLoadingFileSize, setIsLoadingFileSize] = useState(false)
   const [validationError, setValidationError] = useState<string | null>(null)
+  const [canSkipFileSizeValidation, setCanSkipFileSizeValidation] = useState(false)
 
   const MAX_FILE_SIZE = pluginConfig.maxAssetFileSize
   const MAX_DURATION_SECONDS = pluginConfig.maxAssetDuration
@@ -207,6 +208,7 @@ export default function UploadConfiguration({
     setIsLoadingDuration(false)
     setIsLoadingFileSize(false)
     setValidationError(null)
+    setCanSkipFileSizeValidation(false)
 
     let videoElement: HTMLVideoElement | null = null
     let currentVideoSrc: string | null = null
@@ -292,17 +294,24 @@ export default function UploadConfiguration({
             setUrlFileSize(fileSize)
           }
 
-          // Validate file size if limit is configured
-          if (MAX_FILE_SIZE !== undefined && fileSize) {
+          // Validate file size if limit is configured and size is available
+          if (MAX_FILE_SIZE !== undefined && fileSize !== null) {
             if (validateFileSize(fileSize)) {
               validateDuration(url)
             }
+          } else if (fileSize === null && MAX_FILE_SIZE !== undefined) {
+            // Size unknown but size limit is configured - skip file size validation
+            setCanSkipFileSizeValidation(true)
+            // Still validate duration normally
+            validateDuration(url)
           } else {
             validateDuration(url)
           }
         } catch {
           setIsLoadingFileSize(false)
           console.warn('Could not validate file size from URL')
+          // Skip validation of file size, but still validate duration
+          setCanSkipFileSizeValidation(true)
           validateDuration(url)
         }
       }
@@ -310,7 +319,9 @@ export default function UploadConfiguration({
       fetchFileSize()
     }
 
-    return cleanupVideo(true)
+    return () => {
+      cleanupVideo(true)
+    }
   }, [stagedUpload, MAX_FILE_SIZE, MAX_DURATION_SECONDS])
 
   // Helper to toggle a rendition
@@ -650,7 +661,7 @@ export default function UploadConfiguration({
               (!basicConfig && !config.public_policy && !config.signed_policy) ||
               validationError !== null ||
               isLoadingDuration ||
-              isLoadingFileSize
+              (isLoadingFileSize && !canSkipFileSizeValidation)
             }
             icon={UploadIcon}
             text="Upload"
