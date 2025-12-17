@@ -32,7 +32,7 @@ export interface ConfigureApiDialogProps {
   secrets: Secrets
 }
 
-const fieldNames = ['token', 'secretKey', 'enableSignedUrls'] as const
+const fieldNames = ['token', 'secretKey', 'enableSignedUrls', 'drmConfigId'] as const
 
 // Internal dialog component that can be used with external state
 export function ConfigureApiDialog({secrets, setDialogState}: ConfigureApiDialogProps) {
@@ -48,7 +48,7 @@ export function ConfigureApiDialog({secrets, setDialogState}: ConfigureApiDialog
     [secrets, state]
   )
   const id = `ConfigureApi${useId()}`
-  const [tokenId, secretKeyId, enableSignedUrlsId] = useMemo<typeof fieldNames>(
+  const [tokenId, secretKeyId, enableSignedUrlsId, drmConfigIdId] = useMemo<typeof fieldNames>(
     () => fieldNames.map((field) => `${id}-${field}`) as unknown as typeof fieldNames,
     [id]
   )
@@ -63,8 +63,8 @@ export function ConfigureApiDialog({secrets, setDialogState}: ConfigureApiDialog
       if (!saving.current && event.currentTarget.reportValidity()) {
         saving.current = true
         dispatch({type: 'submit'})
-        const {token, secretKey, enableSignedUrls} = state
-        handleSaveSecrets({token, secretKey, enableSignedUrls})
+        const {token, secretKey, enableSignedUrls, drmConfigId} = state
+        handleSaveSecrets({token, secretKey, enableSignedUrls, drmConfigId})
           .then((savedSecrets) => {
             const {projectId, dataset} = client.config()
             clear([cacheNs, secretsId, projectId, dataset])
@@ -201,6 +201,27 @@ export function ConfigureApiDialog({secrets, setDialogState}: ConfigureApiDialog
                 </Card>
               ) : null}
             </Stack>
+
+            <FormField title="DRM Configuration ID" inputId={drmConfigIdId}>
+              <TextInput
+                id={drmConfigIdId}
+                onChange={handleChangeSecretKey}
+                type="text"
+                value={state.drmConfigId ?? ''}
+                required={false}
+              />
+            </FormField>
+            <Card padding={[3, 3, 3]} radius={2} shadow={1} tone="neutral">
+              <Stack space={3}>
+                <Text size={1}>
+                  {/* TODO: Fix text, add links, check current plan (?) */}
+                  DRM (Digital Rights Management) provides an extra layer of content security for
+                  video content streamed from Mux. For additional information check out our DRM
+                  Guide. DRM is not enabled automatically, and because you&apos;re on a custom plan
+                  you&apos;ll need some extra help from Mux.
+                </Text>
+              </Stack>
+            </Card>
 
             <Inline space={2}>
               <Button
