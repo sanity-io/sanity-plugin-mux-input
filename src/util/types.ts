@@ -303,6 +303,7 @@ export interface Secrets {
   enableSignedUrls: boolean
   signingKeyId: string | null
   signingKeyPrivate: string | null
+  drmConfigId: string | null
 }
 
 // This narrowed type indicates that there may be assets that are signed, and we have the secrets to access them

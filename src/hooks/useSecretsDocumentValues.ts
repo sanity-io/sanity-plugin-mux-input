@@ -18,6 +18,7 @@ export const useSecretsDocumentValues = () => {
       enableSignedUrls: value?.enableSignedUrls || false,
       signingKeyId: value?.signingKeyId || null,
       signingKeyPrivate: value?.signingKeyPrivate || null,
+      drmConfigId: value?.drmConfigId || null,
     }
     return {
       isInitialSetup: !exists,
