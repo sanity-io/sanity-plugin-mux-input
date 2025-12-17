@@ -14,6 +14,7 @@ export type Action =
   | {type: 'change'; payload: {name: 'token'; value: string}}
   | {type: 'change'; payload: {name: 'secretKey'; value: string}}
   | {type: 'change'; payload: {name: 'enableSignedUrls'; value: boolean}}
+  | {type: 'change'; payload: {name: 'drmConfigId'; value: string}}
 function init({token, secretKey, enableSignedUrls, drmConfigId}: Secrets): State {
   return {
     submitting: false,
