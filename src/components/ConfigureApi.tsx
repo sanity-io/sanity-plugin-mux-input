@@ -44,7 +44,8 @@ export function ConfigureApiDialog({secrets, setDialogState}: ConfigureApiDialog
     () =>
       secrets.token !== state.token ||
       secrets.secretKey !== state.secretKey ||
-      secrets.enableSignedUrls !== state.enableSignedUrls,
+      secrets.enableSignedUrls !== state.enableSignedUrls ||
+      secrets.drmConfigId !== state.drmConfigId,
     [secrets, state]
   )
   const id = `ConfigureApi${useId()}`
@@ -102,6 +103,17 @@ export function ConfigureApiDialog({secrets, setDialogState}: ConfigureApiDialog
       dispatch({
         type: 'change',
         payload: {name: 'enableSignedUrls', value: event.currentTarget.checked},
+      })
+    },
+    [dispatch]
+  )
+  const handleChangeDrmConfigId = useCallback(
+    (event: React.FormEvent<HTMLInputElement>) => {
+      // eslint-disable-next-line no-console
+      console.log('handleChangeDrmConfigId: drmConfigId', event.currentTarget.value)
+      dispatch({
+        type: 'change',
+        payload: {name: 'drmConfigId', value: event.currentTarget.value},
       })
     },
     [dispatch]
@@ -205,7 +217,7 @@ export function ConfigureApiDialog({secrets, setDialogState}: ConfigureApiDialog
             <FormField title="DRM Configuration ID" inputId={drmConfigIdId}>
               <TextInput
                 id={drmConfigIdId}
-                onChange={handleChangeSecretKey}
+                onChange={handleChangeDrmConfigId}
                 type="text"
                 value={state.drmConfigId ?? ''}
                 required={false}

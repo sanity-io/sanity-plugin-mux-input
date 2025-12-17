@@ -248,6 +248,7 @@ export interface UploadConfig
   text_tracks: UploadTextTrack[]
   signed_policy: boolean
   public_policy: boolean
+  drm_enabled: boolean
 }
 
 /**
