@@ -219,6 +219,7 @@ export default defineConfig({
 ```
 
 **Standard mode options:**
+
 - `'highest'`: Produces an MP4 file with video resolution up to 4K (2160p)
 - `'audio-only'`: Produces an M4A (audio-only MP4) file
 
@@ -239,10 +240,12 @@ export default defineConfig({
 ```
 
 **Advanced mode options:**
+
 - Specific resolutions: `'270p'`, `'360p'`, `'480p'`, `'540p'`, `'720p'`, `'1080p'`, `'1440p'`, `'2160p'`
 - `'audio-only'`: M4A file
 
 **Important notes:**
+
 - You cannot mix `'highest'` with specific resolutions (e.g., `['highest', '1080p']` is invalid)
 - Mux will not upscale videos - renditions requiring upscaling are automatically skipped
 - When uploading new assets, editors can choose different rendition settings on a per-video basis
