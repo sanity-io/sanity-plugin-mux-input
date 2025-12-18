@@ -89,6 +89,13 @@ export interface MuxInputConfig {
   defaultPublic?: boolean
 
   /**
+   * Enables DRM Protection by default, if you configured your DRM Configuration Id.
+   * @see {@link https://www.mux.com/docs/guides/protect-videos-with-drm}
+   * @defaultValue true
+   */
+  defaultDrm?: boolean
+
+  /**
    * Auto-generate captions for these languages by default.
    * Requires `"video_quality": "plus"`
    *
@@ -248,7 +255,7 @@ export interface UploadConfig
   text_tracks: UploadTextTrack[]
   signed_policy: boolean
   public_policy: boolean
-  drm_enabled: boolean
+  drm_policy: boolean
 }
 
 /**
@@ -292,10 +299,19 @@ export interface MuxNewAssetSettings
   }[]
 
   /** An array of playback policy names that you want applied to this asset and available through playback_ids. */
-  playback_policy: ('public' | 'signed' | 'drm')[]
+  playback_policy?: PlaybackPolicy[]
+
+  /** An array of playback policy objects that you want applied to this asset and available through playback_ids. advanced_playback_policies must be used instead of playback_policies when creating a DRM playback ID. */
+  advanced_playback_policies: AdvancedPlaybackPolicy[]
 
   /** Arbitrary user-supplied metadata that will be included in the asset details and related webhooks.  */
   passthrough?: string
+}
+
+/** Used by advanced_playback_policies, allows to define DRM config. */
+export type AdvancedPlaybackPolicy = {
+  policy: PlaybackPolicy
+  drm_configuration_id?: string
 }
 
 export interface Secrets {
@@ -351,7 +367,7 @@ export interface AssetThumbnailOptions {
   asset: Pick<VideoAssetDocument, 'playbackId' | 'data' | 'thumbTime' | 'filename' | 'assetId'>
 }
 
-export type PlaybackPolicy = 'signed' | 'public'
+export type PlaybackPolicy = 'signed' | 'public' | 'drm'
 
 export interface MuxErrors {
   type: string
