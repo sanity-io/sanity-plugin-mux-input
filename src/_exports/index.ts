@@ -16,6 +16,7 @@ export const defaultConfig: PluginConfig = {
   defaultSigned: false,
   tool: DEFAULT_TOOL_CONFIG,
   allowedRolesForConfiguration: [],
+  acceptedMimeTypes: ['video/*', 'audio/*'],
 }
 
 /**

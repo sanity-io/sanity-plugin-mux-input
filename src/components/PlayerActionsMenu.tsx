@@ -25,11 +25,11 @@ import {memo, useCallback, useEffect, useMemo, useState} from 'react'
 import {PatchEvent, unset} from 'sanity'
 import {styled} from 'styled-components'
 
+import {useAccessControl} from '../hooks/useAccessControl'
 import {type DialogState, type SetDialogState} from '../hooks/useDialogState'
 import {getPlaybackPolicy} from '../util/getPlaybackPolicy'
 import type {MuxInputProps, PluginConfig, VideoAssetDocument} from '../util/types'
 import {FileInputMenuItem} from './FileInputMenuItem'
-import {useAccessControl} from '../hooks/useAccessControl'
 
 const LockCard = styled(Card)`
   position: absolute;
@@ -57,9 +57,10 @@ function PlayerActionsMenu(
     dialogState: DialogState
     setDialogState: SetDialogState
     config: PluginConfig
+    accept: string
   }
 ) {
-  const {asset, readOnly, dialogState, setDialogState, onChange, onSelect} = props
+  const {asset, readOnly, dialogState, setDialogState, onChange, onSelect, accept} = props
   const [open, setOpen] = useState(false)
   const [menuElement, setMenuRef] = useState<HTMLDivElement | null>(null)
   const isSigned = useMemo(() => getPlaybackPolicy(asset) === 'signed', [asset])
@@ -108,7 +109,7 @@ function PlayerActionsMenu(
               </Label>
             </Box>
             <FileInputMenuItem
-              accept="video/*"
+              accept={accept}
               icon={UploadIcon}
               onSelect={onSelect}
               text="Upload"

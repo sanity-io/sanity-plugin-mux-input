@@ -1,12 +1,18 @@
-import {PlugIcon, SearchIcon, UploadIcon} from '@sanity/icons'
-import {DocumentVideoIcon} from '@sanity/icons'
+import {DocumentVideoIcon, PlugIcon, SearchIcon, UploadIcon} from '@sanity/icons'
 import {Button, Card, Flex, Inline, Text} from '@sanity/ui'
 import {useCallback} from 'react'
 
-import type {SetDialogState} from '../hooks/useDialogState'
-import {FileInputButton, type FileInputButtonProps} from './FileInputButton'
 import {useAccessControl} from '../hooks/useAccessControl'
+import type {SetDialogState} from '../hooks/useDialogState'
 import {PluginConfig} from '../util/types'
+import {FileInputButton, type FileInputButtonProps} from './FileInputButton'
+
+function formatAcceptString(accept: string): string {
+  return accept
+    .split(',')
+    .map((type) => type.trim().replace('/*', ''))
+    .join(' or ')
+}
 
 interface UploadPlaceholderProps {
   setDialogState: SetDialogState
@@ -15,9 +21,10 @@ interface UploadPlaceholderProps {
   needsSetup: boolean
   onSelect: FileInputButtonProps['onSelect']
   config: PluginConfig
+  accept: string
 }
 export default function UploadPlaceholder(props: UploadPlaceholderProps) {
-  const {setDialogState, readOnly, onSelect, hovering, needsSetup} = props
+  const {setDialogState, readOnly, onSelect, hovering, needsSetup, accept} = props
   const handleBrowse = useCallback(() => setDialogState('select-video'), [setDialogState])
   const handleConfigureApi = useCallback(() => setDialogState('secrets'), [setDialogState])
   const {hasConfigAccess} = useAccessControl(props.config)
@@ -48,12 +55,13 @@ export default function UploadPlaceholder(props: UploadPlaceholderProps) {
           </Flex>
           <Flex justify="center">
             <Text size={1} muted>
-              Drag video or paste URL here
+              Drag {formatAcceptString(accept)} file or paste URL here
             </Text>
           </Flex>
         </Flex>
         <Inline space={2}>
           <FileInputButton
+            accept={accept}
             mode="bleed"
             tone="default"
             icon={UploadIcon}

@@ -122,6 +122,15 @@ export interface MuxInputConfig {
    * @defaultValue false
    */
   disableTextTrackConfig?: boolean
+
+  /**
+   * The mime types that are accepted by the input.
+   *
+    * @see {@link https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/accept}
+   * @defaultValue ['video/*','audio/*']
+
+   */
+  acceptedMimeTypes?: ('audio/*' | 'video/*')[]
 }
 
 export interface PluginConfig extends MuxInputConfig {
