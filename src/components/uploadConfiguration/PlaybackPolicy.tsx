@@ -1,6 +1,8 @@
 import {Grid, Text} from '@sanity/ui'
+import {ActionDispatch} from 'react'
 
 import {Secrets, UploadConfig} from '../../util/types'
+import {UploadConfigurationStateAction} from '../UploadConfiguration'
 import PlaybackPolicyOption from './PlaybackPolicyOption'
 import PlaybackPolicyWarning from './PlaybackPolicyWarning'
 
@@ -13,9 +15,10 @@ export default function PlaybackPolicy({
   id: string
   config: UploadConfig
   secrets: Secrets
-  dispatch: any
+  dispatch: ActionDispatch<[action: UploadConfigurationStateAction]>
 }) {
-  const noPolicySelected = !(config.public_policy || config.signed_policy)
+  const noPolicySelected = !(config.public_policy || config.signed_policy || config.drm_policy)
+  const drmPolicyDisabled = !secrets.drmConfigId
   return (
     <Grid gap={3}>
       <Text weight="bold">Advanced Playback Policies</Text>
@@ -36,6 +39,28 @@ export default function PlaybackPolicy({
                 // See Secure video playback for details about creating tokens."
           dispatch={dispatch}
           action="signed_policy"
+        />
+      )}
+      {drmPolicyDisabled ? (
+        <PlaybackPolicyOption
+          id={`${id}--drm`}
+          checked={false}
+          optionName="DRM - Disabled"
+          description="To enable DRM add your DRM Configuration Id to your plugin configuration. Contact us to get started using DRM."
+          dispatch={dispatch}
+          disabled
+        />
+      ) : (
+        <PlaybackPolicyOption
+          id={`${id}--drm`}
+          checked={config.drm_policy}
+          optionName="DRM"
+          description="DRM Configuration should be used with tokens https://license.mux.com/license/{DRM_SYSTEM}/{PLAYBACK_ID}?token={TOKEN}.\n
+                 Where DRM_SYSTEM is one of ('widevine' | 'playready' | 'fairplay')\n
+                 For FairPlay also set certificate https://license.mux.com/certificate/fairplay/{PLAYBACK_ID}?token={TOKEN}\n
+                 See Secure video playback for details about creating tokens."
+          dispatch={dispatch}
+          action="drm_policy"
         />
       )}
       {noPolicySelected && <PlaybackPolicyWarning />}
