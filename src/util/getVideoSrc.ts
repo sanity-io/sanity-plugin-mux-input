@@ -2,7 +2,7 @@ import type {SanityClient} from 'sanity'
 
 import {generateJwt} from './generateJwt'
 import {getPlaybackId} from './getPlaybackId'
-import {getPlaybackPolicy} from './getPlaybackPolicy'
+import {getPlaybackPolicyById} from './getPlaybackPolicy'
 import type {MuxVideoUrl, VideoAssetDocument} from './types'
 
 interface VideoSrcOptions {
@@ -14,7 +14,8 @@ export function getVideoSrc({asset, client}: VideoSrcOptions): MuxVideoUrl {
   const playbackId = getPlaybackId(asset)
   const searchParams = new URLSearchParams()
 
-  if (getPlaybackPolicy(asset) === 'signed') {
+  const playbackPolicy = getPlaybackPolicyById(asset, playbackId)?.policy
+  if (playbackPolicy === 'signed' || playbackPolicy === 'drm') {
     const token = generateJwt(client, playbackId, 'v')
     searchParams.set('token', token)
   }

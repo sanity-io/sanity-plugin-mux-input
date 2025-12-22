@@ -2,11 +2,13 @@ import {type MuxPlayerProps, type MuxPlayerRefAttributes} from '@mux/mux-player-
 import MuxPlayer from '@mux/mux-player-react/lazy'
 import {ErrorOutlineIcon} from '@sanity/icons'
 import {Card, Text} from '@sanity/ui'
-import {type PropsWithChildren, useMemo, useRef} from 'react'
+import {type PropsWithChildren, Suspense, useMemo, useRef, useState} from 'react'
 
 import {useDialogStateContext} from '../context/DialogStateContext'
 import {useClient} from '../hooks/useClient'
 import {AUDIO_ASPECT_RATIO, MIN_ASPECT_RATIO} from '../util/constants'
+import {generateJwt} from '../util/generateJwt'
+import {getPlaybackId} from '../util/getPlaybackId'
 import {getPosterSrc} from '../util/getPosterSrc'
 import {getVideoSrc} from '../util/getVideoSrc'
 import type {VideoAssetDocument} from '../util/types'
@@ -28,32 +30,74 @@ export default function VideoPlayer({
 
   const isAudio = assetIsAudio(asset)
   const muxPlayer = useRef<MuxPlayerRefAttributes>(null)
+  const [error, setError] = useState<Error>()
 
-  const {
-    src: videoSrc,
-    thumbnail: thumbnailSrc,
-    error,
-  } = useMemo(() => {
+  const playbackId = useMemo(() => {
     try {
-      const thumbnail = getPosterSrc({asset, client, width: thumbnailWidth})
-      const src = asset?.playbackId && getVideoSrc({client, asset})
-      if (src) return {src: src, thumbnail}
-
-      return {error: new TypeError('Asset has no playback ID')}
-      // eslint-disable-next-line @typescript-eslint/no-shadow
-    } catch (error) {
-      return {error}
+      return getPlaybackId(asset)
+    } catch (e) {
+      setError(new TypeError('Asset has no playback ID'))
+      return undefined
     }
+  }, [asset])
+
+  const src = useMemo(() => {
+    return getVideoSrc({asset, client})
+  }, [asset, client])
+
+  const poster = useMemo(() => {
+    return getPosterSrc({asset, client, width: thumbnailWidth})
   }, [asset, client, thumbnailWidth])
 
   const signedToken = useMemo(() => {
     try {
-      const url = new URL(videoSrc!)
+      const url = new URL(src!)
       return url.searchParams.get('token')
     } catch {
-      return false
+      return undefined
     }
-  }, [videoSrc])
+  }, [src])
+  const drmToken = useMemo(() => {
+    if (!playbackId) return undefined
+    const token = generateJwt(client, playbackId, 'd')
+    return token
+  }, [client, playbackId])
+  const tokens:
+    | Partial<{
+        playback?: string
+        thumbnail?: string
+        storyboard?: string
+        drm?: string
+      }>
+    | undefined = useMemo(() => {
+    try {
+      const partialTokens: {
+        playback?: string
+        thumbnail?: string
+        storyboard?: string
+        drm?: string
+      } = {
+        playback: undefined,
+        thumbnail: undefined,
+        storyboard: undefined,
+        drm: undefined,
+      }
+
+      if (signedToken) {
+        partialTokens.playback = signedToken
+        partialTokens.thumbnail = signedToken
+        partialTokens.storyboard = signedToken
+      }
+
+      if (drmToken) {
+        partialTokens.drm = drmToken
+      }
+
+      return {...partialTokens}
+    } catch {
+      return undefined
+    }
+  }, [signedToken, drmToken])
 
   const [width, height] = (asset?.data?.aspect_ratio ?? '16:9').split(':').map(Number)
   const targetAspectRatio =
@@ -66,6 +110,8 @@ export default function VideoPlayer({
       : AUDIO_ASPECT_RATIO
   }
 
+  /* We use Suspense here because `generateJwt` and related functions use suspend()
+   under the hood */
   return (
     <>
       <Card
@@ -76,7 +122,7 @@ export default function VideoPlayer({
           ...(isAudio && {display: 'flex', alignItems: 'flex-end'}),
         }}
       >
-        {videoSrc && (
+        {src && poster && (
           <>
             {isAudio && (
               <AudioIcon
@@ -91,34 +137,32 @@ export default function VideoPlayer({
                 }}
               />
             )}
-            <MuxPlayer
-              poster={isAudio ? undefined : thumbnailSrc}
-              ref={muxPlayer}
-              {...props}
-              playsInline
-              playbackId={asset.playbackId}
-              tokens={
-                signedToken
-                  ? {playback: signedToken, thumbnail: signedToken, storyboard: signedToken}
-                  : undefined
-              }
-              preload="metadata"
-              crossOrigin="anonymous"
-              metadata={{
-                player_name: 'Sanity Admin Dashboard',
-                player_version: process.env.PKG_VERSION,
-                page_type: 'Preview Player',
-              }}
-              audio={isAudio}
-              style={{
-                ...(!isAudio && {height: '100%'}),
-                width: '100%',
-                display: 'block',
-                objectFit: 'contain',
-                ...(isAudio && {alignSelf: 'end'}),
-              }}
-            />
-            {children}
+            <Suspense fallback={null}>
+              <MuxPlayer
+                poster={poster}
+                ref={muxPlayer}
+                {...props}
+                playsInline
+                playbackId={asset.playbackId}
+                tokens={tokens}
+                preload="metadata"
+                crossOrigin="anonymous"
+                metadata={{
+                  player_name: 'Sanity Admin Dashboard',
+                  player_version: process.env.PKG_VERSION,
+                  page_type: 'Preview Player',
+                }}
+                audio={isAudio}
+                style={{
+                  ...(!isAudio && {height: '100%'}),
+                  width: '100%',
+                  display: 'block',
+                  objectFit: 'contain',
+                  ...(isAudio && {alignSelf: 'end'}),
+                }}
+              />
+              {children}
+            </Suspense>
           </>
         )}
         {error ? (
