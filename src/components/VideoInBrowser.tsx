@@ -119,13 +119,43 @@ export default function VideoInBrowser({
               position: 'absolute',
               left: '1em',
               top: '1em',
-              zIndex: 10,
+              zIndex: 11,
             }}
             padding={2}
             border
           >
             <Text muted size={1}>
               <LockIcon />
+            </Text>
+          </Card>
+        </Tooltip>
+      )}
+      {playbackPolicy === 'drm' && (
+        <Tooltip
+          animate
+          content={
+            <Card padding={2} radius={2}>
+              <IconInfo icon={LockIcon} text="DRM playback policy" size={2} />
+            </Card>
+          }
+          placement="right"
+          fallbackPlacements={['top', 'bottom']}
+          portal
+        >
+          <Card
+            tone="caution"
+            style={{
+              borderRadius: '0.25rem',
+              position: 'absolute',
+              left: '1em',
+              top: '1em',
+              zIndex: 11,
+            }}
+            padding={2}
+            border
+          >
+            <Text muted size={1} weight="semibold" style={{color: 'var(--card-icon-color)'}}>
+              DRM
             </Text>
           </Card>
         </Tooltip>
