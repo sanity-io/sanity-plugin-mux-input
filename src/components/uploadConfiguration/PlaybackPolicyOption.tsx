@@ -1,5 +1,5 @@
 import {Checkbox, Flex, Grid, Text} from '@sanity/ui'
-import {ActionDispatch, CSSProperties, useState} from 'react'
+import {ActionDispatch, CSSProperties, ReactNode, useState} from 'react'
 
 import {UploadConfigurationStateAction} from '../UploadConfiguration'
 
@@ -15,7 +15,7 @@ export default function PlaybackPolicyOption({
   id: string
   checked: boolean
   optionName: string
-  description: string
+  description: string | ReactNode
   dispatch: ActionDispatch<[action: UploadConfigurationStateAction]>
   action?: 'public_policy' | 'signed_policy' | 'drm_policy'
   disabled?: boolean
@@ -45,6 +45,15 @@ export default function PlaybackPolicyOption({
       value: !checked,
     })
   }
+
+  const descriptionJsx =
+    typeof description === 'string' ? (
+      <Text size={2} muted>
+        {description}
+      </Text>
+    ) : (
+      description
+    )
   return (
     <label>
       <Flex gap={3} padding={3} style={boxStyle}>
@@ -59,9 +68,7 @@ export default function PlaybackPolicyOption({
           <Text size={3} weight="bold">
             {optionName}
           </Text>
-          <Text size={2} muted>
-            {description}
-          </Text>
+          {descriptionJsx}
         </Grid>
       </Flex>
     </label>
