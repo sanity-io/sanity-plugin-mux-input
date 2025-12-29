@@ -25,11 +25,11 @@ import {memo, useCallback, useEffect, useMemo, useState} from 'react'
 import {PatchEvent, unset} from 'sanity'
 import {styled} from 'styled-components'
 
+import {useAccessControl} from '../hooks/useAccessControl'
 import {type DialogState, type SetDialogState} from '../hooks/useDialogState'
 import {getPlaybackPolicy} from '../util/getPlaybackPolicy'
 import type {MuxInputProps, PluginConfig, VideoAssetDocument} from '../util/types'
 import {FileInputMenuItem} from './FileInputMenuItem'
-import {useAccessControl} from '../hooks/useAccessControl'
 
 const LockCard = styled(Card)`
   position: absolute;
@@ -62,7 +62,7 @@ function PlayerActionsMenu(
   const {asset, readOnly, dialogState, setDialogState, onChange, onSelect} = props
   const [open, setOpen] = useState(false)
   const [menuElement, setMenuRef] = useState<HTMLDivElement | null>(null)
-  const isSigned = useMemo(() => getPlaybackPolicy(asset) === 'signed', [asset])
+  const isSigned = useMemo(() => getPlaybackPolicy(asset)?.policy === 'signed', [asset])
   const {hasConfigAccess} = useAccessControl(props.config)
 
   const onReset = useCallback(() => onChange(PatchEvent.from(unset([]))), [onChange])

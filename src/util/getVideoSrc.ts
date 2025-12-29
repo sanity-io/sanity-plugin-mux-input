@@ -1,24 +1,20 @@
 import type {SanityClient} from 'sanity'
 
 import {generateJwt} from './generateJwt'
-import {getPlaybackId} from './getPlaybackId'
-import {getPlaybackPolicyById} from './getPlaybackPolicy'
-import type {MuxVideoUrl, VideoAssetDocument} from './types'
+import type {MuxPlaybackId, MuxVideoUrl} from './types'
 
 interface VideoSrcOptions {
-  asset: VideoAssetDocument
+  muxPlaybackId: MuxPlaybackId
   client: SanityClient
 }
 
-export function getVideoSrc({asset, client}: VideoSrcOptions): MuxVideoUrl {
-  const playbackId = getPlaybackId(asset)
+export function getVideoSrc({client, muxPlaybackId}: VideoSrcOptions): MuxVideoUrl {
   const searchParams = new URLSearchParams()
 
-  const playbackPolicy = getPlaybackPolicyById(asset, playbackId)?.policy
-  if (playbackPolicy === 'signed' || playbackPolicy === 'drm') {
-    const token = generateJwt(client, playbackId, 'v')
+  if (muxPlaybackId.policy === 'signed' || muxPlaybackId.policy === 'drm') {
+    const token = generateJwt(client, muxPlaybackId.id, 'v')
     searchParams.set('token', token)
   }
 
-  return `https://stream.mux.com/${playbackId}.m3u8?${searchParams}`
+  return `https://stream.mux.com/${muxPlaybackId.id}.m3u8?${searchParams}`
 }

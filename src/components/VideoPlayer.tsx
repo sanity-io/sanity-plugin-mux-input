@@ -9,6 +9,7 @@ import {useClient} from '../hooks/useClient'
 import {AUDIO_ASPECT_RATIO, MIN_ASPECT_RATIO} from '../util/constants'
 import {generateJwt} from '../util/generateJwt'
 import {getPlaybackId} from '../util/getPlaybackId'
+import {getPlaybackPolicyById} from '../util/getPlaybackPolicy'
 import {getPosterSrc} from '../util/getPosterSrc'
 import {getVideoSrc} from '../util/getVideoSrc'
 import type {VideoAssetDocument} from '../util/types'
@@ -31,18 +32,26 @@ export default function VideoPlayer({
   const muxPlayer = useRef<MuxPlayerRefAttributes>(null)
   const [error, setError] = useState<Error>()
 
+  /* Playback ID that will be used to play the video */
   const playbackId = useMemo(() => {
     try {
-      return getPlaybackId(asset)
+      return getPlaybackId(asset, ['public', 'signed', 'drm'])
     } catch (e) {
       setError(new TypeError('Asset has no playback ID'))
       return undefined
     }
   }, [asset])
 
+  const muxPlaybackId = useMemo(() => {
+    if (!playbackId) return undefined
+    return getPlaybackPolicyById(asset, playbackId)
+  }, [asset, playbackId])
+
   const src = useMemo(() => {
-    return getVideoSrc({asset, client})
-  }, [asset, client])
+    if (!playbackId) return undefined
+    if (!muxPlaybackId) return undefined
+    return getVideoSrc({muxPlaybackId, client})
+  }, [muxPlaybackId, playbackId, client])
 
   const poster = useMemo(() => {
     return getPosterSrc({asset, client, width: thumbnailWidth})
@@ -58,9 +67,10 @@ export default function VideoPlayer({
   }, [src])
   const drmToken = useMemo(() => {
     if (!playbackId) return undefined
+    if (muxPlaybackId?.policy !== 'drm') return undefined
     const token = generateJwt(client, playbackId, 'd')
     return token
-  }, [client, playbackId])
+  }, [client, muxPlaybackId?.policy, playbackId])
   const tokens:
     | Partial<{
         playback?: string
@@ -121,7 +131,7 @@ export default function VideoPlayer({
               ref={muxPlayer}
               {...props}
               playsInline
-              playbackId={asset.playbackId}
+              playbackId={playbackId}
               tokens={tokens}
               preload="metadata"
               crossOrigin="anonymous"
