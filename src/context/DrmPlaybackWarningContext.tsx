@@ -1,4 +1,4 @@
-import {Button, Dialog, Stack, Text} from '@sanity/ui'
+import {Button, Card, Dialog, Stack, Text} from '@sanity/ui'
 import React, {createContext, useContext, useState} from 'react'
 
 import {PluginConfig} from '../util/types'
@@ -71,12 +71,22 @@ export const DRMWarningDialog = ({onClose}: {onClose: () => void}) => {
       }
     >
       <Stack space={3} padding={3}>
-        <Text size={1} weight="semibold">
-          Playing DRM protected content will issue a license which infers a small cost
-        </Text>
-        <Text size={1} weight="semibold">
-          This is a one time warning. You can disable this in the plugin config.
-        </Text>
+        <Card padding={[3, 3, 3]} radius={2}>
+          <Stack space={3}>
+            <Text size={1} weight="semibold">
+              DRM-protected playback will generate a license with a small associated cost. The
+              plugin will attempt to play signed or public playback IDs instead whenever possible.
+            </Text>
+          </Stack>
+        </Card>
+        <Card padding={[3, 3, 3]} radius={2} tone="suggest">
+          <Stack space={3}>
+            <Text size={1} weight="semibold">
+              This is a one time warning. If it persists, you can disable it from your plugin
+              configuration.
+            </Text>
+          </Stack>
+        </Card>
       </Stack>
     </Dialog>
   )

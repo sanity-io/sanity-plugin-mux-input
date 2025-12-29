@@ -226,11 +226,26 @@ export function ConfigureApiDialog({secrets, setDialogState}: ConfigureApiDialog
             <Card padding={[3, 3, 3]} radius={2} shadow={1} tone="neutral">
               <Stack space={3}>
                 <Text size={1}>
-                  {/* TODO: Fix text, add links, check current plan (?) */}
                   DRM (Digital Rights Management) provides an extra layer of content security for
-                  video content streamed from Mux. For additional information check out our DRM
-                  Guide. DRM is not enabled automatically, and because you&apos;re on a custom plan
-                  you&apos;ll need some extra help from Mux.
+                  video content streamed from Mux. For additional information check out our{' '}
+                  <a
+                    href="https://www.mux.com/docs/guides/protect-videos-with-drm#play-drm-protected-videos"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    DRM Guide
+                  </a>
+                  .
+                </Text>
+                <Text size={1}>
+                  <a
+                    href="https://www.mux.com/support/human"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Contact us
+                  </a>{' '}
+                  to get started using DRM.
                 </Text>
               </Stack>
             </Card>
