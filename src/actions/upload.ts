@@ -158,7 +158,7 @@ type UploadResponse = {
     new_asset_settings: {
       static_renditions?: {resolution: string}[]
       passthrough: string
-      playback_policies: ['public' | 'signed']
+      playback_policies: ['public' | 'signed' | 'drm']
     }
     status: string
     timeout: number

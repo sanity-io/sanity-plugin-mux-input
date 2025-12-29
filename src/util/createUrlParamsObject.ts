@@ -2,7 +2,7 @@ import type {SanityClient} from 'sanity'
 
 import {Audience, generateJwt} from './generateJwt'
 import {getPlaybackId} from './getPlaybackId'
-import {getPlaybackPolicy} from './getPlaybackPolicy'
+import {getPlaybackPolicyById} from './getPlaybackPolicy'
 import type {AssetThumbnailOptions} from './types'
 
 export function createUrlParamsObject(
@@ -16,7 +16,8 @@ export function createUrlParamsObject(
   let searchParams = new URLSearchParams(
     JSON.parse(JSON.stringify(params, (_, v) => v ?? undefined))
   )
-  if (getPlaybackPolicy(asset) === 'signed') {
+  const playbackPolicy = getPlaybackPolicyById(asset, playbackId)?.policy
+  if (playbackPolicy === 'signed' || playbackPolicy === 'drm') {
     const token = generateJwt(client, playbackId, audience, params)
     searchParams = new URLSearchParams({token})
   }
