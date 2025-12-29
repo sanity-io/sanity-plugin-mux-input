@@ -129,6 +129,13 @@ export interface MuxInputConfig {
    * @defaultValue false
    */
   disableTextTrackConfig?: boolean
+
+  /**
+   * Whether or not to show the playback warning when trying to watch DRM content for the first time.
+   *
+   * @defaultValue false
+   */
+  disableDrmPlaybackWarning?: boolean
 }
 
 export interface PluginConfig extends MuxInputConfig {

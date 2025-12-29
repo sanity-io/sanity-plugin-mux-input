@@ -4,8 +4,8 @@ import type {PluginConfig} from '../util/types'
 import ToolIcon from './icons/ToolIcon'
 import VideosBrowser from './VideosBrowser'
 
-const StudioTool: React.FC<PluginConfig> = () => {
-  return <VideosBrowser />
+const StudioTool: React.FC<PluginConfig> = (config) => {
+  return <VideosBrowser config={config} />
 }
 
 export const DEFAULT_TOOL_CONFIG = {
