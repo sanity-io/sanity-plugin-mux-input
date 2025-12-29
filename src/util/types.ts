@@ -131,6 +131,13 @@ export interface MuxInputConfig {
   disableTextTrackConfig?: boolean
 
   /**
+   * Whether or not to show the playback warning when trying to watch DRM content for the first time.
+   *
+   * @defaultValue false
+   */
+  disableDrmPlaybackWarning?: boolean
+
+  /**
    * The mime types that are accepted by the input.
    *
     * @see {@link https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/accept}
