@@ -73,7 +73,7 @@ export default function PlaybackPolicy({
           optionName="DRM - Disabled"
           description={
             <>
-              <Text>
+              <Text size={2} muted>
                 To enable DRM add your DRM Configuration Id to your plugin configuration in the API
                 Credentials view.{' '}
                 <a
