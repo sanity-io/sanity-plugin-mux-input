@@ -1,11 +1,13 @@
-import type {MuxPlaybackId, PlaybackPolicy, VideoAssetDocument} from './types'
+import {getPlaybackId} from './getPlaybackId'
+import type {MuxPlaybackId, VideoAssetDocument} from './types'
 
 export function getPlaybackPolicy(
   asset: Pick<VideoAssetDocument, 'data' | 'playbackId'>
-): PlaybackPolicy {
+): MuxPlaybackId | undefined {
   return (
-    asset.data?.playback_ids?.find((playbackId) => asset.playbackId === playbackId.id)?.policy ??
-    'public'
+    asset.data?.playback_ids?.find(
+      (playbackId) => getPlaybackId(asset, ['drm', 'signed', 'public']) === playbackId.id
+    ) ?? {id: '', policy: 'public'}
   )
 }
 

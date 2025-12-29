@@ -71,6 +71,8 @@ const PlayButton = styled.button`
   }
 `
 
+type RenderState = 'render-video' | 'pre-render-warn' | false
+
 export default function VideoInBrowser({
   onSelect,
   onEdit,
@@ -80,7 +82,7 @@ export default function VideoInBrowser({
   onEdit?: (asset: VideoAssetDocument) => void
   asset: VideoAssetDocument
 }) {
-  const [renderVideo, setRenderVideo] = useState(false)
+  const [renderVideo, setRenderVideo] = useState<RenderState>(false)
   const select = React.useCallback(() => onSelect?.(asset), [onSelect, asset])
   const edit = React.useCallback(() => onEdit?.(asset), [onEdit, asset])
 
@@ -89,7 +91,13 @@ export default function VideoInBrowser({
   }
 
   const playbackPolicy = getPlaybackPolicy(asset)
-
+  const onClickPlay = () => {
+    if (playbackPolicy?.policy === 'drm' && !hasShownWarning) {
+      setRenderVideo('pre-render-warn')
+    } else {
+      setRenderVideo('render-video')
+    }
+  }
   return (
     <Card
       border
@@ -100,7 +108,7 @@ export default function VideoInBrowser({
         position: 'relative',
       }}
     >
-      {playbackPolicy === 'signed' && (
+      {playbackPolicy?.policy === 'signed' && (
         <Tooltip
           animate
           content={
@@ -130,7 +138,7 @@ export default function VideoInBrowser({
           </Card>
         </Tooltip>
       )}
-      {playbackPolicy === 'drm' && (
+      {playbackPolicy?.policy === 'drm' && (
         <Tooltip
           animate
           content={
@@ -167,10 +175,12 @@ export default function VideoInBrowser({
           gridTemplateRows: 'min-content min-content 1fr',
         }}
       >
-        {renderVideo ? (
+        {renderVideo === 'pre-render-warn' && (
+        )}
+        {renderVideo === 'render-video' ? (
           <VideoPlayer asset={asset} autoPlay forceAspectRatio={THUMBNAIL_ASPECT_RATIO} />
         ) : (
-          <PlayButton onClick={() => setRenderVideo(true)}>
+          <PlayButton onClick={onClickPlay}>
             <div data-play>
               <PlayIcon />
             </div>
