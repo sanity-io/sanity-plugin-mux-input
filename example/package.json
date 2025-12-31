@@ -14,15 +14,15 @@
   },
   "dependencies": {
     "@mux/mux-player-react": "^3.8.0",
-    "@portabletext/react": "^3.0.18",
+    "@portabletext/react": "^4.0.3",
     "@sanity/client": "^6.27.2",
     "@sanity/image-url": "^1.0.2",
-    "@sanity/vision": "^3.74.0",
+    "@sanity/vision": "^4.22.0",
     "next": "^14.2.3",
     "next-sanity": "^9.8.51",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "sanity": "^3.74.0",
+    "sanity": "^4.22.0",
     "sanity-plugin-mux-input": "^2.10.1",
     "styled-components": "^6.1.14"
   },
