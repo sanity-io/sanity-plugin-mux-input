@@ -124,6 +124,15 @@ export interface MuxInputConfig {
   disableTextTrackConfig?: boolean
 
   /**
+   * The mime types that are accepted by the input.
+   *
+    * @see {@link https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/accept}
+   * @defaultValue ['video/*','audio/*']
+
+   */
+  acceptedMimeTypes?: ('audio/*' | 'video/*')[]
+
+  /**
    * Maximum file size allowed for video uploads in bytes.
    * If not specified, no file size validation will be performed.
    *
