@@ -11,6 +11,7 @@ import {getPosterSrc} from '../util/getPosterSrc'
 import {getVideoSrc} from '../util/getVideoSrc'
 import type {VideoAssetDocument} from '../util/types'
 import EditThumbnailDialog from './EditThumbnailDialog'
+import {AudioIcon} from './icons/Audio'
 
 export default function VideoPlayer({
   asset,
@@ -67,11 +68,31 @@ export default function VideoPlayer({
 
   return (
     <>
-      <Card tone="transparent" style={{aspectRatio: aspectRatio, position: 'relative'}}>
+      <Card
+        tone="transparent"
+        style={{
+          aspectRatio: aspectRatio,
+          position: 'relative',
+          ...(isAudio && {display: 'flex', alignItems: 'flex-end'}),
+        }}
+      >
         {videoSrc && (
           <>
+            {isAudio && (
+              <AudioIcon
+                style={{
+                  padding: '0.5em',
+                  width: '2.2em',
+                  height: '2.2em',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  zIndex: 1,
+                }}
+              />
+            )}
             <MuxPlayer
-              poster={thumbnailSrc}
+              poster={isAudio ? undefined : thumbnailSrc}
               ref={muxPlayer}
               {...props}
               playsInline
@@ -90,10 +111,11 @@ export default function VideoPlayer({
               }}
               audio={isAudio}
               style={{
-                height: '100%',
+                ...(!isAudio && {height: '100%'}),
                 width: '100%',
                 display: 'block',
                 objectFit: 'contain',
+                ...(isAudio && {alignSelf: 'end'}),
               }}
             />
             {children}
