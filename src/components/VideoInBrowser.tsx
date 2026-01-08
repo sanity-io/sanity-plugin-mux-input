@@ -3,6 +3,7 @@ import {Button, Card, Stack, Text, Tooltip} from '@sanity/ui'
 import React, {useState} from 'react'
 import {styled} from 'styled-components'
 
+import {DRMWarningDialog, useDrmPlaybackWarningContext} from '../context/DrmPlaybackWarningContext'
 import {THUMBNAIL_ASPECT_RATIO} from '../util/constants'
 import {getPlaybackPolicy} from '../util/getPlaybackPolicy'
 import {VideoAssetDocument} from '../util/types'
@@ -71,6 +72,8 @@ const PlayButton = styled.button`
   }
 `
 
+type RenderState = 'render-video' | 'pre-render-warn' | false
+
 export default function VideoInBrowser({
   onSelect,
   onEdit,
@@ -80,16 +83,23 @@ export default function VideoInBrowser({
   onEdit?: (asset: VideoAssetDocument) => void
   asset: VideoAssetDocument
 }) {
-  const [renderVideo, setRenderVideo] = useState(false)
+  const [renderVideo, setRenderVideo] = useState<RenderState>(false)
   const select = React.useCallback(() => onSelect?.(asset), [onSelect, asset])
   const edit = React.useCallback(() => onEdit?.(asset), [onEdit, asset])
+  const {hasShownWarning} = useDrmPlaybackWarningContext()
 
   if (!asset) {
     return null
   }
 
   const playbackPolicy = getPlaybackPolicy(asset)
-
+  const onClickPlay = () => {
+    if (playbackPolicy?.policy === 'drm' && !hasShownWarning) {
+      setRenderVideo('pre-render-warn')
+    } else {
+      setRenderVideo('render-video')
+    }
+  }
   return (
     <Card
       border
@@ -100,7 +110,7 @@ export default function VideoInBrowser({
         position: 'relative',
       }}
     >
-      {playbackPolicy === 'signed' && (
+      {playbackPolicy?.policy === 'signed' && (
         <Tooltip
           animate
           content={
@@ -119,13 +129,43 @@ export default function VideoInBrowser({
               position: 'absolute',
               left: '1em',
               top: '1em',
-              zIndex: 10,
+              zIndex: 11,
             }}
             padding={2}
             border
           >
             <Text muted size={1}>
               <LockIcon />
+            </Text>
+          </Card>
+        </Tooltip>
+      )}
+      {playbackPolicy?.policy === 'drm' && (
+        <Tooltip
+          animate
+          content={
+            <Card padding={2} radius={2}>
+              <IconInfo icon={LockIcon} text="DRM playback policy" size={2} />
+            </Card>
+          }
+          placement="right"
+          fallbackPlacements={['top', 'bottom']}
+          portal
+        >
+          <Card
+            tone="caution"
+            style={{
+              borderRadius: '0.25rem',
+              position: 'absolute',
+              left: '1em',
+              top: '1em',
+              zIndex: 11,
+            }}
+            padding={2}
+            border
+          >
+            <Text muted size={1} weight="semibold" style={{color: 'var(--card-icon-color)'}}>
+              DRM
             </Text>
           </Card>
         </Tooltip>
@@ -137,10 +177,17 @@ export default function VideoInBrowser({
           gridTemplateRows: 'min-content min-content 1fr',
         }}
       >
-        {renderVideo ? (
+        {renderVideo === 'pre-render-warn' && (
+          <DRMWarningDialog
+            onClose={() => {
+              setRenderVideo('render-video')
+            }}
+          />
+        )}
+        {renderVideo === 'render-video' ? (
           <VideoPlayer asset={asset} autoPlay forceAspectRatio={THUMBNAIL_ASPECT_RATIO} />
         ) : (
-          <PlayButton onClick={() => setRenderVideo(true)}>
+          <PlayButton onClick={onClickPlay}>
             <div data-play>
               <PlayIcon />
             </div>

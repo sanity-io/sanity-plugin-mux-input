@@ -16,7 +16,8 @@ export default function InputBrowser({
   setDialogState,
   asset,
   onChange,
-}: Pick<SelectAssetProps, 'onChange' | 'asset'> & {
+  config,
+}: Pick<SelectAssetProps, 'onChange' | 'asset' | 'config'> & {
   setDialogState: SetDialogState
 }) {
   const id = `InputBrowser${useId()}`
@@ -29,7 +30,12 @@ export default function InputBrowser({
       onClose={handleClose}
       width={2}
     >
-      <SelectAsset asset={asset} onChange={onChange} setDialogState={setDialogState} />
+      <SelectAsset
+        config={config}
+        asset={asset}
+        onChange={onChange}
+        setDialogState={setDialogState}
+      />
     </StyledDialog>
   )
 }
