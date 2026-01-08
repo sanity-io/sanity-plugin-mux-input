@@ -1,8 +1,8 @@
 import {DocumentVideoIcon, ErrorOutlineIcon, UploadIcon} from '@sanity/icons'
-import {Box, Button, Card, Checkbox, Dialog, Flex, Label, Radio, Stack, Text} from '@sanity/ui'
+import {Box, Button, Card, Dialog, Flex, Label, Radio, Stack, Text} from '@sanity/ui'
 import {uuid} from '@sanity/uuid'
 import LanguagesList from 'iso-639-1'
-import {useEffect, useId, useMemo, useReducer, useRef, useState} from 'react'
+import {useEffect, useId, useReducer, useRef, useState} from 'react'
 import {FormField} from 'sanity'
 
 import formatBytes from '../util/formatBytes'
@@ -22,6 +22,11 @@ import {
 } from '../util/types'
 import TextTracksEditor, {type TrackAction} from './TextTracksEditor'
 import PlaybackPolicy from './uploadConfiguration/PlaybackPolicy'
+import {
+  RESOLUTION_TIERS,
+  ResolutionTierSelector,
+} from './uploadConfiguration/ResolutionTierSelector'
+import {StaticRenditionSelector} from './uploadConfiguration/StaticRenditionSelector'
 import type {StagedUpload} from './Uploader'
 
 export type UploadConfigurationStateAction =
@@ -39,23 +44,6 @@ const VIDEO_QUALITY_LEVELS = [
   {value: 'plus', label: 'Plus'},
   {value: 'premium', label: 'Premium'},
 ] as const satisfies {value: UploadConfig['video_quality']; label: string}[]
-
-const RESOLUTION_TIERS = [
-  {value: '1080p', label: '1080p'},
-  {value: '1440p', label: '1440p (2k)'},
-  {value: '2160p', label: '2160p (4k)'},
-] as const satisfies {value: UploadConfig['max_resolution_tier']; label: string}[]
-
-const ADVANCED_RESOLUTIONS: {value: StaticRenditionResolution; label: string}[] = [
-  {value: '270p', label: '270p'},
-  {value: '360p', label: '360p'},
-  {value: '480p', label: '480p'},
-  {value: '540p', label: '540p'},
-  {value: '720p', label: '720p'},
-  {value: '1080p', label: '1080p'},
-  {value: '1440p', label: '1440p'},
-  {value: '2160p', label: '2160p'},
-]
 
 /**
  * Sanitizes static renditions configuration to ensure 'highest' is not mixed with specific resolutions.
@@ -182,18 +170,6 @@ export default function UploadConfiguration({
       normalize_audio: pluginConfig.normalize_audio,
       text_tracks: autoTextTracks,
     } as UploadConfig
-  )
-
-  // Determine if user is in advanced mode based on selected renditions
-  const isAdvancedMode = useMemo(() => {
-    const specificResolutions = config.static_renditions.filter(
-      (r) => r !== 'highest' && r !== 'audio-only'
-    )
-    return specificResolutions.length > 0
-  }, [config.static_renditions])
-
-  const [renditionMode, setRenditionMode] = useState<'standard' | 'advanced'>(
-    isAdvancedMode ? 'advanced' : 'standard'
   )
 
   // Video validations
@@ -328,42 +304,6 @@ export default function UploadConfiguration({
     }
   }, [stagedUpload, MAX_FILE_SIZE, MAX_DURATION_SECONDS])
 
-  // Helper to toggle a rendition
-  const toggleRendition = (rendition: StaticRenditionResolution) => {
-    const current = config.static_renditions
-    const hasRendition = current.includes(rendition)
-
-    if (hasRendition) {
-      dispatch({
-        action: 'static_renditions',
-        value: current.filter((r) => r !== rendition),
-      })
-    } else {
-      dispatch({
-        action: 'static_renditions',
-        value: [...current, rendition],
-      })
-    }
-  }
-
-  // When switching modes, clear renditions that don't apply
-  const handleModeChange = (mode: 'standard' | 'advanced') => {
-    setRenditionMode(mode)
-    if (mode === 'standard') {
-      // Remove specific resolutions, keep only highest and audio-only
-      dispatch({
-        action: 'static_renditions',
-        value: config.static_renditions.filter((r) => r === 'highest' || r === 'audio-only'),
-      })
-    } else {
-      // Remove highest, keep specific resolutions and audio-only
-      dispatch({
-        action: 'static_renditions',
-        value: config.static_renditions.filter((r) => r !== 'highest'),
-      })
-    }
-  }
-
   // If user-provided config is disabled, begin the upload immediately with
   // the developer-specified values from the schema or config or defaults.
   // This can include auto-generated subtitles!
@@ -376,6 +316,7 @@ export default function UploadConfiguration({
   if (skipConfig) return null
 
   const basicConfig = config.video_quality !== 'plus' && config.video_quality !== 'premium'
+  const playbackPolicySelected = config.public_policy || config.signed_policy || config.drm_policy
   const maxSupportedResolution = RESOLUTION_TIERS.findIndex(
     (rt) => rt.value === pluginConfig.max_resolution_tier
   )
@@ -491,181 +432,36 @@ export default function UploadConfiguration({
               </Flex>
             </FormField>
 
-            {!basicConfig && maxSupportedResolution > 0 && (
-              <FormField
-                title="Resolution Tier"
-                description={
-                  <>
-                    The maximum{' '}
-                    <a
-                      href="https://docs.mux.com/api-reference#video/operation/create-direct-upload"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      resolution_tier
-                    </a>{' '}
-                    your asset is encoded, stored, and streamed at.
-                  </>
-                }
-              >
-                <Flex gap={3} wrap={'wrap'}>
-                  {RESOLUTION_TIERS.map(({value, label}, index) => {
-                    const inputId = `${id}--type-${value}`
-
-                    if (index > maxSupportedResolution) return null
-
-                    return (
-                      <Flex key={value} align="center" gap={2}>
-                        <Radio
-                          checked={config.max_resolution_tier === value}
-                          name="asset-resolutiontier"
-                          onChange={(e) =>
-                            dispatch({
-                              action: 'max_resolution_tier',
-                              value: e.currentTarget.value as UploadConfig['max_resolution_tier'],
-                            })
-                          }
-                          value={value}
-                          id={inputId}
-                        />
-                        <Text as="label" htmlFor={inputId}>
-                          {label}
-                        </Text>
-                      </Flex>
-                    )
-                  })}
-                </Flex>
-              </FormField>
-            )}
-
             {!basicConfig && (
               <FormField title="Additional Configuration">
                 <Stack space={3}>
                   <PlaybackPolicy id={id} config={config} secrets={secrets} dispatch={dispatch} />
-
-                  <Stack space={3}>
-                    <FormField
-                      title="Static Renditions"
-                      description="Generate downloadable MP4 or M4A files. Note: Mux will not upscale to produce MP4 renditions - renditions that would cause upscaling are skipped."
-                    >
-                      <Stack space={3}>
-                        {/* Mode Selector */}
-                        <Flex gap={3}>
-                          <Flex align="center" gap={2}>
-                            <Radio
-                              checked={renditionMode === 'standard'}
-                              name="rendition-mode"
-                              onChange={() => handleModeChange('standard')}
-                              value="standard"
-                              id={`${id}--mode-standard`}
-                            />
-                            <Text as="label" htmlFor={`${id}--mode-standard`}>
-                              Standard
-                            </Text>
-                          </Flex>
-                          <Flex align="center" gap={2}>
-                            <Radio
-                              checked={renditionMode === 'advanced'}
-                              name="rendition-mode"
-                              onChange={() => handleModeChange('advanced')}
-                              value="advanced"
-                              id={`${id}--mode-advanced`}
-                            />
-                            <Text as="label" htmlFor={`${id}--mode-advanced`}>
-                              Advanced
-                            </Text>
-                          </Flex>
-                        </Flex>
-
-                        {/* Standard Mode Options */}
-                        {renditionMode === 'standard' && (
-                          <Stack space={2}>
-                            <Flex align="center" gap={2} padding={[0, 2]}>
-                              <Checkbox
-                                id={`${id}--highest`}
-                                style={{display: 'block'}}
-                                checked={config.static_renditions.includes('highest')}
-                                onChange={() => toggleRendition('highest')}
-                              />
-                              <Text as="label" htmlFor={`${id}--highest`}>
-                                Highest Resolution (up to 4K)
-                              </Text>
-                            </Flex>
-                            <Flex align="center" gap={2} padding={[0, 2]}>
-                              <Checkbox
-                                id={`${id}--audio-only-standard`}
-                                style={{display: 'block'}}
-                                checked={config.static_renditions.includes('audio-only')}
-                                onChange={() => toggleRendition('audio-only')}
-                              />
-                              <Text as="label" htmlFor={`${id}--audio-only-standard`}>
-                                Audio Only (M4A)
-                              </Text>
-                            </Flex>
-                          </Stack>
-                        )}
-
-                        {/* Advanced Mode Options */}
-                        {renditionMode === 'advanced' && (
-                          <Stack space={2}>
-                            <Label size={1} muted>
-                              Select specific resolutions:
-                            </Label>
-                            <Flex gap={2} wrap="wrap">
-                              {ADVANCED_RESOLUTIONS.map(({value, label}) => {
-                                const inputId = `${id}--resolution-${value}`
-                                return (
-                                  <Flex key={value} align="center" gap={2}>
-                                    <Checkbox
-                                      id={inputId}
-                                      style={{display: 'block'}}
-                                      checked={config.static_renditions.includes(value)}
-                                      onChange={() => toggleRendition(value)}
-                                    />
-                                    <Text as="label" htmlFor={inputId} size={1}>
-                                      {label}
-                                    </Text>
-                                  </Flex>
-                                )
-                              })}
-                            </Flex>
-                            <Flex align="center" gap={2} padding={[2, 2, 0, 2]}>
-                              <Checkbox
-                                id={`${id}--audio-only-advanced`}
-                                style={{display: 'block'}}
-                                checked={config.static_renditions.includes('audio-only')}
-                                onChange={() => toggleRendition('audio-only')}
-                              />
-                              <Text as="label" htmlFor={`${id}--audio-only-advanced`}>
-                                Audio Only (M4A)
-                              </Text>
-                            </Flex>
-                          </Stack>
-                        )}
-                      </Stack>
-                    </FormField>
-                  </Stack>
+                  {maxSupportedResolution > 0 && (
+                    <ResolutionTierSelector
+                      id={id}
+                      config={config}
+                      dispatch={dispatch}
+                      maxSupportedResolution={maxSupportedResolution}
+                    />
+                  )}
+                  <StaticRenditionSelector id={id} config={config} dispatch={dispatch} />
+                  {!disableTextTrackConfig && (
+                    <TextTracksEditor
+                      tracks={config.text_tracks}
+                      dispatch={dispatch}
+                      defaultLang={pluginConfig.defaultAutogeneratedSubtitleLang}
+                    />
+                  )}
                 </Stack>
               </FormField>
             )}
           </Stack>
         )}
 
-        {!disableTextTrackConfig && !basicConfig && (
-          <TextTracksEditor
-            tracks={config.text_tracks}
-            dispatch={dispatch}
-            defaultLang={pluginConfig.defaultAutogeneratedSubtitleLang}
-          />
-        )}
-
         <Box marginTop={4}>
           <Button
             disabled={
-              (!basicConfig &&
-                !config.public_policy &&
-                !config.signed_policy &&
-                !config.drm_policy) ||
+              (!basicConfig && !playbackPolicySelected) ||
               validationError !== null ||
               isLoadingDuration ||
               (isLoadingFileSize && !canSkipFileSizeValidation)
@@ -675,7 +471,7 @@ export default function UploadConfiguration({
             tone="positive"
             onClick={() => {
               if (!validationError) {
-                startUpload(formatUploadConfig(config))
+                startUpload(formatUploadConfig(config, secrets))
               }
             }}
           />
