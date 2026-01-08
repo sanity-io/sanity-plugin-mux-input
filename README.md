@@ -408,17 +408,17 @@ export default defineConfig({
 You can override the global limits for specific fields, allowing different validation rules for different use cases:
 
 ```js
-import { defineType, defineField } from "sanity";
+import {defineType, defineField} from 'sanity'
 
 export default defineType({
-  name: "muxTest",
-  title: "Mux Files",
-  type: "document",
+  name: 'muxTest',
+  title: 'Mux Files',
+  type: 'document',
   fields: [
     defineField({
-      name: "shortVideo",
-      title: "Short Video (max 1 minute)",
-      type: "mux.video",
+      name: 'shortVideo',
+      title: 'Short Video (max 1 minute)',
+      type: 'mux.video',
       options: {
         maxAssetFileSize: 100 * 1024 * 1024, // 100 MB
         maxAssetDuration: 60, // 1 minute
@@ -439,7 +439,7 @@ export default defineType({
       type: 'mux.video',
       // Uses plugin defaults or no validation if not configured
     }),
-  ]
+  ],
 })
 ```
 
