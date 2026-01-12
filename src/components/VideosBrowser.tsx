@@ -1,5 +1,5 @@
-import {SearchIcon} from '@sanity/icons'
-import {Card, Flex, Grid, Label, Stack, Text, TextInput} from '@sanity/ui'
+import {SearchIcon, ChevronLeftIcon, ChevronRightIcon} from '@sanity/icons'
+import {Card, Flex, Grid, Label, Stack, Text, TextInput, Button} from '@sanity/ui'
 import {useMemo, useState} from 'react'
 
 import useAssets from '../hooks/useAssets'
@@ -17,11 +17,18 @@ export interface VideosBrowserProps {
 
 export default function VideosBrowser({onSelect}: VideosBrowserProps) {
   const {assets, isLoading, searchQuery, setSearchQuery, setSort, sort} = useAssets()
+  const [page, setPage] = useState(0)
+  const pageLimit = 20
+  const pageTotal = Math.floor(assets.length / pageLimit) + 1
   const [editedAsset, setEditedAsset] = useState<VideoDetailsProps['asset'] | null>(null)
   const freshEditedAsset = useMemo(
     () => assets.find((a) => a._id === editedAsset?._id) || editedAsset,
     [editedAsset, assets]
   )
+
+  if (Math.min(pageTotal - 1, Math.max(0, page)) !== page) setPage(0) // Reset page if out of bounds.
+  const pageStart = page * pageLimit
+  const pageEnd = pageStart + pageLimit
 
   const placement = onSelect ? 'input' : 'tool'
   return (
@@ -38,6 +45,13 @@ export default function VideosBrowser({onSelect}: VideosBrowserProps) {
               placeholder="Search videos"
             />
             <SelectSortOptions setSort={setSort} sort={sort} />
+            <Button icon={ChevronLeftIcon} mode="bleed" padding={3} style={{cursor: "pointer"}} onClick={() => {
+              setPage((page: number) => { return Math.min(pageTotal - 1, Math.max(0, page - 1)) })
+            }} />
+            <Label muted>Page {page + 1}/{pageTotal}</Label>
+            <Button icon={ChevronRightIcon} mode="bleed" padding={3} style={{cursor: "pointer"}} onClick={() => {
+              setPage((page: number) => { return Math.min(pageTotal - 1, Math.max(0, page + 1)) })
+            }} />
           </Flex>
           {placement === 'tool' && <ImportVideosFromMux />}
         </Flex>
@@ -54,7 +68,7 @@ export default function VideosBrowser({onSelect}: VideosBrowserProps) {
               gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
             }}
           >
-            {assets.map((asset) => (
+            {assets.slice(pageStart, pageEnd).map((asset) => (
               <VideoInBrowser
                 key={asset._id}
                 asset={asset}
