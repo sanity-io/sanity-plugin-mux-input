@@ -1,6 +1,6 @@
 {
   "name": "sanity-plugin-mux-input",
-  "version": "2.9.0",
+  "version": "2.12.1",
   "description": "An input component that integrates Sanity Studio with Mux video encoding/hosting service.",
   "keywords": [
     "sanity",
@@ -52,7 +52,7 @@
     "watch": "pkg-utils watch --strict"
   },
   "dependencies": {
-    "@mux/mux-player-react": "^2.6.0",
+    "@mux/mux-player-react": "^3.8.0",
     "@mux/upchunk": "^3.4.0",
     "@sanity/icons": "^3.0.0",
     "@sanity/incompatible-plugin": "^1.0.4",
@@ -70,11 +70,11 @@
     "use-error-boundary": "^2.0.6"
   },
   "devDependencies": {
-    "@sanity/client": "^6.28.1",
-    "@sanity/pkg-utils": "^6.13.4",
-    "@sanity/plugin-kit": "4.0.19",
+    "@sanity/client": "^7.12.1",
+    "@sanity/pkg-utils": "^8.1.29",
+    "@sanity/plugin-kit": "^4.0.20",
     "@sanity/semantic-release-preset": "^5.0.0",
-    "@sanity/vision": "^3.77.2",
+    "@sanity/vision": "^3.99.0",
     "@types/lodash": "^4.17.15",
     "@types/react": "^19.0.10",
     "@types/react-is": "^19.0.0",
@@ -90,29 +90,28 @@
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "husky": "^9.0.11",
     "lint-staged": "^15.2.2",
-    "npm-run-all2": "^5.0.2",
+    "npm-run-all2": "^6.2.6",
     "prettier": "^3.5.2",
     "prettier-plugin-packagejson": "^2.5.9",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-is": "^19.0.0",
-    "sanity": "^3.77.2",
+    "sanity": "^3.99.0",
     "semantic-release": "^24.2.3",
     "styled-components": "^6.1.15",
-    "typescript": "5.7.3"
+    "typescript": "5.9.3"
   },
   "peerDependencies": {
     "react": "^18.3 || ^19",
     "react-is": "^18.3 || ^19",
-    "sanity": "^3.42.0 || ^4.0.0-0",
+    "sanity": "^3.42.0 || ^4.0.0-0 || ^5.0.0",
     "styled-components": "^5 || ^6"
   },
   "engines": {
     "node": ">=18"
   },
   "publishConfig": {
-    "access": "public",
-    "provenance": true
+    "access": "public"
   },
   "sanityExchangeUrl": "https://www.sanity.io/plugins/sanity-plugin-mux-input",
   "browserslist": "extends @sanity/browserslist-config",

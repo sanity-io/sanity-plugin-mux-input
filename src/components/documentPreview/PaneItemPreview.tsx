@@ -45,26 +45,26 @@ export function PaneItemPreview(props: PaneItemPreviewProps) {
       : null
 
   const observable = useMemo(
-    () => getPreviewStateObservable(props.documentPreviewStore, schemaType, value._id, title),
-    [props.documentPreviewStore, schemaType, title, value._id]
+    () => getPreviewStateObservable(props.documentPreviewStore, schemaType, value._id),
+    [props.documentPreviewStore, schemaType, value._id]
   )
-  const {draft, published, isLoading} = useObservable(observable, {
-    draft: null,
-    published: null,
+  const {snapshot, original, isLoading} = useObservable(observable, {
     isLoading: true,
+    snapshot: null,
+    original: null,
   })
 
   const status = isLoading ? null : (
     <Inline space={4}>
       {presence && presence.length > 0 && <DocumentPreviewPresence presence={presence} />}
-      <PublishedStatus document={published} />
-      <DraftStatus document={draft} />
+      <PublishedStatus document={original} />
+      <DraftStatus document={snapshot} />
     </Inline>
   )
 
   return (
     <SanityDefaultPreview
-      {...(getPreviewValueWithFallback({value, draft, published}) as any)}
+      {...(getPreviewValueWithFallback({snapshot, original, fallback: {title}}) as any)}
       isPlaceholder={isLoading}
       icon={icon}
       layout={layout}

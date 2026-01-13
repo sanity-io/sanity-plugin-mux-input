@@ -1,4 +1,5 @@
-import MuxPlayer, {type MuxPlayerProps, type MuxPlayerRefAttributes} from '@mux/mux-player-react'
+import {type MuxPlayerProps, type MuxPlayerRefAttributes} from '@mux/mux-player-react'
+import MuxPlayer from '@mux/mux-player-react/lazy'
 import {ErrorOutlineIcon} from '@sanity/icons'
 import {Card, Text} from '@sanity/ui'
 import {type PropsWithChildren, useMemo, useRef} from 'react'
@@ -10,6 +11,7 @@ import {getPosterSrc} from '../util/getPosterSrc'
 import {getVideoSrc} from '../util/getVideoSrc'
 import type {VideoAssetDocument} from '../util/types'
 import EditThumbnailDialog from './EditThumbnailDialog'
+import {AudioIcon} from './icons/Audio'
 
 export default function VideoPlayer({
   asset,
@@ -26,19 +28,23 @@ export default function VideoPlayer({
 
   const isAudio = assetIsAudio(asset)
   const muxPlayer = useRef<MuxPlayerRefAttributes>(null)
-  const thumbnail = getPosterSrc({asset, client, width: thumbnailWidth})
 
-  const {src: videoSrc, error} = useMemo(() => {
+  const {
+    src: videoSrc,
+    thumbnail: thumbnailSrc,
+    error,
+  } = useMemo(() => {
     try {
+      const thumbnail = getPosterSrc({asset, client, width: thumbnailWidth})
       const src = asset?.playbackId && getVideoSrc({client, asset})
-      if (src) return {src: src}
+      if (src) return {src: src, thumbnail}
 
       return {error: new TypeError('Asset has no playback ID')}
       // eslint-disable-next-line @typescript-eslint/no-shadow
     } catch (error) {
       return {error}
     }
-  }, [asset, client])
+  }, [asset, client, thumbnailWidth])
 
   const signedToken = useMemo(() => {
     try {
@@ -62,11 +68,31 @@ export default function VideoPlayer({
 
   return (
     <>
-      <Card tone="transparent" style={{aspectRatio: aspectRatio, position: 'relative'}}>
+      <Card
+        tone="transparent"
+        style={{
+          aspectRatio: aspectRatio,
+          position: 'relative',
+          ...(isAudio && {display: 'flex', alignItems: 'flex-end'}),
+        }}
+      >
         {videoSrc && (
           <>
+            {isAudio && (
+              <AudioIcon
+                style={{
+                  padding: '0.5em',
+                  width: '2.2em',
+                  height: '2.2em',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  zIndex: 1,
+                }}
+              />
+            )}
             <MuxPlayer
-              poster={thumbnail}
+              poster={isAudio ? undefined : thumbnailSrc}
               ref={muxPlayer}
               {...props}
               playsInline
@@ -85,10 +111,11 @@ export default function VideoPlayer({
               }}
               audio={isAudio}
               style={{
-                height: '100%',
+                ...(!isAudio && {height: '100%'}),
                 width: '100%',
                 display: 'block',
                 objectFit: 'contain',
+                ...(isAudio && {alignSelf: 'end'}),
               }}
             />
             {children}

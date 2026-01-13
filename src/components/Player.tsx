@@ -33,14 +33,23 @@ const Player = ({asset, buttons, readOnly, onChange}: Props) => {
     return true
   }, [asset])
   const isPreparingStaticRenditions = useMemo<boolean>(() => {
-    if (asset?.data?.static_renditions?.status === 'preparing') {
-      return true
-    }
-    if (asset?.data?.static_renditions?.status === 'ready') {
+    // Legacy: If static_renditions has a status field, it was created with mp4_support (deprecated)
+    // We don't process this old format, just return false
+    // Note: 'disabled' status is valid in the new format when no renditions were requested
+    if (
+      asset?.data?.static_renditions?.status &&
+      asset?.data?.static_renditions?.status !== 'disabled'
+    ) {
       return false
     }
-    return false
-  }, [asset?.data?.static_renditions?.status])
+
+    // Check if any file in static_renditions is still preparing
+    const files = asset?.data?.static_renditions?.files
+    if (!files || files.length === 0) {
+      return false
+    }
+    return files.some((file) => file.status === 'preparing')
+  }, [asset?.data?.static_renditions?.status, asset?.data?.static_renditions?.files])
   const playRef = useRef<HTMLDivElement>(null)
   const muteRef = useRef<HTMLDivElement>(null)
   const handleCancelUpload = useCancelUpload(asset, onChange)

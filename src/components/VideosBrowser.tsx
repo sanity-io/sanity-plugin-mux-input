@@ -1,10 +1,12 @@
 import {SearchIcon} from '@sanity/icons'
-import {Card, Flex, Grid, Label, Stack, Text, TextInput} from '@sanity/ui'
+import {Card, Flex, Grid, Inline, Label, Stack, Text, TextInput} from '@sanity/ui'
 import {useMemo, useState} from 'react'
 
 import useAssets from '../hooks/useAssets'
 import type {VideoAssetDocument} from '../util/types'
+import ConfigureApi from './ConfigureApi'
 import ImportVideosFromMux from './ImportVideosFromMux'
+import ResyncMetadata from './ResyncMetadata'
 import {SelectSortOptions} from './SelectSortOptions'
 import SpinnerBox from './SpinnerBox'
 import type {VideoDetailsProps} from './VideoDetails/useVideoDetails'
@@ -39,7 +41,13 @@ export default function VideosBrowser({onSelect}: VideosBrowserProps) {
             />
             <SelectSortOptions setSort={setSort} sort={sort} />
           </Flex>
-          {placement === 'tool' && <ImportVideosFromMux />}
+          {placement === 'tool' && (
+            <Inline space={2}>
+              <ImportVideosFromMux />
+              <ResyncMetadata />
+              <ConfigureApi />
+            </Inline>
+          )}
         </Flex>
         <Stack space={3}>
           {assets?.length > 0 && (

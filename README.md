@@ -122,7 +122,7 @@ For reference, here's an example `mux.videoAsset` document:
   thumbTime: 65.82,
   // Full Mux asset data:
   data: {
-    encoding_tier: 'smart',
+    video_quality: 'plus',
     max_resolution_tier: '1080p',
     aspect_ratio: '16:9',
     created_at: '1706645034',
@@ -198,21 +198,68 @@ sanity documents delete secrets.mux
 
 More information on signed URLs is available on Mux's [docs](https://docs.mux.com/docs/headless-cms-sanity#advanced-signed-urls)
 
-### MP4 support (downloadable videos or offline viewing)
+### Static Renditions (downloadable videos or offline viewing)
 
-To enable [static MP4 renditions](https://docs.mux.com/guides/video/enable-static-mp4-renditions), add `mp4_support: 'standard'` to the `options` of your `mux.video` schema type.
+To enable [static MP4 renditions](https://docs.mux.com/guides/video/enable-static-mp4-renditions), add `static_renditions` to your plugin configuration. This allows users to download videos for offline viewing.
+
+#### Standard Mode (Recommended)
 
 ```js
 import {muxInput} from 'sanity-plugin-mux-input'
 
 export default defineConfig({
-  plugins: [muxInput({mp4_support: 'standard'})],
+  plugins: [
+    muxInput({
+      static_renditions: ['highest'], // Enables MP4 downloads at the highest quality (up to 4K)
+      // or
+      static_renditions: ['highest', 'audio-only'], // Also includes audio-only (M4A) downloads
+    }),
+  ],
 })
 ```
 
-If MP4 support is enabled in the plugin's configuration, editors can still choose to enable MP4 renditions on a per-video basis when uploading new assets.
+**Standard mode options:**
 
-MP4 allows users to download videos for later or offline viewing. More information can be found on Mux's [documentation](https://docs.mux.com/guides/enable-static-mp4-renditions).
+- `'highest'`: Produces an MP4 file with video resolution up to 4K (2160p)
+- `'audio-only'`: Produces an M4A (audio-only MP4) file
+
+#### Advanced Mode (Specific Resolutions)
+
+For more control, you can specify exact resolutions:
+
+```js
+import {muxInput} from 'sanity-plugin-mux-input'
+
+export default defineConfig({
+  plugins: [
+    muxInput({
+      static_renditions: ['1080p', '720p', 'audio-only'],
+    }),
+  ],
+})
+```
+
+**Advanced mode options:**
+
+- Specific resolutions: `'270p'`, `'360p'`, `'480p'`, `'540p'`, `'720p'`, `'1080p'`, `'1440p'`, `'2160p'`
+- `'audio-only'`: M4A file
+
+**Important notes:**
+
+- You cannot mix `'highest'` with specific resolutions (e.g., `['highest', '1080p']` is invalid)
+- Mux will not upscale videos - renditions requiring upscaling are automatically skipped
+- When uploading new assets, editors can choose different rendition settings on a per-video basis
+
+#### Backward Compatibility
+
+The deprecated `mp4_support` field is still supported for backward compatibility:
+
+```js
+// ⚠️ Deprecated - use static_renditions instead
+muxInput({mp4_support: 'standard'}) // Equivalent to static_renditions: ['highest']
+```
+
+More information can be found on Mux's [documentation](https://docs.mux.com/guides/enable-static-mp4-renditions).
 
 ### Video resolution (max_resolution_tier)
 
@@ -228,25 +275,25 @@ export default defineConfig({
 
 When uploading new assets, editors can still choose a lower resolution for each video than configured globally. This option controls the maximum resolution encoded or processed for the uploaded video. The option is particularly important to manage costs when uploaded videos are higher than `1080p` resolution. More information on the feature is available on Mux's [docs](https://docs.mux.com/guides/stream-videos-in-4k). Also, read more on this feature announcement on Mux's [blog](https://www.mux.com/blog/more-pixels-fewer-problems-introducing-4k-support-for-mux-video).
 
-### Encoding tier (smart or baseline)
+### Video Quality Level (plus or basic)
 
-The [encoding tier](https://docs.mux.com/guides/use-encoding-tiers) informs the cost, quality, and available platform features for the asset. You can choose between `smart` and `baseline` at the plugin configuration. Defaults to `smart`.
+The [video quality level](https://docs.mux.com/guides/use-video-quality-levels) informs the cost, quality, and available platform features for the asset. You can choose between `plus` and `basic` at the plugin configuration. Defaults to `plus`.
 
 ```js
 import {muxInput} from 'sanity-plugin-mux-input'
 
 export default defineConfig({
-  plugins: [muxInput({encoding_tier: 'baseline'})],
+  plugins: [muxInput({video_quality: 'basic'})],
 })
 ```
 
-If `encoding_tier: 'smart'`, editors can still choose to use the `baseline` encoding tier on a per-video basis when uploading new assets.
+If `video_quality: 'plus'`, editors can still choose to use the `basic` video quality level on a per-video basis when uploading new assets.
 
-More information on the feature is available on Mux's [documentation](https://docs.mux.com/guides/use-encoding-tiers). Also, read more on the feature announcement on Mux's [blog](https://www.mux.com/blog/our-next-pricing-lever-baseline-on-demand-assets-with-free-video-encoding)
+More information on the feature is available on Mux's [documentation](https://www.mux.com/docs/guides/use-video-quality-levels). Also, read more on the feature announcement on Mux's [blog](https://www.mux.com/blog/our-next-pricing-lever-baseline-on-demand-assets-with-free-video-encoding)
 
 ### Auto-generated subtitles and captions
 
-If you've enabled smart encoding, you can use Mux's [auto-generated subtitles](https://docs.mux.com/guides/video/auto-generated-subtitles) feature. Unless you pass `disableTextTrackConfig: true` to the configuration, users will be able to choose a language to auto-generate subtitles for uploaded videos. Refer to Mux's documentation for the list of supported languages.
+If you are using 'plus' video quality level, you can use Mux's [auto-generated subtitles](https://docs.mux.com/guides/video/auto-generated-subtitles) feature. Unless you pass `disableTextTrackConfig: true` to the configuration, users will be able to choose a language to auto-generate subtitles for uploaded videos. Refer to Mux's documentation for the list of supported languages.
 
 You can also define a default language for the upload configuration form:
 
@@ -256,7 +303,7 @@ import {muxInput} from 'sanity-plugin-mux-input'
 export default defineConfig({
   plugins: [
     muxInput({
-      encoding_tier: 'smart',
+      video_quality: 'plus',
       defaultAutogeneratedSubtitleLang: 'en', // choose from one of the supported languages
     }),
   ],
@@ -264,6 +311,136 @@ export default defineConfig({
 ```
 
 If your videos are always spoken in a specific language and you want to include captions by default, you can use `disableTextTrackConfig: true` together with `defaultAutogeneratedSubtitleLang` to transcribe captions for every uploaded asset without needing user interaction.
+
+### Accepted File Types
+
+By default, the plugin accepts both video and audio files (`['video/*', 'audio/*']`). You can configure which file types are accepted either globally at the plugin level or per-field at the schema level.
+
+#### Plugin-level configuration
+
+Configure accepted file types for all `mux.video` fields globally:
+
+```js
+import {muxInput} from 'sanity-plugin-mux-input'
+
+export default defineConfig({
+  plugins: [
+    muxInput({
+      acceptedMimeTypes: ['video/*'], // Only accept video files
+      // or
+      acceptedMimeTypes: ['audio/*'], // Only accept audio files
+      // or
+      acceptedMimeTypes: ['video/*', 'audio/*'], // Accept both (default)
+    }),
+  ],
+})
+```
+
+#### Schema-level configuration
+
+You can also configure `acceptedMimeTypes` for individual fields in your schema, which will override the plugin-level configuration:
+
+```js
+import { defineField, defineType } from "sanity";
+
+export default defineType({
+  name: "muxTest",
+  title: "Mux Files",
+  type: "document",
+  fields: [
+    defineField({
+      name: "audioFile",
+      title: "Audio File",
+      type: "mux.video",
+      options: {
+        acceptedMimeTypes: ["audio/*"],
+      },
+    }),
+    defineField({
+      name: "videoFile",
+      title: "Video File",
+      type: "mux.video",
+      options: {
+        acceptedMimeTypes: ["video/*"],
+      },
+    }),
+    defineField({
+      name: "either",
+      title: "Either File",
+      type: "mux.video",
+    }),
+  ],
+});
+```
+
+The `acceptedMimeTypes` option controls the `accept` attribute on the file input, which filters which file types users can select when uploading. This affects both the file picker dialog and drag-and-drop file validation.
+
+📌 **Note**: This option accepts an array of MIME type patterns. The valid values are:
+- `'video/*'` - Accepts all video file types
+- `'audio/*'` - Accepts all audio file types
+
+For more information on the `accept` attribute, refer to the [MDN documentation](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept).
+
+### File size and duration validation
+
+You can configure maximum file size and video duration limits to prevent users from uploading videos that exceed your requirements. These validations run before the upload starts, providing immediate feedback to users.
+
+#### Plugin-level configuration
+
+Set validation limits for all `mux.video` fields globally:
+
+```js
+import {muxInput} from 'sanity-plugin-mux-input'
+
+export default defineConfig({
+  plugins: [
+    muxInput({
+      maxAssetFileSize: 1024 * 1024 * 1024, // 1 GB in bytes
+      maxAssetDuration: 2 * 60 * 60, // 2 hours in seconds
+    }),
+  ],
+})
+```
+
+#### Schema-level configuration
+
+You can override the global limits for specific fields, allowing different validation rules for different use cases:
+
+```js
+import { defineType, defineField } from "sanity";
+
+export default defineType({
+  name: "muxTest",
+  title: "Mux Files",
+  type: "document",
+  fields: [
+    defineField({
+      name: "shortVideo",
+      title: "Short Video (max 1 minute)",
+      type: "mux.video",
+      options: {
+        maxAssetFileSize: 100 * 1024 * 1024, // 100 MB
+        maxAssetDuration: 60, // 1 minute
+      },
+    }),
+    defineField({
+      name: 'longVideo',
+      title: 'Long Video (max 2 hours)',
+      type: 'mux.video',
+      options: {
+        maxAssetFileSize: 1024 * 1024 * 1024, // 1 GB
+        maxAssetDuration: 2 * 60 * 60, // 2 hours
+      },
+    }),
+    defineField({
+      name: 'unlimitedVideo',
+      title: 'Unlimited Video',
+      type: 'mux.video',
+      // Uses plugin defaults or no validation if not configured
+    }),
+  ]
+})
+```
 
 ## Contributing
 

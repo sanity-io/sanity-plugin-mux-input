@@ -157,7 +157,7 @@ type UploadResponse = {
     cors_origin: string
     id: string
     new_asset_settings: {
-      mp4_support: 'standard' | 'none'
+      static_renditions?: {resolution: string}[]
       passthrough: string
       playback_policies: ['public' | 'signed']
     }
@@ -243,17 +243,17 @@ export function testUrl(url: string): Observable<string> {
   if (typeof url !== 'string') {
     return throwError(error)
   }
+  let formattedUrl = url.trim()
+  formattedUrl = formatDriveShareLink(formattedUrl)
   let parsed
   try {
-    parsed = new URL(url)
+    parsed = new URL(formattedUrl)
   } catch (err) {
     return throwError(error)
   }
   if (parsed && !parsed.protocol.match(/http:|https:/)) {
     return throwError(error)
   }
-  let formattedUrl = url
-  formattedUrl = formatDriveShareLink(formattedUrl)
   return of(formattedUrl)
 }
 

@@ -5,6 +5,61 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.12.1](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.12.0...v2.12.1) (2025-12-18)
+
+### Bug Fixes
+
+- add sanity v5 in allowed peer dependency range ([#457](https://github.com/sanity-io/sanity-plugin-mux-input/issues/457)) ([33676e7](https://github.com/sanity-io/sanity-plugin-mux-input/commit/33676e7723dbd423bab9e5bbf2d9b906bda9b853))
+
+## [2.12.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.11.2...v2.12.0) (2025-11-19)
+
+### Features
+
+- add static renditions and remove deprecated mp4_support ([#446](https://github.com/sanity-io/sanity-plugin-mux-input/issues/446)) ([d577543](https://github.com/sanity-io/sanity-plugin-mux-input/commit/d577543916779eb65e0b31bbd8b3a100d1682653))
+
+## [2.11.2](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.11.1...v2.11.2) (2025-11-13)
+
+### Bug Fixes
+
+- **deps:** upgrade tooling ([08eafbd](https://github.com/sanity-io/sanity-plugin-mux-input/commit/08eafbdddaacb0786857b241fffa106b11944df6))
+- preview state missing on "Used by" list ([#448](https://github.com/sanity-io/sanity-plugin-mux-input/issues/448)) ([8af65f3](https://github.com/sanity-io/sanity-plugin-mux-input/commit/8af65f363449a67b9289a9002b284eb66d2a21f8))
+- trim whitespace from video URL before sending to Mux ([#451](https://github.com/sanity-io/sanity-plugin-mux-input/issues/451)) ([59f8407](https://github.com/sanity-io/sanity-plugin-mux-input/commit/59f8407426a6a4008d99b19d0031fa5d310eeb05))
+
+## [2.11.1](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.11.0...v2.11.1) (2025-11-06)
+
+### Bug Fixes
+
+- import lazy MuxPlayer to avoid schema extraction errors ([#447](https://github.com/sanity-io/sanity-plugin-mux-input/issues/447)) ([ab6ffa6](https://github.com/sanity-io/sanity-plugin-mux-input/commit/ab6ffa69e3bb7a0d767509ee633dbe91182e33e5))
+
+## [2.11.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.10.1...v2.11.0) (2025-11-03)
+
+### Features
+
+- Added `defaultPublic` configuration ([#438](https://github.com/sanity-io/sanity-plugin-mux-input/issues/438)) ([1a61f16](https://github.com/sanity-io/sanity-plugin-mux-input/commit/1a61f162df571ec6535a98e0c3c24e53231a4eb5))
+- Added clear mechanism to remove corrupted uploads ([#439](https://github.com/sanity-io/sanity-plugin-mux-input/issues/439)) ([8d9c7f9](https://github.com/sanity-io/sanity-plugin-mux-input/commit/8d9c7f926fdb1393598666c4e6113202aa41b5e5))
+
+### Bug Fixes
+
+- Upgraded Mux Player to 3.8.0 to fix issues with native chrome ([#441](https://github.com/sanity-io/sanity-plugin-mux-input/issues/441)) ([6ddc7b4](https://github.com/sanity-io/sanity-plugin-mux-input/commit/6ddc7b48588424451ad032e23fcdf7a367caf234))
+
+## [2.10.1](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.10.0...v2.10.1) (2025-11-03)
+
+### Bug Fixes
+
+- Renamed `Encoding Tiers` to Video `Quality Levels` ([#437](https://github.com/sanity-io/sanity-plugin-mux-input/issues/437)) ([57d6c79](https://github.com/sanity-io/sanity-plugin-mux-input/commit/57d6c799fb5cb0be8e4516b3ef2d146ec817de8b))
+
+## [2.10.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.9.1...v2.10.0) (2025-10-24)
+
+### Features
+
+- Resync video metadata + fix CORS ([#436](https://github.com/sanity-io/sanity-plugin-mux-input/issues/436)) ([5f17fdf](https://github.com/sanity-io/sanity-plugin-mux-input/commit/5f17fdfeb054d76c11c8f781b007feada513560e))
+
+## [2.9.1](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.9.0...v2.9.1) (2025-10-16)
+
+### Bug Fixes
+
+- allow 0 as a valid time value for poster thumbnails ([#432](https://github.com/sanity-io/sanity-plugin-mux-input/issues/432)) ([9090fd5](https://github.com/sanity-io/sanity-plugin-mux-input/commit/9090fd527bf956b76341f96f9d3320d41171996c))
+
 ## [2.9.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.8.1...v2.9.0) (2025-08-07)
 
 ### Features
