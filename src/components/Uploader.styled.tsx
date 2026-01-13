@@ -5,9 +5,6 @@ import {styled} from 'styled-components'
 
 import {withFocusRing} from './withFocusRing'
 
-const ctrlKey = 17
-const cmdKey = 91
-
 const UploadCardWithFocusRing = withFocusRing(Card)
 
 interface UploadCardProps {
@@ -21,20 +18,17 @@ interface UploadCardProps {
 }
 export const UploadCard = forwardRef<HTMLDivElement, UploadCardProps>(
   ({children, tone, onPaste, onDrop, onDragEnter, onDragLeave, onDragOver}, forwardedRef) => {
-    const ctrlDown = useRef(false)
     const inputRef = useRef<HTMLInputElement>(null)
     const handleKeyDown = useCallback<React.KeyboardEventHandler<HTMLDivElement>>((event) => {
-      if (event.keyCode == ctrlKey || event.keyCode == cmdKey) {
-        ctrlDown.current = true
+      const target = event.target as HTMLElement
+
+      // Don't steal focus when pasting into the VTT input
+      if (target.closest('#vtt-url')) {
+        return
       }
-      const vKey = 86
-      if (ctrlDown.current && event.keyCode == vKey) {
+
+      if ((event.ctrlKey || event.metaKey) && event.key === 'v') {
         inputRef.current!.focus()
-      }
-    }, [])
-    const handleKeyUp = useCallback<React.KeyboardEventHandler<HTMLDivElement>>((event) => {
-      if (event.keyCode == ctrlKey || event.keyCode == cmdKey) {
-        ctrlDown.current = false
       }
     }, [])
 
@@ -47,14 +41,13 @@ export const UploadCard = forwardRef<HTMLDivElement, UploadCardProps>(
         shadow={0}
         tabIndex={0}
         onKeyDown={handleKeyDown}
-        onKeyUp={handleKeyUp}
         onPaste={onPaste}
         onDrop={onDrop}
         onDragEnter={onDragEnter}
         onDragLeave={onDragLeave}
         onDragOver={onDragOver}
       >
-        <HiddenInput ref={inputRef} onPaste={onPaste} />
+        <HiddenInput ref={inputRef} />
         {children}
       </UploadCardWithFocusRing>
     )
