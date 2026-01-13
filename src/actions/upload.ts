@@ -5,6 +5,7 @@ import type {SanityClient} from 'sanity'
 
 import {createUpChunkObservable} from '../clients/upChunkObservable'
 import type {MuxAsset, MuxNewAssetSettings} from '../util/types'
+import {formatDriveShareLink} from '../util/formatDriveShareLink'
 import {getAsset} from './assets'
 import {testSecretsObservable} from './secrets'
 
@@ -251,7 +252,9 @@ export function testUrl(url: string): Observable<string> {
   if (parsed && !parsed.protocol.match(/http:|https:/)) {
     return throwError(error)
   }
-  return of(url)
+  let formattedUrl = url
+  formattedUrl = formatDriveShareLink(formattedUrl)
+  return of(formattedUrl)
 }
 
 function optionsFromFile(opts: {preserveFilename?: boolean}, file: File) {
