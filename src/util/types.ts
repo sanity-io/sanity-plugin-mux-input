@@ -1,5 +1,6 @@
 import type {ObjectInputProps, PreviewLayoutKey, PreviewProps, SchemaType} from 'sanity'
 import type {PartialDeep} from 'type-fest'
+import type MuxPlayerElement from '@mux/mux-player'
 
 /**
  * Standard static rendition options available for plugin configuration defaults
@@ -149,6 +150,23 @@ export interface MuxInputConfig {
    * @defaultValue undefined
    */
   maxAssetDuration?: number
+
+  /**
+   * HLS.js configuration options to be passed to the Mux Player.
+   * These options allow you to customize the underlying HLS.js playback engine behavior.
+   *
+   * @see {@link https://github.com/video-dev/hls.js/blob/master/docs/API.md#fine-tuning}
+   * @defaultValue undefined
+   * @example
+   * ```ts
+   * {
+   *   maxBufferLength: 30,
+   *   lowLatencyMode: true,
+   *   capLevelToPlayerSize: true
+   * }
+   * ```
+   */
+  hlsConfig?: MuxPlayerElement['_hlsConfig']
 }
 
 export interface PluginConfig extends MuxInputConfig {
