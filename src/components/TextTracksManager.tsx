@@ -12,9 +12,7 @@ import {useEffect, useId, useMemo, useState} from 'react'
 
 import {deleteTextTrack, getAsset} from '../actions/assets'
 import {useClient} from '../hooks/useClient'
-import {generateJwt} from '../util/generateJwt'
-import {getPlaybackId} from '../util/getPlaybackId'
-import {getPlaybackPolicy} from '../util/getPlaybackPolicy'
+import {downloadVttFile} from '../util/textTracks'
 import type {MuxTextTrack, VideoAssetDocument} from '../util/types'
 import AddCaptionDialog from './AddCaptionDialog'
 import EditCaptionDialog from './EditCaptionDialog'
@@ -91,8 +89,9 @@ function TrackCard({
                   style={{
                     verticalAlign: 'middle',
                     display: 'inline-block',
-                    width: '1em',
-                    height: '1em',
+                    marginTop: '-2px',
+                    width: '0.5em',
+                    height: '0.5em',
                   }}
                 />
               ) : (
@@ -483,35 +482,7 @@ export default function TextTracksManager({
 
     setDownloadingTrackId(track.id)
     try {
-      if (!asset.assetId) {
-        throw new Error('Asset ID is required')
-      }
-      const playbackId = getPlaybackId(asset)
-      const playbackPolicy = getPlaybackPolicy(asset)
-
-      let vttUrl = `https://stream.mux.com/${playbackId}/text/${track.id}.vtt`
-
-      if (playbackPolicy === 'signed') {
-        const token = generateJwt(client, playbackId, 'v')
-        vttUrl += `?token=${token}`
-      }
-
-      const response = await fetch(vttUrl)
-      if (!response.ok) {
-        throw new Error(`Failed to download file: ${response.statusText}`)
-      }
-
-      const blob = await response.blob()
-      const blobUrl = URL.createObjectURL(blob)
-
-      const link = document.createElement('a')
-      link.href = blobUrl
-      link.download = `${asset.filename || 'captions'}-${track.language_code || 'en'}.vtt`
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-
-      URL.revokeObjectURL(blobUrl)
+      await downloadVttFile(client, asset, track)
     } catch (error) {
       toast.push({
         title: 'Failed to download VTT file',

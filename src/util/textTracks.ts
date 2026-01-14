@@ -1,7 +1,42 @@
 import type {SanityClient} from '@sanity/client'
 
 import {getAsset} from '../actions/assets'
-import type {MuxTextTrack} from './types'
+import {generateJwt} from './generateJwt'
+import {getPlaybackId} from './getPlaybackId'
+import {getPlaybackPolicy} from './getPlaybackPolicy'
+import type {MuxTextTrack, VideoAssetDocument} from './types'
+
+export function extractErrorMessage(
+  error: unknown,
+  defaultMessage = 'Failed to process request'
+): string {
+  let message = ''
+
+  if (error && typeof error === 'object') {
+    const err = error as {response?: {body?: {message?: string}}; message?: string}
+    message = err.response?.body?.message || err.message || ''
+  } else if (typeof error === 'string') {
+    message = error
+  }
+
+  if (!message) {
+    return defaultMessage
+  }
+
+  const match = message.match(/\(([^)]+)\)/)
+  if (match && match[1]) {
+    return match[1]
+  }
+
+  if (message.includes('responded with')) {
+    const parts = message.split('(')
+    if (parts.length > 1) {
+      return parts[parts.length - 1].replace(')', '').trim()
+    }
+  }
+
+  return message
+}
 
 export interface PollTrackStatusOptions {
   client: SanityClient
@@ -132,4 +167,53 @@ export async function pollTrackStatus(
     found: true,
     status: 'ready',
   }
+}
+
+export async function downloadVttFile(
+  client: SanityClient,
+  asset: VideoAssetDocument,
+  track: MuxTextTrack
+): Promise<void> {
+  if (!track.id) {
+    throw new Error('Track ID is missing')
+  }
+
+  if (track.status !== 'ready') {
+    throw new Error(`Track is not ready yet. Status: ${track.status}`)
+  }
+
+  if (!asset.assetId) {
+    throw new Error('Asset ID is required')
+  }
+
+  const playbackId = getPlaybackId(asset)
+  if (!playbackId) {
+    throw new Error('Playback ID is required')
+  }
+
+  const playbackPolicy = getPlaybackPolicy(asset)
+
+  let downloadUrl = `https://stream.mux.com/${playbackId}/text/${track.id}.vtt`
+
+  if (playbackPolicy === 'signed') {
+    const token = generateJwt(client, playbackId, 'v')
+    downloadUrl += `?token=${token}`
+  }
+
+  const response = await fetch(downloadUrl)
+  if (!response.ok) {
+    throw new Error(`Failed to download file: ${response.statusText}`)
+  }
+
+  const blob = await response.blob()
+  const blobUrl = URL.createObjectURL(blob)
+
+  const link = document.createElement('a')
+  link.href = blobUrl
+  link.download = `${asset.filename || 'captions'}-${track.language_code || 'en'}.vtt`
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+
+  URL.revokeObjectURL(blobUrl)
 }

@@ -17,11 +17,10 @@ import {useEffect, useId, useRef, useState} from 'react'
 
 import {addTextTrackFromUrl, deleteTextTrack, getAsset} from '../actions/assets'
 import {useClient} from '../hooks/useClient'
-import {extractErrorMessage} from '../util/extractErrorMessage'
 import {generateJwt} from '../util/generateJwt'
 import {getPlaybackId} from '../util/getPlaybackId'
 import {getPlaybackPolicy} from '../util/getPlaybackPolicy'
-import {pollTrackStatus} from '../util/pollTrackStatus'
+import {downloadVttFile, extractErrorMessage, pollTrackStatus} from '../util/textTracks'
 import type {MuxTextTrack, VideoAssetDocument} from '../util/types'
 
 const LANGUAGE_OPTIONS = LanguagesList.getAllCodes().map((code) => ({
@@ -81,65 +80,27 @@ export default function EditCaptionDialog({asset, track, onUpdate, onClose}: Pro
   }, [track, asset, client])
 
   const handleDownloadCurrentFile = async () => {
-    if (!track.id) {
-      toast.push({
-        title: 'Cannot download',
-        status: 'error',
-        description: 'Track ID is missing',
-      })
-      return
-    }
-
-    if (track.status !== 'ready') {
-      toast.push({
-        title: 'Cannot download',
-        status: 'error',
-        description: `Track is not ready yet. Status: ${track.status}`,
-      })
-      return
-    }
-
     setDownloading(true)
     try {
-      if (!asset.assetId) {
-        throw new Error('Asset ID is required')
-      }
-
-      const playbackId = getPlaybackId(asset)
-      if (!playbackId) {
-        throw new Error('Playback ID is required')
-      }
-
-      const playbackPolicy = getPlaybackPolicy(asset)
-
-      let downloadUrl = `https://stream.mux.com/${playbackId}/text/${track.id}.vtt`
-
-      if (playbackPolicy === 'signed') {
-        const token = generateJwt(client, playbackId, 'v')
-        downloadUrl += `?token=${token}`
-      }
-
-      const response = await fetch(downloadUrl)
-      if (!response.ok) {
-        throw new Error(`Failed to download file: ${response.statusText}`)
-      }
-
-      const blob = await response.blob()
-      const blobUrl = URL.createObjectURL(blob)
-
-      const link = document.createElement('a')
-      link.href = blobUrl
-      link.download = `${asset.filename || 'captions'}-${track.language_code || 'en'}.vtt`
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-
-      URL.revokeObjectURL(blobUrl)
+      await downloadVttFile(client, asset, track)
     } catch (error) {
+      let errorMessage = 'Please try again'
+      let title = 'Failed to download VTT file'
+
+      if (error instanceof Error) {
+        errorMessage = error.message
+        if (error.message.includes('Track')) {
+          title = 'Cannot download'
+        }
+      } else if (error === 'Track ID is missing' || error === 'Track is not ready yet') {
+        errorMessage = String(error)
+        title = 'Cannot download'
+      }
+
       toast.push({
-        title: 'Failed to download VTT file',
+        title,
         status: 'error',
-        description: error instanceof Error ? error.message : 'Please try again',
+        description: errorMessage,
       })
     } finally {
       setDownloading(false)
@@ -408,7 +369,21 @@ export default function EditCaptionDialog({asset, track, onUpdate, onClose}: Pro
               <Flex gap={2}>
                 {track.status !== 'errored' && (
                   <Button
-                    icon={downloading ? Spinner : DownloadIcon}
+                    icon={
+                      downloading ? (
+                        <Spinner
+                          style={{
+                            verticalAlign: 'middle',
+                            display: 'inline-block',
+                            marginTop: '-2px',
+                            width: '0.5em',
+                            height: '0.5em',
+                          }}
+                        />
+                      ) : (
+                        <DownloadIcon />
+                      )
+                    }
                     text="Download"
                     mode="ghost"
                     tone="primary"
