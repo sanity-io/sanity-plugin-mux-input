@@ -15,19 +15,12 @@ import {
 } from '@sanity/ui'
 import LanguagesList from 'iso-639-1'
 import {useId, useState} from 'react'
-import {styled} from 'styled-components'
 
 import {addTextTrackFromUrl, generateSubtitles, getAsset} from '../actions/assets'
 import {useClient} from '../hooks/useClient'
+import {extractErrorMessage} from '../util/extractErrorMessage'
 import {pollTrackStatus} from '../util/pollTrackStatus'
 import type {MuxTextTrack, VideoAssetDocument} from '../util/types'
-
-const IconWrapper = styled.span`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  vertical-align: middle;
-`
 
 const LANGUAGE_OPTIONS = LanguagesList.getAllCodes().map((code) => ({
   value: code,
@@ -54,22 +47,6 @@ export default function AddCaptionDialog({asset, onAdd, onClose}: Props) {
   const [name, setName] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const extractErrorMessage = (error: unknown): string => {
-    if (error && typeof error === 'object') {
-      const err = error as {response?: {body?: {message?: string}}; message?: string}
-      if (err.response?.body?.message) {
-        return err.response.body.message
-      }
-      if (err.message) {
-        return err.message
-      }
-    }
-    if (typeof error === 'string') {
-      return error
-    }
-    return 'Failed to add caption track'
-  }
-
   const handleAddTrackFromUrl = async () => {
     if (!asset.assetId) {
       throw new Error('Asset ID is required')
@@ -78,20 +55,11 @@ export default function AddCaptionDialog({asset, onAdd, onClose}: Props) {
     const trimmedName = name.trim()
     const trimmedLanguageCode = languageCode.trim()
 
-    try {
-      await addTextTrackFromUrl(client, asset.assetId, vttUrl.trim(), {
-        language_code: trimmedLanguageCode,
-        name: trimmedName,
-        text_type: 'subtitles',
-      })
-    } catch (error: unknown) {
-      toast.push({
-        title: 'Failed to add caption track',
-        status: 'error',
-        description: extractErrorMessage(error),
-      })
-      throw error
-    }
+    await addTextTrackFromUrl(client, asset.assetId, vttUrl.trim(), {
+      language_code: trimmedLanguageCode,
+      name: trimmedName,
+      text_type: 'subtitles',
+    })
 
     const result = await pollTrackStatus({
       client,
@@ -247,7 +215,7 @@ export default function AddCaptionDialog({asset, onAdd, onClose}: Props) {
       toast.push({
         title: 'Failed to add caption track',
         status: 'error',
-        description: error instanceof Error ? error.message : 'Please try again',
+        description: extractErrorMessage(error, 'Failed to add caption track'),
       })
     } finally {
       setIsSubmitting(false)
@@ -356,13 +324,18 @@ export default function AddCaptionDialog({asset, onAdd, onClose}: Props) {
             tone="primary"
             icon={
               isSubmitting ? (
-                <IconWrapper>
-                  <Spinner />
-                </IconWrapper>
+                <Spinner
+                  style={{
+                    verticalAlign: 'middle',
+                    display: 'inline-block',
+                    marginBottom: '-3px',
+                    width: '1em',
+                    height: '1em',
+                    marginRight: '-6px',
+                  }}
+                />
               ) : (
-                <IconWrapper>
-                  <UploadIcon />
-                </IconWrapper>
+                <UploadIcon />
               )
             }
             onClick={handleSubmit}

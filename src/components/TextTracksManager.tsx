@@ -9,7 +9,6 @@ import {
 } from '@sanity/icons'
 import {Box, Button, Card, Dialog, Flex, Heading, Spinner, Stack, Text, useToast} from '@sanity/ui'
 import {useEffect, useId, useMemo, useState} from 'react'
-import {styled} from 'styled-components'
 
 import {deleteTextTrack, getAsset} from '../actions/assets'
 import {useClient} from '../hooks/useClient'
@@ -19,13 +18,6 @@ import {getPlaybackPolicy} from '../util/getPlaybackPolicy'
 import type {MuxTextTrack, VideoAssetDocument} from '../util/types'
 import AddCaptionDialog from './AddCaptionDialog'
 import EditCaptionDialog from './EditCaptionDialog'
-
-const IconWrapper = styled.span`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  vertical-align: middle;
-`
 
 interface TrackCardProps {
   track: MuxTextTrack
@@ -71,8 +63,17 @@ function TrackCard({
   const renderActionButtons = () => {
     if (track.status === 'preparing') {
       return (
-        <Flex align="center" gap={1}>
-          <Spinner muted />
+        <Flex align="center" gap={2}>
+          <Spinner
+            muted
+            style={{
+              width: '0.75em',
+              height: '0.75em',
+              verticalAlign: 'middle',
+              display: 'inline-block',
+              marginBottom: '-2px',
+            }}
+          />
           <Text size={1} muted>
             Processing...
           </Text>
@@ -80,64 +81,36 @@ function TrackCard({
       )
     }
 
-    if (track.status === 'errored') {
-      return (
-        <Flex gap={2}>
+    return (
+      <Flex gap={2}>
+        {track.status !== 'errored' && (
           <Button
             icon={
-              <IconWrapper>
-                <EditIcon />
-              </IconWrapper>
+              downloadingTrackId === track.id ? (
+                <Spinner
+                  style={{
+                    verticalAlign: 'middle',
+                    display: 'inline-block',
+                    width: '1em',
+                    height: '1em',
+                  }}
+                />
+              ) : (
+                <DownloadIcon />
+              )
             }
-            text={iconOnly ? undefined : 'Edit'}
+            text={iconOnly ? undefined : 'Download'}
             mode="ghost"
             tone="primary"
             fontSize={1}
             padding={2}
-            disabled={isDisabled('edit')}
-            onClick={() => setTrackToEdit(track)}
-            title="Edit"
+            onClick={() => handleDownload(track)}
+            disabled={isDisabled('download')}
+            title="Download"
           />
-          <Button
-            icon={
-              deletingTrackId === track.id ? (
-                <IconWrapper>
-                  <Spinner />
-                </IconWrapper>
-              ) : (
-                <IconWrapper>
-                  <TrashIcon />
-                </IconWrapper>
-              )
-            }
-            text={iconOnly ? undefined : 'Delete'}
-            mode="ghost"
-            tone="critical"
-            fontSize={1}
-            padding={2}
-            disabled={isDisabled('delete')}
-            onClick={() => setTrackToDelete(track)}
-            title="Delete"
-          />
-        </Flex>
-      )
-    }
-
-    return (
-      <Flex gap={2}>
+        )}
         <Button
-          icon={downloadingTrackId === track.id ? Spinner : DownloadIcon}
-          text={iconOnly ? undefined : 'Download'}
-          mode="ghost"
-          tone="primary"
-          fontSize={1}
-          padding={2}
-          onClick={() => handleDownload(track)}
-          disabled={isDisabled('download')}
-          title="Download"
-        />
-        <Button
-          icon={EditIcon}
+          icon={<EditIcon />}
           text={iconOnly ? undefined : 'Edit'}
           mode="ghost"
           tone="primary"
@@ -150,13 +123,17 @@ function TrackCard({
         <Button
           icon={
             deletingTrackId === track.id ? (
-              <IconWrapper>
-                <Spinner />
-              </IconWrapper>
+              <Spinner
+                style={{
+                  verticalAlign: 'middle',
+                  display: 'inline-block',
+                  marginTop: '-2px',
+                  width: '0.5em',
+                  height: '0.5em',
+                }}
+              />
             ) : (
-              <IconWrapper>
-                <TrashIcon />
-              </IconWrapper>
+              <TrashIcon />
             )
           }
           text={iconOnly ? undefined : 'Delete'}
@@ -192,14 +169,6 @@ function TrackCard({
                 aria-label="Error"
                 fontSize={20}
               />
-            )}
-            {track.status === 'preparing' && (
-              <Flex align="center" gap={1}>
-                <Spinner muted />
-                <Text size={1} muted>
-                  Preparing...
-                </Text>
-              </Flex>
             )}
           </Flex>
           {track.language_code && (
@@ -696,11 +665,6 @@ export default function TextTracksManager({
   if (visibleTracks.length === 0 && !showAddDialog) {
     return (
       <Stack space={3}>
-        <Card padding={4} radius={2} tone="transparent" border>
-          <Text size={1} muted>
-            No captions available. Add captions when uploading a video or add them manually.
-          </Text>
-        </Card>
         <Flex justify="flex-end">
           <Button
             icon={AddIcon}
@@ -709,6 +673,11 @@ export default function TextTracksManager({
             onClick={() => setShowAddDialog(true)}
           />
         </Flex>
+        <Card padding={4} radius={2} tone="transparent" border>
+          <Text size={1} muted>
+            No captions available. Add captions when uploading a video or add them manually.
+          </Text>
+        </Card>
         {showAddDialog && (
           <AddCaptionDialog
             asset={asset}
@@ -793,13 +762,17 @@ export default function TextTracksManager({
                   <Button
                     icon={
                       deletingTrackId === trackToDelete.id ? (
-                        <IconWrapper>
-                          <Spinner />
-                        </IconWrapper>
+                        <Spinner
+                          style={{
+                            verticalAlign: 'middle',
+                            display: 'inline-block',
+                            marginTop: '-2px',
+                            width: '0.5em',
+                            height: '0.5em',
+                          }}
+                        />
                       ) : (
-                        <IconWrapper>
-                          <TrashIcon />
-                        </IconWrapper>
+                        <TrashIcon />
                       )
                     }
                     fontSize={2}
