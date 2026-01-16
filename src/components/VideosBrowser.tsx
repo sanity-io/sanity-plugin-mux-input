@@ -12,6 +12,7 @@ import SpinnerBox from './SpinnerBox'
 import type {VideoDetailsProps} from './VideoDetails/useVideoDetails'
 import VideoDetails from './VideoDetails/VideoDetails'
 import VideoInBrowser from './VideoInBrowser'
+import PageSelector from './PageSelector'
 
 export interface VideosBrowserProps {
   onSelect?: (asset: VideoAssetDocument) => void
@@ -19,11 +20,17 @@ export interface VideosBrowserProps {
 
 export default function VideosBrowser({onSelect}: VideosBrowserProps) {
   const {assets, isLoading, searchQuery, setSearchQuery, setSort, sort} = useAssets()
+  const [page, setPage] = useState<number>(0)
+  const pageLimit = 20
+  const pageTotal = Math.floor(assets.length / pageLimit) + 1
   const [editedAsset, setEditedAsset] = useState<VideoDetailsProps['asset'] | null>(null)
   const freshEditedAsset = useMemo(
     () => assets.find((a) => a._id === editedAsset?._id) || editedAsset,
     [editedAsset, assets]
   )
+
+  const pageStart = page * pageLimit
+  const pageEnd = pageStart + pageLimit
 
   const placement = onSelect ? 'input' : 'tool'
   return (
@@ -40,6 +47,7 @@ export default function VideosBrowser({onSelect}: VideosBrowserProps) {
               placeholder="Search videos"
             />
             <SelectSortOptions setSort={setSort} sort={sort} />
+            <PageSelector page={page} setPage={setPage} total={pageTotal} limit={pageLimit} />
           </Flex>
           {placement === 'tool' && (
             <Inline space={2}>
@@ -62,7 +70,7 @@ export default function VideosBrowser({onSelect}: VideosBrowserProps) {
               gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
             }}
           >
-            {assets.map((asset) => (
+            {assets.slice(pageStart, pageEnd).map((asset) => (
               <VideoInBrowser
                 key={asset._id}
                 asset={asset}
