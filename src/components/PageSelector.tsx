@@ -1,15 +1,19 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@sanity/icons'
 import { Label, Button } from '@sanity/ui'
 
-import { Dispatch, SetStateAction, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect } from 'react'
 
 const PageSelector = (props: { page: number, setPage: Dispatch<SetStateAction<number>>, total: number, limit: number }) => {
 
 	const page = props.page
 	const setPage = props.setPage
 
-	if (Math.min(props.total - 1, Math.max(0, page)) !== page) // Constraint in bounds.
-		setPage((page) => Math.min(props.total - 1, Math.max(0, page)))
+	useEffect(() => { // Constraint in bounds.
+		const clamped = Math.min(props.total - 1, Math.max(0, page))
+		if (page !== clamped) {
+			setPage(clamped)
+		}
+	}, [page, props.total, setPage])
 
 	return (
 		<>
