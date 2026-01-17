@@ -1,5 +1,8 @@
+import {Suspense} from 'react'
+
 import Input from './components/Input'
 import VideoThumbnail from './components/VideoThumbnail'
+import VideoThumbnailFallback from './components/VideoThumbnailFallback'
 import type {MuxInputProps, PluginConfig, VideoAssetDocument} from './util/types'
 
 export function muxVideoCustomRendering(config: PluginConfig) {
@@ -23,7 +26,7 @@ export function muxVideoCustomRendering(config: PluginConfig) {
         return {
           title: filename || playbackId || '',
           subtitle: status ? `status: ${status}` : null,
-          media: asset.playbackId ? <VideoThumbnail asset={asset} width={64} /> : null,
+          media: asset.playbackId ? <Suspense fallback={<VideoThumbnailFallback width={64} />}><VideoThumbnail asset={asset} width={64} /></Suspense> : null,
         }
       },
     },

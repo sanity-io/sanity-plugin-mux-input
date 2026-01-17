@@ -1,6 +1,6 @@
 import {CheckmarkIcon, EditIcon, LockIcon, PlayIcon} from '@sanity/icons'
 import {Button, Card, Stack, Text, Tooltip} from '@sanity/ui'
-import React, {useState} from 'react'
+import React, {Suspense, useState} from 'react'
 import {styled} from 'styled-components'
 
 import {THUMBNAIL_ASPECT_RATIO} from '../util/constants'
@@ -11,6 +11,7 @@ import {AudioIcon} from './icons/Audio'
 import VideoMetadata from './VideoMetadata'
 import VideoPlayer, {assetIsAudio} from './VideoPlayer'
 import VideoThumbnail from './VideoThumbnail'
+import VideoThumbnailFallback from './VideoThumbnailFallback'
 
 const PlayButton = styled.button`
   display: block;
@@ -156,7 +157,9 @@ export default function VideoInBrowser({
                 <AudioIcon width="3em" height="3em" />
               </div>
             ) : (
-              <VideoThumbnail asset={asset} />
+              <Suspense fallback={<VideoThumbnailFallback />}>
+                <VideoThumbnail asset={asset} />
+              </Suspense>
             )}
           </PlayButton>
         )}
