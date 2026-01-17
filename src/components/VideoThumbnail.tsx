@@ -50,7 +50,12 @@ export default function VideoThumbnail({
       else thumbnail = getAnimatedPosterSrc({asset, client, width: posterWidth})
 
       return thumbnail
-    } catch {
+    } catch (error) {
+      // Re-throw if it's a Promise (Suspense mechanism) - don't catch it!
+      if (error && typeof error === 'object' && 'then' in error && typeof error.then === 'function') {
+        throw error
+      }
+      // Handle actual errors
       if (status !== 'error') setStatus('error')
       return undefined
     }

@@ -18,6 +18,7 @@ import {
   Stack,
   Text,
 } from '@sanity/ui'
+import {Suspense} from 'react'
 import {truncateString, useFormattedDuration} from 'sanity'
 import {styled} from 'styled-components'
 
@@ -25,6 +26,7 @@ import useImportMuxAssets from '../hooks/useImportMuxAssets'
 import {DIALOGS_Z_INDEX} from '../util/constants'
 import type {MuxAsset} from '../util/types'
 import VideoThumbnail from './VideoThumbnail'
+import VideoThumbnailFallback from './VideoThumbnailFallback'
 
 const MissingAssetCheckbox = styled(Checkbox)`
   position: static !important;
@@ -68,15 +70,17 @@ function MissingAsset({
           }}
           aria-label={selected ? `Import video ${asset.id}` : `Skip import of video ${asset.id}`}
         />
-        <VideoThumbnail
-          asset={{
-            assetId: asset.id,
-            data: asset,
-            filename: asset.id,
-            playbackId: asset.playback_ids.find((p) => p.id)?.id,
-          }}
-          width={150}
-        />
+        <Suspense fallback={<VideoThumbnailFallback width={150} />}>
+          <VideoThumbnail
+            asset={{
+              assetId: asset.id,
+              data: asset,
+              filename: asset.id,
+              playbackId: asset.playback_ids.find((p) => p.id)?.id,
+            }}
+            width={150}
+          />
+        </Suspense>
         <Stack space={2}>
           <Flex align="center" gap={1}>
             <Code size={2}>{truncateString(asset.id, 15)}</Code>{' '}

@@ -1,11 +1,19 @@
 import {Card, Text} from '@sanity/ui'
-import React, {useEffect, useMemo, useRef} from 'react'
+import React, {Suspense, useEffect, useMemo, useRef} from 'react'
 
 import {useCancelUpload} from '../hooks/useCancelUpload'
 import type {MuxInputProps, PluginConfig, VideoAssetDocument} from '../util/types'
 import {TopControls} from './Player.styled'
 import {UploadProgress} from './UploadProgress'
 import VideoPlayer from './VideoPlayer'
+
+function PlayerFallback() {
+  return (
+    <Card padding={4} radius={2} tone="transparent">
+      <Text align="center" muted>Loading video player...</Text>
+    </Card>
+  )
+}
 
 interface Props extends Pick<MuxInputProps, 'onChange' | 'readOnly'> {
   buttons?: React.ReactNode
@@ -92,25 +100,27 @@ const Player = ({asset, buttons, readOnly, onChange, config}: Props) => {
   }
 
   return (
-    <VideoPlayer asset={asset} hlsConfig={config?.hlsConfig}>
-      {buttons && <TopControls slot="top-chrome">{buttons}</TopControls>}
-      {isPreparingStaticRenditions && (
-        <Card
-          padding={2}
-          radius={1}
-          style={{
-            background: 'var(--card-fg-color)',
-            position: 'absolute',
-            top: '0.5em',
-            left: '0.5em',
-          }}
-        >
-          <Text size={1} style={{color: 'var(--card-bg-color)'}}>
-            MUX is preparing static renditions, please stand by
-          </Text>
+    <Suspense fallback={<PlayerFallback />}>
+      <VideoPlayer asset={asset} hlsConfig={config?.hlsConfig}>
+        {buttons && <TopControls slot="top-chrome">{buttons}</TopControls>}
+        {isPreparingStaticRenditions && (
+          <Card
+            padding={2}
+            radius={1}
+            style={{
+              background: 'var(--card-fg-color)',
+              position: 'absolute',
+              top: '0.5em',
+              left: '0.5em',
+            }}
+          >
+            <Text size={1} style={{color: 'var(--card-bg-color)'}}>
+              MUX is preparing static renditions, please stand by
+            </Text>
         </Card>
       )}
-    </VideoPlayer>
+      </VideoPlayer>
+    </Suspense>
   )
 }
 

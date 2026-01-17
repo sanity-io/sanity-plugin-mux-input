@@ -6,6 +6,12 @@ import {muxVideoSchema, schemaTypes} from '../schema'
 import type {PluginConfig, StaticRenditionResolution} from '../util/types'
 export type {VideoAssetDocument} from '../util/types'
 
+// Preload the JWT signing library to avoid race condition on first render
+// This ensures the library is available when generateJwt() is called
+import('jsonwebtoken-esm/sign').catch(() => {
+  // Ignore errors - library will be loaded via suspend() if this fails
+})
+
 export const defaultConfig: PluginConfig = {
   static_renditions: [],
   mp4_support: 'none',
