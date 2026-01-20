@@ -1,31 +1,56 @@
-import { ChevronLeftIcon, ChevronRightIcon } from '@sanity/icons'
-import { Label, Button } from '@sanity/ui'
+import {ChevronLeftIcon, ChevronRightIcon} from '@sanity/icons'
+import {Label, Button} from '@sanity/ui'
 
-import { Dispatch, SetStateAction, useEffect } from 'react'
+import {Dispatch, SetStateAction, useEffect} from 'react'
 
-const PageSelector = (props: { page: number, setPage: Dispatch<SetStateAction<number>>, total: number, limit: number }) => {
+const PageSelector = (props: {
+  page: number
+  setPage: Dispatch<SetStateAction<number>>
+  total: number
+  limit: number
+}) => {
+  const page = props.page
+  const setPage = props.setPage
 
-	const page = props.page
-	const setPage = props.setPage
+  useEffect(() => {
+    // Constraint in bounds.
+    const clamped = Math.min(props.total - 1, Math.max(0, page))
+    if (page !== clamped) {
+      setPage(clamped)
+    }
+  }, [page, props.total, setPage])
 
-	useEffect(() => { // Constraint in bounds.
-		const clamped = Math.min(props.total - 1, Math.max(0, page))
-		if (page !== clamped) {
-			setPage(clamped)
-		}
-	}, [page, props.total, setPage])
-
-	return (
-		<>
-			<Button icon={ChevronLeftIcon} mode="bleed" padding={3} style={{ cursor: "pointer" }} disabled={page <= 0} onClick={() => {
-				setPage((page) => { return Math.min(props.total - 1, Math.max(0, page - 1)) })
-			}} />
-			<Label muted>Page {page + 1}/{props.total}</Label>
-			<Button icon={ChevronRightIcon} mode="bleed" padding={3} style={{ cursor: "pointer" }} disabled={page >= props.total - 1} onClick={() => {
-				setPage((page) => { return Math.min(props.total - 1, Math.max(0, page + 1)) })
-			}} />
-		</>
-	)
+  return (
+    <>
+      <Button
+        icon={ChevronLeftIcon}
+        mode="bleed"
+        padding={3}
+        style={{cursor: 'pointer'}}
+        disabled={page <= 0}
+        onClick={() => {
+          setPage((page) => {
+            return Math.min(props.total - 1, Math.max(0, page - 1))
+          })
+        }}
+      />
+      <Label muted>
+        Page {page + 1}/{props.total}
+      </Label>
+      <Button
+        icon={ChevronRightIcon}
+        mode="bleed"
+        padding={3}
+        style={{cursor: 'pointer'}}
+        disabled={page >= props.total - 1}
+        onClick={() => {
+          setPage((page) => {
+            return Math.min(props.total - 1, Math.max(0, page + 1))
+          })
+        }}
+      />
+    </>
+  )
 }
 
 export default PageSelector
