@@ -20,11 +20,15 @@ export default function VideoPlayer({
   asset,
   thumbnailWidth = 250,
   children,
+  hlsConfig,
   ...props
 }: PropsWithChildren<
-  {asset: VideoAssetDocument; thumbnailWidth?: number; forceAspectRatio?: number} & Partial<
-    Pick<MuxPlayerProps, 'autoPlay'>
-  >
+  {
+    asset: VideoAssetDocument
+    thumbnailWidth?: number
+    forceAspectRatio?: number
+    hlsConfig?: MuxPlayerProps['_hlsConfig']
+  } & Partial<Pick<MuxPlayerProps, 'autoPlay'>>
 >) {
   const client = useClient()
   const {dialogState} = useDialogStateContext()
@@ -163,11 +167,13 @@ export default function VideoPlayer({
                   page_type: 'Preview Player',
                 }}
                 audio={isAudio}
+                _hlsConfig={hlsConfig}
                 style={{
-                  height: '100%',
+                  ...(!isAudio && {height: '100%'}),
                   width: '100%',
                   display: 'block',
                   objectFit: 'contain',
+                  ...(isAudio && {alignSelf: 'end'}),
                 }}
               />
               {children}

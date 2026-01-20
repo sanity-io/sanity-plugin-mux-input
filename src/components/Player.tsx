@@ -2,7 +2,7 @@ import {Card, Text} from '@sanity/ui'
 import React, {useEffect, useMemo, useRef} from 'react'
 
 import {useCancelUpload} from '../hooks/useCancelUpload'
-import type {MuxInputProps, VideoAssetDocument} from '../util/types'
+import type {MuxInputProps, PluginConfig, VideoAssetDocument} from '../util/types'
 import {TopControls} from './Player.styled'
 import {UploadProgress} from './UploadProgress'
 import VideoPlayer from './VideoPlayer'
@@ -10,9 +10,10 @@ import VideoPlayer from './VideoPlayer'
 interface Props extends Pick<MuxInputProps, 'onChange' | 'readOnly'> {
   buttons?: React.ReactNode
   asset: VideoAssetDocument
+  config?: PluginConfig
 }
 
-const Player = ({asset, buttons, readOnly, onChange}: Props) => {
+const Player = ({asset, buttons, readOnly, onChange, config}: Props) => {
   const isLoading = useMemo<boolean | string>(() => {
     if (asset?.status === 'preparing') {
       return 'Preparing the video'
@@ -91,7 +92,7 @@ const Player = ({asset, buttons, readOnly, onChange}: Props) => {
   }
 
   return (
-    <VideoPlayer asset={asset}>
+    <VideoPlayer asset={asset} hlsConfig={config?.hlsConfig}>
       {buttons && <TopControls slot="top-chrome">{buttons}</TopControls>}
       {isPreparingStaticRenditions && (
         <Card

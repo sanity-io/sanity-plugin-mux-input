@@ -5,6 +5,14 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.13.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.12.1...v2.13.0) (2026-01-15)
+
+### Features
+
+- add file size and duration validation ([#454](https://github.com/sanity-io/sanity-plugin-mux-input/issues/454)) ([0a0b353](https://github.com/sanity-io/sanity-plugin-mux-input/commit/0a0b353efb25a16a9a3c156157e4126a6afc6bac))
+- Add support for configuring HLS.js options ([#463](https://github.com/sanity-io/sanity-plugin-mux-input/issues/463)) ([7327643](https://github.com/sanity-io/sanity-plugin-mux-input/commit/7327643063c54a1cbc716e124d5f22250b969db3))
+- configure mime/type option ([#453](https://github.com/sanity-io/sanity-plugin-mux-input/issues/453)) ([7804a9b](https://github.com/sanity-io/sanity-plugin-mux-input/commit/7804a9b5f34fa17df888f2b4f7a27e611453d2ce))
+
 ## [2.12.1](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.12.0...v2.12.1) (2025-12-18)
 
 ### Bug Fixes

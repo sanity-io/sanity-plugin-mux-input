@@ -435,6 +435,7 @@ export default function Uploader(props: Props) {
               readOnly={props.readOnly}
               asset={props.asset}
               onChange={props.onChange}
+              config={props.config}
               buttons={
                 <PlayerActionsMenu
                   accept={acceptMimeString}
