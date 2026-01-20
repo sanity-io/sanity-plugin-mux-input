@@ -27,10 +27,12 @@ import {
 import React, {useEffect, useState} from 'react'
 
 import {DIALOGS_Z_INDEX} from '../../util/constants'
+import type {MuxTextTrack} from '../../util/types'
 import FormField from '../FormField'
 import IconInfo from '../IconInfo'
 import {ResolutionIcon} from '../icons/Resolution'
 import {StopWatchIcon} from '../icons/StopWatch'
+import TextTracksManager from '../TextTracksManager'
 import VideoPlayer from '../VideoPlayer'
 import DeleteDialog from './DeleteDialog'
 import useVideoDetails, {VideoDetailsProps} from './useVideoDetails'
@@ -203,6 +205,20 @@ const VideoDetails: React.FC<VideoDetailsProps> = (props) => {
         >
           <Stack space={4} flex={1} sizing="border">
             <VideoPlayer asset={props.asset} autoPlay={props.asset.autoPlay || false} />
+            {tab === 'details' && (
+              <TextTracksManager
+                asset={props.asset}
+                iconOnly
+                collapseTracks
+                tracks={
+                  displayInfo?.text_tracks ||
+                  props.asset.data?.tracks?.filter(
+                    (track): track is MuxTextTrack => track.type === 'text'
+                  ) ||
+                  []
+                }
+              />
+            )}
           </Stack>
           <Stack space={4} flex={1} sizing="border">
             <TabList space={2}>
