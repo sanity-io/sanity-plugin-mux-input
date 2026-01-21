@@ -14,6 +14,7 @@ export const defaultConfig: PluginConfig = {
   normalize_audio: false,
   defaultPublic: true,
   defaultSigned: false,
+  defaultDrm: false,
   tool: DEFAULT_TOOL_CONFIG,
   allowedRolesForConfiguration: [],
   acceptedMimeTypes: ['video/*', 'audio/*'],

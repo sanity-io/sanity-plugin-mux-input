@@ -341,41 +341,42 @@ export default defineConfig({
 You can also configure `acceptedMimeTypes` for individual fields in your schema, which will override the plugin-level configuration:
 
 ```js
-import { defineField, defineType } from "sanity";
+import {defineField, defineType} from 'sanity'
 
 export default defineType({
-  name: "muxTest",
-  title: "Mux Files",
-  type: "document",
+  name: 'muxTest',
+  title: 'Mux Files',
+  type: 'document',
   fields: [
     defineField({
-      name: "audioFile",
-      title: "Audio File",
-      type: "mux.video",
+      name: 'audioFile',
+      title: 'Audio File',
+      type: 'mux.video',
       options: {
-        acceptedMimeTypes: ["audio/*"],
+        acceptedMimeTypes: ['audio/*'],
       },
     }),
     defineField({
-      name: "videoFile",
-      title: "Video File",
-      type: "mux.video",
+      name: 'videoFile',
+      title: 'Video File',
+      type: 'mux.video',
       options: {
-        acceptedMimeTypes: ["video/*"],
+        acceptedMimeTypes: ['video/*'],
       },
     }),
     defineField({
-      name: "either",
-      title: "Either File",
-      type: "mux.video",
+      name: 'either',
+      title: 'Either File',
+      type: 'mux.video',
     }),
   ],
-});
+})
 ```
 
 The `acceptedMimeTypes` option controls the `accept` attribute on the file input, which filters which file types users can select when uploading. This affects both the file picker dialog and drag-and-drop file validation.
 
 📌 **Note**: This option accepts an array of MIME type patterns. The valid values are:
+
 - `'video/*'` - Accepts all video file types
 - `'audio/*'` - Accepts all audio file types
 
@@ -407,17 +408,17 @@ export default defineConfig({
 You can override the global limits for specific fields, allowing different validation rules for different use cases:
 
 ```js
-import { defineType, defineField } from "sanity";
+import {defineType, defineField} from 'sanity'
 
 export default defineType({
-  name: "muxTest",
-  title: "Mux Files",
-  type: "document",
+  name: 'muxTest',
+  title: 'Mux Files',
+  type: 'document',
   fields: [
     defineField({
-      name: "shortVideo",
-      title: "Short Video (max 1 minute)",
-      type: "mux.video",
+      name: 'shortVideo',
+      title: 'Short Video (max 1 minute)',
+      type: 'mux.video',
       options: {
         maxAssetFileSize: 100 * 1024 * 1024, // 100 MB
         maxAssetDuration: 60, // 1 minute
@@ -438,7 +439,7 @@ export default defineType({
       type: 'mux.video',
       // Uses plugin defaults or no validation if not configured
     }),
-  ]
+  ],
 })
 ```
 

@@ -464,6 +464,7 @@ export default function Uploader(props: Props) {
       </UploadCard>
       {props.dialogState === 'select-video' && (
         <InputBrowser
+          config={props.config}
           asset={props.asset}
           onChange={props.onChange}
           setDialogState={props.setDialogState}
