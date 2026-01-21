@@ -6,7 +6,6 @@ const PageSelector = (props: {
   page: number
   setPage: Dispatch<SetStateAction<number>>
   total: number
-  limit: number
 }) => {
   const page = props.page
   const setPage = props.setPage
@@ -28,8 +27,8 @@ const PageSelector = (props: {
         style={{cursor: 'pointer'}}
         disabled={page <= 0}
         onClick={() => {
-          setPage((page) => {
-            return Math.min(props.total - 1, Math.max(0, page - 1))
+          setPage((p) => {
+            return Math.min(props.total - 1, Math.max(0, p - 1))
           })
         }}
       />
@@ -43,8 +42,8 @@ const PageSelector = (props: {
         style={{cursor: 'pointer'}}
         disabled={page >= props.total - 1}
         onClick={() => {
-          setPage((page) => {
-            return Math.min(props.total - 1, Math.max(0, page + 1))
+          setPage((p) => {
+            return Math.min(props.total - 1, Math.max(0, p + 1))
           })
         }}
       />

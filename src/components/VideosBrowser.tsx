@@ -49,7 +49,7 @@ export default function VideosBrowser({onSelect, config}: VideosBrowserProps) {
               placeholder="Search videos"
             />
             <SelectSortOptions setSort={setSort} sort={sort} />
-            <PageSelector page={page} setPage={setPage} total={pageTotal} limit={pageLimit} />
+            <PageSelector page={page} setPage={setPage} total={pageTotal} />
           </Flex>
           {placement === 'tool' && (
             <Inline space={2}>
