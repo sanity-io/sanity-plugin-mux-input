@@ -109,8 +109,6 @@ export function ConfigureApiDialog({secrets, setDialogState}: ConfigureApiDialog
   )
   const handleChangeDrmConfigId = useCallback(
     (event: React.FormEvent<HTMLInputElement>) => {
-      // eslint-disable-next-line no-console
-      console.log('handleChangeDrmConfigId: drmConfigId', event.currentTarget.value)
       dispatch({
         type: 'change',
         payload: {name: 'drmConfigId', value: event.currentTarget.value},
