@@ -7,13 +7,13 @@ import useAssets from '../hooks/useAssets'
 import type {PluginConfig, VideoAssetDocument} from '../util/types'
 import ConfigureApi from './ConfigureApi'
 import ImportVideosFromMux from './ImportVideosFromMux'
+import PageSelector from './PageSelector'
 import ResyncMetadata from './ResyncMetadata'
 import {SelectSortOptions} from './SelectSortOptions'
 import SpinnerBox from './SpinnerBox'
 import type {VideoDetailsProps} from './VideoDetails/useVideoDetails'
 import VideoDetails from './VideoDetails/VideoDetails'
 import VideoInBrowser from './VideoInBrowser'
-import PageSelector from './PageSelector'
 
 export interface VideosBrowserProps {
   config: PluginConfig
