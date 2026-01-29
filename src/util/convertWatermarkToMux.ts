@@ -2,7 +2,7 @@ import type {MuxOverlaySettings, WatermarkConfig} from './types'
 
 /**
  * Converts a draggable watermark position (x, y percentages) to Mux's overlay_settings format.
- * 
+ *
  * @param watermark - The watermark configuration with position, size, and opacity
  * @returns Mux overlay_settings object
  * @see {@link https://www.mux.com/docs/guides/add-watermarks-to-your-videos}
@@ -85,20 +85,18 @@ export function convertWatermarkToMuxOverlay(
   if (watermark.overlay_settings) {
     const widthValue = watermark.overlay_settings.width
     const widthNormalized =
-      options?.units === 'px'
-        ? normalizeToPixels(widthValue, 'x')
-        : widthValue
+      options?.units === 'px' ? normalizeToPixels(widthValue, 'x') : widthValue
     return {
       ...watermark.overlay_settings,
       horizontal_margin:
         options?.units === 'px'
-          ? normalizeToPixels(watermark.overlay_settings.horizontal_margin, 'x') ??
-            watermark.overlay_settings.horizontal_margin
+          ? (normalizeToPixels(watermark.overlay_settings.horizontal_margin, 'x') ??
+            watermark.overlay_settings.horizontal_margin)
           : watermark.overlay_settings.horizontal_margin,
       vertical_margin:
         options?.units === 'px'
-          ? normalizeToPixels(watermark.overlay_settings.vertical_margin, 'y') ??
-            watermark.overlay_settings.vertical_margin
+          ? (normalizeToPixels(watermark.overlay_settings.vertical_margin, 'y') ??
+            watermark.overlay_settings.vertical_margin)
           : watermark.overlay_settings.vertical_margin,
       width: widthNormalized ?? `${size}%`,
       opacity: watermark.overlay_settings.opacity ?? `${Math.round(opacity * 100)}%`,

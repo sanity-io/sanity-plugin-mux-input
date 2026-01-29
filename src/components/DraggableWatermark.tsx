@@ -1,10 +1,10 @@
-import {ErrorOutlineIcon, CheckmarkCircleIcon} from '@sanity/icons'
+import {CheckmarkCircleIcon, ErrorOutlineIcon} from '@sanity/icons'
 import {Box, Button, Card, Flex, Grid, Stack, Text, TextInput} from '@sanity/ui'
 import {useCallback, useEffect, useRef, useState} from 'react'
 import {styled} from 'styled-components'
 
-import type {MuxOverlaySettings, WatermarkConfig} from '../util/types'
 import {convertWatermarkToMuxOverlay} from '../util/convertWatermarkToMux'
+import type {MuxOverlaySettings, WatermarkConfig} from '../util/types'
 
 const RangeInput = styled.input`
   width: 100%;
@@ -198,9 +198,7 @@ export default function DraggableWatermark({
     let transform = hStyle.transform
     if (overlay.vertical_align === 'middle') {
       transform =
-        overlay.horizontal_align === 'center'
-          ? 'translate(-50%, -50%)'
-          : 'translate(0, -50%)'
+        overlay.horizontal_align === 'center' ? 'translate(-50%, -50%)' : 'translate(0, -50%)'
     }
 
     return {
@@ -343,7 +341,7 @@ export default function DraggableWatermark({
 
   const hasManualOverlay = Boolean(watermark.overlay_settings)
   const opacityForRender = hasManualOverlay
-    ? parseOpacityPercent(watermark.overlay_settings?.opacity) ?? opacity
+    ? (parseOpacityPercent(watermark.overlay_settings?.opacity) ?? opacity)
     : opacity
   const contentBox = getVideoContentBox()
   const hasContentBox = contentBox.width > 0 && contentBox.height > 0
@@ -405,7 +403,9 @@ export function WatermarkControls({
   const [isValidating, setIsValidating] = useState(false)
   const [isValid, setIsValid] = useState<boolean | null>(null)
   const validationTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const [mode, setMode] = useState<'canvas' | 'manual'>(watermark.overlay_settings ? 'manual' : 'canvas')
+  const [mode, setMode] = useState<'canvas' | 'manual'>(
+    watermark.overlay_settings ? 'manual' : 'canvas'
+  )
 
   // Track if we're currently updating to prevent sync loop
   const isUpdatingRef = useRef(false)
@@ -441,7 +441,11 @@ export function WatermarkControls({
         try {
           const urlObj = new URL(url)
           const pathname = urlObj.pathname.toLowerCase()
-          if (pathname.endsWith('.png') || pathname.endsWith('.jpg') || pathname.endsWith('.jpeg')) {
+          if (
+            pathname.endsWith('.png') ||
+            pathname.endsWith('.jpg') ||
+            pathname.endsWith('.jpeg')
+          ) {
             setIsValid(true)
             setUrlError(null)
             onValidationChange?.(null)
@@ -470,7 +474,8 @@ export function WatermarkControls({
             }
             img.src = url
           } else {
-            const errorMsg = 'Mux only supports PNG and JPG watermark images. Please use a .png or .jpg file.'
+            const errorMsg =
+              'Mux only supports PNG and JPG watermark images. Please use a .png or .jpg file.'
             setIsValid(false)
             setUrlError(errorMsg)
             onValidationChange?.(errorMsg)
@@ -578,7 +583,8 @@ export function WatermarkControls({
       overlay_settings: {
         ...merged,
         // Keep the "0% -> 0.01%" behavior for margins
-        horizontal_margin: normalizeZeroPercent(merged.horizontal_margin) || merged.horizontal_margin,
+        horizontal_margin:
+          normalizeZeroPercent(merged.horizontal_margin) || merged.horizontal_margin,
         vertical_margin: normalizeZeroPercent(merged.vertical_margin) || merged.vertical_margin,
       },
     })
@@ -618,7 +624,8 @@ export function WatermarkControls({
           Watermark Image URL
         </Text>
         <Text size={0} muted>
-          Enter a URL to a PNG or JPG image. Mux will download this image and overlay it on your video.
+          Enter a URL to a PNG or JPG image. Mux will download this image and overlay it on your
+          video.
         </Text>
         <Box style={{position: 'relative', width: '100%'}}>
           <input
@@ -756,10 +763,16 @@ export function WatermarkControls({
                       value={watermark.overlay_settings?.horizontal_align || 'right'}
                       onChange={(e) =>
                         updateOverlaySettings({
-                          horizontal_align: (e.target.value || 'right') as MuxOverlaySettings['horizontal_align'],
+                          horizontal_align: (e.target.value ||
+                            'right') as MuxOverlaySettings['horizontal_align'],
                         })
                       }
-                      style={{width: '100%', padding: '8px 10px', border: '1px solid #ccc', borderRadius: 4}}
+                      style={{
+                        width: '100%',
+                        padding: '8px 10px',
+                        border: '1px solid #ccc',
+                        borderRadius: 4,
+                      }}
                     >
                       <option value="left">left</option>
                       <option value="center">center</option>
@@ -772,7 +785,9 @@ export function WatermarkControls({
                     </Text>
                     <TextInput
                       value={watermark.overlay_settings?.horizontal_margin || '2%'}
-                      onChange={(e) => updateOverlaySettings({horizontal_margin: e.currentTarget.value})}
+                      onChange={(e) =>
+                        updateOverlaySettings({horizontal_margin: e.currentTarget.value})
+                      }
                     />
                   </Box>
                   <Box style={{minWidth: 0}}>
@@ -783,10 +798,16 @@ export function WatermarkControls({
                       value={watermark.overlay_settings?.vertical_align || 'bottom'}
                       onChange={(e) =>
                         updateOverlaySettings({
-                          vertical_align: (e.target.value || 'bottom') as MuxOverlaySettings['vertical_align'],
+                          vertical_align: (e.target.value ||
+                            'bottom') as MuxOverlaySettings['vertical_align'],
                         })
                       }
-                      style={{width: '100%', padding: '8px 10px', border: '1px solid #ccc', borderRadius: 4}}
+                      style={{
+                        width: '100%',
+                        padding: '8px 10px',
+                        border: '1px solid #ccc',
+                        borderRadius: 4,
+                      }}
                     >
                       <option value="top">top</option>
                       <option value="middle">middle</option>
@@ -799,7 +820,9 @@ export function WatermarkControls({
                     </Text>
                     <TextInput
                       value={watermark.overlay_settings?.vertical_margin || '2%'}
-                      onChange={(e) => updateOverlaySettings({vertical_margin: e.currentTarget.value})}
+                      onChange={(e) =>
+                        updateOverlaySettings({vertical_margin: e.currentTarget.value})
+                      }
                     />
                   </Box>
                   <Box style={{minWidth: 0}}>

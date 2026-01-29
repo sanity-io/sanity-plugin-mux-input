@@ -5,6 +5,7 @@ import LanguagesList from 'iso-639-1'
 import {memo, useEffect, useId, useMemo, useReducer, useRef, useState} from 'react'
 import {FormField} from 'sanity'
 
+import {convertWatermarkToMuxOverlay} from '../util/convertWatermarkToMux'
 import formatBytes from '../util/formatBytes'
 import {formatSeconds} from '../util/formatSeconds'
 import {
@@ -21,7 +22,6 @@ import {
   type UploadTextTrack,
   type WatermarkConfig,
 } from '../util/types'
-import {convertWatermarkToMuxOverlay} from '../util/convertWatermarkToMux'
 import DraggableWatermark, {WatermarkControls} from './DraggableWatermark'
 import TextTracksEditor, {type TrackAction} from './TextTracksEditor'
 import PlaybackPolicy from './uploadConfiguration/PlaybackPolicy'
@@ -708,7 +708,8 @@ export default function UploadConfiguration({
                 previewContainerRef={watermarkPreviewContainerRef}
                 previewVideoRef={watermarkPreviewVideoRef}
               />
-              {config.watermark?.imageUrl && stagedUpload.type === 'file' && (
+              {config.watermark?.imageUrl &&
+                stagedUpload.type === 'file' &&
                 // Canvas preview is only shown in "Canvas" mode (no explicit overlay_settings)
                 (!config.watermark.overlay_settings ? (
                   <WatermarkPreview
@@ -724,8 +725,7 @@ export default function UploadConfiguration({
                     previewContainerRef={watermarkPreviewContainerRef}
                     videoRef={watermarkPreviewVideoRef}
                   />
-                ) : null)
-              )}
+                ) : null)}
             </Stack>
           </FormField>
         )}
@@ -809,9 +809,7 @@ const WatermarkPreview = memo(function WatermarkPreview({
           aspectRatio: videoAspectRatio ? String(videoAspectRatio) : '16/9',
           // For vertical videos: set a reasonable max height and let width be calculated from aspect ratio
           // For horizontal videos: use minHeight as before
-          ...(isVertical
-            ? {height: '400px', maxHeight: '50vh'}
-            : {minHeight: '200px'}),
+          ...(isVertical ? {height: '400px', maxHeight: '50vh'} : {minHeight: '200px'}),
           overflow: 'hidden',
         }}
       >
@@ -917,6 +915,8 @@ function formatUploadConfig(
       video_quality: config.video_quality,
       normalize_audio: config.normalize_audio,
     },
-    watermark: config.watermark?.imageUrl ? ({...config.watermark, enabled: true} as WatermarkConfig) : undefined,
+    watermark: config.watermark?.imageUrl
+      ? ({...config.watermark, enabled: true} as WatermarkConfig)
+      : undefined,
   }
 }

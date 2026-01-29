@@ -190,7 +190,10 @@ export default function Uploader(props: Props) {
    * @param watermark Optional watermark configuration
    * @returns
    */
-  const startUpload = (settings: MuxNewAssetSettings, watermark?: import('../util/types').WatermarkConfig) => {
+  const startUpload = (
+    settings: MuxNewAssetSettings,
+    watermark?: import('../util/types').WatermarkConfig
+  ) => {
     const {stagedUpload} = state
     if (!stagedUpload || uploadRef.current) return
     dispatch({action: 'commitUpload'})
