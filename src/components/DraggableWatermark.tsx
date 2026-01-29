@@ -68,22 +68,10 @@ const WatermarkOverlay = styled.div<{$opacity: number}>`
   }
 `
 
-const Container = styled.div`
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-`
-
 interface DraggableWatermarkProps {
   watermark: WatermarkConfig
   onChange: (watermark: WatermarkConfig) => void
   containerRef?: React.RefObject<HTMLDivElement>
-  /**
-   * Video aspect ratio (width / height). Used so drag bounds match the
-   * conversion to Mux `overlay_settings` margins.
-   */
-  videoAspectRatio?: number
   /**
    * Optional video element ref. If provided, we compute the actual displayed
    * video content box (for `object-fit: contain`) so dragging aligns with what
@@ -96,7 +84,6 @@ export default function DraggableWatermark({
   watermark,
   onChange,
   containerRef,
-  videoAspectRatio,
   videoElementRef,
 }: DraggableWatermarkProps) {
   const [isDragging, setIsDragging] = useState(false)
@@ -119,7 +106,7 @@ export default function DraggableWatermark({
     return Math.max(0, Math.min(1, num / 100))
   }
 
-  const getVideoContentBox = () => {
+  const getVideoContentBox = useCallback(() => {
     const container = containerRef?.current
     if (!container) return {x: 0, y: 0, width: 0, height: 0}
 
@@ -144,7 +131,7 @@ export default function DraggableWatermark({
     const offsetY = (containerH - contentH) / 2
 
     return {x: offsetX, y: offsetY, width: contentW, height: contentH}
-  }
+  }, [containerRef, videoElementRef])
 
   const parseOverlayValue = (value: string | undefined): {n: number; unit: '%' | 'px'} | null => {
     if (!value) return null
@@ -180,19 +167,28 @@ export default function DraggableWatermark({
       return `${(v.n * h) / baseH}px`
     }
 
-    const hStyle =
-      overlay.horizontal_align === 'left'
-        ? {left: toCss(hm, 'x'), right: undefined, transform: 'translate(0, 0)'}
-        : overlay.horizontal_align === 'right'
-          ? {right: toCss(hm, 'x'), left: undefined, transform: 'translate(0, 0)'}
-          : {left: '50%', right: undefined, transform: 'translate(-50%, 0)'}
+    const computeHorizontalStyle = () => {
+      if (overlay.horizontal_align === 'left') {
+        return {left: toCss(hm, 'x'), right: undefined, transform: 'translate(0, 0)'}
+      }
+      if (overlay.horizontal_align === 'right') {
+        return {right: toCss(hm, 'x'), left: undefined, transform: 'translate(0, 0)'}
+      }
+      return {left: '50%', right: undefined, transform: 'translate(-50%, 0)'}
+    }
 
-    const vStyle =
-      overlay.vertical_align === 'top'
-        ? {top: toCss(vm, 'y'), bottom: undefined}
-        : overlay.vertical_align === 'bottom'
-          ? {bottom: toCss(vm, 'y'), top: undefined}
-          : {top: '50%', bottom: undefined}
+    const computeVerticalStyle = () => {
+      if (overlay.vertical_align === 'top') {
+        return {top: toCss(vm, 'y'), bottom: undefined}
+      }
+      if (overlay.vertical_align === 'bottom') {
+        return {bottom: toCss(vm, 'y'), top: undefined}
+      }
+      return {top: '50%', bottom: undefined}
+    }
+
+    const hStyle = computeHorizontalStyle()
+    const vStyle = computeVerticalStyle()
 
     // Combine translate for middle/center cases.
     let transform = hStyle.transform
@@ -272,17 +268,6 @@ export default function DraggableWatermark({
       let newY = startPosition.y + deltaYPercent
 
       // Constrain to bounds (accounting for watermark dimensions)
-      // Width is `size%` of video width. Height depends on image + video aspect ratios.
-      const arFromVideoEl =
-        videoElementRef?.current?.videoWidth && videoElementRef.current.videoHeight
-          ? videoElementRef.current.videoWidth / videoElementRef.current.videoHeight
-          : undefined
-      const arVideo = arFromVideoEl ?? videoAspectRatio ?? contentW / contentH
-      const arImage = watermark.imageAspectRatio ?? 1
-      const halfWidth = size / 2
-      const heightPercent = Math.max(0, Math.min(100, (size * arVideo) / arImage))
-      const halfHeight = heightPercent / 2
-
       // Allow watermark to be partially outside the canvas (cropped).
       // Center position can go from 0% to 100%, which means the watermark
       // can extend beyond the edges and be sent to Mux with negative margins.
@@ -303,11 +288,9 @@ export default function DraggableWatermark({
       dragStart,
       startPosition,
       containerRef,
-      size,
       watermark,
-      onChange,
-      videoAspectRatio,
-      videoElementRef,
+      debouncedOnChange,
+      getVideoContentBox,
     ]
   )
 
@@ -333,6 +316,7 @@ export default function DraggableWatermark({
         document.removeEventListener('mouseup', handleMouseUp)
       }
     }
+    return undefined
   }, [isDragging, handleMouseMove, handleMouseUp])
 
   if (!watermark.imageUrl) {
@@ -346,32 +330,36 @@ export default function DraggableWatermark({
   const contentBox = getVideoContentBox()
   const hasContentBox = contentBox.width > 0 && contentBox.height > 0
 
+  const computeWatermarkStyle = () => {
+    if (hasManualOverlay) {
+      return computeManualStyle(watermark.overlay_settings!)
+    }
+    if (hasContentBox) {
+      // Place relative to the actual video content box (object-fit: contain)
+      return {
+        left: `${contentBox.x + (position.x / 100) * contentBox.width}px`,
+        top: `${contentBox.y + (position.y / 100) * contentBox.height}px`,
+        transform: 'translate(-50%, -50%)',
+        width: `${Math.max(1, (size / 100) * contentBox.width)}px`,
+        cursor: isDragging ? 'grabbing' : 'grab',
+      }
+    }
+    // Fallback until video metadata is available (prevents 0px watermark)
+    return {
+      left: `${position.x}%`,
+      top: `${position.y}%`,
+      transform: 'translate(-50%, -50%)',
+      width: `${size}%`,
+      cursor: isDragging ? 'grabbing' : 'grab',
+    }
+  }
+
   return (
     <WatermarkOverlay
       ref={watermarkRef}
       $opacity={opacityForRender}
       onMouseDown={hasManualOverlay ? undefined : handleMouseDown}
-      style={
-        hasManualOverlay
-          ? computeManualStyle(watermark.overlay_settings!)
-          : hasContentBox
-            ? {
-                // Place relative to the actual video content box (object-fit: contain)
-                left: `${contentBox.x + (position.x / 100) * contentBox.width}px`,
-                top: `${contentBox.y + (position.y / 100) * contentBox.height}px`,
-                transform: 'translate(-50%, -50%)',
-                width: `${Math.max(1, (size / 100) * contentBox.width)}px`,
-                cursor: isDragging ? 'grabbing' : 'grab',
-              }
-            : {
-                // Fallback until video metadata is available (prevents 0px watermark)
-                left: `${position.x}%`,
-                top: `${position.y}%`,
-                transform: 'translate(-50%, -50%)',
-                width: `${size}%`,
-                cursor: isDragging ? 'grabbing' : 'grab',
-              }
-      }
+      style={computeWatermarkStyle()}
     >
       <img src={watermark.imageUrl} alt="Watermark" draggable={false} />
     </WatermarkOverlay>
@@ -381,7 +369,6 @@ export default function DraggableWatermark({
 interface WatermarkControlsProps {
   watermark: WatermarkConfig
   onChange: (watermark: WatermarkConfig) => void
-  onImageUpload?: (file: File) => void
   onValidationChange?: (error: string | null) => void
   /**
    * Optional refs to the canvas preview elements so we can display pixel-based
@@ -508,7 +495,7 @@ export function WatermarkControls({
         }
       }, 500)
     },
-    [watermark, onChange]
+    [watermark, onChange, onValidationChange]
   )
 
   // Cleanup timeout on unmount
@@ -542,11 +529,6 @@ export function WatermarkControls({
     }
 
     validateUrl(url)
-  }
-
-  const handleClearUrl = () => {
-    setUrlInput('')
-    validateUrl('')
   }
 
   const normalizeZeroPercent = (value: string | undefined) => {
@@ -635,13 +617,16 @@ export function WatermarkControls({
             placeholder="https://example.com/watermark.png"
             style={{
               padding: '8px 12px',
-              paddingRight: urlInput ? '96px' : isValid !== null ? '36px' : '12px',
-              border:
-                urlError || isValid === false
-                  ? '1px solid #e74c3c'
-                  : isValid === true
-                    ? '1px solid #4caf50'
-                    : '1px solid #ccc',
+              paddingRight: (() => {
+                if (urlInput) return '96px'
+                if (isValid !== null) return '36px'
+                return '12px'
+              })(),
+              border: (() => {
+                if (urlError || isValid === false) return '1px solid #e74c3c'
+                if (isValid === true) return '1px solid #4caf50'
+                return '1px solid #ccc'
+              })(),
               borderRadius: '4px',
               width: '100%',
               maxWidth: '100%',

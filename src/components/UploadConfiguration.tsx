@@ -682,7 +682,7 @@ export default function UploadConfiguration({
             title="Watermark"
             description={
               <>
-                Add a watermark overlay to your video using Mux's native watermark support.{' '}
+                Add a watermark overlay to your video using Mux&apos;s native watermark support.{' '}
                 <a
                   href="https://www.mux.com/docs/guides/add-watermarks-to-your-videos"
                   target="_blank"
@@ -711,7 +711,7 @@ export default function UploadConfiguration({
               {config.watermark?.imageUrl &&
                 stagedUpload.type === 'file' &&
                 // Canvas preview is only shown in "Canvas" mode (no explicit overlay_settings)
-                (!config.watermark.overlay_settings ? (
+                !config.watermark.overlay_settings && (
                   <WatermarkPreview
                     stagedUpload={stagedUpload}
                     watermark={config.watermark}
@@ -725,7 +725,7 @@ export default function UploadConfiguration({
                     previewContainerRef={watermarkPreviewContainerRef}
                     videoRef={watermarkPreviewVideoRef}
                   />
-                ) : null)}
+                )}
             </Stack>
           </FormField>
         )}
@@ -782,9 +782,11 @@ const WatermarkPreview = memo(function WatermarkPreview({
         URL.revokeObjectURL(url)
       }
     }
-  }, [stagedUpload])
+    return undefined
+  }, [stagedUpload, videoRef])
 
-  const isVertical = videoAspectRatio != null && videoAspectRatio < 1
+  const isVertical =
+    videoAspectRatio !== null && videoAspectRatio !== undefined && videoAspectRatio < 1
 
   return (
     <Card
@@ -831,7 +833,6 @@ const WatermarkPreview = memo(function WatermarkPreview({
           watermark={watermark}
           onChange={onWatermarkChange}
           containerRef={previewContainerRef as React.RefObject<HTMLDivElement>}
-          videoAspectRatio={videoAspectRatio ?? undefined}
           videoElementRef={videoRef as React.RefObject<HTMLVideoElement>}
         />
       </div>
