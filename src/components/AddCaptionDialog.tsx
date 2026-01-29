@@ -19,7 +19,7 @@ import {useId, useRef, useState} from 'react'
 import {addTextTrackFromUrl, generateSubtitles, getAsset} from '../actions/assets'
 import {useClient} from '../hooks/useClient'
 import {extractErrorMessage, pollTrackStatus} from '../util/textTracks'
-import {SUPPORTED_MUX_LANGUAGES, type MuxTextTrack, type VideoAssetDocument} from '../util/types'
+import {type MuxTextTrack, SUPPORTED_MUX_LANGUAGES, type VideoAssetDocument} from '../util/types'
 
 const LANGUAGE_OPTIONS = LanguagesList.getAllCodes().map((code) => ({
   value: code,

@@ -285,7 +285,6 @@ export interface MuxNewAssetSettings
     name?: string
     /** Indicates the track provides Subtitles for the Deaf or Hard-of-hearing (SDH). */
     closed_captions?: boolean
-    /// @TODO Huhh?>?? Below
     /** This optional parameter should be used tracks with type of text and text_type set to subtitles. */
     passthrough?: string
   }[]
