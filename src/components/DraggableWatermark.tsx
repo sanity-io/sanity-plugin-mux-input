@@ -285,8 +285,11 @@ export default function DraggableWatermark({
       const heightPercent = Math.max(0, Math.min(100, (size * arVideo) / arImage))
       const halfHeight = heightPercent / 2
 
-      newX = Math.max(halfWidth, Math.min(100 - halfWidth, newX))
-      newY = Math.max(halfHeight, Math.min(100 - halfHeight, newY))
+      // Allow watermark to be partially outside the canvas (cropped).
+      // Center position can go from 0% to 100%, which means the watermark
+      // can extend beyond the edges and be sent to Mux with negative margins.
+      newX = Math.max(0, Math.min(100, newX))
+      newY = Math.max(0, Math.min(100, newY))
 
       // Update local position immediately for visual feedback
       setLocalPosition({x: newX, y: newY})

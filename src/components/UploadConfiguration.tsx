@@ -244,9 +244,7 @@ export default function UploadConfiguration({
       currentVideoSrc = null
     }
 
-    const validateDuration = (videoSrc: string, shouldRevokeUrl = false) => {
-      if (!MAX_DURATION_SECONDS || MAX_DURATION_SECONDS <= 0) return
-
+    const loadVideoMetadata = (videoSrc: string, shouldRevokeUrl = false) => {
       setIsLoadingDuration(true)
       videoElement = document.createElement('video')
       videoElement.preload = 'metadata'
@@ -255,12 +253,14 @@ export default function UploadConfiguration({
       videoElement.onloadedmetadata = () => {
         const duration = videoElement!.duration
         setVideoDuration(duration)
+        // Always calculate aspect ratio for watermark preview positioning
         if (videoElement?.videoWidth && videoElement?.videoHeight) {
           setVideoAspectRatio(videoElement.videoWidth / videoElement.videoHeight)
         }
         setIsLoadingDuration(false)
 
-        if (duration > MAX_DURATION_SECONDS) {
+        // Only validate duration if a max is configured
+        if (MAX_DURATION_SECONDS && MAX_DURATION_SECONDS > 0 && duration > MAX_DURATION_SECONDS) {
           setValidationError(
             `Video duration (${formatSeconds(duration)}) exceeds maximum allowed duration of ${formatSeconds(MAX_DURATION_SECONDS)}`
           )
@@ -293,7 +293,7 @@ export default function UploadConfiguration({
     if (stagedUpload.type === 'file') {
       const file = stagedUpload.files[0]
       if (validateFileSize(file.size)) {
-        validateDuration(URL.createObjectURL(file), true)
+        loadVideoMetadata(URL.createObjectURL(file), true)
       }
     }
 
@@ -324,14 +324,14 @@ export default function UploadConfiguration({
           }
 
           if (shouldValidateDuration) {
-            validateDuration(url)
+            loadVideoMetadata(url)
           }
         } catch {
           setIsLoadingFileSize(false)
           console.warn('Could not validate file size from URL')
           // Skip validation of file size, but still validate duration
           setCanSkipFileSizeValidation(true)
-          validateDuration(url)
+          loadVideoMetadata(url)
         }
       }
 
@@ -777,9 +777,6 @@ const WatermarkPreview = memo(function WatermarkPreview({
       const file = stagedUpload.files[0]
       const url = URL.createObjectURL(file)
       videoRef.current.src = url
-      videoRef.current.style.width = '100%'
-      videoRef.current.style.height = '100%'
-      videoRef.current.style.objectFit = 'contain'
 
       return () => {
         URL.revokeObjectURL(url)
@@ -787,36 +784,59 @@ const WatermarkPreview = memo(function WatermarkPreview({
     }
   }, [stagedUpload])
 
+  const isVertical = videoAspectRatio != null && videoAspectRatio < 1
+
   return (
     <Card
-      ref={previewContainerRef}
       tone="transparent"
       border
-      padding={2}
       style={{
-        position: 'relative',
-        // Match the uploaded video's aspect ratio (supports vertical videos)
-        aspectRatio: videoAspectRatio ? String(videoAspectRatio) : '16/9',
-        minHeight: '200px',
         overflow: 'hidden',
+        // For vertical videos, center the preview and limit its width
+        display: 'flex',
+        justifyContent: 'center',
       }}
     >
-      <video
-        ref={videoRef}
+      {/* Inner container that exactly matches the video aspect ratio - no padding, no letterbox */}
+      <div
+        ref={previewContainerRef}
         style={{
-          width: '100%',
-          height: '100%',
-          objectFit: 'contain',
-          display: 'block',
+          position: 'relative',
+          // For vertical videos: limit width so the preview doesn't get too tall
+          // For horizontal videos: use full width
+          width: isVertical ? 'auto' : '100%',
+          // Use the video's actual aspect ratio so the canvas matches exactly what Mux sees
+          aspectRatio: videoAspectRatio ? String(videoAspectRatio) : '16/9',
+          // For vertical videos: set a reasonable max height and let width be calculated from aspect ratio
+          // For horizontal videos: use minHeight as before
+          ...(isVertical
+            ? {height: '400px', maxHeight: '50vh'}
+            : {minHeight: '200px'}),
+          overflow: 'hidden',
         }}
-      />
-      <DraggableWatermark
-        watermark={watermark}
-        onChange={onWatermarkChange}
-        containerRef={previewContainerRef as React.RefObject<HTMLDivElement>}
-        videoAspectRatio={videoAspectRatio ?? undefined}
-        videoElementRef={videoRef as React.RefObject<HTMLVideoElement>}
-      />
+      >
+        <video
+          ref={videoRef}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            // Use 'fill' to ensure video fills the entire container without letterboxing
+            // The container already has the correct aspect ratio, so no distortion occurs
+            objectFit: 'fill',
+            display: 'block',
+          }}
+        />
+        <DraggableWatermark
+          watermark={watermark}
+          onChange={onWatermarkChange}
+          containerRef={previewContainerRef as React.RefObject<HTMLDivElement>}
+          videoAspectRatio={videoAspectRatio ?? undefined}
+          videoElementRef={videoRef as React.RefObject<HTMLVideoElement>}
+        />
+      </div>
     </Card>
   )
 })
