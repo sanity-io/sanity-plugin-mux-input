@@ -40,10 +40,6 @@ function sanitizeOverlaySettingsInPlace(settings: MuxNewAssetSettings) {
 
 function sanitizePxStringsInJson(json: string): string {
   // Replace any "...px" string values that include decimals with whole pixels.
-  // Examples:
-  // - "616.79px" -> "617px"
-  // - "-0.4px" -> "-1px"
-  // - "0.2px" -> "1px"
   return json.replace(/"(-?\d+(?:\.\d+)?)px"/g, (_match, num) => {
     const n = Number(num)
     if (!Number.isFinite(n)) return _match

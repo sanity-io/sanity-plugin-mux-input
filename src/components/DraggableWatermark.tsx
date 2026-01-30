@@ -397,6 +397,10 @@ export function WatermarkControls({
   // Track if we're currently updating to prevent sync loop
   const isUpdatingRef = useRef(false)
 
+  const isValidExtension = (extension: string) => {
+    return extension.endsWith('.png') || extension.endsWith('.jpg') || extension.endsWith('.jpeg')
+  }
+
   // Validate URL with debounce for better UX
   const validateUrl = useCallback(
     (url: string) => {
@@ -428,11 +432,7 @@ export function WatermarkControls({
         try {
           const urlObj = new URL(url)
           const pathname = urlObj.pathname.toLowerCase()
-          if (
-            pathname.endsWith('.png') ||
-            pathname.endsWith('.jpg') ||
-            pathname.endsWith('.jpeg')
-          ) {
+          if (isValidExtension(pathname)) {
             setIsValid(true)
             setUrlError(null)
             onValidationChange?.(null)
