@@ -1,5 +1,6 @@
 import type {ObjectInputProps, PreviewLayoutKey, PreviewProps, SchemaType} from 'sanity'
 import type {PartialDeep} from 'type-fest'
+import type MuxPlayerElement from '@mux/mux-player'
 
 /**
  * Standard static rendition options available for plugin configuration defaults
@@ -149,6 +150,23 @@ export interface MuxInputConfig {
    * @defaultValue undefined
    */
   maxAssetDuration?: number
+
+  /**
+   * HLS.js configuration options to be passed to the Mux Player.
+   * These options allow you to customize the underlying HLS.js playback engine behavior.
+   *
+   * @see {@link https://github.com/video-dev/hls.js/blob/master/docs/API.md#fine-tuning}
+   * @defaultValue undefined
+   * @example
+   * ```ts
+   * {
+   *   maxBufferLength: 30,
+   *   lowLatencyMode: true,
+   *   capLevelToPlayerSize: true
+   * }
+   * ```
+   */
+  hlsConfig?: MuxPlayerElement['_hlsConfig']
 }
 
 export interface PluginConfig extends MuxInputConfig {
@@ -285,7 +303,6 @@ export interface MuxNewAssetSettings
     name?: string
     /** Indicates the track provides Subtitles for the Deaf or Hard-of-hearing (SDH). */
     closed_captions?: boolean
-    /// @TODO Huhh?>?? Below
     /** This optional parameter should be used tracks with type of text and text_type set to subtitles. */
     passthrough?: string
   }[]
@@ -383,7 +400,12 @@ export interface MuxTextTrack {
   id: string
   text_type?: 'subtitles'
   // https://docs.mux.com/api-reference/video#operation/list-assets:~:text=text%20type%20tracks.-,tracks%5B%5D.,text_source,-string
-  text_source?: 'uploaded' | 'embedded' | 'generated_live' | 'generated_live_final'
+  text_source?:
+    | 'uploaded'
+    | 'embedded'
+    | 'generated_live'
+    | 'generated_live_final'
+    | 'generated_vod'
   // BCP 47 language code
   language_code?: 'en' | 'en-US' | string
   // The name of the track containing a human-readable description. The hls manifest will associate a subtitle text track with this value
@@ -392,8 +414,12 @@ export interface MuxTextTrack {
   //  Max 255 characters
   passthrough?: string
   status: 'preparing' | 'ready' | 'errored'
+  error?: {
+    type: string
+    messages?: string[]
+  }
 }
-export type MuxTrack = MuxVideoTrack | MuxAudioTrack
+export type MuxTrack = MuxVideoTrack | MuxAudioTrack | MuxTextTrack
 // Typings lifted from https://docs.mux.com/api-reference/video#tag/assets
 export interface MuxAsset {
   id: string

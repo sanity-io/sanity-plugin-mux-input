@@ -10,6 +10,7 @@ import {AUDIO_ASPECT_RATIO, MIN_ASPECT_RATIO} from '../util/constants'
 import {getPosterSrc} from '../util/getPosterSrc'
 import {getVideoSrc} from '../util/getVideoSrc'
 import type {VideoAssetDocument} from '../util/types'
+import CaptionsDialog from './CaptionsDialog'
 import EditThumbnailDialog from './EditThumbnailDialog'
 import {AudioIcon} from './icons/Audio'
 
@@ -17,11 +18,15 @@ export default function VideoPlayer({
   asset,
   thumbnailWidth = 250,
   children,
+  hlsConfig,
   ...props
 }: PropsWithChildren<
-  {asset: VideoAssetDocument; thumbnailWidth?: number; forceAspectRatio?: number} & Partial<
-    Pick<MuxPlayerProps, 'autoPlay'>
-  >
+  {
+    asset: VideoAssetDocument
+    thumbnailWidth?: number
+    forceAspectRatio?: number
+    hlsConfig?: MuxPlayerProps['_hlsConfig']
+  } & Partial<Pick<MuxPlayerProps, 'autoPlay'>>
 >) {
   const client = useClient()
   const {dialogState} = useDialogStateContext()
@@ -110,6 +115,7 @@ export default function VideoPlayer({
                 page_type: 'Preview Player',
               }}
               audio={isAudio}
+              _hlsConfig={hlsConfig}
               style={{
                 ...(!isAudio && {height: '100%'}),
                 width: '100%',
@@ -144,6 +150,7 @@ export default function VideoPlayer({
       {dialogState === 'edit-thumbnail' && (
         <EditThumbnailDialog asset={asset} currentTime={muxPlayer?.current?.currentTime} />
       )}
+      {dialogState === 'edit-captions' && <CaptionsDialog asset={asset} />}
     </>
   )
 }

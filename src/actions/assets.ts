@@ -69,3 +69,78 @@ export function listAssets(
     query,
   })
 }
+
+/**
+ * Adds a new text track to an existing asset using a VTT file URL
+ */
+export function addTextTrackFromUrl(
+  client: SanityClient,
+  assetId: string,
+  vttUrl: string,
+  options: {
+    language_code: string
+    name: string
+    text_type?: 'subtitles'
+  }
+) {
+  const {dataset} = client.config()
+
+  return client.request<{data: MuxAsset}>({
+    url: `/addons/mux/assets/${dataset}/${assetId}/tracks`,
+    withCredentials: true,
+    method: 'POST',
+    body: {
+      url: vttUrl,
+      type: 'text',
+      language_code: options.language_code,
+      name: options.name,
+      text_type: options.text_type || 'subtitles',
+    },
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+}
+
+/**
+ * Generates subtitles automatically for an audio track
+ */
+export function generateSubtitles(
+  client: SanityClient,
+  assetId: string,
+  audioTrackId: string,
+  options: {
+    language_code: string
+    name: string
+  }
+) {
+  const {dataset} = client.config()
+  return client.request<{data: MuxAsset}>({
+    url: `/addons/mux/assets/${dataset}/${assetId}/tracks/${audioTrackId}/generate-subtitles`,
+    withCredentials: true,
+    method: 'POST',
+    body: {
+      generated_subtitles: [
+        {
+          language_code: options.language_code,
+          name: options.name,
+        },
+      ],
+    },
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+}
+
+/**
+ * Deletes a text track from an asset
+ */
+export function deleteTextTrack(client: SanityClient, assetId: string, trackId: string) {
+  const {dataset} = client.config()
+  return client.request<{data: MuxAsset}>({
+    url: `/addons/mux/assets/${dataset}/${assetId}/tracks/${trackId}`,
+    withCredentials: true,
+    method: 'DELETE',
+  })
+}

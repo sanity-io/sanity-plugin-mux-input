@@ -297,6 +297,13 @@ export default function Uploader(props: Props) {
 
   // Stages and validates an upload from pasting an asset URL
   const handlePaste: React.ClipboardEventHandler<HTMLInputElement> = (event) => {
+    const target = event.target as HTMLElement
+
+    // Ignore paste coming from the VTT URL input
+    if (target.closest('#vtt-url')) {
+      return
+    }
+
     event.preventDefault()
     event.stopPropagation()
     const clipboardData =
@@ -435,6 +442,7 @@ export default function Uploader(props: Props) {
               readOnly={props.readOnly}
               asset={props.asset}
               onChange={props.onChange}
+              config={props.config}
               buttons={
                 <PlayerActionsMenu
                   accept={acceptMimeString}
