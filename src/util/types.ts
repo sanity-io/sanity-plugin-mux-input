@@ -1,6 +1,6 @@
+import type MuxPlayerElement from '@mux/mux-player'
 import type {ObjectInputProps, PreviewLayoutKey, PreviewProps, SchemaType} from 'sanity'
 import type {PartialDeep} from 'type-fest'
-import type MuxPlayerElement from '@mux/mux-player'
 
 /**
  * Standard static rendition options available for plugin configuration defaults
