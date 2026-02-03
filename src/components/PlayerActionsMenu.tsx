@@ -5,6 +5,7 @@ import {
   PlugIcon,
   ResetIcon,
   SearchIcon,
+  TranslateIcon,
   UploadIcon,
 } from '@sanity/icons'
 import {
@@ -122,11 +123,18 @@ function PlayerActionsMenu(
               onClick={() => setDialogState('select-video')}
             />
             {isVideoAsset(asset) && (
-              <MenuItem
-                icon={ImageIcon}
-                text="Thumbnail"
-                onClick={() => setDialogState('edit-thumbnail')}
-              />
+              <>
+                <MenuItem
+                  icon={ImageIcon}
+                  text="Thumbnail"
+                  onClick={() => setDialogState('edit-thumbnail')}
+                />
+                <MenuItem
+                  icon={TranslateIcon}
+                  text="Captions"
+                  onClick={() => setDialogState('edit-captions')}
+                />
+              </>
             )}
             <MenuDivider />
             {hasConfigAccess && (

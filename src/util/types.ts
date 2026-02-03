@@ -303,7 +303,6 @@ export interface MuxNewAssetSettings
     name?: string
     /** Indicates the track provides Subtitles for the Deaf or Hard-of-hearing (SDH). */
     closed_captions?: boolean
-    /// @TODO Huhh?>?? Below
     /** This optional parameter should be used tracks with type of text and text_type set to subtitles. */
     passthrough?: string
   }[]
@@ -401,7 +400,12 @@ export interface MuxTextTrack {
   id: string
   text_type?: 'subtitles'
   // https://docs.mux.com/api-reference/video#operation/list-assets:~:text=text%20type%20tracks.-,tracks%5B%5D.,text_source,-string
-  text_source?: 'uploaded' | 'embedded' | 'generated_live' | 'generated_live_final'
+  text_source?:
+    | 'uploaded'
+    | 'embedded'
+    | 'generated_live'
+    | 'generated_live_final'
+    | 'generated_vod'
   // BCP 47 language code
   language_code?: 'en' | 'en-US' | string
   // The name of the track containing a human-readable description. The hls manifest will associate a subtitle text track with this value
@@ -410,8 +414,12 @@ export interface MuxTextTrack {
   //  Max 255 characters
   passthrough?: string
   status: 'preparing' | 'ready' | 'errored'
+  error?: {
+    type: string
+    messages?: string[]
+  }
 }
-export type MuxTrack = MuxVideoTrack | MuxAudioTrack
+export type MuxTrack = MuxVideoTrack | MuxAudioTrack | MuxTextTrack
 // Typings lifted from https://docs.mux.com/api-reference/video#tag/assets
 export interface MuxAsset {
   id: string
