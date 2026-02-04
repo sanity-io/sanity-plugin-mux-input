@@ -13,6 +13,7 @@ import {getPlaybackPolicyById} from '../util/getPlaybackPolicy'
 import {getPosterSrc} from '../util/getPosterSrc'
 import {getVideoSrc} from '../util/getVideoSrc'
 import type {VideoAssetDocument} from '../util/types'
+import CaptionsDialog from './CaptionsDialog'
 import EditThumbnailDialog from './EditThumbnailDialog'
 import {AudioIcon} from './icons/Audio'
 
@@ -203,6 +204,7 @@ export default function VideoPlayer({
       {dialogState === 'edit-thumbnail' && (
         <EditThumbnailDialog asset={asset} currentTime={muxPlayer?.current?.currentTime} />
       )}
+      {dialogState === 'edit-captions' && <CaptionsDialog asset={asset} />}
     </>
   )
 }
