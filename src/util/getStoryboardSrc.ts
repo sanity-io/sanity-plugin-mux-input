@@ -1,7 +1,7 @@
 import type {SanityClient} from 'sanity'
 
+import {getPlaybackId} from '../util/getPlaybackPolicy'
 import {generateJwt} from './generateJwt'
-import {getPlaybackId} from './getPlaybackId'
 import {getPlaybackPolicyById} from './getPlaybackPolicy'
 import type {MuxStoryboardUrl, VideoAssetDocument} from './types'
 
