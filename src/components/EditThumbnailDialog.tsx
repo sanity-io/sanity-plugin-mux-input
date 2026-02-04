@@ -1,5 +1,5 @@
 import {Button, Dialog, Flex, Stack, Text, TextInput} from '@sanity/ui'
-import React, {useId, useMemo, useState} from 'react'
+import React, {Suspense, useId, useMemo, useState} from 'react'
 import {getDevicePixelRatio} from 'use-device-pixel-ratio'
 
 import {useDialogStateContext} from '../context/DialogStateContext'
@@ -11,6 +11,7 @@ import {
 } from '../util/formatSeconds'
 import type {VideoAssetDocument} from '../util/types'
 import VideoThumbnail from './VideoThumbnail'
+import VideoThumbnailFallback from './VideoThumbnailFallback'
 
 export interface Props {
   asset: VideoAssetDocument
@@ -87,13 +88,17 @@ export default function EditThumbnailDialog({asset, currentTime = 0}: Props) {
           <Text size={1} weight="semibold">
             Current:
           </Text>
-          <VideoThumbnail asset={asset} width={width} staticImage />
+          <Suspense fallback={<VideoThumbnailFallback width={width} />}>
+            <VideoThumbnail asset={asset} width={width} staticImage />
+          </Suspense>
         </Stack>
         <Stack space={2}>
           <Text size={1} weight="semibold">
             New:
           </Text>
-          <VideoThumbnail asset={assetWithNewThumbnail} width={width} staticImage />
+          <Suspense fallback={<VideoThumbnailFallback width={width} />}>
+            <VideoThumbnail asset={assetWithNewThumbnail} width={width} staticImage />
+          </Suspense>
         </Stack>
 
         <Stack space={2}>

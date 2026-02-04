@@ -47,6 +47,10 @@ export default function VideoPlayer({
       return {error: new TypeError('Asset has no playback ID')}
       // eslint-disable-next-line @typescript-eslint/no-shadow
     } catch (error) {
+      // Re-throw if it's a Promise (Suspense mechanism) - don't catch it!
+      if (error && typeof error === 'object' && 'then' in error && typeof error.then === 'function') {
+        throw error
+      }
       return {error}
     }
   }, [asset, client, thumbnailWidth])
