@@ -740,7 +740,7 @@ export function WatermarkControls({
                   Mux overlay_settings
                 </Text>
                 <Grid columns={[1, 2]} gap={3} style={{width: '100%'}}>
-                  <Box style={{minWidth: 0}}>
+                  <Stack space={2} style={{minWidth: 0}}>
                     <Text size={0} muted>
                       horizontal_align
                     </Text>
@@ -763,8 +763,8 @@ export function WatermarkControls({
                       <option value="center">center</option>
                       <option value="right">right</option>
                     </select>
-                  </Box>
-                  <Box style={{minWidth: 0}}>
+                  </Stack>
+                  <Stack space={2} style={{minWidth: 0}}>
                     <Text size={0} muted>
                       horizontal_margin (e.g. 2% or 40px)
                     </Text>
@@ -774,8 +774,8 @@ export function WatermarkControls({
                         updateOverlaySettings({horizontal_margin: e.currentTarget.value})
                       }
                     />
-                  </Box>
-                  <Box style={{minWidth: 0}}>
+                  </Stack>
+                  <Stack space={2} style={{minWidth: 0}}>
                     <Text size={0} muted>
                       vertical_align
                     </Text>
@@ -798,8 +798,8 @@ export function WatermarkControls({
                       <option value="middle">middle</option>
                       <option value="bottom">bottom</option>
                     </select>
-                  </Box>
-                  <Box style={{minWidth: 0}}>
+                  </Stack>
+                  <Stack space={2} style={{minWidth: 0}}>
                     <Text size={0} muted>
                       vertical_margin (e.g. 2% or 40px)
                     </Text>
@@ -809,8 +809,8 @@ export function WatermarkControls({
                         updateOverlaySettings({vertical_margin: e.currentTarget.value})
                       }
                     />
-                  </Box>
-                  <Box style={{minWidth: 0}}>
+                  </Stack>
+                  <Stack space={2} style={{minWidth: 0}}>
                     <Text size={0} muted>
                       width (e.g. 25% or 80px)
                     </Text>
@@ -818,8 +818,8 @@ export function WatermarkControls({
                       value={watermark.overlay_settings?.width || `${watermark.size ?? 20}%`}
                       onChange={(e) => updateOverlaySettings({width: e.currentTarget.value})}
                     />
-                  </Box>
-                  <Box style={{minWidth: 0}}>
+                  </Stack>
+                  <Stack space={2} style={{minWidth: 0}}>
                     <Text size={0} muted>
                       opacity (e.g. 90%)
                     </Text>
@@ -830,7 +830,7 @@ export function WatermarkControls({
                       }
                       onChange={(e) => updateOverlaySettings({opacity: e.currentTarget.value})}
                     />
-                  </Box>
+                  </Stack>
                 </Grid>
                 <Text size={0} muted>
                   Margins and width accept either percentages or pixels, per the Mux guide.
