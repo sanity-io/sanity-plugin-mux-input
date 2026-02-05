@@ -1,4 +1,9 @@
-import type {MuxPlaybackId, VideoAssetDocument} from './types'
+import type {
+  AdvancedPlaybackPolicy,
+  MuxPlaybackId,
+  PlaybackPolicy,
+  VideoAssetDocument,
+} from './types'
 
 /* - Returns the playback id of the asset based on the specified priority.
   By default chooses the "strongest" policy
@@ -47,4 +52,18 @@ export function getPlaybackPolicyById(
   playbackId: string
 ): MuxPlaybackId | undefined {
   return asset.data?.playback_ids?.find((entry) => playbackId === entry.id)
+}
+
+export function hasPlaybackPolicy(
+  data: Partial<{
+    playback_policy?: PlaybackPolicy[]
+    advanced_playback_policies: AdvancedPlaybackPolicy[]
+  }>,
+  policy: PlaybackPolicy
+) {
+  return (
+    (data.advanced_playback_policies &&
+      data.advanced_playback_policies.find((p) => p.policy === policy)) ||
+    data.playback_policy?.find((p) => p === policy)
+  )
 }
