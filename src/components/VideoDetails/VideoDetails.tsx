@@ -7,6 +7,7 @@ import {
   ErrorOutlineIcon,
   RevertIcon,
   SearchIcon,
+  SyncIcon,
   TagIcon,
   TrashIcon,
 } from '@sanity/icons'
@@ -71,6 +72,8 @@ const VideoDetails: React.FC<VideoDetailsProps> = (props) => {
     handleClose,
     confirmClose,
     saveChanges,
+    handleResync,
+    isResyncing,
   } = useVideoDetails(props)
 
   const isSaving = state === 'saving'
@@ -97,16 +100,29 @@ const VideoDetails: React.FC<VideoDetailsProps> = (props) => {
       footer={
         <Card padding={3}>
           <Flex justify="space-between" align="center">
-            <Button
-              icon={TrashIcon}
-              fontSize={2}
-              padding={3}
-              mode="bleed"
-              text="Delete"
-              tone="critical"
-              onClick={() => setState('deleting')}
-              disabled={isSaving}
-            />
+            <Flex gap={2}>
+              <Button
+                icon={TrashIcon}
+                fontSize={2}
+                padding={3}
+                mode="bleed"
+                text="Delete"
+                tone="critical"
+                onClick={() => setState('deleting')}
+                disabled={isSaving || isResyncing}
+              />
+              <Button
+                icon={SyncIcon}
+                fontSize={2}
+                padding={3}
+                mode="bleed"
+                text="Resync"
+                tone="primary"
+                onClick={handleResync}
+                disabled={isSaving || isResyncing}
+                iconRight={isResyncing && Spinner}
+              />
+            </Flex>
             {modified && (
               <Button
                 icon={CheckmarkIcon}
@@ -117,7 +133,7 @@ const VideoDetails: React.FC<VideoDetailsProps> = (props) => {
                 tone="positive"
                 onClick={saveChanges}
                 iconRight={isSaving && Spinner}
-                disabled={isSaving}
+                disabled={isSaving || isResyncing}
               />
             )}
           </Flex>
