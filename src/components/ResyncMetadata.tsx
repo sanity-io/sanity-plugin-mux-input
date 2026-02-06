@@ -276,5 +276,5 @@ export default function ResyncMetadata() {
   }
 
   // eslint-disable-next-line consistent-return
-  return <Button mode="bleed" text="Resync with Mux" onClick={resyncMetadata.openDialog} />
+  return <Button mode="bleed" text="Sync with Mux" onClick={resyncMetadata.openDialog} />
 }
