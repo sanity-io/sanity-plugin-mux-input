@@ -32,9 +32,6 @@ export function convertWatermarkToMuxOverlay(
   const size = watermark.size || 20
   const opacity = watermark.opacity ?? 0.7
 
-  /**
-   * Round an existing "123.4px" style string to whole pixels, avoiding 0px.
-   */
   const roundPxString = (value: string | undefined): string | undefined => {
     if (!value) return value
     const trimmed = value.trim()
@@ -130,7 +127,6 @@ export function convertWatermarkToMuxOverlay(
     return `${isZeroish ? 0.01 : value}%`
   }
 
-  // Watermark width is defined as % of video width (Mux `width` behaves the same).
   const watermarkWidthPercentOfVideoWidth = size
 
   /**
@@ -150,8 +146,6 @@ export function convertWatermarkToMuxOverlay(
   const halfWidth = watermarkWidthPercentOfVideoWidth / 2
   const halfHeight = watermarkHeightPercentOfVideoHeight / 2
 
-  // Convert center-position to top-left margins.
-  // We cap the "inside frame" side but allow negative values.
   const leftMargin = clampPercent(
     Math.min(position.x - halfWidth, 100 - watermarkWidthPercentOfVideoWidth)
   )

@@ -72,11 +72,6 @@ interface DraggableWatermarkProps {
   watermark: WatermarkConfig
   onChange: (watermark: WatermarkConfig) => void
   containerRef?: React.RefObject<HTMLDivElement>
-  /**
-   * Optional video element ref. If provided, we compute the actual displayed
-   * video content box (for `object-fit: contain`) so dragging aligns with what
-   * Mux considers the video frame (no letterbox padding).
-   */
   videoElementRef?: React.RefObject<HTMLVideoElement>
 }
 
@@ -118,7 +113,6 @@ export default function DraggableWatermark({
     const videoW = videoEl?.videoWidth || 0
     const videoH = videoEl?.videoHeight || 0
 
-    // If we don't know the intrinsic video size yet, fall back to container box.
     if (!videoW || !videoH || !containerW || !containerH) {
       return {x: 0, y: 0, width: containerW, height: containerH}
     }
@@ -146,8 +140,6 @@ export default function DraggableWatermark({
   }
 
   const computeManualStyle = (overlay: MuxOverlaySettings) => {
-    // Pixel scaling behavior per Mux docs:
-    // px values are applied as if video scaled to 1920x1080 (horizontal) or 1080x1920 (vertical).
     const rect = containerRef?.current?.getBoundingClientRect()
     const w = rect?.width ?? 0
     const h = rect?.height ?? 0
@@ -190,7 +182,6 @@ export default function DraggableWatermark({
     const hStyle = computeHorizontalStyle()
     const vStyle = computeVerticalStyle()
 
-    // Combine translate for middle/center cases.
     let transform = hStyle.transform
     if (overlay.vertical_align === 'middle') {
       transform =
@@ -208,7 +199,6 @@ export default function DraggableWatermark({
     }
   }
 
-  // Debounced onChange to prevent excessive re-renders
   const debouncedOnChange = useCallback(
     (newWatermark: WatermarkConfig) => {
       if (debounceTimeoutRef.current) {
@@ -221,7 +211,6 @@ export default function DraggableWatermark({
     [onChange]
   )
 
-  // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
       if (debounceTimeoutRef.current) {
@@ -230,7 +219,6 @@ export default function DraggableWatermark({
     }
   }, [])
 
-  // Sync local position with watermark prop when not dragging
   useEffect(() => {
     if (!isDragging && watermark.position) {
       setLocalPosition(watermark.position)
@@ -259,25 +247,17 @@ export default function DraggableWatermark({
       const dx = e.clientX - dragStart.x
       const dy = e.clientY - dragStart.y
 
-      // Convert pixel movement to percentage
       const deltaXPercent = (dx / contentW) * 100
       const deltaYPercent = (dy / contentH) * 100
 
-      // Calculate new position
       let newX = startPosition.x + deltaXPercent
       let newY = startPosition.y + deltaYPercent
 
-      // Constrain to bounds (accounting for watermark dimensions)
-      // Allow watermark to be partially outside the canvas (cropped).
-      // Center position can go from 0% to 100%, which means the watermark
-      // can extend beyond the edges and be sent to Mux with negative margins.
       newX = Math.max(0, Math.min(100, newX))
       newY = Math.max(0, Math.min(100, newY))
 
-      // Update local position immediately for visual feedback
       setLocalPosition({x: newX, y: newY})
 
-      // Debounce the onChange to parent to prevent excessive re-renders
       debouncedOnChange({
         ...watermark,
         position: {x: newX, y: newY},
@@ -296,7 +276,6 @@ export default function DraggableWatermark({
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false)
-    // Ensure final position is saved immediately when dragging ends
     if (debounceTimeoutRef.current) {
       clearTimeout(debounceTimeoutRef.current)
       debounceTimeoutRef.current = null
@@ -335,7 +314,6 @@ export default function DraggableWatermark({
       return computeManualStyle(watermark.overlay_settings!)
     }
     if (hasContentBox) {
-      // Place relative to the actual video content box (object-fit: contain)
       return {
         left: `${contentBox.x + (position.x / 100) * contentBox.width}px`,
         top: `${contentBox.y + (position.y / 100) * contentBox.height}px`,
@@ -344,7 +322,6 @@ export default function DraggableWatermark({
         cursor: isDragging ? 'grabbing' : 'grab',
       }
     }
-    // Fallback until video metadata is available (prevents 0px watermark)
     return {
       left: `${position.x}%`,
       top: `${position.y}%`,
@@ -370,10 +347,6 @@ interface WatermarkControlsProps {
   watermark: WatermarkConfig
   onChange: (watermark: WatermarkConfig) => void
   onValidationChange?: (error: string | null) => void
-  /**
-   * Optional refs to the canvas preview elements so we can display pixel-based
-   * values (e.g. watermark width in px) in Canvas mode.
-   */
   previewContainerRef?: React.RefObject<HTMLDivElement | null>
   previewVideoRef?: React.RefObject<HTMLVideoElement | null>
 }
@@ -394,14 +367,12 @@ export function WatermarkControls({
     watermark.overlay_settings ? 'manual' : 'canvas'
   )
 
-  // Track if we're currently updating to prevent sync loop
   const isUpdatingRef = useRef(false)
 
   const isValidExtension = (extension: string) => {
     return extension.endsWith('.png') || extension.endsWith('.jpg') || extension.endsWith('.jpeg')
   }
 
-  // Validate URL with debounce for better UX
   const validateUrl = useCallback(
     (url: string) => {
       if (validationTimeoutRef.current) {
@@ -413,7 +384,6 @@ export function WatermarkControls({
         setIsValid(null)
         setIsValidating(false)
         onValidationChange?.(null)
-        // Clear watermark when URL is deleted
         isUpdatingRef.current = true
         onChange({
           ...watermark,
@@ -436,7 +406,6 @@ export function WatermarkControls({
             setIsValid(true)
             setUrlError(null)
             onValidationChange?.(null)
-            // Load image to capture aspect ratio for correct positioning.
             const img = new Image()
             img.onload = () => {
               const imageAspectRatio =
@@ -450,7 +419,6 @@ export function WatermarkControls({
               })
             }
             img.onerror = () => {
-              // If we can't load to measure, still enable; fallback aspect ratio handled downstream.
               isUpdatingRef.current = true
               onChange({
                 ...watermark,
@@ -466,7 +434,6 @@ export function WatermarkControls({
             setIsValid(false)
             setUrlError(errorMsg)
             onValidationChange?.(errorMsg)
-            // Clear watermark when URL is invalid
             isUpdatingRef.current = true
             onChange({
               ...watermark,
@@ -481,7 +448,6 @@ export function WatermarkControls({
           const errorMsg = 'Please enter a valid URL (e.g., https://example.com/watermark.png)'
           setUrlError(errorMsg)
           onValidationChange?.(errorMsg)
-          // Clear watermark when URL is invalid
           isUpdatingRef.current = true
           onChange({
             ...watermark,
@@ -498,7 +464,6 @@ export function WatermarkControls({
     [watermark, onChange, onValidationChange]
   )
 
-  // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
       if (validationTimeoutRef.current) {
@@ -507,7 +472,6 @@ export function WatermarkControls({
     }
   }, [])
 
-  // Keep local mode in sync with external changes
   useEffect(() => {
     setMode(watermark.overlay_settings ? 'manual' : 'canvas')
   }, [watermark.overlay_settings])
@@ -516,7 +480,6 @@ export function WatermarkControls({
     const url = e.target.value
     setUrlInput(url)
 
-    // Immediately clear any existing watermark while new URL is being validated
     if (watermark.imageUrl && url !== watermark.imageUrl) {
       isUpdatingRef.current = true
       onChange({
@@ -534,7 +497,6 @@ export function WatermarkControls({
   const normalizeZeroPercent = (value: string | undefined) => {
     if (!value) return value
     const trimmed = value.trim()
-    // Only adjust percentage strings (not px). Accept negative and whitespace.
     if (!trimmed.endsWith('%')) return value
     const n = Number(trimmed.slice(0, -1))
     if (!Number.isFinite(n)) return value
@@ -564,7 +526,6 @@ export function WatermarkControls({
       enabled: true,
       overlay_settings: {
         ...merged,
-        // Keep the "0% -> 0.01%" behavior for margins
         horizontal_margin:
           normalizeZeroPercent(merged.horizontal_margin) || merged.horizontal_margin,
         vertical_margin: normalizeZeroPercent(merged.vertical_margin) || merged.vertical_margin,
@@ -584,12 +545,10 @@ export function WatermarkControls({
     const videoW = videoEl?.videoWidth || 0
     const videoH = videoEl?.videoHeight || 0
 
-    // If we don't know the intrinsic video size yet, fall back to container box.
     if (!videoW || !videoH || !containerW || !containerH) {
       return {x: 0, y: 0, width: containerW, height: containerH}
     }
 
-    // object-fit: contain sizing
     const scale = Math.min(containerW / videoW, containerH / videoH)
     const contentW = videoW * scale
     const contentH = videoH * scale

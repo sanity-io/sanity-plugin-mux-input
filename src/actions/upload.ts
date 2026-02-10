@@ -24,7 +24,6 @@ function sanitizeOverlaySettingsInPlace(settings: MuxNewAssetSettings) {
   const inputs = settings.input
   if (!inputs) return
   for (const input of inputs) {
-    // Only some inputs include overlay_settings
     const overlay = (input as {overlay_settings?: Record<string, unknown>}).overlay_settings
     if (!overlay) continue
 
@@ -39,7 +38,6 @@ function sanitizeOverlaySettingsInPlace(settings: MuxNewAssetSettings) {
 }
 
 function sanitizePxStringsInJson(json: string): string {
-  // Replace any "...px" string values that include decimals with whole pixels.
   return json.replace(/"(-?\d+(?:\.\d+)?)px"/g, (_match, num) => {
     const n = Number(num)
     if (!Number.isFinite(n)) return _match

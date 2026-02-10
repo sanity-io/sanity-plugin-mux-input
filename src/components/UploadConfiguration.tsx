@@ -361,8 +361,6 @@ function formatUploadConfig(
     ),
   ]
 
-  // Add watermark as a second input if it has an imageUrl
-  // (watermark is URL-based; enabling follows from having a valid URL)
   if (config.watermark?.imageUrl) {
     const watermarkForMux: WatermarkConfig = {...config.watermark, enabled: true}
     const overlaySettings = convertWatermarkToMuxOverlay(watermarkForMux, {
@@ -395,9 +393,6 @@ function formatUploadConfig(
   }
 }
 
-/**
- * Component for displaying validation errors
- */
 function ValidationErrorDisplay({
   validationError,
   watermarkValidationError,
@@ -422,9 +417,6 @@ function ValidationErrorDisplay({
   )
 }
 
-/**
- * Component for displaying file upload information
- */
 function FileUploadInfo({
   stagedUpload,
   urlFileSize,
@@ -484,9 +476,6 @@ function FileUploadInfo({
   )
 }
 
-/**
- * Component for static renditions configuration
- */
 function StaticRenditionsConfig({
   id,
   config,
@@ -739,7 +728,6 @@ export default function UploadConfiguration({
     (rt) => rt.value === pluginConfig.max_resolution_tier
   )
 
-  // Calculate if upload button should be disabled
   const isUploadDisabled =
     (!basicConfig && !config.public_policy && !config.signed_policy) ||
     validationError !== null ||
@@ -1013,10 +1001,7 @@ const WatermarkPreview = memo(function WatermarkPreview({
           // For vertical videos: limit width so the preview doesn't get too tall
           // For horizontal videos: use full width
           width: isVertical ? 'auto' : '100%',
-          // Use the video's actual aspect ratio so the canvas matches exactly what Mux sees
           aspectRatio: videoAspectRatio ? String(videoAspectRatio) : '16/9',
-          // For vertical videos: set a reasonable max height and let width be calculated from aspect ratio
-          // For horizontal videos: use minHeight as before
           ...(isVertical ? {height: '400px', maxHeight: '50vh'} : {minHeight: '200px'}),
           overflow: 'hidden',
         }}
@@ -1029,8 +1014,6 @@ const WatermarkPreview = memo(function WatermarkPreview({
             left: 0,
             width: '100%',
             height: '100%',
-            // Use 'fill' to ensure video fills the entire container without letterboxing
-            // The container already has the correct aspect ratio, so no distortion occurs
             objectFit: 'fill',
             display: 'block',
           }}
