@@ -5,6 +5,8 @@ import LanguagesList from 'iso-639-1'
 import {useEffect, useId, useReducer, useRef, useState} from 'react'
 import {FormField} from 'sanity'
 
+import {useFetchFileSize} from '../hooks/useFetchFileSize'
+import {useMediaMetadata} from '../hooks/useMediaMetadata'
 import formatBytes from '../util/formatBytes'
 import {formatSeconds} from '../util/formatSeconds'
 import {
@@ -173,70 +175,32 @@ export default function UploadConfiguration({
   )
 
   // Video validations
-  const [videoDuration, setVideoDuration] = useState<number | null>(null)
-  const [urlFileSize, setUrlFileSize] = useState<number | null>(null)
-  const [isLoadingDuration, setIsLoadingDuration] = useState(false)
-  const [isLoadingFileSize, setIsLoadingFileSize] = useState(false)
   const [validationError, setValidationError] = useState<string | null>(null)
-  const [canSkipFileSizeValidation, setCanSkipFileSizeValidation] = useState(false)
-
   const MAX_FILE_SIZE = pluginConfig.maxAssetFileSize
   const MAX_DURATION_SECONDS = pluginConfig.maxAssetDuration
 
+  const {fileSize, isLoadingFileSize, canSkipFileSizeValidation} = useFetchFileSize(
+    stagedUpload,
+    MAX_FILE_SIZE
+  )
+  const {videoAssetMetadata, setVideoAssetMetadata, isLoadingMetadata} =
+    useMediaMetadata(stagedUpload)
+
   useEffect(() => {
-    setVideoDuration(null)
-    setUrlFileSize(null)
-    setIsLoadingDuration(false)
-    setIsLoadingFileSize(false)
-    setValidationError(null)
-    setCanSkipFileSizeValidation(false)
-
-    let videoElement: HTMLVideoElement | null = null
-    let currentVideoSrc: string | null = null
-
-    const cleanupVideo = (shouldRevokeUrl: boolean) => {
-      if (videoElement) {
-        videoElement.onloadedmetadata = null
-        videoElement.onerror = null
-        videoElement.src = ''
-        videoElement.load()
-        videoElement = null
-      }
-      if (shouldRevokeUrl && currentVideoSrc?.startsWith('blob:')) {
-        URL.revokeObjectURL(currentVideoSrc)
-      }
-      currentVideoSrc = null
+    if (fileSize) {
+      setVideoAssetMetadata((old) => ({...old, size: fileSize}))
     }
+  }, [fileSize, setVideoAssetMetadata])
 
-    const validateDuration = (videoSrc: string, shouldRevokeUrl = false) => {
-      if (!MAX_DURATION_SECONDS || MAX_DURATION_SECONDS <= 0) return
-
-      setIsLoadingDuration(true)
-      videoElement = document.createElement('video')
-      videoElement.preload = 'metadata'
-      currentVideoSrc = videoSrc
-
-      videoElement.onloadedmetadata = () => {
-        const duration = videoElement!.duration
-        setVideoDuration(duration)
-        setIsLoadingDuration(false)
-
-        if (duration > MAX_DURATION_SECONDS) {
-          setValidationError(
-            `Video duration (${formatSeconds(duration)}) exceeds maximum allowed duration of ${formatSeconds(MAX_DURATION_SECONDS)}`
-          )
-        }
-
-        cleanupVideo(shouldRevokeUrl)
+  useEffect(() => {
+    const validateDuration = (duration: number) => {
+      if (MAX_DURATION_SECONDS && duration > MAX_DURATION_SECONDS) {
+        setValidationError(
+          `Video duration (${formatSeconds(duration)}) exceeds maximum allowed duration of ${formatSeconds(MAX_DURATION_SECONDS)}`
+        )
+        return false
       }
-
-      videoElement.onerror = () => {
-        setIsLoadingDuration(false)
-        console.warn('Could not read video metadata for validation')
-        cleanupVideo(shouldRevokeUrl)
-      }
-
-      videoElement.src = videoSrc
+      return true
     }
 
     const validateFileSize = (size: number): boolean => {
@@ -250,59 +214,39 @@ export default function UploadConfiguration({
       return false
     }
 
-    // Validate file uploads
-    if (stagedUpload.type === 'file') {
-      const file = stagedUpload.files[0]
-      if (validateFileSize(file.size)) {
-        validateDuration(URL.createObjectURL(file), true)
+    const validateDrmAvailability = (isAudioOnly: boolean) => {
+      if (config.drm_policy && isAudioOnly) {
+        setValidationError('Audio-only asset cannot be DRM protected')
+        return false
       }
+      return true
     }
 
-    // Validate URL uploads
-    if (stagedUpload.type === 'url') {
-      const url = stagedUpload.url
-
-      // Get file size from URL
-      const fetchFileSize = async () => {
-        setIsLoadingFileSize(true)
-        try {
-          const response = await fetch(url, {method: 'HEAD'})
-          const contentLength = response.headers.get('content-length')
-          const fileSize = contentLength ? parseInt(contentLength, 10) : null
-
-          setIsLoadingFileSize(false)
-          if (fileSize) {
-            setUrlFileSize(fileSize)
-          }
-
-          // Validate file size if limit is configured and size is available
-          const shouldValidateDuration =
-            MAX_FILE_SIZE === undefined || fileSize === null || validateFileSize(fileSize)
-
-          if (fileSize === null && MAX_FILE_SIZE !== undefined) {
-            // Size unknown but size limit is configured - skip file size validation
-            setCanSkipFileSizeValidation(true)
-          }
-
-          if (shouldValidateDuration) {
-            validateDuration(url)
-          }
-        } catch {
-          setIsLoadingFileSize(false)
-          console.warn('Could not validate file size from URL')
-          // Skip validation of file size, but still validate duration
-          setCanSkipFileSizeValidation(true)
-          validateDuration(url)
-        }
-      }
-
-      fetchFileSize()
+    let valid = true
+    if (videoAssetMetadata?.size) {
+      valid = valid && (canSkipFileSizeValidation || validateFileSize(videoAssetMetadata.size))
     }
-
-    return () => {
-      cleanupVideo(true)
+    if (videoAssetMetadata?.duration) {
+      valid = valid && validateDuration(videoAssetMetadata.duration)
     }
-  }, [stagedUpload, MAX_FILE_SIZE, MAX_DURATION_SECONDS])
+    if (videoAssetMetadata?.isAudioOnly != undefined) {
+      valid = valid && validateDrmAvailability(videoAssetMetadata.isAudioOnly)
+    }
+    if (valid) {
+      setValidationError(null)
+    }
+  }, [
+    MAX_FILE_SIZE,
+    MAX_DURATION_SECONDS,
+    canSkipFileSizeValidation,
+    videoAssetMetadata?.duration,
+    videoAssetMetadata?.size,
+    videoAssetMetadata?.height,
+    videoAssetMetadata?.width,
+    videoAssetMetadata,
+    config.drm_policy,
+    validationError,
+  ])
 
   // If user-provided config is disabled, begin the upload immediately with
   // the developer-specified values from the schema or config or defaults.
@@ -362,8 +306,8 @@ export default function UploadConfiguration({
                 {stagedUpload.type === 'file'
                   ? `Direct File Upload (${formatBytes(stagedUpload.files[0].size)})`
                   : (() => {
-                      if (urlFileSize) {
-                        return `File From URL (${formatBytes(urlFileSize)})`
+                      if (videoAssetMetadata?.size) {
+                        return `File From URL (${formatBytes(videoAssetMetadata.size)})`
                       }
                       if (isLoadingFileSize) {
                         return 'File From URL (Loading size...)'
@@ -373,14 +317,14 @@ export default function UploadConfiguration({
               </Text>
               {stagedUpload.type === 'file' && (
                 <Stack space={1}>
-                  {isLoadingDuration && (
+                  {isLoadingMetadata && (
                     <Text as="p" size={1} muted>
                       Reading video metadata...
                     </Text>
                   )}
-                  {videoDuration !== null && !validationError && (
+                  {videoAssetMetadata?.duration && !validationError && (
                     <Text as="p" size={1} muted>
-                      Duration: {formatSeconds(videoDuration)}
+                      Duration: {formatSeconds(videoAssetMetadata.duration)}
                     </Text>
                   )}
                 </Stack>
@@ -463,7 +407,7 @@ export default function UploadConfiguration({
             disabled={
               (!basicConfig && !playbackPolicySelected) ||
               validationError !== null ||
-              isLoadingDuration ||
+              isLoadingMetadata ||
               (isLoadingFileSize && !canSkipFileSizeValidation)
             }
             icon={UploadIcon}
