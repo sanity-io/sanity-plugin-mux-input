@@ -27,7 +27,7 @@ export default function useVideoDetails(props: VideoDetailsProps) {
 
   const displayInfo = getVideoMetadata({...props.asset, filename})
 
-  const [state, setState] = useState<'deleting' | 'closing' | 'idle' | 'saving'>('idle')
+  const [state, setState] = useState<'deleting' | 'downloading' | 'closing' | 'idle' | 'saving'>('idle')
 
   function handleClose() {
     if (state !== 'idle') return
