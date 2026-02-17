@@ -3,6 +3,7 @@ import {
   CheckmarkIcon,
   ClockIcon,
   CropIcon,
+  DownloadIcon,
   EditIcon,
   ErrorOutlineIcon,
   RevertIcon,
@@ -28,6 +29,7 @@ import React, {useEffect, useState} from 'react'
 
 import {DIALOGS_Z_INDEX} from '../../util/constants'
 import type {MuxTextTrack} from '../../util/types'
+import DownloadAssetDialog from '../DownloadAssetDialog'
 import FormField from '../FormField'
 import IconInfo from '../IconInfo'
 import {ResolutionIcon} from '../icons/Resolution'
@@ -107,19 +109,31 @@ const VideoDetails: React.FC<VideoDetailsProps> = (props) => {
               onClick={() => setState('deleting')}
               disabled={isSaving}
             />
-            {modified && (
+            <Flex gap={2}>
               <Button
-                icon={CheckmarkIcon}
-                fontSize={2}
-                padding={3}
-                mode="ghost"
-                text="Save and close"
-                tone="positive"
-                onClick={saveChanges}
-                iconRight={isSaving && Spinner}
-                disabled={isSaving}
+                  icon={DownloadIcon}
+                  fontSize={2}
+                  padding={3}
+                  mode="bleed"
+                  text="Download"
+                  tone="default"
+                  onClick={() => setState('downloading')}
+                  disabled={isSaving}
               />
-            )}
+              {modified && (
+                <Button
+                  icon={CheckmarkIcon}
+                  fontSize={2}
+                  padding={3}
+                  mode="ghost"
+                  text="Save and close"
+                  tone="positive"
+                  onClick={saveChanges}
+                  iconRight={isSaving && Spinner}
+                  disabled={isSaving}
+                />
+              )}
+            </Flex>
           </Flex>
         </Card>
       }
@@ -134,6 +148,15 @@ const VideoDetails: React.FC<VideoDetailsProps> = (props) => {
           succeededDeleting={() => {
             props.closeDialog()
           }}
+        />
+      )}
+
+      {/* DOWNLOAD DIALOG */}
+      {state === 'downloading' && (
+        <DownloadAssetDialog
+          asset={props.asset}
+          onClose={() => setState('idle')}
+          absolute={true}
         />
       )}
 
