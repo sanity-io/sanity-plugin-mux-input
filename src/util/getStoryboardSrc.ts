@@ -10,6 +10,9 @@ interface StoryboardSrcOptions {
   client: SanityClient
 }
 
+/**
+ * May throw a Promise. Call this with {@link tryWithSuspend} or rethrow the Promise
+ */
 export function getStoryboardSrc({asset, client}: StoryboardSrcOptions): MuxStoryboardUrl {
   const playbackId = getPlaybackId(asset)
   const searchParams = new URLSearchParams()

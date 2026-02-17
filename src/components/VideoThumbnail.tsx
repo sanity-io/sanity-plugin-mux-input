@@ -8,6 +8,7 @@ import {useInView} from '../hooks/useInView'
 import {THUMBNAIL_ASPECT_RATIO} from '../util/constants'
 import {getAnimatedPosterSrc} from '../util/getAnimatedPosterSrc'
 import {getPosterSrc} from '../util/getPosterSrc'
+import {tryWithSuspend} from '../util/tryWithSuspend'
 import {AssetThumbnailOptions, MuxAnimatedThumbnailUrl, MuxThumbnailUrl} from '../util/types'
 
 const Image = styled.img`
@@ -42,20 +43,35 @@ export default function VideoThumbnail({
   const inView = useInView(ref)
 
   const [status, setStatus] = useState<ImageStatus>('loading')
+  const [error, setError] = useState<string | null>(null)
 
   const thumbnailSrc = useMemo(() => {
-    let thumbnail: MuxAnimatedThumbnailUrl | MuxThumbnailUrl
-    if (staticImage) thumbnail = getPosterSrc({asset, client, width: posterWidth})
-    else thumbnail = getAnimatedPosterSrc({asset, client, width: posterWidth})
-    return thumbnail
+    return tryWithSuspend(
+      () => {
+        let thumbnail: MuxAnimatedThumbnailUrl | MuxThumbnailUrl | undefined
+
+        if (staticImage) thumbnail = getPosterSrc({asset, client, width: posterWidth})
+        else thumbnail = getAnimatedPosterSrc({asset, client, width: posterWidth})
+        return thumbnail
+      },
+      (err: Error) => {
+        handleError(err.message)
+        return undefined
+      }
+    )
   }, [asset, client, posterWidth, staticImage])
 
   function handleLoad() {
     setStatus('loaded')
   }
 
-  function handleError() {
+  function handleError(err?: string) {
     setStatus('error')
+    if (err) {
+      setError(err)
+    } else {
+      setError('Failed loading thumbnail')
+    }
   }
 
   return (
@@ -103,7 +119,7 @@ export default function VideoThumbnail({
                   <ErrorOutlineIcon style={{fontSize: '1.75em'}} />
                 </Text>
                 <Text muted align="center">
-                  Failed loading thumbnail
+                  {error}
                 </Text>
               </Stack>
             )}
@@ -111,7 +127,7 @@ export default function VideoThumbnail({
               src={thumbnailSrc ?? undefined}
               alt={`Preview for ${staticImage ? 'image' : 'video'} ${asset.filename || asset.assetId}`}
               onLoad={handleLoad}
-              onError={handleError}
+              onError={() => handleError()}
               style={{opacity: status === 'loaded' ? 1 : 0}}
             />
           </>

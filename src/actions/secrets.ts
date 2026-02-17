@@ -31,6 +31,8 @@ export function saveSecrets(
     signingKeyPrivate,
     drmConfigId,
   }
+  doc.signingKeyId = enableSignedUrls ? signingKeyId : ''
+  doc.signingKeyPrivate = enableSignedUrls ? signingKeyPrivate : ''
 
   return client.createOrReplace(doc)
 }

@@ -18,6 +18,9 @@ export type Payload<T extends Audience> = T extends 'g'
           ? never
           : never
 
+/**
+ * Uses suspend. Call this with {@link tryWithSuspend} or rethrow the Promise
+ */
 export function generateJwt<T extends Audience>(
   client: SanityClient,
   playbackId: string,

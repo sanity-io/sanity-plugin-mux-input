@@ -8,6 +8,9 @@ interface VideoSrcOptions {
   client: SanityClient
 }
 
+/**
+ * May throw a Promise. Call this with {@link tryWithSuspend} or rethrow the Promise
+ */
 export function getVideoSrc({client, muxPlaybackId}: VideoSrcOptions): MuxVideoUrl {
   const searchParams = new URLSearchParams()
 

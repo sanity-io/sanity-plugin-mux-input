@@ -12,6 +12,7 @@ import {getPlaybackId} from '../util/getPlaybackPolicy'
 import {getPlaybackPolicyById} from '../util/getPlaybackPolicy'
 import {getPosterSrc} from '../util/getPosterSrc'
 import {getVideoSrc} from '../util/getVideoSrc'
+import {tryWithSuspend} from '../util/tryWithSuspend'
 import type {VideoAssetDocument} from '../util/types'
 import CaptionsDialog from './CaptionsDialog'
 import EditThumbnailDialog from './EditThumbnailDialog'
@@ -56,11 +57,23 @@ export default function VideoPlayer({
   const src = useMemo(() => {
     if (!playbackId) return undefined
     if (!muxPlaybackId) return undefined
-    return getVideoSrc({muxPlaybackId, client})
+    return tryWithSuspend(
+      () => getVideoSrc({muxPlaybackId, client}),
+      (e: Error) => {
+        setError(e)
+        return undefined
+      }
+    )
   }, [muxPlaybackId, playbackId, client])
 
   const poster = useMemo(() => {
-    return getPosterSrc({asset, client, width: thumbnailWidth})
+    return tryWithSuspend(
+      () => getPosterSrc({asset, client, width: thumbnailWidth}),
+      (e: Error) => {
+        setError(e)
+        return undefined
+      }
+    )
   }, [asset, client, thumbnailWidth])
 
   const signedToken = useMemo(() => {
@@ -74,8 +87,14 @@ export default function VideoPlayer({
   const drmToken = useMemo(() => {
     if (!playbackId) return undefined
     if (muxPlaybackId?.policy !== 'drm') return undefined
-    const token = generateJwt(client, playbackId, 'd')
-    return token
+
+    return tryWithSuspend(
+      () => generateJwt(client, playbackId, 'd'),
+      (e: Error) => {
+        setError(e)
+        return undefined
+      }
+    )
   }, [client, muxPlaybackId?.policy, playbackId])
   const tokens:
     | Partial<{

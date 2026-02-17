@@ -169,6 +169,9 @@ export async function pollTrackStatus(
   }
 }
 
+/**
+ * May throw a Promise. Call this with {@link tryWithSuspend} or rethrow the Promise
+ */
 export async function downloadVttFile(
   client: SanityClient,
   asset: VideoAssetDocument,
@@ -195,7 +198,7 @@ export async function downloadVttFile(
 
   let downloadUrl = `https://stream.mux.com/${playbackId}/text/${track.id}.vtt`
 
-  if (playbackPolicy === 'signed') {
+  if (playbackPolicy === 'signed' || playbackPolicy === 'drm') {
     const token = generateJwt(client, playbackId, 'v')
     downloadUrl += `?token=${token}`
   }

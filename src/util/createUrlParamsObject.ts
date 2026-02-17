@@ -5,6 +5,9 @@ import {Audience, generateJwt} from './generateJwt'
 import {getPlaybackPolicyById} from './getPlaybackPolicy'
 import type {AssetThumbnailOptions} from './types'
 
+/**
+ * May throw a Promise. Call this with {@link tryWithSuspend} or rethrow the Promise
+ */
 export function createUrlParamsObject(
   client: SanityClient,
   asset: AssetThumbnailOptions['asset'],
