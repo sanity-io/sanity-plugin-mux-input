@@ -2,15 +2,21 @@ import {useCallback} from 'react'
 import {PatchEvent, set, setIfMissing, unset} from 'sanity'
 
 import type {SetDialogState} from '../hooks/useDialogState'
-import type {MuxInputProps, VideoAssetDocument} from '../util/types'
+import type {MuxInputProps, PluginConfig, VideoAssetDocument} from '../util/types'
 import VideosBrowser, {type VideosBrowserProps} from './VideosBrowser'
 
 export interface Props extends Pick<MuxInputProps, 'onChange'> {
   asset?: VideoAssetDocument | null | undefined
   setDialogState: SetDialogState
+  config: PluginConfig
 }
 
-export default function SelectAssets({asset: selectedAsset, onChange, setDialogState}: Props) {
+export default function SelectAssets({
+  asset: selectedAsset,
+  onChange,
+  setDialogState,
+  config,
+}: Props) {
   const handleSelect = useCallback<Required<VideosBrowserProps>['onSelect']>(
     (chosenAsset) => {
       if (!chosenAsset?._id) {
@@ -29,5 +35,5 @@ export default function SelectAssets({asset: selectedAsset, onChange, setDialogS
     [onChange, setDialogState, selectedAsset]
   )
 
-  return <VideosBrowser onSelect={handleSelect} />
+  return <VideosBrowser onSelect={handleSelect} config={config} />
 }

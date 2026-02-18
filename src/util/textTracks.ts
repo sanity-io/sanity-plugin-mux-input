@@ -2,7 +2,7 @@ import type {SanityClient} from '@sanity/client'
 
 import {getAsset} from '../actions/assets'
 import {generateJwt} from './generateJwt'
-import {getPlaybackId} from './getPlaybackId'
+import {getPlaybackId} from './getPlaybackPolicy'
 import {getPlaybackPolicy} from './getPlaybackPolicy'
 import type {MuxTextTrack, VideoAssetDocument} from './types'
 
@@ -169,6 +169,9 @@ export async function pollTrackStatus(
   }
 }
 
+/**
+ * May throw a Promise. Call this with {@link tryWithSuspend} or rethrow the Promise
+ */
 export async function downloadVttFile(
   client: SanityClient,
   asset: VideoAssetDocument,
@@ -191,11 +194,11 @@ export async function downloadVttFile(
     throw new Error('Playback ID is required')
   }
 
-  const playbackPolicy = getPlaybackPolicy(asset)
+  const playbackPolicy = getPlaybackPolicy(asset)?.policy
 
   let downloadUrl = `https://stream.mux.com/${playbackId}/text/${track.id}.vtt`
 
-  if (playbackPolicy === 'signed') {
+  if (playbackPolicy === 'signed' || playbackPolicy === 'drm') {
     const token = generateJwt(client, playbackId, 'v')
     downloadUrl += `?token=${token}`
   }

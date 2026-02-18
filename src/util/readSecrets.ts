@@ -21,7 +21,8 @@ export function readSecrets(client: SanityClient): Secrets {
         secretKey,
         enableSignedUrls,
         signingKeyId,
-        signingKeyPrivate
+        signingKeyPrivate,
+        drmConfigId
       }`,
       {_id}
     )
@@ -31,6 +32,7 @@ export function readSecrets(client: SanityClient): Secrets {
       enableSignedUrls: Boolean(data?.enableSignedUrls) || false,
       signingKeyId: data?.signingKeyId || null,
       signingKeyPrivate: data?.signingKeyPrivate || null,
+      drmConfigId: data?.drmConfigId || null,
     }
   }, [cacheNs, _id, projectId, dataset])
 }

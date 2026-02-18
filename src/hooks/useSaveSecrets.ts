@@ -10,7 +10,11 @@ export const useSaveSecrets = (client: SanityClient, secrets: Secrets) => {
       token,
       secretKey,
       enableSignedUrls,
-    }: Pick<Secrets, 'token' | 'secretKey' | 'enableSignedUrls'>): Promise<Secrets> => {
+      drmConfigId,
+    }: Pick<
+      Secrets,
+      'token' | 'secretKey' | 'enableSignedUrls' | 'drmConfigId'
+    >): Promise<Secrets> => {
       let {signingKeyId, signingKeyPrivate} = secrets
 
       try {
@@ -20,7 +24,8 @@ export const useSaveSecrets = (client: SanityClient, secrets: Secrets) => {
           secretKey!,
           enableSignedUrls,
           signingKeyId!,
-          signingKeyPrivate!
+          signingKeyPrivate!,
+          drmConfigId!
         )
         const valid = await testSecrets(client)
         if (!valid?.status && token && secretKey) {
@@ -49,7 +54,8 @@ export const useSaveSecrets = (client: SanityClient, secrets: Secrets) => {
               secretKey!,
               enableSignedUrls,
               signingKeyId,
-              signingKeyPrivate
+              signingKeyPrivate,
+              drmConfigId ?? ''
             )
           } catch (err: any) {
             // eslint-disable-next-line no-console
@@ -64,6 +70,7 @@ export const useSaveSecrets = (client: SanityClient, secrets: Secrets) => {
         enableSignedUrls,
         signingKeyId,
         signingKeyPrivate,
+        drmConfigId,
       }
     },
     [client, secrets]

@@ -64,7 +64,7 @@ function PlayerActionsMenu(
   const {asset, readOnly, dialogState, setDialogState, onChange, onSelect, accept} = props
   const [open, setOpen] = useState(false)
   const [menuElement, setMenuRef] = useState<HTMLDivElement | null>(null)
-  const isSigned = useMemo(() => getPlaybackPolicy(asset) === 'signed', [asset])
+  const isSigned = useMemo(() => getPlaybackPolicy(asset)?.policy === 'signed', [asset])
   const {hasConfigAccess} = useAccessControl(props.config)
 
   const onReset = useCallback(() => onChange(PatchEvent.from(unset([]))), [onChange])
