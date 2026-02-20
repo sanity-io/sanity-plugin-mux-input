@@ -9,8 +9,9 @@ import {PatchEvent, set, setIfMissing} from 'sanity'
 import {uploadFile, uploadUrl} from '../actions/upload'
 import {DialogStateProvider} from '../context/DialogStateContext'
 import {type DialogState, type SetDialogState} from '../hooks/useDialogState'
-import {isValidUrl} from '../util/asserters'
+import {isServerError, isValidUrl} from '../util/asserters'
 import {extractDroppedFiles} from '../util/extractFiles'
+import {hasPlaybackPolicy} from '../util/getPlaybackPolicy'
 import type {
   MuxInputProps,
   MuxNewAssetSettings,
@@ -66,7 +67,7 @@ type UploaderStateAction =
       | Extract<UploadUrlEvent, {type: 'url'}>
     ))
   | {action: 'progress'; percent: number}
-  | {action: 'error'; error: Error}
+  | {action: 'error'; error: Error; settings: MuxNewAssetSettings}
   | {action: 'complete' | 'reset'}
 
 /**
@@ -125,12 +126,21 @@ export default function Uploader(props: Props) {
           uploadRef.current = null
           uploadingDocumentId.current = null
           return INITIAL_STATE
-        case 'error':
+        case 'error': {
           // Clear upload observable on error
           uploadRef.current?.unsubscribe()
           uploadRef.current = null
           uploadingDocumentId.current = null
-          return Object.assign({}, INITIAL_STATE, {error: action.error})
+
+          let error = action.error
+          if (isServerError(action.error) && hasPlaybackPolicy(action.settings, 'drm')) {
+            error = new Error(
+              'Unknown Error while uploading DRM protected content. Make sure your DRM configuration ID is valid and set correctly'
+            )
+          }
+
+          return Object.assign({}, INITIAL_STATE, {error: error})
+        }
         default:
           return prev
       }
@@ -254,7 +264,7 @@ export default function Uploader(props: Props) {
         }
       },
       complete: () => dispatch({action: 'complete'}),
-      error: (error) => dispatch({action: 'error', error}),
+      error: (error) => dispatch({action: 'error', error, settings}),
     })
   }
 
@@ -372,7 +382,7 @@ export default function Uploader(props: Props) {
 
   // Upload has errored
   if (state.error !== null) {
-    const error = {state}
+    const error = state.error
     return (
       <Flex gap={3} direction="column" justify="center" align="center">
         <Text size={5} muted>
@@ -380,7 +390,7 @@ export default function Uploader(props: Props) {
         </Text>
         <Text>Something went wrong</Text>
         {error instanceof Error && error.message && (
-          <Text size={1} muted>
+          <Text size={1} muted weight="semibold" style={{textAlign: 'center'}}>
             {error.message}
           </Text>
         )}
@@ -471,6 +481,7 @@ export default function Uploader(props: Props) {
       </UploadCard>
       {props.dialogState === 'select-video' && (
         <InputBrowser
+          config={props.config}
           asset={props.asset}
           onChange={props.onChange}
           setDialogState={props.setDialogState}

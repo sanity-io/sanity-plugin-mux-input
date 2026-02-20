@@ -2,8 +2,9 @@ import {SearchIcon} from '@sanity/icons'
 import {Card, Flex, Grid, Inline, Label, Stack, Text, TextInput} from '@sanity/ui'
 import {useMemo, useState} from 'react'
 
+import {DrmPlaybackWarningContextProvider} from '../context/DrmPlaybackWarningContext'
 import useAssets from '../hooks/useAssets'
-import type {VideoAssetDocument} from '../util/types'
+import type {PluginConfig, VideoAssetDocument} from '../util/types'
 import ConfigureApi from './ConfigureApi'
 import ImportVideosFromMux from './ImportVideosFromMux'
 import PageSelector from './PageSelector'
@@ -15,10 +16,11 @@ import VideoDetails from './VideoDetails/VideoDetails'
 import VideoInBrowser from './VideoInBrowser'
 
 export interface VideosBrowserProps {
+  config: PluginConfig
   onSelect?: (asset: VideoAssetDocument) => void
 }
 
-export default function VideosBrowser({onSelect}: VideosBrowserProps) {
+export default function VideosBrowser({onSelect, config}: VideosBrowserProps) {
   const {assets, isLoading, searchQuery, setSearchQuery, setSort, sort} = useAssets()
   const [page, setPage] = useState<number>(0)
   const pageLimit = 20
@@ -34,7 +36,7 @@ export default function VideosBrowser({onSelect}: VideosBrowserProps) {
 
   const placement = onSelect ? 'input' : 'tool'
   return (
-    <>
+    <DrmPlaybackWarningContextProvider config={config}>
       <Stack padding={4} space={4} style={{minHeight: '50vh'}}>
         <Flex justify="space-between" align="center">
           <Flex align="center" gap={3}>
@@ -47,7 +49,7 @@ export default function VideosBrowser({onSelect}: VideosBrowserProps) {
               placeholder="Search videos"
             />
             <SelectSortOptions setSort={setSort} sort={sort} />
-            <PageSelector page={page} setPage={setPage} total={pageTotal} limit={pageLimit} />
+            <PageSelector page={page} setPage={setPage} total={pageTotal} />
           </Flex>
           {placement === 'tool' && (
             <Inline space={2}>
@@ -93,6 +95,6 @@ export default function VideosBrowser({onSelect}: VideosBrowserProps) {
       {freshEditedAsset && (
         <VideoDetails closeDialog={() => setEditedAsset(null)} asset={freshEditedAsset} />
       )}
-    </>
+    </DrmPlaybackWarningContextProvider>
   )
 }

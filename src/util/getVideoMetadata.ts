@@ -13,6 +13,7 @@ export default function getVideoMetadata(doc: VideoAssetDocument) {
     playbackId: doc.playbackId,
     createdAt: date,
     duration: doc.data?.duration ? formatSeconds(doc.data?.duration) : undefined,
+    playback_ids: doc.data?.playback_ids,
     aspect_ratio: doc.data?.aspect_ratio,
     max_stored_resolution: doc.data?.max_stored_resolution,
     max_stored_frame_rate: doc.data?.max_stored_frame_rate,

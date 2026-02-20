@@ -9,6 +9,7 @@ interface SecretsDocument {
   enableSignedUrls: boolean
   signingKeyId: string
   signingKeyPrivate: string
+  drmConfigId: string
 }
 // eslint-disable-next-line max-params
 export function saveSecrets(
@@ -17,7 +18,8 @@ export function saveSecrets(
   secretKey: string,
   enableSignedUrls: boolean,
   signingKeyId: string,
-  signingKeyPrivate: string
+  signingKeyPrivate: string,
+  drmConfigId: string
 ): Promise<SecretsDocument> {
   const doc: SecretsDocument = {
     _id: 'secrets.mux',
@@ -27,7 +29,10 @@ export function saveSecrets(
     enableSignedUrls,
     signingKeyId,
     signingKeyPrivate,
+    drmConfigId,
   }
+  doc.signingKeyId = enableSignedUrls ? signingKeyId : ''
+  doc.signingKeyPrivate = enableSignedUrls ? signingKeyPrivate : ''
 
   return client.createOrReplace(doc)
 }
