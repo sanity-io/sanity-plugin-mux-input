@@ -8,6 +8,8 @@ import {useResyncAsset} from '../../hooks/useResyncAsset'
 import getVideoMetadata from '../../util/getVideoMetadata'
 import {VideoAssetDocument} from '../../util/types'
 
+type VideoDetailsState = 'idle' | 'saving' | 'deleting' | 'closing' | 'resyncing'
+
 export interface VideoDetailsProps {
   closeDialog: () => void
   asset: VideoAssetDocument & {autoPlay?: boolean}
@@ -28,9 +30,7 @@ export default function useVideoDetails(props: VideoDetailsProps) {
 
   const displayInfo = getVideoMetadata({...props.asset, filename})
 
-  const [state, setState] = useState<'deleting' | 'closing' | 'idle' | 'saving' | 'resyncing'>(
-    'idle'
-  )
+  const [state, setState] = useState<VideoDetailsState>('idle')
 
   const {resyncAsset, isResyncing} = useResyncAsset({showToast: true})
 
