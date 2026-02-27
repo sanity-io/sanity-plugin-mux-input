@@ -6,6 +6,7 @@ import {
   useDocumentStore,
 } from 'sanity'
 
+import {addKeysToMuxData} from '../util/addKeysToMuxData'
 import {isEmptyOrPlaceholderTitle} from '../util/assetTitlePlaceholder'
 import type {MuxAsset, VideoAssetDocument} from '../util/types'
 import {SANITY_API_VERSION} from './useClient'
@@ -115,6 +116,37 @@ export default function useResyncMuxMetadata() {
     }
   }
 
+  async function syncFullData() {
+    if (!matchedAssets) return
+
+    setResyncState('syncing')
+
+    try {
+      const tx = client.transaction()
+
+      matchedAssets.forEach((matched) => {
+        if (!matched.muxAsset) return
+
+        const dataWithKeys = addKeysToMuxData(matched.muxAsset)
+
+        // Update all fields: filename, status, and full data from Mux
+        tx.patch(matched.sanityDoc._id, {
+          set: {
+            filename: matched.muxTitle || matched.currentTitle || '',
+            status: matched.muxAsset.status,
+            data: dataWithKeys,
+          },
+        })
+      })
+
+      await tx.commit({returnDocuments: false})
+      setResyncState('done')
+    } catch (error) {
+      setResyncState('error')
+      setResyncError(error)
+    }
+  }
+
   return {
     sanityAssetsLoading,
     closeDialog,
@@ -124,6 +156,7 @@ export default function useResyncMuxMetadata() {
     hasSecrets,
     syncAllVideos,
     syncOnlyEmpty,
+    syncFullData,
     matchedAssets,
     muxAssets,
     openDialog,

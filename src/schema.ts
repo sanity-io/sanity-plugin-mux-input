@@ -23,6 +23,11 @@ const muxTrack = {
     {type: 'number', name: 'max_frame_rate'},
     {type: 'number', name: 'duration'},
     {type: 'number', name: 'max_height'},
+    {type: 'string', name: 'language_code'},
+    {type: 'string', name: 'name'},
+    {type: 'string', name: 'status'},
+    {type: 'string', name: 'text_source'},
+    {type: 'string', name: 'text_type'},
   ],
 }
 
