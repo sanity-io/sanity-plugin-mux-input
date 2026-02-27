@@ -5,6 +5,19 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.15.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.14.0...v2.15.0) (2026-02-18)
+
+### Features
+
+- Add DRM support ([#458](https://github.com/sanity-io/sanity-plugin-mux-input/issues/458)) ([363bf60](https://github.com/sanity-io/sanity-plugin-mux-input/commit/363bf600fc15d6ddadf59466a6401dde083515e7)), closes [#2](https://github.com/sanity-io/sanity-plugin-mux-input/issues/2) [#1](https://github.com/sanity-io/sanity-plugin-mux-input/issues/1)
+
+## [2.14.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.13.0...v2.14.0) (2026-02-03)
+
+### Features
+
+- Add pagination in asset library ([#460](https://github.com/sanity-io/sanity-plugin-mux-input/issues/460)) ([96dc509](https://github.com/sanity-io/sanity-plugin-mux-input/commit/96dc509a0b937967d9c65fdae82c76b5206578be))
+- text tracks management ([#462](https://github.com/sanity-io/sanity-plugin-mux-input/issues/462)) ([e1ad280](https://github.com/sanity-io/sanity-plugin-mux-input/commit/e1ad280fc81359dc4eea3c63b68fbea5be4fd50b))
+
 ## [2.13.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.12.1...v2.13.0) (2026-01-15)
 
 ### Features

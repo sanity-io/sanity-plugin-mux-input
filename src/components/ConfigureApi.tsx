@@ -32,7 +32,7 @@ export interface ConfigureApiDialogProps {
   secrets: Secrets
 }
 
-const fieldNames = ['token', 'secretKey', 'enableSignedUrls'] as const
+const fieldNames = ['token', 'secretKey', 'enableSignedUrls', 'drmConfigId'] as const
 
 // Internal dialog component that can be used with external state
 export function ConfigureApiDialog({secrets, setDialogState}: ConfigureApiDialogProps) {
@@ -44,11 +44,12 @@ export function ConfigureApiDialog({secrets, setDialogState}: ConfigureApiDialog
     () =>
       secrets.token !== state.token ||
       secrets.secretKey !== state.secretKey ||
-      secrets.enableSignedUrls !== state.enableSignedUrls,
+      secrets.enableSignedUrls !== state.enableSignedUrls ||
+      secrets.drmConfigId !== state.drmConfigId,
     [secrets, state]
   )
   const id = `ConfigureApi${useId()}`
-  const [tokenId, secretKeyId, enableSignedUrlsId] = useMemo<typeof fieldNames>(
+  const [tokenId, secretKeyId, enableSignedUrlsId, drmConfigIdId] = useMemo<typeof fieldNames>(
     () => fieldNames.map((field) => `${id}-${field}`) as unknown as typeof fieldNames,
     [id]
   )
@@ -63,8 +64,8 @@ export function ConfigureApiDialog({secrets, setDialogState}: ConfigureApiDialog
       if (!saving.current && event.currentTarget.reportValidity()) {
         saving.current = true
         dispatch({type: 'submit'})
-        const {token, secretKey, enableSignedUrls} = state
-        handleSaveSecrets({token, secretKey, enableSignedUrls})
+        const {token, secretKey, enableSignedUrls, drmConfigId} = state
+        handleSaveSecrets({token, secretKey, enableSignedUrls, drmConfigId})
           .then((savedSecrets) => {
             const {projectId, dataset} = client.config()
             clear([cacheNs, secretsId, projectId, dataset])
@@ -102,6 +103,15 @@ export function ConfigureApiDialog({secrets, setDialogState}: ConfigureApiDialog
       dispatch({
         type: 'change',
         payload: {name: 'enableSignedUrls', value: event.currentTarget.checked},
+      })
+    },
+    [dispatch]
+  )
+  const handleChangeDrmConfigId = useCallback(
+    (event: React.FormEvent<HTMLInputElement>) => {
+      dispatch({
+        type: 'change',
+        payload: {name: 'drmConfigId', value: event.currentTarget.value},
       })
     },
     [dispatch]
@@ -201,6 +211,42 @@ export function ConfigureApiDialog({secrets, setDialogState}: ConfigureApiDialog
                 </Card>
               ) : null}
             </Stack>
+
+            <FormField title="DRM Configuration ID" inputId={drmConfigIdId}>
+              <TextInput
+                id={drmConfigIdId}
+                onChange={handleChangeDrmConfigId}
+                type="text"
+                value={state.drmConfigId ?? ''}
+                required={false}
+              />
+            </FormField>
+            <Card padding={[3, 3, 3]} radius={2} shadow={1} tone="neutral">
+              <Stack space={3}>
+                <Text size={1}>
+                  DRM (Digital Rights Management) provides an extra layer of content security for
+                  video content streamed from Mux. For additional information check out our{' '}
+                  <a
+                    href="https://www.mux.com/docs/guides/protect-videos-with-drm#play-drm-protected-videos"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    DRM Guide
+                  </a>
+                  .
+                </Text>
+                <Text size={1}>
+                  <a
+                    href="https://www.mux.com/support/human"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Contact us
+                  </a>{' '}
+                  to get started using DRM.
+                </Text>
+              </Stack>
+            </Card>
 
             <Inline space={2}>
               <Button

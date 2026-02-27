@@ -4,7 +4,7 @@ import {suspend} from 'suspend-react'
 import {readSecrets} from './readSecrets'
 import type {AnimatedThumbnailOptions, ThumbnailOptions} from './types'
 
-export type Audience = 'g' | 's' | 't' | 'v'
+export type Audience = 'g' | 's' | 't' | 'v' | 'd'
 
 export type Payload<T extends Audience> = T extends 'g'
   ? AnimatedThumbnailOptions
@@ -14,8 +14,13 @@ export type Payload<T extends Audience> = T extends 'g'
       ? ThumbnailOptions
       : T extends 'v'
         ? never
-        : never
+        : T extends 'd'
+          ? never
+          : never
 
+/**
+ * Uses suspend. Call this with {@link tryWithSuspend} or rethrow the Promise
+ */
 export function generateJwt<T extends Audience>(
   client: SanityClient,
   playbackId: string,
@@ -30,6 +35,10 @@ export function generateJwt<T extends Audience>(
     throw new TypeError("Missing `signingKeyPrivate`.\n Check your plugin's configuration")
   }
 
+  /* Using suspend means we need to use Suspense on parent components. 
+  Also, this will throw a Promise under the hood (apparently common in React), 
+  so if we want to catch errors we have to take this into account in catch blocks
+  and rethrow promises. */
   // @ts-expect-error - handle missing typings for this package
   const {default: sign} = suspend(() => import('jsonwebtoken-esm/sign'), ['jsonwebtoken-esm/sign'])
 

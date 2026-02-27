@@ -1,6 +1,6 @@
+import type MuxPlayerElement from '@mux/mux-player'
 import type {ObjectInputProps, PreviewLayoutKey, PreviewProps, SchemaType} from 'sanity'
 import type {PartialDeep} from 'type-fest'
-import type MuxPlayerElement from '@mux/mux-player'
 
 /**
  * Standard static rendition options available for plugin configuration defaults
@@ -90,6 +90,13 @@ export interface MuxInputConfig {
   defaultPublic?: boolean
 
   /**
+   * Enables DRM Protection by default, if you configured your DRM Configuration Id.
+   * @see {@link https://www.mux.com/docs/guides/protect-videos-with-drm}
+   * @defaultValue true
+   */
+  defaultDrm?: boolean
+
+  /**
    * Auto-generate captions for these languages by default.
    * Requires `"video_quality": "plus"`
    *
@@ -123,6 +130,13 @@ export interface MuxInputConfig {
    * @defaultValue false
    */
   disableTextTrackConfig?: boolean
+
+  /**
+   * Whether or not to show the playback warning when trying to watch DRM content for the first time.
+   *
+   * @defaultValue false
+   */
+  disableDrmPlaybackWarning?: boolean
 
   /**
    * The mime types that are accepted by the input.
@@ -306,6 +320,7 @@ export interface UploadConfig
   signed_policy: boolean
   public_policy: boolean
   watermark?: WatermarkConfig
+  drm_policy: boolean
 }
 
 /**
@@ -343,7 +358,6 @@ export interface MuxNewAssetSettings
     name?: string
     /** Indicates the track provides Subtitles for the Deaf or Hard-of-hearing (SDH). */
     closed_captions?: boolean
-    /// @TODO Huhh?>?? Below
     /** This optional parameter should be used tracks with type of text and text_type set to subtitles. */
     passthrough?: string
     /** Overlay settings for watermarks. Used when adding a watermark image as a second input. */
@@ -351,10 +365,19 @@ export interface MuxNewAssetSettings
   }[]
 
   /** An array of playback policy names that you want applied to this asset and available through playback_ids. */
-  playback_policy: ('public' | 'signed' | 'drm')[]
+  playback_policy?: PlaybackPolicy[]
+
+  /** An array of playback policy objects that you want applied to this asset and available through playback_ids. advanced_playback_policies must be used instead of playback_policies when creating a DRM playback ID. */
+  advanced_playback_policies: AdvancedPlaybackPolicy[]
 
   /** Arbitrary user-supplied metadata that will be included in the asset details and related webhooks.  */
   passthrough?: string
+}
+
+/** Used by advanced_playback_policies, allows to define DRM config. */
+export type AdvancedPlaybackPolicy = {
+  policy: PlaybackPolicy
+  drm_configuration_id?: string
 }
 
 export interface Secrets {
@@ -363,6 +386,7 @@ export interface Secrets {
   enableSignedUrls: boolean
   signingKeyId: string | null
   signingKeyPrivate: string | null
+  drmConfigId: string | null
 }
 
 // This narrowed type indicates that there may be assets that are signed, and we have the secrets to access them
@@ -409,7 +433,7 @@ export interface AssetThumbnailOptions {
   asset: Pick<VideoAssetDocument, 'playbackId' | 'data' | 'thumbTime' | 'filename' | 'assetId'>
 }
 
-export type PlaybackPolicy = 'signed' | 'public'
+export type PlaybackPolicy = 'signed' | 'public' | 'drm'
 
 export interface MuxErrors {
   type: string
@@ -443,7 +467,12 @@ export interface MuxTextTrack {
   id: string
   text_type?: 'subtitles'
   // https://docs.mux.com/api-reference/video#operation/list-assets:~:text=text%20type%20tracks.-,tracks%5B%5D.,text_source,-string
-  text_source?: 'uploaded' | 'embedded' | 'generated_live' | 'generated_live_final'
+  text_source?:
+    | 'uploaded'
+    | 'embedded'
+    | 'generated_live'
+    | 'generated_live_final'
+    | 'generated_vod'
   // BCP 47 language code
   language_code?: 'en' | 'en-US' | string
   // The name of the track containing a human-readable description. The hls manifest will associate a subtitle text track with this value
@@ -452,8 +481,12 @@ export interface MuxTextTrack {
   //  Max 255 characters
   passthrough?: string
   status: 'preparing' | 'ready' | 'errored'
+  error?: {
+    type: string
+    messages?: string[]
+  }
 }
-export type MuxTrack = MuxVideoTrack | MuxAudioTrack
+export type MuxTrack = MuxVideoTrack | MuxAudioTrack | MuxTextTrack
 // Typings lifted from https://docs.mux.com/api-reference/video#tag/assets
 export interface MuxAsset {
   id: string
