@@ -8,6 +8,7 @@ export interface VideoAssetMetadata {
   isAudioOnly?: boolean
   duration?: number
   size?: number
+  aspectRatio?: number
 }
 
 export function useMediaMetadata(stagedUpload: StagedUpload) {
@@ -48,6 +49,7 @@ export function useMediaMetadata(stagedUpload: StagedUpload) {
         const width = videoElement.videoWidth
         const height = videoElement.videoHeight
         const isAudioOnly = width <= 0 && height <= 0
+        const aspectRatio = width / height
         setVideoAssetMetadata((old) => {
           return {
             ...old,
@@ -55,6 +57,7 @@ export function useMediaMetadata(stagedUpload: StagedUpload) {
             width: width,
             height: height,
             isAudioOnly: isAudioOnly,
+            aspectRatio: aspectRatio,
           }
         })
       },
