@@ -6,7 +6,7 @@ import {memo, useEffect, useId, useReducer, useRef, useState} from 'react'
 import {FormField} from 'sanity'
 
 import {useFetchFileSize} from '../hooks/useFetchFileSize'
-import {useMediaMetadata} from '../hooks/useMediaMetadata'
+import {useMediaMetadata, type VideoAssetMetadata} from '../hooks/useMediaMetadata'
 import {convertWatermarkToMuxOverlay} from '../util/convertWatermarkToMux'
 import formatBytes from '../util/formatBytes'
 import {formatSeconds} from '../util/formatSeconds'
@@ -413,59 +413,15 @@ export default function UploadConfiguration({
                     )}
                   </Stack>
                 </FormField>
-                {videoAssetMetadata?.isAudioOnly === false && (
-                  <FormField
-                    title="Watermark"
-                    description={
-                      <>
-                        Add a watermark overlay to your video using Mux&apos;s native watermark
-                        support.{' '}
-                        <a
-                          href="https://www.mux.com/docs/guides/add-watermarks-to-your-videos"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          Learn more about Mux watermarks.
-                        </a>
-                      </>
-                    }
-                  >
-                    <Stack space={3}>
-                      <WatermarkControls
-                        watermark={config.watermark || {enabled: false}}
-                        onChange={(watermark) => {
-                          dispatch({
-                            action: 'watermark',
-                            value: watermark,
-                          })
-                        }}
-                        onValidationChange={(error) => {
-                          setWatermarkValidationError(error)
-                        }}
-                        previewContainerRef={watermarkPreviewContainerRef}
-                        previewVideoRef={watermarkPreviewVideoRef}
-                      />
-                      {config.watermark?.imageUrl &&
-                        stagedUpload.type === 'file' &&
-                        // Canvas preview is only shown in "Canvas" mode (no explicit overlay_settings)
-                        !config.watermark.overlay_settings && (
-                          <WatermarkPreview
-                            stagedUpload={stagedUpload}
-                            watermark={config.watermark}
-                            videoAspectRatio={videoAssetMetadata.aspectRatio}
-                            onWatermarkChange={(watermark) => {
-                              dispatch({
-                                action: 'watermark',
-                                value: watermark,
-                              })
-                            }}
-                            previewContainerRef={watermarkPreviewContainerRef}
-                            videoRef={watermarkPreviewVideoRef}
-                          />
-                        )}
-                    </Stack>
-                  </FormField>
-                )}
+                <WatermarkSection
+                  config={config}
+                  dispatch={dispatch}
+                  stagedUpload={stagedUpload}
+                  videoAssetMetadata={videoAssetMetadata}
+                  watermarkPreviewContainerRef={watermarkPreviewContainerRef}
+                  watermarkPreviewVideoRef={watermarkPreviewVideoRef}
+                  onValidationChange={setWatermarkValidationError}
+                />
               </>
             )}
           </Stack>
@@ -589,6 +545,70 @@ function formatUploadConfig(
       ? ({...config.watermark, enabled: true} as WatermarkConfig)
       : undefined,
   }
+}
+
+function WatermarkSection({
+  config,
+  dispatch,
+  stagedUpload,
+  videoAssetMetadata,
+  watermarkPreviewContainerRef,
+  watermarkPreviewVideoRef,
+  onValidationChange,
+}: {
+  config: UploadConfig
+  dispatch: (action: UploadConfigurationStateAction) => void
+  stagedUpload: StagedUpload
+  videoAssetMetadata: VideoAssetMetadata | null
+  watermarkPreviewContainerRef: React.RefObject<HTMLDivElement | null>
+  watermarkPreviewVideoRef: React.RefObject<HTMLVideoElement | null>
+  onValidationChange: (error: string | null) => void
+}) {
+  if (videoAssetMetadata?.isAudioOnly !== false) return null
+  return (
+    <FormField
+      title="Watermark"
+      description={
+        <>
+          Add a watermark overlay to your video using Mux&apos;s native watermark support.{' '}
+          <a
+            href="https://www.mux.com/docs/guides/add-watermarks-to-your-videos"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Learn more about Mux watermarks.
+          </a>
+        </>
+      }
+    >
+      <Stack space={3}>
+        <WatermarkControls
+          watermark={config.watermark || {enabled: false}}
+          onChange={(watermark) => {
+            dispatch({action: 'watermark', value: watermark})
+          }}
+          onValidationChange={onValidationChange}
+          previewContainerRef={watermarkPreviewContainerRef}
+          previewVideoRef={watermarkPreviewVideoRef}
+        />
+        {config.watermark?.imageUrl &&
+          stagedUpload.type === 'file' &&
+          // Canvas preview is only shown in "Canvas" mode (no explicit overlay_settings)
+          !config.watermark.overlay_settings && (
+            <WatermarkPreview
+              stagedUpload={stagedUpload}
+              watermark={config.watermark}
+              videoAspectRatio={videoAssetMetadata.aspectRatio}
+              onWatermarkChange={(watermark) => {
+                dispatch({action: 'watermark', value: watermark})
+              }}
+              previewContainerRef={watermarkPreviewContainerRef}
+              videoRef={watermarkPreviewVideoRef}
+            />
+          )}
+      </Stack>
+    </FormField>
+  )
 }
 
 // Memoized preview component to prevent unnecessary re-renders
