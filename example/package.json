@@ -13,23 +13,23 @@
     "reset-mux-credentials": "sanity documents delete secrets.mux"
   },
   "dependencies": {
-    "@mux/mux-player-react": "^3.8.0",
-    "@portabletext/react": "^3.0.18",
-    "@sanity/client": "^6.27.2",
-    "@sanity/image-url": "^1.0.2",
-    "@sanity/vision": "^3.74.0",
+    "@mux/mux-player-react": "^3.11.5",
+    "@portabletext/react": "^3.2.4",
+    "@sanity/client": "^6.29.1",
+    "@sanity/image-url": "^1.2.0",
+    "@sanity/vision": "^3.99.0",
     "next": "^14.2.3",
-    "next-sanity": "^9.8.51",
+    "next-sanity": "^9.12.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "sanity": "^3.74.0",
-    "sanity-plugin-mux-input": "^2.10.1",
-    "styled-components": "^6.1.14"
+    "sanity": "^3.99.0",
+    "sanity-plugin-mux-input": "^2.15.0",
+    "styled-components": "^6.3.11"
   },
   "devDependencies": {
-    "@types/node": "^20.12.12",
-    "@types/react": "^18.3.18",
-    "@types/react-dom": "^18.3.5",
-    "typescript": "5.7.3"
+    "@types/node": "^20.19.35",
+    "@types/react": "^18.3.28",
+    "@types/react-dom": "^18.3.7",
+    "typescript": "5.9.3"
   }
 }
