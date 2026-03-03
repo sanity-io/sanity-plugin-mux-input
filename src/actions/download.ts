@@ -76,17 +76,19 @@ export async function pollMasterAccess(
  * @param assetId The target mux asset ID.
  * @param timeout The timeout in seconds before dropping.
  * @param interval The interval in seconds between tries.
+ * @param interrupt The manual interrupt function evaluated between tries.
  * @return Return the master access link if available.
  */
 export async function waitForMasterAccess(
     client: SanityClient,
     assetId: string,
-    timeout = 30,
-    interval = 2
+    timeout = 120,
+    interval = 5,
+    interrupt: () => Promise<boolean> | boolean = async () => { return false }
 ): Promise<string> {
 
     const limit = Date.now() + timeout * 1000
-    while (Date.now() < limit) {
+    while (Date.now() < limit && !await interrupt()) {
 
         const url = await pollMasterAccess(client, assetId)
         if (url) return url

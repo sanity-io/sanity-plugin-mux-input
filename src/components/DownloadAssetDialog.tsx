@@ -1,6 +1,6 @@
 import {Button, Dialog, Stack, Text} from '@sanity/ui'
 import {DownloadIcon, ResetIcon} from '@sanity/icons'
-import React, {useEffect, useId, useState} from 'react'
+import React, {useEffect, useId, useRef, useState} from 'react'
 import {getAsset} from '../actions/assets'
 
 import {enableMasterAccess, waitForMasterAccess} from '../actions/download'
@@ -23,19 +23,21 @@ export default function DownloadAssetDialog({asset, onClose, absolute}: Props) {
   const client = useClient()
 
   const [status, setStatus] = useState<MuxMasterAccessStatus>('idle')
+  const interruptedRef = useRef<boolean>(false);
 
   const {setDialogState} = useDialogStateContext()
   const dialogId = `DownloadAssetDialog${useId()}`
 
   const timeout = 120
   const interval = 5
+  const interrupt = () => interruptedRef.current
 
   const prepareDownload = async () => {
     const assetId = asset.assetId ?? ''
     setStatus('preparing')
     enableMasterAccess(client, assetId)
       .then(() => {
-        waitForMasterAccess(client, assetId, timeout, interval)
+        waitForMasterAccess(client, assetId, timeout, interval, interrupt)
           .then((link) => {
             setStatus((link.length > 0) ? 'success' : 'error')
           }
@@ -68,7 +70,10 @@ export default function DownloadAssetDialog({asset, onClose, absolute}: Props) {
     onClick: (status === 'success') ? handleDownload : prepareDownload,
   }
 
-  useEffect(() => { if (status === 'idle') prepareDownload() });
+  useEffect(() => {
+    if (status === 'idle') prepareDownload()
+    return () => { interruptedRef.current = true }
+  }, []);
 
   return (
     <Dialog
