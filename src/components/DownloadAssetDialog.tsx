@@ -28,7 +28,7 @@ export default function DownloadAssetDialog({asset, onClose, absolute}: Props) {
   const dialogId = `DownloadAssetDialog${useId()}`
 
   const timeout = 120
-  const interval = 2
+  const interval = 5
 
   const prepareDownload = async () => {
     const assetId = asset.assetId ?? ''
