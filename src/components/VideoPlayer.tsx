@@ -37,6 +37,7 @@ export default function VideoPlayer({
 
   const isAudio = assetIsAudio(asset)
   const muxPlayer = useRef<MuxPlayerRefAttributes>(null)
+  const playerContainerRef = useRef<HTMLDivElement>(null)
   const [error, setError] = useState<Error>()
 
   /* Playback ID that will be used to play the video */
@@ -149,6 +150,7 @@ export default function VideoPlayer({
   return (
     <>
       <Card
+        ref={playerContainerRef}
         tone="transparent"
         style={{
           aspectRatio: aspectRatio,
