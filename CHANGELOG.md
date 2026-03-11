@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.16.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.15.0...v2.16.0) (2026-03-05)
+
+### Features
+
+- Resync asset ([#469](https://github.com/sanity-io/sanity-plugin-mux-input/issues/469)) ([7076433](https://github.com/sanity-io/sanity-plugin-mux-input/commit/707643353c75984406ce141a4a6b62069f4bf7d8))
+
 ## [2.15.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.14.0...v2.15.0) (2026-02-18)
 
 ### Features
