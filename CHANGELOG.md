@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.17.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.16.0...v2.17.0) (2026-03-11)
+
+### Features
+
+- watermark support ([#472](https://github.com/sanity-io/sanity-plugin-mux-input/issues/472)) ([b9af81f](https://github.com/sanity-io/sanity-plugin-mux-input/commit/b9af81fd4b47dc5738ad6efcda1622a17f014439))
+
 ## [2.16.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.15.0...v2.16.0) (2026-03-05)
 
 ### Features
