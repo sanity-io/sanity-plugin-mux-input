@@ -4,21 +4,10 @@ import {catchError, mergeMap, mergeMapTo, switchMap} from 'rxjs/operators'
 import type {SanityClient} from 'sanity'
 
 import {createUpChunkObservable} from '../clients/upChunkObservable'
+import {roundPxString} from '../util/roundPxString'
 import type {MuxAsset, MuxNewAssetSettings, WatermarkConfig} from '../util/types'
 import {getAsset} from './assets'
 import {testSecretsObservable} from './secrets'
-
-function roundPxString(value: unknown): string | undefined {
-  if (typeof value !== 'string') return undefined
-  const trimmed = value.trim()
-  if (!trimmed.endsWith('px')) return undefined
-  const n = Number(trimmed.slice(0, -2))
-  if (!Number.isFinite(n)) return undefined
-  let rounded = Math.round(n)
-  // Avoid sending 0px (and JS -0); keep sign when negative.
-  if (rounded === 0) rounded = n < 0 ? -1 : 1
-  return `${rounded}px`
-}
 
 function sanitizeOverlaySettingsInPlace(settings: MuxNewAssetSettings) {
   const inputs = settings.input

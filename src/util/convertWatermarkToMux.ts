@@ -1,3 +1,4 @@
+import {roundPxString} from './roundPxString'
 import type {MuxOverlaySettings, WatermarkConfig} from './types'
 
 /**
@@ -31,18 +32,6 @@ export function convertWatermarkToMuxOverlay(
 
   const size = watermark.size || 20
   const opacity = watermark.opacity ?? 0.7
-
-  const roundPxString = (value: string | undefined): string | undefined => {
-    if (!value) return value
-    const trimmed = value.trim()
-    if (!trimmed.endsWith('px')) return value
-    const n = Number(trimmed.slice(0, -2))
-    if (!Number.isFinite(n)) return value
-    let rounded = Math.round(n)
-    // Avoid sending 0px (and JS -0); keep sign when user entered negative.
-    if (rounded === 0) rounded = n < 0 ? -1 : 1
-    return `${rounded}px`
-  }
 
   /**
    * Convert a percentage to whole-pixel string, using Mux's base dimensions:
