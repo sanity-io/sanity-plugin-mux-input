@@ -2,10 +2,10 @@ import {PlugIcon} from '@sanity/icons'
 import {Button, Card, Flex, Grid, Heading, Inline, Text} from '@sanity/ui'
 import {useCallback} from 'react'
 
-import type {SetDialogState} from '../hooks/useDialogState'
-import MuxLogo from './MuxLogo'
-import {PluginConfig} from '../util/types'
 import {useAccessControl} from '../hooks/useAccessControl'
+import type {SetDialogState} from '../hooks/useDialogState'
+import {PluginConfig} from '../util/types'
+import MuxLogo from './MuxLogo'
 
 interface OnboardProps {
   setDialogState: SetDialogState

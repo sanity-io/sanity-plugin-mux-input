@@ -1,4 +1,5 @@
 import {useCurrentUser} from 'sanity'
+
 import {PluginConfig} from '../util/types'
 
 export const useAccessControl = (config: PluginConfig) => {

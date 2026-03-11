@@ -2,7 +2,8 @@ import {useReducer} from 'react'
 
 import type {Secrets} from '../util/types'
 
-export interface State extends Pick<Secrets, 'token' | 'secretKey' | 'enableSignedUrls'> {
+export interface State
+  extends Pick<Secrets, 'token' | 'secretKey' | 'enableSignedUrls' | 'drmConfigId'> {
   submitting: boolean
   error: string | null
 }
@@ -13,7 +14,8 @@ export type Action =
   | {type: 'change'; payload: {name: 'token'; value: string}}
   | {type: 'change'; payload: {name: 'secretKey'; value: string}}
   | {type: 'change'; payload: {name: 'enableSignedUrls'; value: boolean}}
-function init({token, secretKey, enableSignedUrls}: Secrets): State {
+  | {type: 'change'; payload: {name: 'drmConfigId'; value: string}}
+function init({token, secretKey, enableSignedUrls, drmConfigId}: Secrets): State {
   return {
     submitting: false,
     error: null,
@@ -22,6 +24,7 @@ function init({token, secretKey, enableSignedUrls}: Secrets): State {
     token: token ?? '',
     secretKey: secretKey ?? '',
     enableSignedUrls: enableSignedUrls ?? false,
+    drmConfigId: drmConfigId ?? '',
   }
 }
 function reducer(state: State, action: Action) {
@@ -35,7 +38,7 @@ function reducer(state: State, action: Action) {
     case 'change':
       return {...state, [action.payload.name]: action.payload.value}
     default:
-      throw new Error(`Unknown action type: ${(action as any)?.type}`)
+      throw new Error(`Unknown action type: ${(action as unknown as Action)?.type}`)
   }
 }
 

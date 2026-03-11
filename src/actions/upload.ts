@@ -4,10 +4,38 @@ import {catchError, mergeMap, mergeMapTo, switchMap} from 'rxjs/operators'
 import type {SanityClient} from 'sanity'
 
 import {createUpChunkObservable} from '../clients/upChunkObservable'
-import type {MuxAsset, MuxNewAssetSettings} from '../util/types'
 import {formatDriveShareLink} from '../util/formatDriveShareLink'
+import {roundPxString} from '../util/roundPxString'
+import type {MuxAsset, MuxNewAssetSettings, WatermarkConfig} from '../util/types'
 import {getAsset} from './assets'
 import {testSecretsObservable} from './secrets'
+
+function sanitizeOverlaySettingsInPlace(settings: MuxNewAssetSettings) {
+  const inputs = settings.input
+  if (!inputs) return
+  for (const input of inputs) {
+    const overlay = (input as {overlay_settings?: Record<string, unknown>}).overlay_settings
+    if (!overlay) continue
+
+    const hm = roundPxString(overlay.horizontal_margin)
+    const vm = roundPxString(overlay.vertical_margin)
+    const w = roundPxString(overlay.width)
+
+    if (hm) overlay.horizontal_margin = hm
+    if (vm) overlay.vertical_margin = vm
+    if (w) overlay.width = w
+  }
+}
+
+function sanitizePxStringsInJson(json: string): string {
+  return json.replace(/"(-?\d+(?:\.\d+)?)px"/g, (_match, num) => {
+    const n = Number(num)
+    if (!Number.isFinite(n)) return _match
+    let rounded = Math.round(n)
+    if (rounded === 0) rounded = n < 0 ? -1 : 1
+    return `"${rounded}px"`
+  })
+}
 
 export function cancelUpload(client: SanityClient, uuid: string) {
   return client.observable.request({
@@ -21,10 +49,12 @@ export function uploadUrl({
   url,
   settings,
   client,
+  watermark,
 }: {
   url: string
   settings: MuxNewAssetSettings
   client: SanityClient
+  watermark?: WatermarkConfig
 }) {
   return testUrl(url).pipe(
     switchMap((validUrl) => {
@@ -39,9 +69,10 @@ export function uploadUrl({
             const muxBody = settings
             if (!muxBody.input) muxBody.input = [{type: 'video'}]
             muxBody.input[0].url = validUrl
+            sanitizeOverlaySettingsInPlace(muxBody)
 
             const query = {
-              muxBody: JSON.stringify(muxBody),
+              muxBody: sanitizePxStringsInJson(JSON.stringify(muxBody)),
               filename: validUrl.split('/').slice(-1)[0],
             }
 
@@ -80,10 +111,12 @@ export function uploadFile({
   settings,
   client,
   file,
+  watermark,
 }: {
   settings: MuxNewAssetSettings
   client: SanityClient
   file: File
+  watermark?: WatermarkConfig
 }) {
   return testFile(file).pipe(
     switchMap((fileOptions) => {
@@ -96,6 +129,7 @@ export function uploadFile({
             }
             const uuid = generateUuid()
             const body = settings
+            sanitizeOverlaySettingsInPlace(body)
 
             return concat(
               of({type: 'uuid' as const, uuid}),
@@ -130,7 +164,7 @@ export function uploadFile({
                       if (event.type !== 'success') {
                         return of(event)
                       }
-                      return from(updateAssetDocumentFromUpload(client, uuid)).pipe(
+                      return from(updateAssetDocumentFromUpload(client, uuid, watermark)).pipe(
                         // eslint-disable-next-line max-nested-callbacks
                         mergeMap((doc) => of({...event, asset: doc}))
                       )
@@ -159,7 +193,7 @@ type UploadResponse = {
     new_asset_settings: {
       static_renditions?: {resolution: string}[]
       passthrough: string
-      playback_policies: ['public' | 'signed']
+      playback_policies: ['public' | 'signed' | 'drm']
     }
     status: string
     timeout: number
@@ -202,7 +236,11 @@ function pollUpload(client: SanityClient, uuid: string): Promise<UploadResponse>
   })
 }
 
-async function updateAssetDocumentFromUpload(client: SanityClient, uuid: string) {
+async function updateAssetDocumentFromUpload(
+  client: SanityClient,
+  uuid: string,
+  _watermark?: WatermarkConfig
+) {
   let upload: UploadResponse
   let asset: {data: MuxAsset}
   try {

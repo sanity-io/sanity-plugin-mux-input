@@ -18,7 +18,7 @@ import {useEffect, useId, useRef, useState} from 'react'
 import {addTextTrackFromUrl, deleteTextTrack, getAsset} from '../actions/assets'
 import {useClient} from '../hooks/useClient'
 import {generateJwt} from '../util/generateJwt'
-import {getPlaybackId} from '../util/getPlaybackId'
+import {getPlaybackId} from '../util/getPlaybackPolicy'
 import {getPlaybackPolicy} from '../util/getPlaybackPolicy'
 import {downloadVttFile, extractErrorMessage, pollTrackStatus} from '../util/textTracks'
 import type {MuxTextTrack, VideoAssetDocument} from '../util/types'
@@ -276,7 +276,7 @@ export default function EditCaptionDialog({asset, track, onUpdate, onClose}: Pro
         const playbackId = getPlaybackId(asset)
         if (!playbackId) return ''
         let url = `https://stream.mux.com/${playbackId}/text/${track.id}.vtt`
-        if (getPlaybackPolicy(asset) === 'signed') {
+        if (getPlaybackPolicy(asset)?.policy === 'signed') {
           const token = generateJwt(client, playbackId, 'v')
           url += `?token=${token}`
         }

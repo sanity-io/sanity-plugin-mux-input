@@ -7,6 +7,7 @@ import {
   ErrorOutlineIcon,
   RevertIcon,
   SearchIcon,
+  SyncIcon,
   TagIcon,
   TrashIcon,
 } from '@sanity/icons'
@@ -27,7 +28,7 @@ import {
 import React, {useEffect, useState} from 'react'
 
 import {DIALOGS_Z_INDEX} from '../../util/constants'
-import type {MuxTextTrack} from '../../util/types'
+import {MuxPlaybackId, MuxTextTrack, PlaybackPolicy} from '../../util/types'
 import FormField from '../FormField'
 import IconInfo from '../IconInfo'
 import {ResolutionIcon} from '../icons/Resolution'
@@ -71,6 +72,8 @@ const VideoDetails: React.FC<VideoDetailsProps> = (props) => {
     handleClose,
     confirmClose,
     saveChanges,
+    handleResync,
+    isResyncing,
   } = useVideoDetails(props)
 
   const isSaving = state === 'saving'
@@ -97,16 +100,29 @@ const VideoDetails: React.FC<VideoDetailsProps> = (props) => {
       footer={
         <Card padding={3}>
           <Flex justify="space-between" align="center">
-            <Button
-              icon={TrashIcon}
-              fontSize={2}
-              padding={3}
-              mode="bleed"
-              text="Delete"
-              tone="critical"
-              onClick={() => setState('deleting')}
-              disabled={isSaving}
-            />
+            <Flex gap={2}>
+              <Button
+                icon={TrashIcon}
+                fontSize={2}
+                padding={3}
+                mode="bleed"
+                text="Delete"
+                tone="critical"
+                onClick={() => setState('deleting')}
+                disabled={isSaving || isResyncing}
+              />
+              <Button
+                icon={SyncIcon}
+                fontSize={2}
+                padding={3}
+                mode="bleed"
+                text="Resync"
+                tone="primary"
+                onClick={handleResync}
+                disabled={isSaving || isResyncing}
+                iconRight={isResyncing && Spinner}
+              />
+            </Flex>
             {modified && (
               <Button
                 icon={CheckmarkIcon}
@@ -117,7 +133,7 @@ const VideoDetails: React.FC<VideoDetailsProps> = (props) => {
                 tone="positive"
                 onClick={saveChanges}
                 iconRight={isSaving && Spinner}
-                disabled={isSaving}
+                disabled={isSaving || isResyncing}
               />
             )}
           </Flex>
@@ -295,13 +311,7 @@ const VideoDetails: React.FC<VideoDetailsProps> = (props) => {
                     size={2}
                   />
                   <IconInfo text={`Mux ID: \n${displayInfo.id}`} icon={TagIcon} size={2} />
-                  {displayInfo?.playbackId && (
-                    <IconInfo
-                      text={`Playback ID: ${displayInfo.playbackId}`}
-                      icon={TagIcon}
-                      size={2}
-                    />
-                  )}
+                  <PlaybackIds playback_ids={displayInfo.playback_ids} />
                 </Stack>
               </Stack>
             </TabPanel>
@@ -319,4 +329,30 @@ const VideoDetails: React.FC<VideoDetailsProps> = (props) => {
   )
 }
 
+const PlaybackIds = ({playback_ids}: {playback_ids?: MuxPlaybackId[]}) => {
+  if (playback_ids) {
+    return playback_ids.map((entry) => (
+      <IconInfo
+        key={entry.id}
+        text={`Playback ID [${policyToText(entry.policy)}]: ${entry.id}`}
+        icon={TagIcon}
+        size={2}
+      />
+    ))
+  }
+  return <IconInfo text={'No Playback ID'} icon={TagIcon} size={2} />
+}
+
+const policyToText = (policy: PlaybackPolicy) => {
+  switch (policy) {
+    case 'drm':
+      return 'DRM'
+    case 'signed':
+      return 'Signed'
+    case 'public':
+      return 'Public'
+    default:
+      return policy
+  }
+}
 export default VideoDetails

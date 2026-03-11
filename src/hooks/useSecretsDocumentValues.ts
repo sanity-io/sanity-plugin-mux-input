@@ -4,7 +4,14 @@ import {useDocumentValues} from 'sanity'
 import {muxSecretsDocumentId} from '../util/constants'
 import type {Secrets} from '../util/types'
 
-const path = ['token', 'secretKey', 'enableSignedUrls', 'signingKeyId', 'signingKeyPrivate']
+const path = [
+  'token',
+  'secretKey',
+  'enableSignedUrls',
+  'signingKeyId',
+  'signingKeyPrivate',
+  'drmConfigId',
+]
 export const useSecretsDocumentValues = () => {
   const {error, isLoading, value} = useDocumentValues<Partial<Secrets> | null | undefined>(
     muxSecretsDocumentId,
@@ -18,6 +25,7 @@ export const useSecretsDocumentValues = () => {
       enableSignedUrls: value?.enableSignedUrls || false,
       signingKeyId: value?.signingKeyId || null,
       signingKeyPrivate: value?.signingKeyPrivate || null,
+      drmConfigId: value?.drmConfigId || null,
     }
     return {
       isInitialSetup: !exists,

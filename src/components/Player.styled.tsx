@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import {Suspense, useState} from 'react'
 import {styled} from 'styled-components'
 
 import {useClient} from '../hooks/useClient'
@@ -46,5 +46,10 @@ export function ThumbnailsMetadataTrack({asset}: ThumbnailsMetadataTrackProps) {
   // Why useState instead of useMemo? Because we really really only want to run it exactly once and useMemo doesn't make that guarantee
   const [src] = useState<string>(() => getStoryboardSrc({asset, client}))
 
-  return <track label="thumbnails" default kind="metadata" src={src} />
+  return (
+    /* We use Suspense here because `getStoryboardSrc` uses suspend() under the hood */
+    <Suspense fallback={null}>
+      <track label="thumbnails" default kind="metadata" src={src} />
+    </Suspense>
+  )
 }

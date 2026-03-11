@@ -10,8 +10,9 @@ import {
 import {Box, Button, Card, Dialog, Flex, Heading, Spinner, Stack, Text, useToast} from '@sanity/ui'
 import {useEffect, useId, useMemo, useState} from 'react'
 
-import {deleteTextTrack, getAsset} from '../actions/assets'
+import {deleteTextTrack} from '../actions/assets'
 import {useClient} from '../hooks/useClient'
+import {useResyncAsset} from '../hooks/useResyncAsset'
 import {downloadVttFile} from '../util/textTracks'
 import type {MuxTextTrack, VideoAssetDocument} from '../util/types'
 import AddCaptionDialog from './AddCaptionDialog'
@@ -203,6 +204,7 @@ export default function TextTracksManager({
   const client = useClient()
   const toast = useToast()
   const dialogId = `DeleteCaptionDialog${useId()}`
+  const {resyncAsset} = useResyncAsset()
   const [downloadingTrackId, setDownloadingTrackId] = useState<string | null>(null)
   const [deletingTrackId, setDeletingTrackId] = useState<string | null>(null)
   const [addedTracks, setAddedTracks] = useState<MuxTextTrack[]>([])
@@ -215,27 +217,6 @@ export default function TextTracksManager({
   const [isExpanded, setIsExpanded] = useState(false)
 
   const MAX_VISIBLE_TRACKS = 4
-
-  useEffect(() => {
-    if (!asset.assetId || !asset._id) return
-
-    const assetId = asset.assetId
-    const documentId = asset._id
-
-    const refreshAsset = async () => {
-      try {
-        const response = await getAsset(client, assetId)
-        await client
-          .patch(documentId)
-          .set({data: response.data, status: response.data.status})
-          .commit()
-      } catch (error) {
-        console.error('Failed to refresh asset data:', error)
-      }
-    }
-
-    refreshAsset()
-  }, [asset.assetId, asset._id, client])
 
   const realTracks: MuxTextTrack[] = propTracks
     ? propTracks
@@ -344,20 +325,13 @@ export default function TextTracksManager({
       return undefined
     }
 
-    const assetId = asset.assetId
-    const documentId = asset._id
-
     const interval = setInterval(async () => {
       try {
-        const response = await getAsset(client, assetId)
-        await client
-          .patch(documentId)
-          .set({data: response.data, status: response.data.status})
-          .commit()
+        const muxData = await resyncAsset(asset)
+        if (!muxData) return
 
         const fetchedTracks =
-          response.data.tracks?.filter((track): track is MuxTextTrack => track.type === 'text') ||
-          []
+          muxData.tracks?.filter((track): track is MuxTextTrack => track.type === 'text') || []
 
         const isMockTrackReplaced = (
           mockTrack: MuxTextTrack,
@@ -444,7 +418,7 @@ export default function TextTracksManager({
     }, 3000) // Poll every 3 seconds
 
     return () => clearInterval(interval)
-  }, [allTracks, asset.assetId, asset._id, client])
+  }, [allTracks, asset, resyncAsset])
 
   const visibleTracks = allTracks
     .filter(
@@ -506,17 +480,8 @@ export default function TextTracksManager({
       }
       await deleteTextTrack(client, asset.assetId, track.id)
 
-      if (asset._id) {
-        try {
-          const response = await getAsset(client, asset.assetId)
-          await client
-            .patch(asset._id)
-            .set({data: response.data, status: response.data.status})
-            .commit()
-        } catch (refreshError) {
-          console.error('Failed to refresh asset data:', refreshError)
-        }
-      }
+      // Refresh asset data after deletion
+      await resyncAsset(asset)
 
       toast.push({
         title: 'Successfully deleted caption track',
@@ -600,17 +565,8 @@ export default function TextTracksManager({
 
     setTrackToEdit(null)
 
-    if (asset._id && asset.assetId) {
-      try {
-        const response = await getAsset(client, asset.assetId)
-        await client
-          .patch(asset._id)
-          .set({data: response.data, status: response.data.status})
-          .commit()
-      } catch (refreshError) {
-        console.error('Failed to refresh asset data:', refreshError)
-      }
-    }
+    // Refresh asset data after update
+    await resyncAsset(asset)
   }
 
   const getTrackSourceLabel = (track: MuxTextTrack) => {
