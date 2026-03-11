@@ -4,6 +4,7 @@ import {catchError, mergeMap, mergeMapTo, switchMap} from 'rxjs/operators'
 import type {SanityClient} from 'sanity'
 
 import {createUpChunkObservable} from '../clients/upChunkObservable'
+import {formatDriveShareLink} from '../util/formatDriveShareLink'
 import {roundPxString} from '../util/roundPxString'
 import type {MuxAsset, MuxNewAssetSettings, WatermarkConfig} from '../util/types'
 import {getAsset} from './assets'
@@ -280,17 +281,18 @@ export function testUrl(url: string): Observable<string> {
   if (typeof url !== 'string') {
     return throwError(error)
   }
-  const trimmedUrl = url.trim()
+  let formattedUrl = url.trim()
+  formattedUrl = formatDriveShareLink(formattedUrl)
   let parsed
   try {
-    parsed = new URL(trimmedUrl)
+    parsed = new URL(formattedUrl)
   } catch (err) {
     return throwError(error)
   }
   if (parsed && !parsed.protocol.match(/http:|https:/)) {
     return throwError(error)
   }
-  return of(trimmedUrl)
+  return of(formattedUrl)
 }
 
 function optionsFromFile(opts: {preserveFilename?: boolean}, file: File) {
