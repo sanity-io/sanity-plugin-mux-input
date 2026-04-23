@@ -5,6 +5,7 @@ import type {SanityClient} from 'sanity'
 
 import {createUpChunkObservable} from '../clients/upChunkObservable'
 import {formatDriveShareLink} from '../util/formatDriveShareLink'
+import {PLUGIN_VERSION_QUERY} from '../util/pluginVersion'
 import {roundPxString} from '../util/roundPxString'
 import type {MuxAsset, MuxNewAssetSettings, WatermarkConfig} from '../util/types'
 import {getAsset} from './assets'
@@ -42,6 +43,7 @@ export function cancelUpload(client: SanityClient, uuid: string) {
     url: `/addons/mux/uploads/${client.config().dataset}/${uuid}`,
     withCredentials: true,
     method: 'DELETE',
+    query: PLUGIN_VERSION_QUERY,
   })
 }
 
@@ -86,7 +88,7 @@ export function uploadUrl({
                   'MUX-Proxy-UUID': uuid,
                   'Content-Type': 'application/json',
                 },
-                query,
+                query: {...query, ...PLUGIN_VERSION_QUERY},
               })
             ).pipe(
               mergeMap((result) => {
@@ -153,6 +155,7 @@ export function uploadFile({
                     'Content-Type': 'application/json',
                   },
                   body,
+                  query: PLUGIN_VERSION_QUERY,
                 })
               ).pipe(
                 mergeMap((result) => {
@@ -205,6 +208,7 @@ export function getUpload(client: SanityClient, assetId: string) {
     url: `/addons/mux/uploads/${dataset}/${assetId}`,
     withCredentials: true,
     method: 'GET',
+    query: PLUGIN_VERSION_QUERY,
   })
 }
 

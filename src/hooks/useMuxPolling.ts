@@ -3,6 +3,7 @@ import {useDataset, useProjectId} from 'sanity'
 import useSWR from 'swr'
 
 import {useClient} from '../hooks/useClient'
+import {PLUGIN_VERSION_QUERY} from '../util/pluginVersion'
 import type {MuxAsset, VideoAssetDocument} from '../util/types'
 
 // Poll MUX if it's preparing the main document or its own static renditions
@@ -39,6 +40,7 @@ export const useMuxPolling = (asset?: VideoAssetDocument) => {
         url: `/addons/mux/assets/${dataset}/data/${asset!.assetId}`,
         withCredentials: true,
         method: 'GET',
+        query: PLUGIN_VERSION_QUERY,
       })
       client.patch(asset!._id!).set({status: data.status, data}).commit({returnDocuments: false})
     },
