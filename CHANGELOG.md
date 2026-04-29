@@ -5,6 +5,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.18.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.17.0...v2.18.0) (2026-04-29)
+
+### Features
+
+- Add support for Google Drive share links ([#464](https://github.com/sanity-io/sanity-plugin-mux-input/issues/464)) ([f41961f](https://github.com/sanity-io/sanity-plugin-mux-input/commit/f41961f793069542620c55db2df65c27394f33f2))
+- Add support for SRT captions ([#481](https://github.com/sanity-io/sanity-plugin-mux-input/issues/481)) ([cd7aa33](https://github.com/sanity-io/sanity-plugin-mux-input/commit/cd7aa339f34d245ffb130fac3656dd291060cef3))
+
 ## [2.17.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.16.0...v2.17.0) (2026-03-11)
 
 ### Features
