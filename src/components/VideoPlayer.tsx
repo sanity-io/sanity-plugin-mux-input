@@ -15,6 +15,7 @@ import {getVideoSrc} from '../util/getVideoSrc'
 import {tryWithSuspend} from '../util/tryWithSuspend'
 import type {VideoAssetDocument} from '../util/types'
 import CaptionsDialog from './CaptionsDialog'
+import DownloadAssetDialog from './DownloadAssetDialog'
 import EditThumbnailDialog from './EditThumbnailDialog'
 import {AudioIcon} from './icons/Audio'
 
@@ -226,6 +227,7 @@ export default function VideoPlayer({
         <EditThumbnailDialog asset={asset} currentTime={muxPlayer?.current?.currentTime} />
       )}
       {dialogState === 'edit-captions' && <CaptionsDialog asset={asset} />}
+      {dialogState === 'download-asset' && <DownloadAssetDialog asset={asset} />}
     </>
   )
 }
