@@ -1,5 +1,6 @@
 import type {SanityClient} from 'sanity'
 
+import {PLUGIN_VERSION_QUERY} from '../util/pluginVersion'
 import type {MuxAsset, VideoAssetDocument} from '../util/types'
 
 export function deleteAssetOnMux(client: SanityClient, assetId: string) {
@@ -8,6 +9,7 @@ export function deleteAssetOnMux(client: SanityClient, assetId: string) {
     url: `/addons/mux/assets/${dataset}/${assetId}`,
     withCredentials: true,
     method: 'DELETE',
+    query: PLUGIN_VERSION_QUERY,
   })
 }
 
@@ -45,6 +47,7 @@ export function getAsset(client: SanityClient, assetId: string) {
     url: `/addons/mux/assets/${dataset}/data/${assetId}`,
     withCredentials: true,
     method: 'GET',
+    query: PLUGIN_VERSION_QUERY,
   })
 }
 
@@ -66,7 +69,7 @@ export function listAssets(
     url: `/addons/mux/assets/${dataset}/data/list`,
     withCredentials: true,
     method: 'GET',
-    query,
+    query: {...query, ...PLUGIN_VERSION_QUERY},
   })
 }
 
@@ -99,6 +102,7 @@ export function addTextTrackFromUrl(
     headers: {
       'Content-Type': 'application/json',
     },
+    query: PLUGIN_VERSION_QUERY,
   })
 }
 
@@ -130,6 +134,7 @@ export function generateSubtitles(
     headers: {
       'Content-Type': 'application/json',
     },
+    query: PLUGIN_VERSION_QUERY,
   })
 }
 
@@ -142,5 +147,6 @@ export function deleteTextTrack(client: SanityClient, assetId: string, trackId: 
     url: `/addons/mux/assets/${dataset}/${assetId}/tracks/${trackId}`,
     withCredentials: true,
     method: 'DELETE',
+    query: PLUGIN_VERSION_QUERY,
   })
 }

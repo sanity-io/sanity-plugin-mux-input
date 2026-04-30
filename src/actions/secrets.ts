@@ -1,6 +1,8 @@
 import {defer} from 'rxjs'
 import type {SanityClient} from 'sanity'
 
+import {PLUGIN_VERSION_QUERY} from '../util/pluginVersion'
+
 interface SecretsDocument {
   _id: 'secrets.mux'
   _type: 'mux.apiKey'
@@ -46,6 +48,7 @@ export async function createSigningKeys(client: SanityClient) {
       url: `/addons/mux/signing-keys/${dataset}`,
       withCredentials: true,
       method: 'POST',
+      query: PLUGIN_VERSION_QUERY,
     })
     return res
   } catch (error: any) {
@@ -64,6 +67,7 @@ export function testSecrets(client: SanityClient) {
     url: `/addons/mux/secrets/${dataset}/test`,
     withCredentials: true,
     method: 'GET',
+    query: PLUGIN_VERSION_QUERY,
   })
 }
 
@@ -82,6 +86,7 @@ export async function haveValidSigningKeys(
       url: `/addons/mux/signing-keys/${dataset}/${signingKeyId}`,
       withCredentials: true,
       method: 'GET',
+      query: PLUGIN_VERSION_QUERY,
     })
     //
     // if this signing key is valid it will return { data: { id: 'xxxx' } }
@@ -100,6 +105,7 @@ export function testSecretsObservable(client: SanityClient) {
       url: `/addons/mux/secrets/${dataset}/test`,
       withCredentials: true,
       method: 'GET',
+      query: PLUGIN_VERSION_QUERY,
     })
   )
 }
