@@ -17,6 +17,7 @@ import {useEffect, useId, useRef, useState} from 'react'
 
 import {addTextTrackFromUrl, deleteTextTrack, getAsset} from '../actions/assets'
 import {useClient} from '../hooks/useClient'
+import {addKeysToMuxData} from '../util/addKeysToMuxData'
 import {generateJwt} from '../util/generateJwt'
 import {getPlaybackId} from '../util/getPlaybackPolicy'
 import {getPlaybackPolicy} from '../util/getPlaybackPolicy'
@@ -125,10 +126,11 @@ export default function EditCaptionDialog({asset, track, onUpdate, onClose}: Pro
     if (!asset._id || !asset.assetId) return
     try {
       const latestAssetData = await getAsset(client, asset.assetId)
+      const dataWithKeys = addKeysToMuxData(latestAssetData.data)
       await client
         .patch(asset._id)
-        .set({data: latestAssetData.data, status: latestAssetData.data.status})
-        .commit()
+        .set({data: dataWithKeys, status: latestAssetData.data.status})
+        .commit({returnDocuments: false})
     } catch (refreshError) {
       console.error('Failed to refresh asset data:', refreshError)
     }
