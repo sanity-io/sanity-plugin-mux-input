@@ -8,7 +8,7 @@ import {useResyncAsset} from '../../hooks/useResyncAsset'
 import getVideoMetadata from '../../util/getVideoMetadata'
 import {VideoAssetDocument} from '../../util/types'
 
-type VideoDetailsState = 'idle' | 'saving' | 'deleting' | 'closing' | 'resyncing'
+type VideoDetailsState = 'idle' | 'saving' | 'deleting' | 'closing' | 'resyncing' | 'downloading'
 
 export interface VideoDetailsProps {
   closeDialog: () => void
