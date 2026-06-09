@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.19.1](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.19.0...v2.19.1) (2026-06-09)
+
+### Bug Fixes
+
+- add support for sanity v6 and adjust peer dependencies ([#484](https://github.com/sanity-io/sanity-plugin-mux-input/issues/484)) ([c4dc9bf](https://github.com/sanity-io/sanity-plugin-mux-input/commit/c4dc9bf142a99539c117638fa17908109ffad14f))
+
 ## [2.19.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.18.0...v2.19.0) (2026-05-11)
 
 ### Features
