@@ -24,6 +24,7 @@ export const ResolutionTierSelector = ({
 }) => {
   return (
     <FormField
+      path={[]}
       title="Resolution Tier"
       description={
         <>

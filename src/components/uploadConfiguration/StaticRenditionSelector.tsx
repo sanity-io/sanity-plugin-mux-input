@@ -75,6 +75,7 @@ export const StaticRenditionSelector = ({
   return (
     <Stack space={3}>
       <FormField
+        path={[]}
         title="Static Renditions"
         description="Generate downloadable MP4 or M4A files. Note: Mux will not upscale to produce MP4 renditions - renditions that would cause upscaling are skipped."
       >

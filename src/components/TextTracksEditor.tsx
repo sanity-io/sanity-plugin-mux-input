@@ -46,7 +46,7 @@ export default function TextTracksEditor({
 }) {
   const track = tracks[0]
   return (
-    <FormField title="Auto-generated subtitle or caption">
+    <FormField title="Auto-generated subtitle or caption" path={[]}>
       <Stack space={2}>
         <Flex align="center">
           <Checkbox
