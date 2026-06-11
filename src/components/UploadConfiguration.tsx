@@ -349,6 +349,7 @@ export default function UploadConfiguration({
         {!disableUploadConfig && (
           <Stack space={3} paddingBottom={2}>
             <FormField
+              path={[]}
               title="Video Quality Level"
               description={
                 <>
@@ -392,7 +393,7 @@ export default function UploadConfiguration({
 
             {!basicConfig && (
               <>
-                <FormField title="Additional Configuration">
+                <FormField title="Additional Configuration" path={[]}>
                   <Stack space={3}>
                     <PlaybackPolicy id={id} config={config} secrets={secrets} dispatch={dispatch} />
                     {maxSupportedResolution > 0 && (
@@ -567,6 +568,7 @@ function WatermarkSection({
   if (videoAssetMetadata?.isAudioOnly !== false) return null
   return (
     <FormField
+      path={[]}
       title="Watermark"
       description={
         <>

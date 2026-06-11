@@ -2,8 +2,10 @@ import {useReducer} from 'react'
 
 import type {Secrets} from '../util/types'
 
-export interface State
-  extends Pick<Secrets, 'token' | 'secretKey' | 'enableSignedUrls' | 'drmConfigId'> {
+export interface State extends Pick<
+  Secrets,
+  'token' | 'secretKey' | 'enableSignedUrls' | 'drmConfigId'
+> {
   submitting: boolean
   error: string | null
 }
