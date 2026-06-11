@@ -5,6 +5,27 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.0](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.19.1...v3.0.0) (2026-06-11)
+
+### ⚠ BREAKING CHANGES
+
+- `@sanity/ui` has been upgraded to v3, which is only
+  compatible with Sanity Studio v4 and later. The `sanity` peer dependency
+  is now `^4.0.0 || ^5.0.0 || ^6.0.0` and no longer allows Studio v3.
+  If you are on Studio v3, stay on the v2 release line of this plugin.
+
+- chore(deps): bump sanity and @sanity/vision dev dependencies to v6
+
+Sanity v6 requires a `path` prop on `FormField`, so the standalone
+plugin dialogs now pass an empty path. This is backwards compatible
+with Studio v4 and v5, where the prop is ignored.
+
+- chore: add sanity.cli.ts required by the v6 CLI
+
+### Features
+
+- upgrade @sanity/ui to v3, require Sanity Studio v4 or later ([#485](https://github.com/sanity-io/sanity-plugin-mux-input/issues/485)) ([6c148b0](https://github.com/sanity-io/sanity-plugin-mux-input/commit/6c148b07418688bb8462b24ba35d1b2f57c601f6))
+
 ## [2.19.1](https://github.com/sanity-io/sanity-plugin-mux-input/compare/v2.19.0...v2.19.1) (2026-06-09)
 
 ### Bug Fixes
