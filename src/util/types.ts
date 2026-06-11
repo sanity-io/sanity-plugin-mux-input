@@ -313,8 +313,10 @@ export interface MuxOverlaySettings {
   opacity?: string // percentage string (e.g., "90%")
 }
 
-export interface UploadConfig
-  extends Pick<MuxInputConfig, 'max_resolution_tier' | 'normalize_audio' | 'video_quality'> {
+export interface UploadConfig extends Pick<
+  MuxInputConfig,
+  'max_resolution_tier' | 'normalize_audio' | 'video_quality'
+> {
   static_renditions: StaticRenditionResolution[]
   text_tracks: UploadTextTrack[]
   signed_policy: boolean
@@ -327,8 +329,10 @@ export interface UploadConfig
  * Data sent to Mux to create a new asset.
  * @docs {@link https://docs.mux.com/api-reference#video/operation/create-direct-upload}
  */
-export interface MuxNewAssetSettings
-  extends Pick<MuxInputConfig, 'max_resolution_tier' | 'normalize_audio' | 'video_quality'> {
+export interface MuxNewAssetSettings extends Pick<
+  MuxInputConfig,
+  'max_resolution_tier' | 'normalize_audio' | 'video_quality'
+> {
   /** Static renditions configuration for downloadable files */
   static_renditions?: {resolution: StaticRenditionResolution}[]
   /** An array of objects that each describe an input file to be used to create the asset.*/
